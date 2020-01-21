@@ -1,16 +1,21 @@
 package com.project;
 import java.util.ArrayList;
+// import java.awt.geom.Point2D;
 public class Player {
-  int health;
-  int coins;
-  String name;
-  ArrayList<String> items;
+  public int health;
+  public int coins;
+  public String name;
+  public ArrayList<String> items;
+  public Pair position;
+  // Point position;
 
   public Player(String name) {
     this.health = 5;
     this.coins = 0;
     this.name = name;
     this.items = new ArrayList<>();
+    // this.position = new Point(0, 0);
+    this.position = new Pair(1, 2);
   }
   public void decreaseHealth() {
     this.health--;

@@ -2,6 +2,7 @@ package com.project;
 public class test {
   public static void main(String[] args) {
     Player player1 = new Player("James");
+    System.out.println(player1.position.toString());
     System.out.println(player1.name);
     System.out.println(player1.coins);
     System.out.println(player1.health);
