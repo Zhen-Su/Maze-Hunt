@@ -16,5 +16,10 @@ public class test {
     System.out.println(player1.toString());
     player1.death();
     System.out.println(player1.toString());
+    AIPlayer All = new AIPlayer();
+    System.out.println(All.name);
+    System.out.println(All.coins);
+    System.out.println(All.toString());
+    System.out.println(All.direction(4));
   }
 }
