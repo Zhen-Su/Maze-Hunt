@@ -1,5 +1,6 @@
 package com.project;
 import java.lang.Math;
+import java.util.ArrayList;
 public class AIPlayer extends Player {
 
   public AIPlayer() {
@@ -10,8 +11,9 @@ public class AIPlayer extends Player {
   public String toString() {
     return super.toString();
   }
-  public int direction(int numberofExits) {
-    return (int)(Math.random() * ((numberofExits - 1) + 1)) + 1;
+  public int direction(ArrayList<Integer> openDoor) {
+    int direction = (int)(Math.random() * (((openDoor.size())) + 1));
+    return direction;
 
   }
 }

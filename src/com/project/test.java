@@ -1,4 +1,5 @@
 package com.project;
+import java.util.ArrayList;
 public class test {
   public static void main(String[] args) {
     Player player1 = new Player("James");
@@ -22,6 +23,10 @@ public class test {
     System.out.println(All.name);
     System.out.println(All.coins);
     System.out.println(All.toString());
-    System.out.println(All.direction(4));
+    ArrayList<Integer> direction = new ArrayList<>();
+    direction.add(1);
+    direction.add(2);
+    direction.add(3);
+    System.out.println(All.direction(direction));
   }
 }
