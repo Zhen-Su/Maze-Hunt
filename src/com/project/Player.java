@@ -38,7 +38,7 @@ public class Player {
     this.health -= number;
   }
   public String toString() {
-    return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items;
+    return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
   }
 
 }
