@@ -18,10 +18,16 @@ public class Player {
     this.position = new Pair(1, 2);
   }
   public void decreaseHealth() {
+
     this.health--;
+    if (this.health == 0) {
+      this.death();
+    }
   }
   public void generateHealth() {
+    if(health != 5) {
     this.health++;
+    }
   }
   public void pickUpCoins(int coinPick) {
     this.coins += coinPick;
@@ -36,6 +42,9 @@ public class Player {
   }
   public void decreaseHealth(int number) {
     this.health -= number;
+    if(health <= 0) {
+      this.death();
+    }
   }
   public String toString() {
     return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();

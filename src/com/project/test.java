@@ -9,7 +9,7 @@ public class test {
     System.out.println(player1.health);
     player1.decreaseHealth();
     System.out.println(player1.health);
-    player1.decreaseHealth(2);
+    player1.decreaseHealth(7);
     player1.generateHealth();
     System.out.println(player1.health);
     player1.pickUpCoins(5);
