@@ -19,4 +19,9 @@ public class AIPlayer extends Player {
     return direction;
 
   }
+  @Override
+  public void death() {
+    //some command to remove player
+    System.out.println("AI Player is dead");
+  }
 }

@@ -28,5 +28,9 @@ public class test {
     direction.add(2);
     direction.add(3);
     System.out.println(All.direction(direction));
+
+    Player death = new Player("Joe");
+    player1.playerHitPlayer(death);
+    System.out.println(death.toString());
   }
 }
