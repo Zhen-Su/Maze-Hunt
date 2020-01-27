@@ -53,6 +53,7 @@ public class Player {
   }
   public void playerHitPlayer(Player hit) {
     hit.decreaseHealth();
+    //need to add shield stuffr
   }
   public void playerKillAI(AIPlayer AI) {
     if (AI.health == 0) {
