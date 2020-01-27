@@ -60,7 +60,20 @@ public class Player {
   } else {
     AI.decreaseHealth();
   }
-
+  public void move(Pair coord) {
+    this.position = coord;
   }
+  public void changeXAndY(int x, int y) {
+    this.poistion.getX() += x;
+    this.position.getY() += y;
+  }
+  public boolean playerSamePlayer(Player h) {
+    return h.
+  }
+  public boolean sameSpot(Player h) {
+    return this.position.same(h.position);
+  }
+
+
 
 }

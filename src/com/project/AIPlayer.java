@@ -14,14 +14,29 @@ public class AIPlayer extends Player {
   public String toString() {
     return super.toString();
   }
-  public int direction(ArrayList<Integer> openDoor) {
-    int direction = (int)(Math.random() * (((openDoor.size())) + 1));
-    return direction;
-
+  public Pair direction(ArrayList<Integer> openDoor) {
+    int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
+    return openDoor.get(randomTake);
   }
   @Override
   public void death() {
     //some command to remove player
     System.out.println("AI Player is dead");
+  }
+  // will need method to gather all squares which are available and put them in a list
+  public void play() {
+    while(true /* will be replaced by timmer boolean */) {
+      ArrayList<Integer> test = new ArrayList<>();
+      test.add(1);
+      test.add(2);
+      super.move(direction(test))
+      // if condition to pick up item
+      super.pickUpItem("h");
+      //if condition to detect if there is a player
+      while(/* somehting to check if player on smae square*/) {
+        super.playerHitPlayer(/* player interacting */);
+
+      }
+    }
   }
 }

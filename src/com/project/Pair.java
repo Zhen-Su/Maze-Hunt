@@ -27,4 +27,7 @@ public class Pair {
   public void setY(int y) {
     this.y = y;
   }
+  public boolean same(Pair p) {
+    return this.x == p.x && this.y == p.y;
+  }
 }
