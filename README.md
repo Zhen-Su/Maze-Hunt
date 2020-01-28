@@ -3,7 +3,7 @@
 __I will post the image of the code structure real soon__
 
 ## Setting up the project
-1. Preferred IDE for this project: Android Studio. (Eclipse works too but Android Studio/IntelliJ doesn't complain lol)
+1. Preferred IDE for this project: Android Studio/IntelliJ. (Eclipse works too but Android Studio/IntelliJ doesn't complain lol)
 2. Launch Android Studio/IntelliJ
 3. Import project
 4. Main code to edit is the class `Game` located under the `core` folder. under the package `com.mygdx.game`
