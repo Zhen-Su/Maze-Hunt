@@ -2,6 +2,7 @@ package com.project;
 import java.util.ArrayList;
 public class test {
   public static void main(String[] args) {
+    int hi = 1;
     Player player1 = new Player("James");
     System.out.println(player1.position.toString());
     System.out.println(player1.name);

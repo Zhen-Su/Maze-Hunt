@@ -8,6 +8,14 @@ public class Player {
   public String name;
   public ArrayList<String> items;
   public Pair position;
+  public boolean hasSword;
+  public boolean hasHealingPotion;
+  public boolean hasShield;
+  public boolean hasCoin;
+  public boolean hasCompass;
+  public boolean hasDamagingPotion;
+  public int swordDamage = 0;
+
   // Point position;
 
   public Player(String name) {
@@ -52,7 +60,20 @@ public class Player {
     return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
   }
   public void playerHitPlayer(Player hit) {
-    hit.decreaseHealth();
+    // write boolean to check sword
+
+    if (this.hasSword && !hit.hasShield) {
+      // will need to do if have item then that can be called
+      // then decrease the helath based on that
+      // could have a damage do attribute and various attributes which change throught the generateMapItems
+      hit.decreaseHealth(this.swordDamage);
+      if (hit.health == 0) {
+        this.swordDamage++;
+        this.coins += hit.coins;
+        hit.death();
+
+      }
+    }
     //need to add shield stuffr
   }
   public void playerKillAI(AIPlayer AI) {
@@ -68,9 +89,7 @@ public class Player {
     this.poistion.getX() += x;
     this.position.getY() += y;
   }
-  public boolean playerSamePlayer(Player h) {
-    return h.
-  }
+
   public boolean sameSpot(Player h) {
     return this.position.same(h.position);
   }

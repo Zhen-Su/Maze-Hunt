@@ -1,6 +1,7 @@
 package com.project;
 import java.lang.Math;
 import java.util.ArrayList;
+// to do integrate the collectble and write more classes for that
 public class AIPlayer extends Player {
 
   public AIPlayer() {
