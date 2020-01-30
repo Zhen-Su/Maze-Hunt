@@ -2,6 +2,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.lang.Math;
 import java.lang.Integer;
+import java.util.ArrayList;
 
 public class CountDown {
 public Timer timer;
@@ -40,10 +41,12 @@ public class Pair {
     return this.y;
   }
   public void setX(int x) {
-    this.x = x;
+    this.x = (int)x;
+    //set to int by default please
   }
   public void setY(int y) {
-    this.y = y;
+    this.y = (int)y;
+    //same
   }
   public boolean same(Pair p) {
     return this.x == p.x && this.y == p.y;
@@ -117,41 +120,41 @@ public class Collect {
 		int maxY = 1000;
 
 		for (int i = 0; i < maxShields; i++) {
-			position.setX() = (int)(Math.random() * (maxX + 1));
-			position.setY() = (int)(Math.random() * (maxY + 1));
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("shield", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxCoins; i++) {
-			position.setX() = (Math.random() * (maxX + 1));
-			position.setY() = (Math.random() * (maxY + 1));
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("coin", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxSwords; i++) {
-			position.setX() = (Math.random() * (maxX + 1));
-			position.setY() = (Math.random() * (maxY + 1));
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("sword", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxCompasses; i++) {
-			position.setX() = (Math.random() * (maxX + 1));
-			position.setY() = (Math.random() * (maxY + 1));
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("compass", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxPotions; i++) {
-			position.setX() = (Math.random() * (maxX + 1));
-			position.setY() = (Math.random() * (maxY + 1));
-			int whatPotion = (Math.random() * 4);
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
+			int whatPotion = (int)(Math.random() * 4);
 
 			if (whatPotion == 1) {
 				Item item = new Item("healingPotion", position);
@@ -247,7 +250,7 @@ public class Collect {
 
 	public void sword(Item item) {
 		int swordPower = 1;
-		if (gearEnchantment()) {
+		if (gearEnchantment(item)) {
 			swordPower += 1;
 		}
 
