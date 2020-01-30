@@ -17,6 +17,39 @@ class DisplayCountdown extends TimerTask {
 
 }
 
+public class Pair {
+  int x;
+  int y;
+  public Pair(int x, int y) {
+    this.x = x;
+    this.y = y;
+  }
+  public String toString() {
+    return "(" + x + ", " + y + ")";
+  }
+  public void changeX(int x) {
+  this.x += x;
+}
+  public void changeY (int y) {
+    this.y += y;
+  }
+  public int getX() {
+    return this.x;
+  }
+  public int getY() {
+    return this.y;
+  }
+  public void setX(int x) {
+    this.x = x;
+  }
+  public void setY(int y) {
+    this.y = y;
+  }
+  public boolean same(Pair p) {
+    return this.x == p.x && this.y == p.y;
+  }
+}
+
 public class Item {
 	private String type;
 	private int x;
@@ -33,6 +66,10 @@ public class Item {
 		this.type = type;
 	}
 
+	public String getType() {
+		return type;
+	}
+
 	public void setPosition(Pair itemPosition) {
 		this.itemPosition = itemPosition;
 	}
@@ -41,24 +78,23 @@ public class Item {
 		return itemPosition;
 	}
 
-	public int getX() {
-		return x;
-	}
+	//public int getX() {
+	//	return x;
+	//}
 
-	public int getY() {
-		return y;
-	}
-	
-	public String getType() {
-		return type;
-	}
+	//public int getY() {
+	//	return y;
+	//}
+
 
 }
 
+
+
 public class Collect {
-	public Item item = new Item(' ', (0, 0));
+	public Pair position = new Pair(0,0);
+	public Item item = new Item(" ", position);
 	public ArrayList<Item> items;
-	public Pair position;
 	public ArrayList<Item> mapItems;
 
 	//if the player picks up an item, remove it from the map and return the item collected
@@ -72,57 +108,57 @@ public class Collect {
 	}
 
 	public void generateMapItems() {
-		public int maxShields = 3;
-		public int maxCoins = 40;
-		public int maxSwords = 5;
-		public int maxCompasses = 5;
-		public int maxPotions = 10;
-		public int maxX;
-		public int maxY;
+		int maxShields = 3;
+		int maxCoins = 40;
+		int maxSwords = 5;
+		int maxCompasses = 5;
+		int maxPotions = 10;
+		int maxX = 1000;
+		int maxY = 1000;
 
 		for (int i = 0; i < maxShields; i++) {
-			int xValue = (Math.random() * (maxX + 1));
-			int yValue = (Math.random() * (maxY + 1));
-			Item item = new Item("shield", (xValue, yValue));
+			position.setX() = (int)(Math.random() * (maxX + 1));
+			position.setY() = (int)(Math.random() * (maxY + 1));
+			Item item = new Item("shield", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxCoins; i++) {
-			int xValue = (Math.random() * (maxX + 1));
-			int yValue = (Math.random() * (maxY + 1));
-			Item item = new Item("coin", (xValue, yValue));
+			position.setX() = (Math.random() * (maxX + 1));
+			position.setY() = (Math.random() * (maxY + 1));
+			Item item = new Item("coin", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxSwords; i++) {
-			int xValue = (Math.random() * (maxX + 1));
-			int yValue = (Math.random() * (maxY + 1));
-			Item item = new Item("sword", (xValue, yValue));
+			position.setX() = (Math.random() * (maxX + 1));
+			position.setY() = (Math.random() * (maxY + 1));
+			Item item = new Item("sword", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxCompasses; i++) {
-			int xValue = (Math.random() * (maxX + 1));
-			int yValue = (Math.random() * (maxY + 1));
-			Item item = new Item("compass", (xValue, yValue));
+			position.setX() = (Math.random() * (maxX + 1));
+			position.setY() = (Math.random() * (maxY + 1));
+			Item item = new Item("compass", position);
 			mapItems.add(item);
 
 		}
 
 		for (int i = 0; i < maxPotions; i++) {
-			int xValue = (Math.random() * (maxX + 1));
-			int yValue = (Math.random() * (maxY + 1));
+			position.setX() = (Math.random() * (maxX + 1));
+			position.setY() = (Math.random() * (maxY + 1));
 			int whatPotion = (Math.random() * 4);
 
 			if (whatPotion == 1) {
-				Item item = new Item("healingPotion", (xValue, yValue));
+				Item item = new Item("healingPotion", position);
 			} else if (whatPotion == 2) {
-				Item item = new Item("damagingPotion", (xValue, yValue));
+				Item item = new Item("damagingPotion", position);
 			} else {
-				Item item = new Item("gearEnchantment", (xValue, yValue));
+				Item item = new Item("gearEnchantment", position);
 			}
 
 			mapItems.add(item);
@@ -132,14 +168,15 @@ public class Collect {
 	}
 
 	public Item nearestItem(Player player) {
-		Item nearestItem = new Item(' ', (MAX_VALUE, MAX_VALUE));
+		Pair position = new Pair(1000, 1000);
+		Item nearestItem = new Item(" ", position);
 
 		for (int i = 0; i < mapItems.size(); i++) {
-			int tempX = mapItems.get(i).getX();
-			int tempY = mapItems.get(i).getY();
+			int tempX = mapItems.get(i).getPosition().getX();
+			int tempY = mapItems.get(i).getPosition().getY();
 
 			int tempDist = player.getX() + player.getY() - tempX - tempY;
-			int shortDist = player.getX() + player.getY() - nearestItem.getX() - nearestItem.getY();
+			int shortDist = player.getX() + player.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
 
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
@@ -150,24 +187,30 @@ public class Collect {
 	//if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
 	public void main() {
 
-		Player player = new Player(/*attributes*/)
+		Player player = new Player(/*attributes*/);
 		if (player.getPosititon() == player.nearestItem().getPosition()) {
 
 			Item item = pickedUp(player);
 
 			if (!items.contains(item)) {
-				if (item.getType() == "shield")
-					shield();
-				if (item.getType() == "sword")
-					sword();
-				if (item.getType() == "compass")
-					compass();
-				if (item.getType() == "healingPotion")
-					healingPotion();
-				if (item.getType() == "damagingPotion")
-					damagingPotion();
-				if (item.getType() == "gearEnchantment")
-					gearEnchantment();
+				if (item.getType() == "shield") {
+					shield(item);
+				}
+				if (item.getType() == "sword") {
+					sword(item);
+				}
+				if (item.getType() == "compass") {
+					compass(item);
+				}
+				if (item.getType() == "healingPotion") {
+					healingPotion(item);
+				}
+				if (item.getType() == "damagingPotion") {
+					damagingPotion(item);
+				}
+				if (item.getType() == "gearEnchantment") {
+					gearEnchantment(item);
+				}
 			} else {
 				items.remove(item);
 			}
@@ -175,16 +218,18 @@ public class Collect {
 	}
 
 
-	public void shield() {
+	public void shield(Item item) {
 		this.timer = timer;
 		this.seconds = 60;
-		if (gearEnchantment()) 
+		if (gearEnchantment(item)) {
 			this.seconds += 30;
+		}
 
 
 		while (timer != 0) {
-			if (decreaseHealth()) 
+			if (decreaseHealth()) {
 				generateHealth();
+			}
 				//change that in the decreaseHealth class in Player
 			
 
@@ -192,7 +237,7 @@ public class Collect {
 
 		}
 
-		items.remove(shield);
+		items.remove(item);
 
 	}
 
@@ -200,39 +245,39 @@ public class Collect {
 
 	}
 
-	public void sword() {
+	public void sword(Item item) {
 		int swordPower = 1;
-		if (gearEnchantment())
+		if (gearEnchantment()) {
 			swordPower += 1;
+		}
 
-		if (attacks())
+		if (attacks()) {
 			swordPower += 1;
+		}
 
 		//display sword icon on screen
 	}
 
-	public void compass() {
+	public void compass(Item item) {
 		//pick nearest player, follow it
 		//display compass
 	}
 
-	public void healingPotion() {
+	public void healingPotion(Item item) {
 		generateHealth();
 		generateHealth();
-		items.remove(healingPotion);
+		items.remove(item);
 	}
 
-	public void damagingPotion() {
+	public void damagingPotion(Item item) {
 		decreaseHealth();
 		decreaseHealth();
-		items.remove(damagingPotion);
+		items.remove(item);
 	}
 
-	public boolean gearEnchantment() {
-		boolean collected = false;
-		if (pickedUp() == gearEnchantment)
-			collected = true;
-		items.remove(gearEnchantment);
+	public boolean gearEnchantment(Item item) {
+		boolean collected = true;
+		items.remove(item);
 		return collected;
 
 		
@@ -240,6 +285,9 @@ public class Collect {
 
 
 }
+
+
+
 
 
 
@@ -254,7 +302,7 @@ public class Collect {
 	- do research on how to program a compass with a moving target
 		do we have to make a compass? cool but very hard
 		can ask melissa
-	- display methods to display certain layers on the screen
+	- display methods to display certain layers on the screen */
 
 
 
