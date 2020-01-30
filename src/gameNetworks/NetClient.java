@@ -1,5 +1,6 @@
 package gameNetworks;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -12,7 +13,12 @@ import java.net.UnknownHostException;
  */
 public class NetClient {
 	
-	private static int UDP_PORT_START = 2000;
+	/*
+	 * Here is a problem!!
+	 * When we start 2 clients, the udpPort won't increate by 1.
+	 * Solution: We need player to enter udpPort when player click MULTIPLAYER button.
+	 */
+	private static int UDP_PORT_START = 2000; // we don't care Client port number, it can be any number.
 	private int udpPort;
 	
 	public NetClient() {
@@ -33,6 +39,11 @@ printMsg("Connected to server");
 			//Send udpPort to GameServer.
 			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 			dos.writeInt(udpPort);
+printMsg("I've sent my udp port to Game Server!"); 
+			//Receive an unique ID from server
+			DataInputStream dis = new DataInputStream(s.getInputStream());
+			int id = dis.readInt();
+printMsg("Server gives me ID is: "+id); 
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
