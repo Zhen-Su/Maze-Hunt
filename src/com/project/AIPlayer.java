@@ -31,7 +31,7 @@ public class AIPlayer extends Player {
       ArrayList<Integer> test = new ArrayList<>();
       test.add(1);
       test.add(2);
-      super.move(direction(test))
+      super.move(direction(test));
       // if condition to pick up item
       super.pickUpItem("h");
       //if condition to detect if there is a player
@@ -41,5 +41,5 @@ public class AIPlayer extends Player {
       }
     }
   }
-  
+
 }

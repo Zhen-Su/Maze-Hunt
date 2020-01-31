@@ -12,7 +12,7 @@ public class Player {
 
   public int coins;
   public int health;
-  public int ID;
+  private int ID;
   public int swordDamage;
 
   public String name;
@@ -20,7 +20,7 @@ public class Player {
   public Pair position;
 
 
-  public Player(String name, int ID;) {
+  public Player(String name, int ID) {
     this.health = 5;
     this.coins = 0;
     this.name = name;
@@ -51,6 +51,9 @@ public class Player {
   public void pickUpCoins(int coinPick) {
     this.coins += coinPick;
   }
+  public void pickUpCoins() {
+    this.coins++;
+  }
 
   public void death() {
     System.out.println("Player has died respawning now");
@@ -59,8 +62,35 @@ public class Player {
     this.items = new ArrayList<>();
   }
 
-  public void pickUpItem(String item) {
-    this.items.add(item);
+  public void pickUpItem(Item itemPicked) {
+    switch(itemPicked.getType()) {
+      case "Coin":
+        this.pickUpCoins();
+        break;
+      case "Shield":
+        hasShield = true;
+        shield(itemPicked, this);
+        break;
+      case "Sword":
+        hasSword = true;
+        sword(itemPicked, this);
+        // some method to be called
+        break;
+      case "Compass":
+        hasCompass = true;
+        compass(itemPicked);
+        break;
+      case "Healing Potion":
+        hasHealingPotion = true;
+        healingPotion(itemPicked, this);
+        break;
+      case "Damaging Potion":
+        hasDamagingPotion = true;
+        damagingPotion(itemPicked, player1);
+        break;
+      default:
+        throw new Exception("Item does not exist yet");
+    }
   }
 
   public void decreaseHealth(int number) {
@@ -97,6 +127,7 @@ public class Player {
   } else {
     AI.decreaseHealth();
   }
+}
 
   public void move(Pair coord) {
     this.position = coord;
