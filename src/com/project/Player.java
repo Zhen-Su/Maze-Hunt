@@ -59,6 +59,13 @@ public class Player {
     System.out.println("Player has died respawning now");
     this.health = 5;
     this.coins = 0;
+
+    this.hasCompass = false;
+    this.hasDamagingPotion = false;
+    this.hasHealingPotion = false;
+    this.hasShield = false;
+    this.hasSword = false;
+
     this.items = new ArrayList<>();
   }
 
@@ -70,11 +77,12 @@ public class Player {
       case "Shield":
         hasShield = true;
         shield(itemPicked, this);
+        hasShield = false;
         break;
       case "Sword":
         hasSword = true;
         sword(itemPicked, this);
-        // some method to be called
+
         break;
       case "Compass":
         hasCompass = true;
@@ -83,10 +91,12 @@ public class Player {
       case "Healing Potion":
         hasHealingPotion = true;
         healingPotion(itemPicked, this);
+        hasDamagingPotion = false;
         break;
       case "Damaging Potion":
         hasDamagingPotion = true;
         damagingPotion(itemPicked, player1);
+        hasDamagingPotion = false;
         break;
       default:
         throw new Exception("Item does not exist yet");
@@ -140,6 +150,9 @@ public class Player {
 
   public boolean sameSpot(Player h) {
     return this.position.same(h.position);
+  }
+  public boolean itemOnSquare(Item item) {
+    return this.position.same(item.getPosition());
   }
 
 
