@@ -63,3 +63,22 @@ The package `com.project.mazegame.tools` contains the classes for the other back
 
 4. Variables
 ```
+---
+# Update Logs
+## Version 1.0
+```
+- Coded the basic building blocks for rendering
+- Managed to render the TMX file and the Player character
+```
+## Version 1.1
+```
+- Added orthographic camera
+- Added collision so that the player wont run into walls
+```
+## Version 1.2
+```
+- Refactored project structure for better scalability and easier implementation of upcoming features
+- Added Screens (Menu, preferences etc).
+- Player can now quit the game and go back to menu
+- Player now can exit the game by clicking the exit button in the menu screen
+```
