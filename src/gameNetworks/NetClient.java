@@ -1,8 +1,11 @@
 package gameNetworks;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -13,53 +16,115 @@ import java.net.UnknownHostException;
  */
 public class NetClient {
 	
-	/*
-	 * Here is a problem!!
-	 * When we start 2 clients, the udpPort won't increate by 1.
-	 * Solution: We need player to enter udpPort when player click MULTIPLAYER button.
-	 */
-	private static int UDP_PORT_START = 2000; // we don't care Client port number, it can be any number.
-	private int udpPort;
+	private int clientUDPPort;
+	private int serverUDPPort;
+	private GameClient gc;
+	private Socket socket;
+	private String serverIP;
+	private DatagramSocket ds = null;
 	
-	public NetClient() {
-		//DO not need to think sychronization here.
-		udpPort = UDP_PORT_START++;
+	
+	public NetClient(GameClient gc){
+        this.gc = gc;
+    }
+	
+	public int getClientUDPPort() {
+		return clientUDPPort;
+	}
+
+	public void setClientUDPPort(int clientUDPPort) {
+		this.clientUDPPort = clientUDPPort;
 	}
 	
 	/**
 	 * Conncet to GameServer,send udp port and IP to GameServer then close tcp socket.
-	 * @param IP
-	 * @param port
+	 * @param ip   server IP
+	 * @param port server TCP port
 	 */
-	public void connect(String IP, int port) {
-		Socket s =null;
+	public void connect(String ip, int serverTCPPort) {
+		serverIP=ip;
+		Socket socket = null;
 		try {
-			s = new Socket(IP,port);
+			ds = new DatagramSocket(clientUDPPort);  // UDPSocket 
+			socket = new Socket(ip,serverTCPPort);   // TCPSocket
 printMsg("Connected to server"); 
-			//Send udpPort to GameServer.
-			DataOutputStream dos = new DataOutputStream(s.getOutputStream());
-			dos.writeInt(udpPort);
+
+			//Send client udp port to GameServer.
+			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			dos.writeInt(clientUDPPort);
 printMsg("I've sent my udp port to Game Server!"); 
-			//Receive an unique ID from server
-			DataInputStream dis = new DataInputStream(s.getInputStream());
-			int id = dis.readInt();
-printMsg("Server gives me ID is: "+id); 
+
+			//Receive an unique ID and Server udp port 
+			DataInputStream dis = new DataInputStream(socket.getInputStream());
+			int id = dis.readInt(); 	/*Here we only received an ID, but need assign this ID to PLAYER(INTEGRATION WITH PLAYER CLASS)!!! */
+			this.serverUDPPort = dis.readInt();
+printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort); 
+
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally {
 			try {
-				s.close(); //We do not need this tcp socket anymore.
-				s=null;
+				socket.close();  //We do not need this tcp socket anymore.
+				socket=null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		
+		//Send a message to the server when the player just connect to server.
+		NewMessage msg = new NewMessage();
+		send(msg);
+		
+		new Thread(new UDPReceiveThread()).start();
+		
+	}
+	/**
+	 * Send messages to Server, then Server can broadcast it to every clients.
+	 * @param msg
+	 */
+	private void send(NewMessage msg) {
+		msg.send(ds, serverIP, serverUDPPort);
 		
 	}
 	
+	/**
+	 * 
+	 * @author kevin
+	 *
+	 */
+	private class UDPReceiveThread implements Runnable{
+		
+		 byte[] receiveBuf = new byte[1024];
+
+        @Override
+        public void run() {
+            while(null != ds){
+                DatagramPacket dp = new DatagramPacket(receiveBuf, receiveBuf.length);
+                try{
+                    ds.receive(dp);
+                    process(dp);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+/**
+ * Process packet which received from Server
+ * @param dp
+ */
+		private void process(DatagramPacket dp) {
+			ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf,0,receiveBuf.length);
+			DataInputStream dis = new DataInputStream(bais);
+			//Use Polymorphism and switch here! (Message msg= new NewMessage();/ Message msg= new AckMessage();)
+			NewMessage msg = new NewMessage();
+			msg.process(dis);
+		}
+		
+	}
+	
+
 	/**
 	 * For debugging
 	 * @param msg
