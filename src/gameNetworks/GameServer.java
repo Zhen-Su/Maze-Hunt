@@ -15,7 +15,7 @@ import java.util.List;
 public class GameServer {
 	
 	private static int ID= 0001;                    //every client has an unique ID.
-	public static final int SERVER_TCP_PORT=8888;
+	public static final int SERVER_TCP_PORT=9999;
 	public static final int SERVER_UDP_PORT=7777;
 	static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
 	private boolean isRunning = false;
