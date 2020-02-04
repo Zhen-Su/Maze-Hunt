@@ -87,8 +87,8 @@ public class Collect {
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
 
-			int tempDist = player.getX() + player.getY() - tempX - tempY;
-			int shortDist = player.getX() + player.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
+			int tempDist = player.position.getX() + player.position.getY() - tempX - tempY;
+			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
 
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
@@ -99,26 +99,27 @@ public class Collect {
 	//if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
 	public void main() {
 
-		Player player = new Player(/*attributes*/);
-		if (player.getPosititon() == player.nearestItem().getPosition()) {
+		Player player = new Player("James", 123);
+		if (player.position == player.nearestItem().position) {
 
 			Item item = pickedUp(player);
-
+			Player player1 = new Player("James", 123);
+			Player player2 = new Player("James", 123);
 			if (!items.contains(item)) {
 				if (item.getType() == "shield") {
-					shield(item);
+					shield(item, player1);
 				}
 				if (item.getType() == "sword") {
-					sword(item);
+					sword(item, player1, player2);
 				}
 				if (item.getType() == "compass") {
 					compass(item);
 				}
 				if (item.getType() == "healingPotion") {
-					healingPotion(item);
+					healingPotion(item, player1);
 				}
 				if (item.getType() == "damagingPotion") {
-					damagingPotion(item);
+					damagingPotion(item, player1);
 				}
 				if (item.getType() == "gearEnchantment") {
 					gearEnchantment(item);
@@ -131,17 +132,22 @@ public class Collect {
 
 
 	public void shield(Item item, Player player1) {
-		this.timer = timer;
-		this.seconds = 60;
+		// this.timer = timer;
+		// this.seconds = 60;
+		// temp solutions
+		int timer = 20;
+		int seconds = 60;
+		int startHealth = player1.health;
 		if (gearEnchantment(item)) {
-			this.seconds += 30;
+			seconds += 30;
 		}
 
 
 		while (timer != 0) {
-			if (player1.decreaseHealth()) {
-				player1.generateHealth();
+			if (player1.health != startHealth) {
+				player1.health = startHealth;
 			}
+
 				//change that in the decreaseHealth class in Player
 
 
@@ -157,13 +163,13 @@ public class Collect {
 
 	}
 
-	public void sword(Item item, Player player1) {
+	public void sword(Item item, Player player1, Player player2) {
 		int swordPower = 1;
 		if (gearEnchantment(item)) {
 			swordPower += 1;
 		}
 
-		if (attacks()) {
+		if (player2.health == 0) { //going to come back to level
 			swordPower += 1;
 		}
 		player1.swordDamage++;

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class AIPlayer extends Player {
 
   public AIPlayer() {
-    super("AI");
+    super("AI", 123);
 
     super.coins = 5;
 
@@ -19,24 +19,24 @@ public class AIPlayer extends Player {
     return super.toString();
   }
 
-  public Pair direction(ArrayList<Integer> openDoor) {
+  public Pair direction(ArrayList<Pair> openDoor) {
     int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
-    return openDoor.get(randomTake);
+    return openDoor.get(openDoor.indexOf(randomTake));
   }
 
   // will need method to gather all squares which are available and put them in a list
   public void play() {
 
     while(true /* will be replaced by timmer boolean */) {
-      ArrayList<Integer> test = new ArrayList<>();
-      test.add(1);
-      test.add(2);
+      ArrayList<Pair> test = new ArrayList<>();
+      test.add(new Pair(1, 2));
+      test.add(new Pair(3, 4));
       super.move(direction(test));
       // if condition to pick up item
-      super.pickUpItem("h");
+      // super.pickUpItem("h");
       //if condition to detect if there is a player
-      while(/* somehting to check if player on smae square*/) {
-        super.playerHitPlayer(/* player interacting */);
+      while(true /* somehting to check if player on smae square*/) {
+        // super.playerHitPlayer(/* player interacting */);
 
       }
     }

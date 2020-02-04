@@ -70,32 +70,35 @@ public class Player {
   }
 
   public void pickUpItem(Item itemPicked) {
+    Collect co = new Collect(); // will need to be changed maybe put the collect class in parameters
     switch(itemPicked.getType()) {
       case "Coin":
         this.pickUpCoins();
         break;
       case "Shield":
+
         hasShield = true;
-        shield(itemPicked, this);
+        co.shield(itemPicked, this);
         hasShield = false;
         break;
       case "Sword":
         hasSword = true;
-        sword(itemPicked, this);
+        Player player2 = new Player("Hi", 234);
+        co.sword(itemPicked, this, player2);
 
         break;
       case "Compass":
         hasCompass = true;
-        compass(itemPicked);
+        co.compass(itemPicked);
         break;
       case "Healing Potion":
         hasHealingPotion = true;
-        healingPotion(itemPicked, this);
+        co.healingPotion(itemPicked, this);
         hasDamagingPotion = false;
         break;
       case "Damaging Potion":
         hasDamagingPotion = true;
-        damagingPotion(itemPicked, player1);
+        co.damagingPotion(itemPicked, this);
         hasDamagingPotion = false;
         break;
       default:
@@ -144,8 +147,9 @@ public class Player {
   }
 
   public void changeXAndY(int x, int y) {
-    this.poistion.getX() += x;
-    this.position.getY() += y;
+
+    this.position.changeX(x);
+    this.position.changeY(y);
   }
 
   public boolean sameSpot(Player h) {
