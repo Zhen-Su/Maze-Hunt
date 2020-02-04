@@ -56,7 +56,7 @@ printMsg("I've sent my udp port to Game Server!");
 
 			//Receive an unique ID and Server udp port 
 			DataInputStream dis = new DataInputStream(socket.getInputStream());
-			int id = dis.readInt(); 	/*Here we only received an ID, but need assign this ID to PLAYER(INTEGRATION WITH PLAYER CLASS)!!! */
+			int id = dis.readInt(); /*Here we only received an ID, but need assign this ID to PLAYER(INTEGRATION WITH PLAYER CLASS)!!! */
 			this.serverUDPPort = dis.readInt();
 printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort); 
 

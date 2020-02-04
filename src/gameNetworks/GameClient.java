@@ -21,8 +21,9 @@ public class GameClient {
 		System.out.println("Please enter your UDP Port (Any Number): ");
 		int clientUDPPort = sc.nextInt();
 				
-		nc.connect(serverIP,GameServer.SERVER_TCP_PORT);
 		nc.setClientUDPPort(clientUDPPort);
+		nc.connect(serverIP,GameServer.SERVER_TCP_PORT);
+		
 				
 		sc.close();
 		//public IP: 8.208.8.136

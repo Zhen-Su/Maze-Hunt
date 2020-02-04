@@ -52,13 +52,14 @@ public class GameServer {
 					printMsg("Waiting for a client……");
 					s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it. 
 					
-					//Receive udpPort from GameClient to store it.
+					//Receive client's UDP Port from GameClient
 					DataInputStream dis = new DataInputStream(s.getInputStream());
 					int clientUDPPort=dis.readInt();
+					
 					String clientIP=s.getInetAddress().getHostAddress();
 					Client c = new Client(clientIP,clientUDPPort);//create a client object
 					clients.add(c);                   //add this client object to list
-					printMsg("A Client Connected! Address--" + s.getInetAddress()+":"+s.getPort()+" udpPort:"+clientUDPPort);
+					printMsg("A Client Connected! Address--" + s.getInetAddress()+":"+s.getPort()+" Client's UDP Port:"+clientUDPPort);
 					
 					//Send ID and Server UDP_PORT to client.
 					DataOutputStream dos = new DataOutputStream(s.getOutputStream());
@@ -116,11 +117,10 @@ printMsg("UDP thread started at port: "+SERVER_UDP_PORT);
 					ds.receive(dp);
 printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
 					for (Client c : clients){
-						int i=0;
 						if(c!=null) {
 					    dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
 					    ds.send(dp);
-printMsg("I've broadcasted to client["+(i++)+"]");	
+printMsg("I've broadcasted to client");	
 						}
 					}
 				} catch (IOException e) {
