@@ -2,6 +2,7 @@ package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.project.mazegame.MazeGame;
@@ -11,6 +12,7 @@ public class MenuScreen implements Screen {
 
     private MazeGame game;
     private OrthoCam cam;
+    private Music bgm;
 
     private static final int EXIT_WIDTH = 100;
     private static final int EXIT_HEIGHT = 50;
@@ -31,6 +33,9 @@ public class MenuScreen implements Screen {
         playButtonInactive = new Texture ("play_button_inactive.png");
         exitButtonActive = new Texture("exit_button_active.png");
         exitButtonInactive = new Texture("exit_button_inactive.png");
+        bgm = Gdx.audio.newMusic(Gdx.files.internal("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets/sounds/menuBgm.mp3"));
+        bgm.setLooping(true);
+        bgm.play();
     }
 
     @Override
@@ -50,8 +55,10 @@ public class MenuScreen implements Screen {
         int x1 = MazeGame.WIDTH / 2 - PLAY_WIDTH / 2;
         if (Gdx.input.getX() < (x1 + PLAY_WIDTH) && Gdx.input.getX() > x1 && MazeGame.HEIGHT - Gdx.input.getY() > PLAY_Y && MazeGame.HEIGHT - Gdx.input.getY() < PLAY_Y + PLAY_HEIGHT) {
             game.batch.draw(playButtonActive, x1, PLAY_Y,PLAY_WIDTH,PLAY_HEIGHT);
-            if (Gdx.input.isTouched())
+            if (Gdx.input.isTouched()) {
+                bgm.stop();
                 game.setScreen(new GameScreen(game));
+            }
         } else {
             game.batch.draw(playButtonInactive, x1, PLAY_Y,PLAY_WIDTH,PLAY_HEIGHT);
         }

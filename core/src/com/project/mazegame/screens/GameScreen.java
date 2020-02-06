@@ -3,6 +3,7 @@ package com.project.mazegame.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -21,6 +22,7 @@ public class GameScreen implements Screen {
 
     private MazeGame game;
     private OrthoCam cam;
+    private Music bgm;
 
     private Player player;
     private InputHandler inputHandler;
@@ -28,16 +30,36 @@ public class GameScreen implements Screen {
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
+    private OrthogonalTiledMapRenderer tileMapRenderer2;
     private TiledMapTileLayer collisionLayer;
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
-    private final int EXIT_Y = VIEWPORT_HEIGHT;
+
 
     public GameScreen(MazeGame game) {
         this.game = game;
+
+        inputHandler = new InputHandler(this.game);
+
+        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
+        tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
+        tileMapRenderer2 = new OrthogonalTiledMapRenderer(tileMap);
+
+        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
+
+        System.out.println("Tile's width " + collisionLayer.getWidth());
+        player = new Player(this.collisionLayer);
+
+        // buttons
+        exitButtonActive = new Texture("exit_button_active.png");
+        exitButtonInactive = new Texture("exit_button_inactive.png");
+
+        bgm = Gdx.audio.newMusic(Gdx.files.internal("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets/sounds/mainbgm.mp3"));
+        bgm.setLooping(true);
+        bgm.play();
     }
 
 
@@ -53,16 +75,6 @@ public class GameScreen implements Screen {
 
         delta = Gdx.graphics.getDeltaTime();
         System.out.println("Delta is " + delta);
-
-        inputHandler = new InputHandler(this.game);
-
-        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
-        tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-
-        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-
-        System.out.println("Tile's width " + collisionLayer.getWidth());
-        player = new Player(this.collisionLayer);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
 
         //updates
@@ -73,9 +85,6 @@ public class GameScreen implements Screen {
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
 
-        // buttons
-        exitButtonActive = new Texture("exit_button_active.png");
-        exitButtonInactive = new Texture("exit_button_inactive.png");
 
         //rendering
         game.batch.begin();
@@ -84,9 +93,10 @@ public class GameScreen implements Screen {
         float y = player.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-//            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-//            this.dispose();
-//            game.setScreen(new MenuScreen(this.game));
+            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
+            this.dispose();
+            bgm.stop();
+            game.setScreen(new MenuScreen(this.game));
         }
 //        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
 //            game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
