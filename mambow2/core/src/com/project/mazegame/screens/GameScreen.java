@@ -5,6 +5,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -29,6 +31,7 @@ public class GameScreen implements Screen {
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
+    private MapLayer objectLayer;
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
@@ -38,6 +41,27 @@ public class GameScreen implements Screen {
 
     public GameScreen(MazeGame game) {
         this.game = game;
+        inputHandler = new InputHandler(this.game);
+
+        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
+        tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
+
+        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
+        objectLayer = tileMap.getLayers().get("Object Layer 1");
+        //objects
+        MapObjects objects = objectLayer.getObjects();
+        
+        objects.get("3");
+        
+        objectLayer.setVisible(true);
+        //System.out.println("Tile's width " + collisionLayer.getWidth());
+        player = new Player(this.collisionLayer);
+        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
+
+
+        // buttons
+        exitButtonActive = new Texture("exit_button_active.png");
+        exitButtonInactive = new Texture("exit_button_inactive.png");
     }
 
 
@@ -52,18 +76,18 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         delta = Gdx.graphics.getDeltaTime();
-        System.out.println("Delta is " + delta);
+        //System.out.println("Delta is " + delta);
 
-        inputHandler = new InputHandler(this.game);
-
-        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
-        tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-
-        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-
-        System.out.println("Tile's width " + collisionLayer.getWidth());
-        player = new Player(this.collisionLayer);
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
+//        inputHandler = new InputHandler(this.game);
+//
+//        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
+//        tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
+//
+//        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
+//
+//        System.out.println("Tile's width " + collisionLayer.getWidth());
+//        player = new Player(this.collisionLayer);
+//        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
 
         //updates
         inputHandler.update();
@@ -72,10 +96,6 @@ public class GameScreen implements Screen {
         //tilemap
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
-
-        // buttons
-        exitButtonActive = new Texture("exit_button_active.png");
-        exitButtonInactive = new Texture("exit_button_inactive.png");
 
         //rendering
         game.batch.begin();

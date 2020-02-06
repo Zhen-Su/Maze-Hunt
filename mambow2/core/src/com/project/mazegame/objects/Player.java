@@ -22,25 +22,26 @@ public class Player {
         x = VIEWPORT_WIDTH / 2;
         y = VIEWPORT_HEIGHT / 2;
        
-         
         loadPlayerTextures();
         
         width = player_middle.getWidth(); //--------------need to /2 
         height = player_middle.getHeight(); 
+        System.out.println(width + height);
     }
      
     public void update (float delta){
     	// update player movement
     	 // update player movement
+    	
+    	
     
         if (RIGHT_TOUCHED) {
-           //if (SCROLLTRACKER_X > collisionLayer.getWidth()*2) {
-            	//move player
+     
             	x += speed * delta; 
             	SCROLLTRACKER_X += speed;
             	
             	//check player
-            	if(!checkCollisionMap(x + (width/2) ,y)) {
+            	if(!checkCollisionMap(x  , y  )) { // horizontally
             		//move player back if needed
             		System.out.println("hit right wall");
             		x -= speed * delta; 
@@ -54,7 +55,8 @@ public class Player {
             if (x > 0) {
             	x -= speed * delta; 
             	SCROLLTRACKER_X -= speed;
-            	if(!checkCollisionMap(x - (width/2) ,y)) {
+            	
+            	if(!checkCollisionMap(x ,y  )) {
             		System.out.println("hit left wall");
             		x += speed * delta; 
                 	SCROLLTRACKER_X += speed;
@@ -66,7 +68,8 @@ public class Player {
             if (y < VIEWPORT_HEIGHT - height) {
                 y += speed * delta;
                 SCROLLTRACKER_Y += speed;
-                if(!checkCollisionMap(x ,y + (height/2))) {
+                
+                if(!checkCollisionMap(x  , y )) {
                 	System.out.println("hit top wall");
                 	y -= speed * delta;
                     SCROLLTRACKER_Y -= speed;
@@ -79,7 +82,8 @@ public class Player {
             if (y > 0) {
                 y -= speed * delta;
                 SCROLLTRACKER_Y -= speed;
-                if(!checkCollisionMap(x,y - (height/2))) {
+                
+                if(!checkCollisionMap(x, y  )) {
                 	System.out.println("hit bottom wall");
                 	y += speed * delta;
                     SCROLLTRACKER_Y += speed;
@@ -98,7 +102,7 @@ public class Player {
         	player = player_middle;
         }
         
-        checkCollisionMap(x,y);
+        //checkCollisionMap(x,y);
         
     }
     
@@ -115,28 +119,30 @@ public class Player {
     }
     
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
+    	//Overall x and y of player
         float xWorld = possibleX + SCROLLTRACKER_X;
         float yWorld = possibleY + SCROLLTRACKER_Y; 
-                                                                                                     
-        ////////////////// Check For Collision
+        
         boolean collisionWithMap = false;
-        System.out.println("possibleX : " + possibleX);
-        System.out.println("possibleY : " + possibleY);
-        System.out.println("SCROLLTRACKER_X: " + SCROLLTRACKER_X);
-        System.out.println("xWorld: " + xWorld);
-        System.out.println("yWorld: " + yWorld);
-        // check right side middle
-        collisionWithMap = isCellBLocked(xWorld, yWorld);
- 
-        // ////////////////-------------------------------------------------- React to Collision
+  
+        //Check corners of player to check for collision
+        //check corners T = top, B = bottom, R = right, L = left
+        boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2) );
+        boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2));
+        boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2));
+        boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2));
+   
+        collisionWithMap = TLbool || TRbool || BLbool || BRbool;
+        
+        //If there is a collision
         if (collisionWithMap) return false;
         else return true;
        
     }
  
-    public boolean isCellBLocked(float x, float y) {
+    public boolean isCellBlocked(float x, float y) {
 
-//        System.out.println("debug: " + collisionLayer.getTileWidth());
+      System.out.println("debug: " + collisionLayer.getTileWidth());
     	Cell cell = collisionLayer.getCell(
             (int) (x / collisionLayer.getTileWidth()),
             (int) (y / collisionLayer.getTileHeight()));
