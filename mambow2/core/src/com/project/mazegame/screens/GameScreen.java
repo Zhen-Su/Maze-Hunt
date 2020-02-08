@@ -1,16 +1,27 @@
 package com.project.mazegame.screens;
 
+import com.project.mazegame.objects.Pair;
+
+import com.project.mazegame.objects.Item;
+import com.project.mazegame.objects.Pair.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.InputHandler;
@@ -18,6 +29,11 @@ import com.project.mazegame.tools.OrthoCam;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
+import javax.jws.soap.SOAPBinding.Style;
 
 public class GameScreen implements Screen {
 
@@ -35,6 +51,17 @@ public class GameScreen implements Screen {
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
+    private Texture heartTexture;
+    private Texture coinTexture;
+    private Texture swordTexture;
+    private Texture shieldTexture;
+    private Texture audioButtonActive;
+    private Texture audioButtonInactive;
+    private Button audioButton;
+    
+    
+    
+    
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
@@ -44,13 +71,30 @@ public class GameScreen implements Screen {
         inputHandler = new InputHandler(this.game);
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
+        MapObjects mapObjects = tileMap.getLayers().get("Object Layer 1").getObjects();
+        System.out.println("coins : " + mapObjects.getCount());
+        
+        
+        
+        //mapObjects. objAraray[mapObjects.getCount()];
+        /*
+        String name = object.getName();
+        float opacity = object.getOpacity();
+        boolean isVisible = object.isVisible();
+        Color color = object.getColor();
+        */
+        MapObject obj = mapObjects.get("coin");
+        
+        
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
         objectLayer = tileMap.getLayers().get("Object Layer 1");
+        
+        
         //objects
         MapObjects objects = objectLayer.getObjects();
-        
+        System.out.println(objects);
         objects.get("3");
         
         objectLayer.setVisible(true);
@@ -62,6 +106,46 @@ public class GameScreen implements Screen {
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");
         exitButtonInactive = new Texture("exit_button_inactive.png");
+        audioButtonActive = new Texture("audioOn.png");
+        audioButtonInactive = new Texture("audioOff.png");
+        
+        
+        heartTexture = new Texture("heart.png");
+        coinTexture = new Texture("coin.png");
+        swordTexture = new Texture("sword.png");
+        shieldTexture = new Texture("shield.png");
+        
+        
+     
+        
+        Pair p = new Pair((int)player.x + VIEWPORT_WIDTH/2, (int)player.y - VIEWPORT_HEIGHT/2) ;
+        
+        Item item1 = new Item("coin", p);
+        
+       // p.changeX((int) (2 * collisionLayer.getTileWidth()));
+       // p.changeY((int) (2 * collisionLayer.getTileHeight()));
+        item1.setPosition(p)     ;   
+        Item[] coinList = {item1};
+        
+        
+        
+        //changes mapItems
+        //mapItems made of Items
+        
+        
+ 
+	        for(int i = 0; i <= coinList.length -1; i ++) {
+	         // while there are items to draw
+	        	System.out.println("checking");
+	        	 Item currentItem = coinList[i];
+	        	 Pair pos = currentItem.getPosition();
+	        	 
+	        	 game.batch.draw(coinTexture, pos.getX(), pos.getY(), 800 , 800);
+	             
+	        }
+        
+       
+        
     }
 
 
@@ -102,6 +186,8 @@ public class GameScreen implements Screen {
 
         float x = player.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
         float y = player.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
+        
+      //  audioButton.setBackground((Drawable) audioButtonActive);
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
 //            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
@@ -116,6 +202,51 @@ public class GameScreen implements Screen {
 //        else {
 //            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
 //        }
+        
+        //draw hearts in top left corner
+        float iconSize = 30;
+        float buffer = 10;
+        float xheart = player.x - VIEWPORT_WIDTH /2 +buffer;
+        float yheart = player.y + VIEWPORT_HEIGHT/2 - iconSize -buffer;
+        int lives = player.getLives();
+        for(int i = 0; i < lives; i ++) {
+        	  game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
+        	  
+        	  xheart += (iconSize + buffer);
+        }
+        
+        //draw shield icon
+        float shieldSize = 50;
+        float xShield =  player.x + VIEWPORT_WIDTH /2 - shieldSize -buffer;
+        float yShield = player.y + VIEWPORT_HEIGHT/2 - (shieldSize *3) ;
+        game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
+        
+        //sword icon
+        float swordSize = 50;
+        float xSword =  player.x + VIEWPORT_WIDTH /2 - swordSize - buffer;
+        float ySword = player.y + VIEWPORT_HEIGHT/2 - (swordSize *2) ;
+        game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
+        	  
+        //draws coin icon
+        float xCoin = player.x - (VIEWPORT_WIDTH /2) ;
+        float yCoin = player.y + VIEWPORT_HEIGHT/2 - ( iconSize*3) -buffer;
+        game.batch.draw(coinTexture, xCoin, yCoin,iconSize*2 , iconSize*2);
+        
+        //audio
+        float xAudio = player.x + VIEWPORT_WIDTH /2 -(iconSize*3);
+        float yAudio = player.y + VIEWPORT_HEIGHT/2 - iconSize - buffer ;
+        Drawable drawable = new TextureRegionDrawable(new TextureRegion(audioButtonActive));
+        ImageButton audioButton= new ImageButton(drawable);
+        audioButton.setX(xAudio);
+        audioButton.setY(yAudio);
+        audioButton.setWidth(iconSize);
+        audioButton.setHeight(iconSize);
+        //audioButton.draw
+        if (audioButton.isOver()) {
+        	drawable = new TextureRegionDrawable(new TextureRegion(audioButtonInactive));
+        	audioButton.setBackground(drawable);
+        }
+       
         player.render(game.batch);
         game.batch.end();
 
