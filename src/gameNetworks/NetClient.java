@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
@@ -50,12 +52,14 @@ public class NetClient {
 printMsg("Connected to server"); 
 
 			//Send client udp port to GameServer.
-			DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+			OutputStream os = socket.getOutputStream();
+			DataOutputStream dos = new DataOutputStream(os);
 			dos.writeInt(clientUDPPort);
 printMsg("I've sent my udp port to Game Server!"); 
 
 			//Receive an unique ID and Server udp port 
-			DataInputStream dis = new DataInputStream(socket.getInputStream());
+			InputStream is = socket.getInputStream();
+			DataInputStream dis = new DataInputStream(is);
 			int id = dis.readInt(); /*Here we only received an ID, but need assign this ID to PLAYER(INTEGRATION WITH PLAYER CLASS)!!! */
 			this.serverUDPPort = dis.readInt();
 printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort); 
@@ -80,23 +84,23 @@ printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort
 		new Thread(new UDPReceiveThread()).start();
 		
 	}
+	
 	/**
 	 * Send messages to Server, then Server can broadcast it to every clients.
 	 * @param msg
 	 */
 	private void send(NewMessage msg) {
 		msg.send(ds, serverIP, serverUDPPort);
-		
 	}
 	
 	/**
-	 * 
+	 * udp receive inner class
 	 * @author kevin
 	 *
 	 */
 	private class UDPReceiveThread implements Runnable{
 		
-		 byte[] receiveBuf = new byte[1024];
+		byte[] receiveBuf = new byte[1024];
 
         @Override
         public void run() {
@@ -110,18 +114,18 @@ printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort
                 }
             }
         }
+        
 /**
  * Process packet which received from Server
  * @param dp
  */
 		private void process(DatagramPacket dp) {
-			ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf,0,receiveBuf.length);
+			ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf,0,dp.getLength());
 			DataInputStream dis = new DataInputStream(bais);
-			//Use Polymorphism and switch here! (Message msg= new NewMessage();/ Message msg= new AckMessage();)
+			//Use Polymorphism and SWITCH here! (Message msg= new NewMessage();/ Message msg= new AckMessage();)
 			NewMessage msg = new NewMessage();
 			msg.process(dis);
-		}
-		
+		}	
 	}
 	
 

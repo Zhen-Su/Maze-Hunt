@@ -3,12 +3,15 @@ package gameNetworks;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +23,7 @@ public class GameServer {
 	static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
 	private boolean isRunning = false;
 	private ServerSocket serverSocket;
+	private Socket s;
 	
 
 /**
@@ -32,6 +36,7 @@ public class GameServer {
 	
 /**
  * Start game! (NOT A THREAD)
+ * For the final integration, remove main() method in this class, and put this start() method into constructor
  */
 	@SuppressWarnings("resource")
 	public void start(){
@@ -53,16 +58,18 @@ public class GameServer {
 					s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it. 
 					
 					//Receive client's UDP Port from GameClient
-					DataInputStream dis = new DataInputStream(s.getInputStream());
-					int clientUDPPort=dis.readInt();
+					InputStream in = s.getInputStream();
+					DataInputStream dis = new DataInputStream(in);
+					int clientUDPPort = dis.readInt();
 					
-					String clientIP=s.getInetAddress().getHostAddress();
+					String clientIP = s.getInetAddress().getHostAddress();	
 					Client c = new Client(clientIP,clientUDPPort);//create a client object
 					clients.add(c);                   //add this client object to list
 					printMsg("A Client Connected! Address--" + s.getInetAddress()+":"+s.getPort()+" Client's UDP Port:"+clientUDPPort);
 					
 					//Send ID and Server UDP_PORT to client.
-					DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+					OutputStream os = s.getOutputStream();
+					DataOutputStream dos = new DataOutputStream(os);
 					dos.writeInt(ID++);
 					dos.writeInt(SERVER_UDP_PORT);
 				   } catch (IOException e) {
@@ -76,6 +83,8 @@ public class GameServer {
 				}
 			}
 	}
+	
+	
 
 	/**
 	 * Client inner class
@@ -135,11 +144,12 @@ printMsg("I've broadcasted to client");
 	/**
 	 * Stop all threads
 	 */
-	public void stop() {
+	public void dispose() {
 		isRunning = false;
 		//Close all Clients
 		
-		
+		clients.clear();
+		clients=null;
 		//Close Server
 		if(serverSocket!=null) {
 			try {
