@@ -89,7 +89,7 @@ printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort
 	 * Send messages to Server, then Server can broadcast it to every clients.
 	 * @param msg
 	 */
-	private void send(NewMessage msg) {
+	public void send(NewMessage msg) {
 		msg.send(ds, serverIP, serverUDPPort);
 	}
 	
