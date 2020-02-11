@@ -11,6 +11,11 @@
    </object>
   </objectgroup>
  </tile>
+ <tile id="3">
+  <properties>
+   <property name="isCoin" value=""/>
+  </properties>
+ </tile>
  <tile id="5">
   <properties>
    <property name="isWall" value=""/>
