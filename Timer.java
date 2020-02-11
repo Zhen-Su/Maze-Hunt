@@ -1,7 +1,15 @@
 import java.util.Timer; 
 import java.util.TimerTask;
+import java.lang.Object
+package com.badlogic.gdx.utils.Timer;
 
-public class CountDown {
+
+public class Timer {
+	static Timer instance = new Timer;
+	int period = 30000;
+	
+}
+/*public class CountDown {
 public Timer timer;
 
 	public CountDown() { 
@@ -13,4 +21,4 @@ public Timer timer;
 class DisplayCountdown extends TimerTask { 
 	int seconds;
 
-}
+}*/

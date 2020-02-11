@@ -7,6 +7,7 @@ public class Collect {
 	public Item item = new Item(" ", position);
 	public ArrayList<Item> items;
 	public ArrayList<Item> mapItems;
+	public ArrayList<Pair> positions;
 
 	//if the player picks up an item, remove it from the map and return the item collected
 	public Item pickedUp(Item item) {
@@ -22,16 +23,23 @@ public class Collect {
 		int maxShields = 3;
 		int maxCoins = 40;
 		int maxSwords = 5;
-		int maxCompasses = 5;
+		int maxMaps = 5;
 		int maxPotions = 10;
 		int maxX = 1000;
 		int maxY = 1000;
+		Boolean gotShield = false;
 
 		for (int i = 0; i < maxShields; i++) {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("shield", position);
-			mapItems.add(item);
+			// make arrayList positions with all positions of items
+			if (!positions.contains(position) && !isCellBlocked(position)) {
+				mapItems.add(item);
+				positions.add(position);
+			}
+			// do this for all
+
 
 		}
 
@@ -39,7 +47,10 @@ public class Collect {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("coin", position);
-			mapItems.add(item);
+			if (!positions.contains(position) && !isCellBlocked(position)) {
+				mapItems.add(item);
+				positions.add(position);
+			}
 
 		}
 
@@ -47,16 +58,20 @@ public class Collect {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("sword", position);
-			mapItems.add(item);
-
+			if (!positions.contains(position) && !isCellBlocked(position)) {
+				mapItems.add(item);
+				positions.add(position);
+			}
 		}
 
-		for (int i = 0; i < maxCompasses; i++) {
+		for (int i = 0; i < maxMaps; i++) {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("compass", position);
-			mapItems.add(item);
-
+			Item item = new Item("map", position);
+			if (!positions.contains(position) && !isCellBlocked(position)) {
+				mapItems.add(item);
+				positions.add(position);
+			}
 		}
 
 		for (int i = 0; i < maxPotions; i++) {
@@ -72,10 +87,11 @@ public class Collect {
 				Item item = new Item("gearEnchantment", position);
 			}
 
-			mapItems.add(item);
-
+			if (!positions.contains(position) && !isCellBlocked(position)) {
+				mapItems.add(item);
+				positions.add(position);
+			}
 		}
-
 	}
 
 	public Item nearestItem(Player player) {
@@ -99,7 +115,7 @@ public class Collect {
 	public void main() {
 
 		Player player = new Player(/*attributes*/);
-		if (player.getPosititon() == player.nearestItem().getPosition()) {
+		if (player.getPosititon() == nearestItem(player).getPosition()) {
 
 			Item item = pickedUp(player);
 
@@ -110,8 +126,8 @@ public class Collect {
 				if (item.getType() == "sword") {
 					sword(item);
 				}
-				if (item.getType() == "compass") {
-					compass(item);
+				if (item.getType() == "map") {
+					map(item);
 				}
 				if (item.getType() == "healingPotion") {
 					healingPotion(item);
@@ -130,29 +146,24 @@ public class Collect {
 
 
 	public void shield(Item item) {
-		this.timer = timer;
-		this.seconds = 60;
 		if (gearEnchantment(item)) {
 			this.seconds += 30;
 		}
 
+		gotShield = true;
 
-		while (timer != 0) {
-			if (decreaseHealth()) {
-				generateHealth();
-			}
+
+
+		
 				//change that in the decreaseHealth class in Player
 			
 
 			//display shield icon on screen
 
-		}
-
-		items.remove(item);
-
 	}
 
 	public void coin() {
+		// player already has a coin method
 
 	}
 
@@ -169,9 +180,9 @@ public class Collect {
 		//display sword icon on screen
 	}
 
-	public void compass(Item item) {
-		//pick nearest player, follow it
-		//display compass
+	public void map(Item item) {
+		//shows where you and other players are on the map but doesn't show walls
+		//display map
 	}
 
 	public void healingPotion(Item item) {
@@ -210,9 +221,7 @@ public class Collect {
 	- a position() method to determine both a player and an item's coordinates - DONE for item
 	- a nearestItem() method that returns the item with the closest coordinates to the player. This would need to continuously update, as the player will move around - DONE
 	- a nearestPlayer() method that returns the player with the closest coordinates to the player
-	- do research on how to program a compass with a moving target
-		do we have to make a compass? cool but very hard
-		can ask melissa
+	- do research on how to program a with a moving target
 	- display methods to display certain layers on the screen */
 
 
