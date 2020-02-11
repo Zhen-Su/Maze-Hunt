@@ -5,7 +5,8 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 import gameNetworks.GameClient;
-import gameNetworks.NewMessage;
+import messages.MoveMessage;
+import messages.NewMessage;
 
 public class Player {
 
@@ -32,9 +33,10 @@ public class Player {
 		this.y = y;
 	}
 
-	public Player(int x, int y, GameClient gameClient) {
+	public Player(int x, int y, GameClient gameClient,Dir dir) {
 		this(x, y);
 		this.gameClient = gameClient;
+		this.dir=dir;
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -86,7 +88,7 @@ public class Player {
 			 * message to server, then server will broadcast this messsage to all clients.
 			 **/
 
-			// NewMessage msg = new NewMessage(id, x, y, dir);
+			MoveMessage msg = new MoveMessage(id, x, y, dir);
 			gcClient.getNc().send(msg);
 		}
 

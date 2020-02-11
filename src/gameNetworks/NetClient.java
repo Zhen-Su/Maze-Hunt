@@ -11,6 +11,10 @@ import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import messages.Message;
+import messages.MoveMessage;
+import messages.NewMessage;
+
 /**
  * This class handle online players
  * @author kevin
@@ -78,8 +82,8 @@ printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort
 		}
 		
 		//Send a message to the server when the player just connect to server.
-		NewMessage msg = new NewMessage();
-		send(msg);
+		NewMessage msg = new NewMessage(gc.getPlayer());
+        send(msg);
 		
 		new Thread(new UDPReceiveThread()).start();
 		
@@ -89,8 +93,16 @@ printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort
 	 * Send messages to Server, then Server can broadcast it to every clients.
 	 * @param msg
 	 */
-	public void send(NewMessage msg) {
+	public void send(Message msg) {
 		msg.send(ds, serverIP, serverUDPPort);
+	}
+	
+	/**
+	 * For debugging
+	 * @param msg
+	 */
+	public void printMsg(String msg) {
+		System.out.println(msg);
 	}
 	
 	/**
@@ -120,20 +132,25 @@ printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort
  * @param dp
  */
 		private void process(DatagramPacket dp) {
-			ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf,0,dp.getLength());
-			DataInputStream dis = new DataInputStream(bais);
-			//Use Polymorphism and SWITCH here! (Message msg= new NewMessage();/ Message msg= new AckMessage();)
-			NewMessage msg = new NewMessage();
-			msg.process(dis);
+			ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf, 0, dp.getLength());
+            DataInputStream dis = new DataInputStream(bais);
+            int msgType = 0;
+            try {
+                msgType = dis.readInt();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Message msg = null;
+            switch (msgType){
+                case Message.PLAYER_NEW_MSG:
+                    msg = new NewMessage(gc);
+                    msg.process(dis);
+                    break;
+                case  Message.PLAYER_MOVE_MSG:
+                    msg = new MoveMessage(gc);
+                    msg.process(dis);
+                    break;
 		}	
 	}
-	
-
-	/**
-	 * For debugging
-	 * @param msg
-	 */
-	public static void printMsg(String msg) {
-		System.out.println(msg);
-	}
+}
 }

@@ -53,6 +53,22 @@ public class GameClient extends Frame {
 	public void setNc(NetClient nc) {
 		this.nc = nc;
 	}
+	
+	public List<Player> getPlayers() {
+		return players;
+	}
+
+	public void setPlayers(List<Player> players) {
+		this.players = players;
+	}
+
+	public Player getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
 
 	//this method to fix screen	flicker problem
 	@Override
@@ -116,12 +132,6 @@ public class GameClient extends Frame {
 		dialog.setVisible(true);
 	}
 
-	/**
-	 * paint thread class
-	 * 
-	 * @author kevin
-	 *
-	 */
 	class PaintThread implements Runnable {
 
 		public void run() {
