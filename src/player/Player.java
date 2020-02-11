@@ -38,6 +38,13 @@ public class Player {
 		this.gameClient = gameClient;
 		this.dir=dir;
 	}
+	
+	public void draw(Graphics g) {
+
+		g.fillOval(x, y, 50, 50);
+		move();
+
+	}
 
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
@@ -57,6 +64,43 @@ public class Player {
 			break;
 		}
 		locateDirection();
+	}
+	
+	private void move() {
+		switch (dir) {
+		case L:
+			x -= X_SPEED;
+			break;
+		case LU:
+			x -= X_SPEED;
+			y -= Y_SPEED;
+			break;
+		case U:
+			y -= Y_SPEED;
+			break;
+		case RU:
+			x += X_SPEED;
+			y -= Y_SPEED;
+			break;
+		case R:
+			x += X_SPEED;
+			break;
+		case RD:
+			x += X_SPEED;
+			y += Y_SPEED;
+			break;
+		case D:
+			y += Y_SPEED;
+			break;
+		case LD:
+			x -= X_SPEED;
+			y += Y_SPEED;
+			break;
+		case STOP:
+			break;
+		}
+		
+		
 	}
 
 	private void locateDirection() {
@@ -112,48 +156,6 @@ public class Player {
 			break;
 		}
 		locateDirection();
-	}
-
-	public void draw(Graphics g) {
-
-		Color c = g.getColor();
-		g.setColor(Color.BLUE);
-		g.fillOval(x, y, 30, 30);
-		g.setColor(c);
-
-		switch (dir) {
-		case L:
-			x -= X_SPEED;
-			break;
-		case LU:
-			x -= X_SPEED;
-			y -= Y_SPEED;
-			break;
-		case U:
-			y -= Y_SPEED;
-			break;
-		case RU:
-			x += X_SPEED;
-			y -= Y_SPEED;
-			break;
-		case R:
-			x += X_SPEED;
-			break;
-		case RD:
-			x += X_SPEED;
-			y += Y_SPEED;
-			break;
-		case D:
-			y += Y_SPEED;
-			break;
-		case LD:
-			x -= X_SPEED;
-			y += Y_SPEED;
-			break;
-		case STOP:
-			break;
-		}
-
 	}
 
 	public int getId() {

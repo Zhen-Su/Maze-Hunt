@@ -67,15 +67,17 @@ printMsg("I've sent my udp port to Game Server!");
 			int id = dis.readInt(); /*Here we only received an ID, but need assign this ID to PLAYER(INTEGRATION WITH PLAYER CLASS)!!! */
 			this.serverUDPPort = dis.readInt();
 printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort); 
-
+			gc.getPlayer().id=id;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally {
 			try {
+				if(socket!=null) {
 				socket.close();  //We do not need this tcp socket anymore.
 				socket=null;
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

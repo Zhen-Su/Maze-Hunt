@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import player.Player;
+import player.Player.Dir;
 
 /**
  * 
@@ -32,10 +33,11 @@ public class GameClient extends Frame {
 	public static final int FRAME_HEIGHT = 600;
 	public static final String GAME_NAME = "--GAMENAME--";
 	private NetClient nc = new NetClient(this);
-	private Player player;
+	private Player player = new Player(50, 50, this, Dir.STOP);
 	private List<Player> players = new ArrayList<>();
 	private Image offScreenImage = null;
 	private ConDialog dialog = new ConDialog();
+	
 
 	public NetClient getNc() {
 		return nc;
