@@ -67,7 +67,7 @@ printMsg("I've sent my udp port to Game Server!");
 			int id = dis.readInt(); /*Here we only received an ID, but need assign this ID to PLAYER(INTEGRATION WITH PLAYER CLASS)!!! */
 			this.serverUDPPort = dis.readInt();
 printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort); 
-			gc.getPlayer().id=id;
+			gc.getPlayer().setId(id);;
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -121,6 +121,7 @@ printMsg("Server gives me ID is: "+id+" ,and server UDP Port is: "+serverUDPPort
             while(null != ds){
                 DatagramPacket dp = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try{
+ System.out.println("I've received a packet from server");
                     ds.receive(dp);
                     process(dp);
                 } catch (IOException e) {

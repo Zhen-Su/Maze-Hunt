@@ -66,7 +66,6 @@ public class MoveMessage implements Message{
 	                return;
 	            }
 	            Dir dir = Dir.values()[dis.readInt()];
-	            Dir ptDir = Dir.values()[dis.readInt()];
 	            int x = dis.readInt();
 	            int y = dis.readInt();
 	            for(Player t : gameClient.getPlayers()){

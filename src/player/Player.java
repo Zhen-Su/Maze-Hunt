@@ -11,7 +11,7 @@ import messages.NewMessage;
 public class Player {
 
 	public int id;
-	private GameClient gcClient;
+
 
 	public static final int X_SPEED = 5;
 	public static final int Y_SPEED = 5;
@@ -66,6 +66,26 @@ public class Player {
 		locateDirection();
 	}
 	
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		int key = e.getKeyCode();
+		switch (key) {
+		case KeyEvent.VK_A:
+			bL = false;
+			break;
+		case KeyEvent.VK_W:
+			bU = false;
+			break;
+		case KeyEvent.VK_D:
+			bR = false;
+			break;
+		case KeyEvent.VK_S:
+			bD = false;
+			break;
+		}
+		locateDirection();
+	}
+	
 	private void move() {
 		switch (dir) {
 		case L:
@@ -99,8 +119,6 @@ public class Player {
 		case STOP:
 			break;
 		}
-		
-		
 	}
 
 	private void locateDirection() {
@@ -132,30 +150,10 @@ public class Player {
 			 * message to server, then server will broadcast this messsage to all clients.
 			 **/
 
-			MoveMessage msg = new MoveMessage(id, x, y, dir);
-			gcClient.getNc().send(msg);
+			MoveMessage message = new MoveMessage(id, x, y, dir);
+			gameClient.getNc().send(message);
 		}
 
-	}
-
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		int key = e.getKeyCode();
-		switch (key) {
-		case KeyEvent.VK_A:
-			bL = false;
-			break;
-		case KeyEvent.VK_W:
-			bU = false;
-			break;
-		case KeyEvent.VK_D:
-			bR = false;
-			break;
-		case KeyEvent.VK_S:
-			bD = false;
-			break;
-		}
-		locateDirection();
 	}
 
 	public int getId() {

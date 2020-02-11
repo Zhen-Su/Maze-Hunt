@@ -32,8 +32,8 @@ public class GameClient extends Frame {
 	public static final int FRAME_WIDTH = 800;
 	public static final int FRAME_HEIGHT = 600;
 	public static final String GAME_NAME = "--GAMENAME--";
-	private NetClient nc = new NetClient(this);
 	private Player player = new Player(50, 50, this, Dir.STOP);
+	private NetClient nc = new NetClient(this);
 	private List<Player> players = new ArrayList<>();
 	private Image offScreenImage = null;
 	private ConDialog dialog = new ConDialog();
@@ -126,7 +126,7 @@ public class GameClient extends Frame {
 		});
 
 		this.setResizable(false);
-		this.setBackground(Color.BLACK);
+		this.setBackground(Color.WHITE);
 		this.addKeyListener(new KeyMonitor());
 		this.setVisible(true);
 		
