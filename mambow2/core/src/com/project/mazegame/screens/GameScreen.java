@@ -1,9 +1,5 @@
 package com.project.mazegame.screens;
 
-import com.project.mazegame.objects.Pair;
-
-import com.project.mazegame.objects.Item;
-import com.project.mazegame.objects.Pair.*;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -17,8 +13,6 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -29,11 +23,6 @@ import com.project.mazegame.tools.OrthoCam;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
-
-import java.util.ArrayList;
-import java.util.Collection;
-
-import javax.jws.soap.SOAPBinding.Style;
 
 public class GameScreen implements Screen {
 
@@ -47,7 +36,8 @@ public class GameScreen implements Screen {
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
-    private MapLayer objectLayer;
+    //private MapLayer objectLayer;
+    
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
@@ -57,11 +47,8 @@ public class GameScreen implements Screen {
     private Texture shieldTexture;
     private Texture audioButtonActive;
     private Texture audioButtonInactive;
-    private Button audioButton;
     
-    
-    
-    
+
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
@@ -71,33 +58,21 @@ public class GameScreen implements Screen {
         inputHandler = new InputHandler(this.game);
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
-        MapObjects mapObjects = tileMap.getLayers().get("Object Layer 1").getObjects();
-        System.out.println("coins : " + mapObjects.getCount());
-        
-        
-        
-        //mapObjects. objAraray[mapObjects.getCount()];
-        /*
-        String name = object.getName();
-        float opacity = object.getOpacity();
-        boolean isVisible = object.isVisible();
-        Color color = object.getColor();
-        */
-        MapObject obj = mapObjects.get("coin");
-        
-        
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
+        
+        //MapObjects mapObjects = tileMap.getLayers().get("Object Layer 1").getObjects();
+        //System.out.println("coins : " + mapObjects.getCount());
+      //  MapObject mo = mapObjects.get(55);
+        
+      
+        
+
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-        objectLayer = tileMap.getLayers().get("Object Layer 1");
-        
-        
+        //coinLayer = (TiledMapTileLayer) tileMap.getLayers().get("coinLayer");
         //objects
-        MapObjects objects = objectLayer.getObjects();
-        System.out.println(objects);
-        objects.get("3");
         
-        objectLayer.setVisible(true);
+        
         //System.out.println("Tile's width " + collisionLayer.getWidth());
         player = new Player(this.collisionLayer);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
@@ -116,36 +91,13 @@ public class GameScreen implements Screen {
         shieldTexture = new Texture("shield.png");
         
         
-     
+        //sort out where coins are going
         
-        Pair p = new Pair((int)player.x + VIEWPORT_WIDTH/2, (int)player.y - VIEWPORT_HEIGHT/2) ;
+       //choose the x and y cooridinates, multiply these with the collision layer tile widht/height. This should work
         
-        Item item1 = new Item("coin", p);
+        //then simply draw coins in a loop using the coin texture
         
-       // p.changeX((int) (2 * collisionLayer.getTileWidth()));
-       // p.changeY((int) (2 * collisionLayer.getTileHeight()));
-        item1.setPosition(p)     ;   
-        Item[] coinList = {item1};
-        
-        
-        
-        //changes mapItems
-        //mapItems made of Items
-        
-        
- 
-	        for(int i = 0; i <= coinList.length -1; i ++) {
-	         // while there are items to draw
-	        	System.out.println("checking");
-	        	 Item currentItem = coinList[i];
-	        	 Pair pos = currentItem.getPosition();
-	        	 
-	        	 game.batch.draw(coinTexture, pos.getX(), pos.getY(), 800 , 800);
-	             
-	        }
-        
-       
-        
+        //selma's code
     }
 
 
@@ -160,19 +112,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         delta = Gdx.graphics.getDeltaTime();
-        //System.out.println("Delta is " + delta);
-
-//        inputHandler = new InputHandler(this.game);
-//
-//        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
-//        tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-//
-//        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-//
-//        System.out.println("Tile's width " + collisionLayer.getWidth());
-//        player = new Player(this.collisionLayer);
-//        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
-
+    
         //updates
         inputHandler.update();
         player.update(delta);
@@ -180,14 +120,14 @@ public class GameScreen implements Screen {
         //tilemap
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
-
+    
         //rendering
         game.batch.begin();
 
         float x = player.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
         float y = player.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
         
-      //  audioButton.setBackground((Drawable) audioButtonActive);
+        //exit button in top right corner
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
 //            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
@@ -203,6 +143,7 @@ public class GameScreen implements Screen {
 //            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
 //        }
         
+
         //draw hearts in top left corner
         float iconSize = 30;
         float buffer = 10;
@@ -232,7 +173,7 @@ public class GameScreen implements Screen {
         float yCoin = player.y + VIEWPORT_HEIGHT/2 - ( iconSize*3) -buffer;
         game.batch.draw(coinTexture, xCoin, yCoin,iconSize*2 , iconSize*2);
         
-        //audio
+        //audio icon
         float xAudio = player.x + VIEWPORT_WIDTH /2 -(iconSize*3);
         float yAudio = player.y + VIEWPORT_HEIGHT/2 - iconSize - buffer ;
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(audioButtonActive));
@@ -247,6 +188,7 @@ public class GameScreen implements Screen {
         	audioButton.setBackground(drawable);
         }
        
+
         player.render(game.batch);
         game.batch.end();
 
