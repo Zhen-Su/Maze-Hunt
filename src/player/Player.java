@@ -12,7 +12,6 @@ public class Player {
 
 	public int id;
 
-
 	public static final int X_SPEED = 5;
 	public static final int Y_SPEED = 5;
 
@@ -33,12 +32,12 @@ public class Player {
 		this.y = y;
 	}
 
-	public Player(int x, int y, GameClient gameClient,Dir dir) {
+	public Player(int x, int y, GameClient gameClient, Dir dir) {
 		this(x, y);
 		this.gameClient = gameClient;
-		this.dir=dir;
+		this.dir = dir;
 	}
-	
+
 	public void draw(Graphics g) {
 
 		g.fillOval(x, y, 50, 50);
@@ -65,7 +64,7 @@ public class Player {
 		}
 		locateDirection();
 	}
-	
+
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
 		int key = e.getKeyCode();
@@ -85,7 +84,7 @@ public class Player {
 		}
 		locateDirection();
 	}
-	
+
 	private void move() {
 		switch (dir) {
 		case L:
@@ -119,6 +118,14 @@ public class Player {
 		case STOP:
 			break;
 		}
+		if (x < 0)
+			x = 0;
+		if (y < 30)
+			y = 30;
+		if (x + 30 > GameClient.FRAME_WIDTH)
+			x = GameClient.FRAME_WIDTH - 30;
+		if (y + 30 > gameClient.FRAME_HEIGHT)
+			y = GameClient.FRAME_HEIGHT - 30;
 	}
 
 	private void locateDirection() {
