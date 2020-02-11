@@ -37,15 +37,6 @@ public class GameClient extends Frame {
 	private Image offScreenImage = null;
 	private ConDialog dialog = new ConDialog();
 
-	@Override
-	public void paint(Graphics g) {
-		for (int i = 0; i < players.size(); i++) {
-			Player t = players.get(i);
-			t.draw(g);
-		}
-		player.draw(g);
-	}
-
 	public NetClient getNc() {
 		return nc;
 	}
@@ -68,6 +59,16 @@ public class GameClient extends Frame {
 
 	public void setPlayer(Player player) {
 		this.player = player;
+	}
+	
+
+	@Override
+	public void paint(Graphics g) {
+		for (int i = 0; i < players.size(); i++) {
+			Player t = players.get(i);
+			t.draw(g);
+		}
+		player.draw(g);
 	}
 
 	//this method to fix screen	flicker problem
