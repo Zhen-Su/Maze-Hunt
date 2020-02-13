@@ -10,6 +10,9 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 
 import java.util.ArrayList;
+//TODO Look into super class and work on rendering ai
+//TODO integrate collectibles
+//TODO look into more ai and player methods
 
 
 public class Player {
@@ -39,11 +42,11 @@ public class Player {
 
     public Player(TiledMapTileLayer collisionLayer, String name, int ID) {
         this.collisionLayer = collisionLayer;
-        Pair gen = genSpace(60, 0, 60, 0);
-        x = gen.getX();
-        y = gen.getY();
-//        x = VIEWPORT_WIDTH / 2;
-//        y = VIEWPORT_HEIGHT / 2;
+//        Pair gen = genSpace(60, 0, 60, 0);
+//        x = gen.getX();
+//        y = gen.getY();
+        x = VIEWPORT_WIDTH / 2;
+        y = VIEWPORT_HEIGHT / 2;
 
         loadPlayerTextures();
 
@@ -57,7 +60,7 @@ public class Player {
         this.ID = ID;
 
     }
-
+    // modify and override
     public void update (float delta){
         // update player movement
 
@@ -109,7 +112,7 @@ public class Player {
             player = player_middle;
         }
     }
-
+    //modify and overiride
     public void render (SpriteBatch sb){
         sb.draw(player,x- (width/2),y - (height/2));
 

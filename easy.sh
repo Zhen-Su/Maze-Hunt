@@ -3,5 +3,5 @@ cp /home/james/TeamProject/core/src/com/project/mazegame/objects/AIPlayer.java /
 cp /home/james/TeamProject/core/src/com/project/mazegame/objects/Player.java /home/james/TeamProject/git/anotherworld/
 cp /home/james/TeamProject/core/src/com/project/mazegame/objects/Pair.java /home/james/TeamProject/git/anotherworld/
 git add *
-git commit
-git push
+git commit -m "$0"
+
