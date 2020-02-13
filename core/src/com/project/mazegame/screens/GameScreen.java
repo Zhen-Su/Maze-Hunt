@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(MazeGame game) {
         this.game = game;
-        inputHandler = new InputHandler(this.game);
+        inputHandler = new InputHandler();
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -130,9 +130,10 @@ public class GameScreen implements Screen {
         //exit button in top right corner
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-//            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-//            this.dispose();
-//            game.setScreen(new MenuScreen(this.game));
+            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
+            this.dispose();
+//            game.batch.end();
+            game.setScreen(new MenuScreen(this.game));
         }
 //        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
 //            game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);

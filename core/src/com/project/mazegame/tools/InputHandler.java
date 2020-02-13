@@ -1,15 +1,17 @@
 package com.project.mazegame.tools;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.project.mazegame.MazeGame;
 
 import static com.project.mazegame.tools.Variables.*;
 
-public class InputHandler {
-	private MazeGame game;
-  	public InputHandler(MazeGame game) {
-		this.game = game;
+public class InputHandler implements Input.TextInputListener {
+	private String txt;
+  	public InputHandler() {
+
   	}
   	public void update(){
 		// reset all variables
@@ -34,5 +36,19 @@ public class InputHandler {
 //		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
 //			game.setScreen(new MenuScreen(this.game));
 //		}
+	}
+
+	@Override
+	public void input(String text) {
+  		txt = text;
+	}
+
+	public String returnText() {
+  		return txt;
+	}
+
+	@Override
+	public void canceled() {
+
 	}
 }
