@@ -9,6 +9,8 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 
+import java.util.ArrayList;
+
 
 public class Player {
     public float x, y;
@@ -21,18 +23,38 @@ public class Player {
     private TiledMapTileLayer collisionLayer, coinLayer;
     private MapLayer objLayer;
 
+
+    public boolean hasCompass;
+    public boolean hasDamagingPotion;
+    public boolean hasHealingPotion;
+
+    public int coins;
+    private int ID;
+    public int swordDamage;
+
+    public String name;
+    public ArrayList<String> items;
+
+
+
     public Player(TiledMapTileLayer collisionLayer, String name, int ID) {
         this.collisionLayer = collisionLayer;
-//        Pair gen = genSpace(100, 0, 100, 0);
-//        x = gen.getX();
-//        y = gen.getY();
-        x = VIEWPORT_WIDTH / 2;
-        y = VIEWPORT_HEIGHT / 2;
+        Pair gen = genSpace(60, 0, 60, 0);
+        x = gen.getX();
+        y = gen.getY();
+//        x = VIEWPORT_WIDTH / 2;
+//        y = VIEWPORT_HEIGHT / 2;
 
         loadPlayerTextures();
 
         width = player_middle.getWidth();
         height = player_middle.getHeight();
+
+        this.coins = 0;
+        this.name = name;
+        this.items = new ArrayList<String>();
+        this.swordDamage = 0;
+        this.ID = ID;
 
     }
 
@@ -117,6 +139,7 @@ public class Player {
         sword = new Texture("sword.png");
         shield = new Texture("shield.png");
     }
+
     public Pair genSpace(float maxX, float minX, float maxY, float minY) {
         float x = (float)Math.random() * (maxX - minX + 1) + minX;
         float y = (float)Math.random() * (maxY - minY + 1) + minY;
@@ -126,6 +149,7 @@ public class Player {
         }
         return new Pair(x, y);
     }
+
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
         //Overall x and y of player
         float xWorld = possibleX + SCROLLTRACKER_X;
@@ -183,8 +207,113 @@ public class Player {
         player_middle.dispose();
         player.dispose();
     }
+
+    public void decreaseHealth() {
+        this.lives--;
+
+        if (this.lives == 0) {
+            this.death();
+        }
+    }
+
+    public void pickUpCoins(int coinPick) {
+        this.coins += coinPick;
+    }
+    public void pickUpCoins() {
+        this.coins++;
+    }
+
+    public void death() {
+        System.out.println("Player has died respawning now");
+        this.lives = 5;
+        this.coins = 0;
+        Pair newSpace = genSpace(100, 0, 100, 0);
+        this.x = newSpace.getX();
+        this.y = newSpace.getY();
+
+        this.hasCompass = false;
+        this.hasDamagingPotion = false;
+        this.hasHealingPotion = false;
+        this.hasShield = false;
+        this.hasSword = false;
+
+        this.items = new ArrayList<>();
+    }
+    /*
+    public void pickUpItem(Item itemPicked) throws Exception {
+        Collect co = new Collect(); // will need to be changed maybe put the collect class in parameters
+        switch(itemPicked.getType()) {
+            case "Coin":
+                this.pickUpCoins();
+                break;
+            case "Shield":
+
+                hasShield = true;
+//        co.shield(itemPicked, this);
+                hasShield = false;
+                break;
+            case "Sword":
+                hasSword = true;
+                Player player2 = new Player("Hi", 234);
+                co.sword(itemPicked, this, player2);
+
+                break;
+            case "Compass":
+                hasCompass = true;
+                co.compass(itemPicked);
+                break;
+            case "Healing Potion":
+                hasHealingPotion = true;
+                co.healingPotion(itemPicked, this);
+                hasDamagingPotion = false;
+                break;
+            case "Damaging Potion":
+                hasDamagingPotion = true;
+                co.damagingPotion(itemPicked, this);
+                hasDamagingPotion = false;
+                break;
+            default:
+                throw new Exception("Item does not exist yet");
+        }
+    }
+    */
+    public void decreaseHealth(int number) {
+        if(!hasShield) {
+            this.lives -= number;
+
+            if (lives <= 0) {
+                this.death();
+            }
+        }
+    }
+
+    public boolean sameSpot(Player h) {
+        return (this.x == h.x) && (this.y == h.y);
+    }
+    /*
+    public boolean itemOnSquare(Item item) {
+        return this.position.same(item.getPosition());
+    }
+    */
+
     public int getLives() {
         return lives;
+    }
+    public int getID() {return this.ID;}
+
+    public void playerHitPlayer(Player hit) {
+
+
+        if (this.hasSword && !hit.hasShield) {
+
+            hit.decreaseHealth(this.swordDamage);
+            if (hit.lives == 0) {
+                this.swordDamage++;
+                this.coins += hit.coins;
+                hit.death();
+            }
+        }
+        //need to add shield stuffr
     }
 
 }

@@ -11,18 +11,19 @@ public class AIPlayer extends Player{
 
     }
     public ArrayList<Pair> avaibleMoves(float x, float y) {
+        int move = 1;
         ArrayList<Pair> moves = new ArrayList<>();
-        if (checkCollisionMap((x + 100), y) ){
-            moves.add(new Pair((x + 100), y));
+        if (checkCollisionMap((x + move), y) ){
+            moves.add(new Pair((x + move), y));
         }
-        if (checkCollisionMap((x -100), y)) {
-            moves.add(new Pair((x - 100), y));
+        if (checkCollisionMap((x -move), y)) {
+            moves.add(new Pair((x - move), y));
         }
-        if (checkCollisionMap(x, (y + 100))) {
-            moves.add(new Pair(x, (y + 100)));
+        if (checkCollisionMap(x, (y + move))) {
+            moves.add(new Pair(x, (y + move)));
         }
-        if (checkCollisionMap(x, (y - 100))) {
-            moves.add(new Pair(x, (y - 100)));
+        if (checkCollisionMap(x, (y - move))) {
+            moves.add(new Pair(x, (y - move)));
         }
         return moves;
     }
@@ -33,6 +34,7 @@ public class AIPlayer extends Player{
         int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
         return openDoor.get(openDoor.indexOf(randomTake));
     }
+
     public void runPlayer() {
         while(true) {
             Pair moveToTake = direction(avaibleMoves(super.x, super.y));
