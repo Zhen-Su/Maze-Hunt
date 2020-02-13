@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.project.mazegame.networking.Client.GameClient;
+import com.project.mazegame.networking.Messages.MoveMessage;
 
 
 public class Player {
@@ -20,6 +22,24 @@ public class Player {
     private boolean hasShield = true;
     private TiledMapTileLayer collisionLayer, coinLayer;
     private MapLayer objLayer;
+    public int id;
+    private GameClient gameClient;
+    public enum Dir {
+        L,U,R,D,STOP
+    }
+    private boolean bL, bU, bR, bD;
+    private Dir dir = Dir.STOP;
+
+    public Player(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    public Player(int x, int y, GameClient gameClient, Dir dir) {
+        this(x, y);
+        this.gameClient = gameClient;
+        this.dir = dir;
+    }
 
     public Player(TiledMapTileLayer collisionLayer) {
         this.collisionLayer = collisionLayer;
@@ -34,45 +54,92 @@ public class Player {
 
     }
 
+    public Dir getDir() {
+        return dir;
+    }
+
+    public void setDir(Dir dir) {
+        this.dir = dir;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+
     public void update (float delta){
         // update player movement
 
         if (RIGHT_TOUCHED) {
+            //set direction boolean true
+            bR=true;
             //try move player right
             SCROLLTRACKER_X += speed;
+            //change direction
+            locateDirection();
             //check player isn't in a wall
             if(!checkCollisionMap(x, y)) {
                 //move player back if needed
                 System.out.println("hit right wall");
                 SCROLLTRACKER_X -= speed;
             }
-
+            //change back to the original value
+            bR=false;
         }
         if (LEFT_TOUCHED) {
             if (x > 0) {
+                bL=true;
                 SCROLLTRACKER_X -= speed;
+                locateDirection();
                 if(!checkCollisionMap(x,y)) {
                     System.out.println("hit left wall");
                     SCROLLTRACKER_X += speed;
                 }
             }
+            bL=false;
         }
         if (UP_TOUCHED) {
             if (y < VIEWPORT_HEIGHT - height) {
+                bU=true;
                 SCROLLTRACKER_Y += speed;
+                locateDirection();
                 if(!checkCollisionMap(x, y)) {
                     System.out.println("hit top wall");
                     SCROLLTRACKER_Y -= speed;
                 }
+                bU=false;
             }
         }
         if (DOWN_TOUCHED) {
             if (y > 0) {
+                bD=true;
                 SCROLLTRACKER_Y -= speed;
+                locateDirection();
                 if(!checkCollisionMap(x, y  )) {
                     System.out.println("hit bottom wall");
                     SCROLLTRACKER_Y += speed;
                 }
+                bD=false;
             }
         }
 
@@ -85,6 +152,25 @@ public class Player {
             player = player_middle;
         }
     }
+
+    /**
+     * If direction is changed, send message to server immediately.
+     *
+     */
+    private void locateDirection(){
+        Dir oldDir = this.dir;
+
+        if(bR) dir = Dir.R;
+        else if(bL) dir=Dir.L;
+        else if(bU) dir=Dir.U;
+        else if(bD) dir=Dir.D;
+
+        if (dir != oldDir) {
+            MoveMessage message = new MoveMessage(id, (int)x,(int) y, dir);
+            gameClient.getNc().send(message);
+        }
+    }
+
 
     public void render (SpriteBatch sb){
         sb.draw(player,x- (width/2),y - (height/2));

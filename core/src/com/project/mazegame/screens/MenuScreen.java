@@ -37,14 +37,14 @@ public class MenuScreen implements Screen {
 
     public MenuScreen(MazeGame game) {
         this.game = game;
-        playButtonActive = new Texture("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets\\UI\\MenuButtons\\playSoloButton.png");
-        playButtonInactive = new Texture ("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets\\UI\\MenuButtons\\playSoloButtonPressed.png");
+        playButtonActive = new Texture("UI\\MenuButtons\\playSoloButton.png");
+        playButtonInactive = new Texture ("UI\\MenuButtons\\playSoloButtonPressed.png");
         exitButtonActive = new Texture("exit_button_active.png");
         exitButtonInactive = new Texture("exit_button_inactive.png");
-        backGround = new Texture("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets\\UI\\MenuButtons\\menuBackground.png");
-        audioOn = new Texture("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets\\UI\\audioOn.png");
-        audioOff = new Texture("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets\\UI\\audioOff.png");
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\assets/sounds/menuBgm.mp3"));
+        backGround = new Texture("UI\\MenuButtons\\menuBackground.png");
+        audioOn = new Texture("UI\\audioOn.png");
+        audioOff = new Texture("UI\\audioOff.png");
+        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds/menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
     }
