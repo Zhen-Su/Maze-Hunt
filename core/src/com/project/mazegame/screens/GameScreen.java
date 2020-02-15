@@ -31,12 +31,12 @@ public class GameScreen implements Screen {
 
     private Player player;
     private InputHandler inputHandler;
-    private float delta;
+   
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
-    //private MapLayer objectLayer;
+    
     
 
     private Texture exitButtonActive;
@@ -51,7 +51,7 @@ public class GameScreen implements Screen {
 
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
-    private final int EXIT_Y = VIEWPORT_HEIGHT;
+   
 
     public GameScreen(MazeGame game) {
         this.game = game;
@@ -60,24 +60,11 @@ public class GameScreen implements Screen {
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
         
-        //MapObjects mapObjects = tileMap.getLayers().get("Object Layer 1").getObjects();
-        //System.out.println("coins : " + mapObjects.getCount());
-      //  MapObject mo = mapObjects.get(55);
-        
-      
-        
-
-
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-        //coinLayer = (TiledMapTileLayer) tileMap.getLayers().get("coinLayer");
-        //objects
-        
-        
-        //System.out.println("Tile's width " + collisionLayer.getWidth());
+
         player = new Player(this.collisionLayer);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
-
-
+        
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");
         exitButtonInactive = new Texture("exit_button_inactive.png");
@@ -93,7 +80,7 @@ public class GameScreen implements Screen {
         
         //sort out where coins are going
         
-       //choose the x and y cooridinates, multiply these with the collision layer tile widht/height. This should work
+        //choose the x and y cooridinates, multiply these with the collision layer tile widht/height. This should work
         
         //then simply draw coins in a loop using the coin texture
         

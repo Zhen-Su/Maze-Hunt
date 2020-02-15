@@ -11,6 +11,6 @@ public class Variables {
 	  public static boolean LEFT_TOUCHED;
 	  public static boolean RIGHT_TOUCHED;
 	  
-	  public static float SCROLLTRACKER_X;
-	  public static float SCROLLTRACKER_Y;
+	  public static float CAMERA_X;
+	  public static float CAMERA_Y;
 }
