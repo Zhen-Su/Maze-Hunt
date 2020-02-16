@@ -1,3 +1,4 @@
+package com.project.mazegame;
 import java.lang.Math;
 import java.lang.Integer;
 import java.util.ArrayList;
@@ -7,7 +8,6 @@ public class Collect {
 	public Item item = new Item(" ", position);
 	public ArrayList<Item> items;
 	public ArrayList<Item> mapItems;
-	public ArrayList<Pair> positions;
 
 	//if the player picks up an item, remove it from the map and return the item collected
 	public Item pickedUp(Item item) {
@@ -19,27 +19,22 @@ public class Collect {
 
 	}
 
+
+
 	public void generateMapItems() {
 		int maxShields = 3;
 		int maxCoins = 40;
 		int maxSwords = 5;
-		int maxMaps = 5;
+		int maxCompasses = 5;
 		int maxPotions = 10;
 		int maxX = 1000;
 		int maxY = 1000;
-		Boolean gotShield = false;
 
 		for (int i = 0; i < maxShields; i++) {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("shield", position);
-			// make arrayList positions with all positions of items
-			if (!positions.contains(position) && !isCellBlocked(position)) {
-				mapItems.add(item);
-				positions.add(position);
-			}
-			// do this for all
-
+			mapItems.add(item);
 
 		}
 
@@ -47,10 +42,7 @@ public class Collect {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("coin", position);
-			if (!positions.contains(position) && !isCellBlocked(position)) {
-				mapItems.add(item);
-				positions.add(position);
-			}
+			mapItems.add(item);
 
 		}
 
@@ -58,20 +50,16 @@ public class Collect {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("sword", position);
-			if (!positions.contains(position) && !isCellBlocked(position)) {
-				mapItems.add(item);
-				positions.add(position);
-			}
+			mapItems.add(item);
+
 		}
 
-		for (int i = 0; i < maxMaps; i++) {
+		for (int i = 0; i < maxCompasses; i++) {
 			position.setX((int)(Math.random() * (maxX + 1)));
 			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("map", position);
-			if (!positions.contains(position) && !isCellBlocked(position)) {
-				mapItems.add(item);
-				positions.add(position);
-			}
+			Item item = new Item("compass", position);
+			mapItems.add(item);
+
 		}
 
 		for (int i = 0; i < maxPotions; i++) {
@@ -87,11 +75,10 @@ public class Collect {
 				Item item = new Item("gearEnchantment", position);
 			}
 
-			if (!positions.contains(position) && !isCellBlocked(position)) {
-				mapItems.add(item);
-				positions.add(position);
-			}
+			mapItems.add(item);
+
 		}
+
 	}
 
 	public Item nearestItem(Player player) {
@@ -102,38 +89,40 @@ public class Collect {
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
 
-			int tempDist = player.getX() + player.getY() - tempX - tempY;
-			int shortDist = player.getX() + player.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
+			int tempDist = player.position.getX() + player.position.getY() - tempX - tempY;
+			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
 
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
 			}
 		}
+		return nearestItem;
 	}
 
 	//if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
 	public void main() {
 
-		Player player = new Player(/*attributes*/);
-		if (player.getPosititon() == nearestItem(player).getPosition()) {
+		Player player = new Player("James", 123);
+		if (player.position == player.nearestItem().position) {
 
 			Item item = pickedUp(player);
-
+			Player player1 = new Player("James", 123);
+			Player player2 = new Player("James", 123);
 			if (!items.contains(item)) {
 				if (item.getType() == "shield") {
-					shield(item);
+					shield(item, player1);
 				}
 				if (item.getType() == "sword") {
-					sword(item);
+					sword(item, player1, player2);
 				}
-				if (item.getType() == "map") {
-					map(item);
+				if (item.getType() == "compass") {
+					compass(item);
 				}
 				if (item.getType() == "healingPotion") {
-					healingPotion(item);
+					healingPotion(item, player1);
 				}
 				if (item.getType() == "damagingPotion") {
-					damagingPotion(item);
+					damagingPotion(item, player1);
 				}
 				if (item.getType() == "gearEnchantment") {
 					gearEnchantment(item);
@@ -145,55 +134,65 @@ public class Collect {
 	}
 
 
-	public void shield(Item item) {
+	public void shield(Item item, Player player1) {
+		// this.timer = timer;
+		// this.seconds = 60;
+		// temp solutions
+		int timer = 20;
+		int seconds = 60;
+		int startHealth = player1.health;
 		if (gearEnchantment(item)) {
-			this.seconds += 30;
+			seconds += 30;
 		}
 
-		gotShield = true;
 
+		while (timer != 0) {
+			if (player1.health != startHealth) {
+				player1.health = startHealth;
+			}
 
-
-		
 				//change that in the decreaseHealth class in Player
-			
+
 
 			//display shield icon on screen
+
+		}
+
+		items.remove(item);
 
 	}
 
 	public void coin() {
-		// player already has a coin method
 
 	}
 
-	public void sword(Item item) {
+	public void sword(Item item, Player player1, Player player2) {
 		int swordPower = 1;
 		if (gearEnchantment(item)) {
 			swordPower += 1;
 		}
 
-		if (attacks()) {
+		if (player2.health == 0) { //going to come back to level
 			swordPower += 1;
 		}
-
+		player1.swordDamage++;
 		//display sword icon on screen
 	}
 
-	public void map(Item item) {
-		//shows where you and other players are on the map but doesn't show walls
-		//display map
+	public void compass(Item item) {
+		//pick nearest player, follow it
+		//display compass
 	}
 
-	public void healingPotion(Item item) {
-		generateHealth();
-		generateHealth();
+	public void healingPotion(Item item, Player player1) {
+		player1.generateHealth();
+		player1.generateHealth();
 		items.remove(item);
 	}
 
-	public void damagingPotion(Item item) {
-		decreaseHealth();
-		decreaseHealth();
+	public void damagingPotion(Item item, Player player1) {
+		player1.decreaseHealth();
+		player1.decreaseHealth();
 		items.remove(item);
 	}
 
@@ -202,7 +201,7 @@ public class Collect {
 		items.remove(item);
 		return collected;
 
-		
+
 	}
 
 
@@ -221,21 +220,7 @@ public class Collect {
 	- a position() method to determine both a player and an item's coordinates - DONE for item
 	- a nearestItem() method that returns the item with the closest coordinates to the player. This would need to continuously update, as the player will move around - DONE
 	- a nearestPlayer() method that returns the player with the closest coordinates to the player
-	- do research on how to program a with a moving target
+	- do research on how to program a compass with a moving target
+		do we have to make a compass? cool but very hard
+		can ask melissa
 	- display methods to display certain layers on the screen */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,3 +1,4 @@
+package com.project.mazegame;
 public class Item {
 	private String type;
 	private int x;
