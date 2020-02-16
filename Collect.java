@@ -3,11 +3,11 @@ import java.lang.Integer;
 import java.util.ArrayList;
 
 public class Collect {
-	public Pair position = new Pair(0,0);
+	public Cell position = new Cell();
 	public Item item = new Item(" ", position);
 	public ArrayList<Item> items;
 	public ArrayList<Item> mapItems;
-	public ArrayList<Pair> positions;
+	public ArrayList<Cell> positions;
 
 	//if the player picks up an item, remove it from the map and return the item collected
 	public Item pickedUp(Item item) {
@@ -95,7 +95,7 @@ public class Collect {
 	}
 
 	public Item nearestItem(Player player) {
-		Pair position = new Pair(1000, 1000);
+		Cell position = new Cell(1000, 1000);
 		Item nearestItem = new Item(" ", position);
 
 		for (int i = 0; i < mapItems.size(); i++) {
@@ -118,6 +118,7 @@ public class Collect {
 		if (player.getPosititon() == nearestItem(player).getPosition()) {
 
 			Item item = pickedUp(player);
+			//INCLUDE COINS!!!
 
 			if (!items.contains(item)) {
 				if (item.getType() == "shield") {
@@ -198,8 +199,10 @@ public class Collect {
 	}
 
 	public boolean gearEnchantment(Item item) {
-		boolean collected = true;
-		items.remove(item);
+		boolean collected = false;
+		if (items.contains(item)) {
+			collected = true;
+		}
 		return collected;
 
 		
