@@ -9,7 +9,7 @@ import com.project.mazegame.MazeGame;
 import static com.project.mazegame.tools.Variables.*;
 
 public class InputHandler implements Input.TextInputListener {
-	private String txt;
+	private static String txt;
   	public InputHandler() {
 
   	}
@@ -40,15 +40,15 @@ public class InputHandler implements Input.TextInputListener {
 
 	@Override
 	public void input(String text) {
-  		txt = text;
+  		this.txt = text;
 	}
 
-	public String returnText() {
-  		return txt;
+	public String getTxt() {
+  		return this.txt;
 	}
 
 	@Override
 	public void canceled() {
-
+		System.out.println("Canceled");
 	}
 }

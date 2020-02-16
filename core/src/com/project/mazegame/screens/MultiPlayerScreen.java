@@ -23,10 +23,7 @@ public class MultiPlayerScreen implements Screen{
         this.game = game;
         textListener = new InputHandler();
 
-        Gdx.input.getTextInput(textListener, "ENTER IP", "", "Your IP Please");
-        ip = textListener.returnText();
-        Gdx.input.getTextInput(textListener, "ENTER USERNAME", "", "Your username Please");
-        username = textListener.returnText();
+
     }
 
     @Override
@@ -36,7 +33,13 @@ public class MultiPlayerScreen implements Screen{
 
     @Override
     public void render(float delta) {
-        this.dispose();
+        Gdx.input.getTextInput(textListener, "ENTER IP", "", "Your IP Please");
+        ip = textListener.getTxt();
+        System.out.println("IP : " + ip );
+        Gdx.input.getTextInput(textListener, "ENTER Username", "", "Your username Please");
+        username = textListener.getTxt();
+        System.out.println("USER : " + username);
+
         game.setScreen(new MenuScreen(game));
     }
 
