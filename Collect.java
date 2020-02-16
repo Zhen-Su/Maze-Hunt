@@ -198,8 +198,10 @@ public class Collect {
 	}
 
 	public boolean gearEnchantment(Item item) {
-		boolean collected = true;
-		items.remove(item);
+		boolean collected = false;
+		if (items.contains(item)) {
+			collected = true;
+		}
 		return collected;
 
 		
