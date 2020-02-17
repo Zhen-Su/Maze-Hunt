@@ -1,5 +1,6 @@
 package com.project.mazegame.objects;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ public class AIPlayer extends Player{
         return openDoor.get(openDoor.indexOf(randomTake));
     }
 
-    public void runPlayer() {
+    @Override
+    public void update(float delta) {
         while(true) {
             Pair moveToTake = direction(avaibleMoves(super.x, super.y));
             super.x = moveToTake.getX();
@@ -43,4 +45,12 @@ public class AIPlayer extends Player{
         }
     }
 
+    @Override
+    public void render (SpriteBatch sb) {
+        super.render(sb);
+    }
+    @Override
+    public void loadPlayerTextures() {
+        super.loadPlayerTextures();
+    }
 }
