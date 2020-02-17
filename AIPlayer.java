@@ -2,6 +2,7 @@ package com.project.mazegame.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 
 import java.util.ArrayList;
 
@@ -49,6 +50,7 @@ public class AIPlayer extends Player{
     public void render (SpriteBatch sb) {
         super.render(sb);
     }
+
     @Override
     public void loadPlayerTextures() {
         super.loadPlayerTextures();

@@ -150,6 +150,7 @@ public class Player {
             x = (float)Math.random() * (maxX - minX + 1) + minX;
             y = (float)Math.random() * (maxY - minY + 1) + minY;
         }
+
         return new Pair(x, y);
     }
 
