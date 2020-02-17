@@ -8,14 +8,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-
-import java.util.ArrayList;
-//TODO Look into super class and work on rendering ai
-//TODO integrate collectibles
-//TODO look into more ai and player methods
+import com.project.mazegame.networking.Messages.MoveMessage;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 
-public class Player {
+public class MultiPlayer {
     public float x, y;
     private Texture player, player_up, player_middle, player_down, sword,shield;
     private float speed = 6;
@@ -26,80 +23,176 @@ public class Player {
     private TiledMapTileLayer collisionLayer, coinLayer;
     private MapLayer objLayer;
 
-
     public boolean hasCompass;
     public boolean hasDamagingPotion;
     public boolean hasHealingPotion;
 
     public int coins;
-    private int ID;
     public int swordDamage;
 
-    public String name;
-    public ArrayList<String> items;
+    private int id;
+    private String name;
+    private MultiPlayerGameScreen gameClient;
+    public boolean bL, bU, bR, bD;
+    private Direction dir = Direction.STOP;
 
 
+    //constructors=================================================================================
+    public MultiPlayer(int x, int y, String name) {
+        this.x = x;
+        this.y = y;
+        this.name=name;
+    }
 
-    public Player(TiledMapTileLayer collisionLayer, String name, int ID) {
+    public MultiPlayer(String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
+        this(x, y,username);
+
+        this.gameClient = gameClient;
+        this.dir = dir;
+    }
+
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
+        this(username, x, y,gameClient,dir);
+
         this.collisionLayer = collisionLayer;
-//        Pair gen = genSpace(60, 0, 60, 0);
-//        x = gen.getX();
-//        y = gen.getY();
-        x = VIEWPORT_WIDTH / 2;
-        y = VIEWPORT_HEIGHT / 2;
-
         loadPlayerTextures();
-
         width = player_middle.getWidth();
         height = player_middle.getHeight();
-
-        this.coins = 0;
-        this.name = name;
-        this.items = new ArrayList<String>();
-        this.swordDamage = 0;
-        this.ID = ID;
-
     }
-    // modify and override
+
+
+    //Getter&Setter=================================================================================
+    public Direction getDir() {
+        return dir;
+    }
+
+    public void setDir(Direction dir) {
+        this.dir = dir;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Texture getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Texture player) {
+        this.player = player;
+    }
+
+    public Texture getPlayer_up() {
+        return player_up;
+    }
+
+    public Texture getPlayer_middle() {
+        return player_middle;
+    }
+
+    public Texture getPlayer_down() {
+        return player_down;
+    }
+
+    public boolean isHasSword() {
+        return hasSword;
+    }
+
+    public void setHasSword(boolean hasSword) {
+        this.hasSword = hasSword;
+    }
+
+    public boolean isHasShield() {
+        return hasShield;
+    }
+
+    public void setHasShield(boolean hasShield) {
+        this.hasShield = hasShield;
+    }
+
+    //==============================================================================================
+
+    // update player movement
     public void update (float delta){
-        // update player movement
 
         if (RIGHT_TOUCHED) {
+            //set direction boolean true
+            bR=true;
             //try move player right
             SCROLLTRACKER_X += speed;
+            //change direction
+            locateDirection();
             //check player isn't in a wall
             if(!checkCollisionMap(x, y)) {
                 //move player back if needed
                 System.out.println("hit right wall");
                 SCROLLTRACKER_X -= speed;
             }
-
+            //change it back to the original value
+            bR=false;
         }
         if (LEFT_TOUCHED) {
             if (x > 0) {
+                bL=true;
                 SCROLLTRACKER_X -= speed;
+                locateDirection();
                 if(!checkCollisionMap(x,y)) {
                     System.out.println("hit left wall");
                     SCROLLTRACKER_X += speed;
                 }
             }
+            bL=false;
         }
         if (UP_TOUCHED) {
             if (y < VIEWPORT_HEIGHT - height) {
+                bU=true;
                 SCROLLTRACKER_Y += speed;
+                locateDirection();
                 if(!checkCollisionMap(x, y)) {
                     System.out.println("hit top wall");
                     SCROLLTRACKER_Y -= speed;
                 }
+                bU=false;
             }
         }
         if (DOWN_TOUCHED) {
             if (y > 0) {
+                bD=true;
                 SCROLLTRACKER_Y -= speed;
-                if(!checkCollisionMap(x, y  )) {
+                locateDirection();
+                if(!checkCollisionMap(x, y)) {
                     System.out.println("hit bottom wall");
                     SCROLLTRACKER_Y += speed;
                 }
+                bD=false;
             }
         }
 
@@ -112,45 +205,51 @@ public class Player {
             player = player_middle;
         }
     }
-    //modify and overiride
-    public void render (SpriteBatch sb){
-        sb.draw(player,x- (width/2),y - (height/2));
 
-        if(hasSword) {
+    /**
+     * If direction is changed, send message to server immediately.
+     * boolean bL, bU, bR, bD is only used to decide when should send message
+     */
+    private void locateDirection(){
+        Direction oldDir = this.dir;
 
+        if(bR) dir = Direction.R;
+        else if(bL) dir=Direction.L;
+        else if(bU) dir=Direction.U;
+        else if(bD) dir=Direction.D;
 
-            sb.draw(sword,(float)(x),y - (height/4),50,50);
-
-
+        if (dir != oldDir) {
+           // MoveMessage message = new MoveMessage(id, (int)x,(int) y, dir);
+           // gameClient.getNc().send(message);
         }
-        if(hasShield) {
+    }
 
 
-            sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
+    public void render (SpriteBatch sb){
+        //sb.draw(player,x- (width/2),y - (height/2));
 
+        System.out.println("Players number: "+gameClient.getPlayers().size());
+        for(int i=0;i<gameClient.getPlayers().size();i++){
 
+            sb.draw(player,x- (width/2),y - (height/2));
+
+            if(hasSword) {
+                sb.draw(sword,(float)(x),y - (height/4),50,50);
+            }
+            if(hasShield) {
+                sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
+            }
 
         }
 
     }
 
     public void loadPlayerTextures(){
-
         player_up = new Texture("playerRedBackCrop.png");
         player_middle = new Texture("playerRedFrontCrop.png");
         player_down = new Texture("playerRedFrontCrop.png");
         sword = new Texture("sword.png");
         shield = new Texture("shield.png");
-    }
-
-    public Pair genSpace(float maxX, float minX, float maxY, float minY) {
-        float x = (float)Math.random() * (maxX - minX + 1) + minX;
-        float y = (float)Math.random() * (maxY - minY + 1) + minY;
-        while(!checkCollisionMap(x, y)) {
-            x = (float)Math.random() * (maxX - minX + 1) + minX;
-            y = (float)Math.random() * (maxY - minY + 1) + minY;
-        }
-        return new Pair(x, y);
     }
 
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
@@ -210,113 +309,8 @@ public class Player {
         player_middle.dispose();
         player.dispose();
     }
-
-    public void decreaseHealth() {
-        this.lives--;
-
-        if (this.lives == 0) {
-            this.death();
-        }
-    }
-
-    public void pickUpCoins(int coinPick) {
-        this.coins += coinPick;
-    }
-    public void pickUpCoins() {
-        this.coins++;
-    }
-
-    public void death() {
-        System.out.println("Player has died respawning now");
-        this.lives = 5;
-        this.coins = 0;
-        Pair newSpace = genSpace(100, 0, 100, 0);
-        this.x = newSpace.getX();
-        this.y = newSpace.getY();
-
-        this.hasCompass = false;
-        this.hasDamagingPotion = false;
-        this.hasHealingPotion = false;
-        this.hasShield = false;
-        this.hasSword = false;
-
-        this.items = new ArrayList<>();
-    }
-    /*
-    public void pickUpItem(Item itemPicked) throws Exception {
-        Collect co = new Collect(); // will need to be changed maybe put the collect class in parameters
-        switch(itemPicked.getType()) {
-            case "Coin":
-                this.pickUpCoins();
-                break;
-            case "Shield":
-
-                hasShield = true;
-//        co.shield(itemPicked, this);
-                hasShield = false;
-                break;
-            case "Sword":
-                hasSword = true;
-                Player player2 = new Player("Hi", 234);
-                co.sword(itemPicked, this, player2);
-
-                break;
-            case "Compass":
-                hasCompass = true;
-                co.compass(itemPicked);
-                break;
-            case "Healing Potion":
-                hasHealingPotion = true;
-                co.healingPotion(itemPicked, this);
-                hasDamagingPotion = false;
-                break;
-            case "Damaging Potion":
-                hasDamagingPotion = true;
-                co.damagingPotion(itemPicked, this);
-                hasDamagingPotion = false;
-                break;
-            default:
-                throw new Exception("Item does not exist yet");
-        }
-    }
-    */
-    public void decreaseHealth(int number) {
-        if(!hasShield) {
-            this.lives -= number;
-
-            if (lives <= 0) {
-                this.death();
-            }
-        }
-    }
-
-    public boolean sameSpot(Player h) {
-        return (this.x == h.x) && (this.y == h.y);
-    }
-    /*
-    public boolean itemOnSquare(Item item) {
-        return this.position.same(item.getPosition());
-    }
-    */
-
     public int getLives() {
         return lives;
-    }
-    public int getID() {return this.ID;}
-
-    public void playerHitPlayer(Player hit) {
-
-
-        if (this.hasSword && !hit.hasShield) {
-
-            hit.decreaseHealth(this.swordDamage);
-            if (hit.lives == 0) {
-                this.swordDamage++;
-                this.coins += hit.coins;
-                hit.death();
-            }
-        }
-        //need to add shield stuffr
     }
 
 }

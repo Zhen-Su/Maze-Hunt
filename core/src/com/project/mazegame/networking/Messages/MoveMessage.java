@@ -1,7 +1,10 @@
 package com.project.mazegame.networking.Messages;
 
-import com.project.mazegame.networking.Client.GameClient;
+
+import com.project.mazegame.objects.Direction;
+import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -15,10 +18,10 @@ public class MoveMessage implements Message {
     private int msgType = Message.PLAYER_MOVE_MSG;
     private int id;
     private int x, y;
-    private Player.Dir dir;
-    private GameClient gameClient;
+    private Direction dir;
+    private MultiPlayerGameScreen gameClient;
 
-    public MoveMessage(int id, int x, int y, Player.Dir dir) {
+    public MoveMessage(int id, int x, int y, Direction dir) {
         // TODO Auto-generated constructor stub
         this.id=id;
         this.x=x;
@@ -26,7 +29,7 @@ public class MoveMessage implements Message {
         this.dir=dir;
     }
 
-    public MoveMessage(GameClient gameClient) {
+    public MoveMessage(MultiPlayerGameScreen gameClient) {
         // TODO Auto-generated constructor stub
         this.gameClient=gameClient;
     }
@@ -61,17 +64,26 @@ public class MoveMessage implements Message {
         // TODO Auto-generated method stub
         try{
             int id = dis.readInt();
-            if(id == this.gameClient.getPlayer().id){
+            if(id == this.gameClient.getMultiPlayer().getId()){
                 return;
             }
-            Player.Dir dir = Player.Dir.values()[dis.readInt()];
+            Direction dir = Direction.values()[dis.readInt()];
             int x = dis.readInt();
             int y = dis.readInt();
-            for(Player t : gameClient.getPlayers()){
-                if(t.id == id){
+            for(MultiPlayer t : gameClient.getPlayers()){
+                if(t.getId() == id){
+                    //change coordinate and direction
                     t.setDir(dir);
                     t.setX(x);
                     t.setY(y);
+                    //change player texture
+                    if(t.bU ==true && t.bD == false){
+                        t.setPlayer(t.getPlayer_up());
+                    }else if(t.bD==true&&t.bU==false){
+                        t.setPlayer(t.getPlayer_down());
+                    }else {
+                        t.setPlayer(t.getPlayer_middle());
+                    }
                     break;
                 }
             }

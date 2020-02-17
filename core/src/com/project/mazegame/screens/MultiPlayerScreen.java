@@ -7,9 +7,10 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.networking.Client.GameClient;
 import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Server.GameServer;
+import com.project.mazegame.objects.Direction;
+import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.InputHandler;
 import com.project.mazegame.tools.OrthoCam;
@@ -25,33 +26,80 @@ public class MultiPlayerScreen implements Screen {
     private MazeGame game;
     private OrthoCam cam;
     private Music bgm;
-    private String ip;
-    private String username;
-    private boolean hasEnterIP=false;
-    private Player myPlayer;
-    private GameServer gameServer;
-    private GameClient gameClient = new GameClient();
-    private NetClient netClient = new NetClient(gameClient);
 
+    public String ip;
+    public String username;
+
+    private boolean hasEnterIP = false;
+    private boolean hasEnterUsername =false;
+//    private boolean imServer = false;
+//    private boolean imClient = false;
 
     public MultiPlayerScreen(MazeGame game) {
         this.game = game;
-        playerEnterIp();
-//        try {
-//            //if don't have server, then this player enter own ip,and this player will be a server.
-//            System.out.println("Player enter ip is: "+ip);
-//            if(ip == InetAddress.getLocalHost().getHostAddress()){
-//                GameServer gameServer=new GameServer();
-//                gameServer.start();
-//                netClient.connect(ip,GameServer.SERVER_TCP_PORT);
-//            }else{
-//                //if we have a server,then this player enter server ip,then connect to server.
-//                netClient.connect(ip,GameServer.SERVER_TCP_PORT);
-//            }
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-//        }
+        this.playerEnterIp();
+        System.out.println("construction done!");
     }
+
+    private void playerEnterIp(){
+        Gdx.input.getTextInput(new Input.TextInputListener() {
+            @Override
+            public void input(String text) {
+                System.out.println("ip: "+text);
+                ip=text;
+                hasEnterIP=true;
+                if(hasEnterIP){
+                    System.out.println("player has enter ip");
+                    playerEnterUsername();
+                }
+            }
+            @Override
+            public void canceled() {
+                System.out.println("Player cancel,GOOD_BYE");
+            }
+        },"ENTER IP", "", "Your IP Please");
+    }
+
+    private void playerEnterUsername (){
+        Gdx.input.getTextInput(new Input.TextInputListener() {
+            @Override
+            public void input(String text) {
+                System.out.println("username: "+text);
+                username=text;
+                hasEnterUsername=true;
+                if(hasEnterUsername) {
+                    System.out.println("player has enter username");
+//                    AreYouServer();
+                }
+            }
+            @Override
+            public void canceled() {
+                System.out.println("Player cancel,GOOD_BYE");
+            }
+        },"ENTER USERNAME", "", "Your username Please");
+    }
+
+//    private void AreYouServer(){
+//        Gdx.input.getTextInput(new Input.TextInputListener() {
+//            @Override
+//            public void input(String text) {
+//                if(text.equals("yes")) {
+//                    imServer=true;
+//                    System.out.println("i'm server!!");
+//                }else {
+//                    imClient=true;
+//                }
+//
+//           }
+//            @Override
+//            public void canceled() {
+//                System.out.println("Player cancel,GOOD_BYE");
+//            }
+//        },"Are you server?", "", "Are you server? yes OR no");
+//    }
+
+    //----------------------------------------------------------------------------------------------
+    //Override method
 
     @Override
     public void show() {
@@ -60,8 +108,10 @@ public class MultiPlayerScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        if(hasEnterUsername){
+            game.setScreen(new MultiPlayerGameScreen(game,username,ip));
+        }
         this.dispose();
-        game.setScreen(new MenuScreen(game));
     }
 
     @Override
@@ -87,37 +137,5 @@ public class MultiPlayerScreen implements Screen {
     @Override
     public void dispose() {
 
-    }
-
-    private void playerEnterIp(){
-        Gdx.input.getTextInput(new Input.TextInputListener() {
-            @Override
-            public void input(String text) {
-                System.out.println("ip: "+text);
-                ip=text;
-                hasEnterIP=true;
-                if(hasEnterIP){
-                    playerEnterUsername();
-                }
-            }
-            @Override
-            public void canceled() {
-                System.out.println("Player cancel,GOOD_BYE");
-            }
-        },"ENTER IP", "", "Your IP Please");
-    }
-
-    private void playerEnterUsername (){
-        Gdx.input.getTextInput(new Input.TextInputListener() {
-            @Override
-            public void input(String text) {
-                System.out.println("username: "+text);
-                username=text;
-            }
-            @Override
-            public void canceled() {
-                System.out.println("Player cancel,GOOD_BYE");
-            }
-        },"ENTER USERNAME", "", "Your username Please");
     }
 }

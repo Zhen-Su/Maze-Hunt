@@ -1,13 +1,17 @@
 package com.project.mazegame.networking.Client;
 
 import com.project.mazegame.networking.Messages.Message;
+import com.project.mazegame.networking.Messages.MoveMessage;
 import com.project.mazegame.networking.Messages.PlayerNewMessage;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 
+import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -16,25 +20,20 @@ import java.util.Random;
 
 public class NetClient {
 
-    private GameClient gc;
+    private MultiPlayerGameScreen gameClient;
     private int clientUDPPort;
     private int serverUDPPort;
     private String serverIP;
-    public DatagramSocket ds = null;
-    private Socket socket;
+    public DatagramSocket datagramSocket = null;
+    private Socket socket = null;
 
     public int getClientUDPPort() {
         return clientUDPPort;
     }
 
-    public NetClient(GameClient gc){
-        this.gc = gc;
+    public NetClient(MultiPlayerGameScreen gameClient){
+        this.gameClient = gameClient;
         this.clientUDPPort=getRandomUDPPort();
-        try {
-            ds = new DatagramSocket(clientUDPPort);  // UDPSocket
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -44,9 +43,14 @@ public class NetClient {
      */
     public void connect(String ip, int serverTCPPort) {
         serverIP = ip;
-        Socket socket = null;
         try {
-
+            try {
+                System.out.println("Client UDP socket have be opened");
+                datagramSocket = new DatagramSocket(clientUDPPort);  // UDPSocket
+            } catch (SocketException e) {
+                e.printStackTrace();
+            }
+            //ds = new DatagramSocket(serverUDPPort);   //UDPSocket
             socket = new Socket(ip, serverTCPPort);   // TCPSocket
             printMsg("Connected to server");
 
@@ -62,8 +66,7 @@ public class NetClient {
             int id = dis.readInt();
             this.serverUDPPort = dis.readInt();
             printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
-            gc.getPlayer().setId(id);
-
+            gameClient.getMultiPlayer().setId(id);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -79,17 +82,68 @@ public class NetClient {
             }
         }
 
-        new Thread(new ClientThread(this)).start();
+        new Thread(new ClientThread()).start();
 
-        PlayerNewMessage msg = new PlayerNewMessage(gc.getPlayer());
+        PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
         send(msg);
-
 
     }
 
     public void send(Message msg) {
-        msg.send(ds, serverIP, serverUDPPort);
+        msg.send(datagramSocket, serverIP, serverUDPPort);
+    }
 
+    /**
+     * Inner class
+     * For Client to send and receive messages
+     */
+    public class ClientThread implements Runnable {
+
+        byte[] receiveBuf = new byte[1024];
+
+        @Override
+        public void run() {
+            while (null != datagramSocket) {
+                System.out.println("Client thread start...");
+                DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
+                try {
+                    datagramSocket.receive(datagramPacket);
+                    System.out.println("I've received a packet from server");
+                    process(datagramPacket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        /**
+         * Process the data which rececive from server
+         *
+         * @param datagramPacket
+         */
+        private void process(DatagramPacket datagramPacket) {
+            ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf, 0, datagramPacket.getLength());
+            DataInputStream dis = new DataInputStream(bais);
+
+            int msgType = 0;
+            try {
+                msgType = dis.readInt();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Message msg = null;
+            switch (msgType) {
+                case Message.PLAYER_NEW_MSG:
+                    msg = new PlayerNewMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.PLAYER_MOVE_MSG:
+                    msg = new MoveMessage(gameClient);
+                    msg.process(dis);
+                    break;
+            }
+        }
     }
 
     /**

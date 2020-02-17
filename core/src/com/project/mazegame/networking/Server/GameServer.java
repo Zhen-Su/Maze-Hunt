@@ -18,17 +18,20 @@ import java.util.List;
  */
 public class GameServer {
 
-    public static int ID = 1;//ID for every client.
-    public static final int SERVER_TCP_PORT = 5555;//Server TCP port
-    public static final int SERVER_UDP_PORT = 6666;//Server UDP port
+    public static int ID = 100;//ID for every client.
+    public static final int SERVER_TCP_PORT = 9999;//Server TCP port
+    public static final int SERVER_UDP_PORT = 7777;//Server UDP port
     public List<ClientInfo> clients = new ArrayList<>();//List to store client's info
     private boolean isRunning = false; //server working flag
     private ServerSocket serverSocket =null;
     private Socket s=null;
 
+    public static void main(String[] args) {
+        new GameServer().start();
+    }
 
     /**
-     * launch game server
+     * launch server
      */
     public void start(){
 
@@ -44,10 +47,11 @@ public class GameServer {
         }
 
         while(isRunning){
-            ;
+
             try {
-                printMsg("Waiting for a clinet...");
+                printMsg("Waiting for a client...");
                 s=serverSocket.accept();
+               // printMsg("accept() stop here>>>");
 
                 //receive client's UDP Port from GameClient
                 InputStream in = s.getInputStream();
@@ -79,7 +83,6 @@ public class GameServer {
                 }
             }
         }
-
     }
 
     /**
@@ -100,7 +103,6 @@ public class GameServer {
             }
         }
     }
-
 
 
     /**

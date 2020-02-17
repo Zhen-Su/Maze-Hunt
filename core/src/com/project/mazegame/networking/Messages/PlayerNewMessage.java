@@ -1,7 +1,10 @@
 package com.project.mazegame.networking.Messages;
 
-import com.project.mazegame.networking.Client.GameClient;
+
+import com.project.mazegame.objects.Direction;
+import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -15,19 +18,17 @@ public class PlayerNewMessage implements Message {
 
 
     private int msgType = Message.PLAYER_NEW_MSG;
-    private Player player;
-    private GameClient gameClient;
+    private MultiPlayer multiPlayer;
+    private MultiPlayerGameScreen gameClient;
 
-    public PlayerNewMessage(Player player) {
-        this.player = player;
+    public PlayerNewMessage(MultiPlayer multiPlayer) {
+        this.multiPlayer = multiPlayer;
         this.gameClient = gameClient;
     }
 
-    public PlayerNewMessage(GameClient gameClient) {
-        // TODO Auto-generated constructor stub
+    public PlayerNewMessage(MultiPlayerGameScreen gameClient) {
         this.gameClient = gameClient;
-        player = gameClient.getPlayer();
-
+        multiPlayer = gameClient.getMultiPlayer();
     }
 
 
@@ -35,28 +36,29 @@ public class PlayerNewMessage implements Message {
     /**
      * Send a packet to Server,then Server broadcast this packet to all clients
      *
-     * @param ds
-     * @param ip
+     * @param datagramSocket
+     * @param ip  Server ip
      * @param server_UDP_Port
      */
     @Override
-    public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
+    public void send(DatagramSocket datagramSocket, String ip, int server_UDP_Port) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
         try {
             dos.writeInt(msgType);
-            dos.writeInt(player.id);
-            dos.writeInt((int) player.getX());
-            dos.writeInt((int) player.getY());
-            dos.writeInt(player.getDir().ordinal());
+            dos.writeInt(multiPlayer.getId());
+            dos.writeInt((int) multiPlayer.getX());
+            dos.writeInt((int) multiPlayer.getY());
+            dos.writeInt(multiPlayer.getDir().ordinal());
+            dos.writeUTF(multiPlayer.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         byte[] buf = baos.toByteArray();
         try {
-            DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
-            ds.send(dp);
+            DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
+            datagramSocket.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -66,19 +68,20 @@ public class PlayerNewMessage implements Message {
     @Override
     public void process(DataInputStream dis) {
         try{
+
             int id = dis.readInt();
-            if(id == this.gameClient.getPlayer().id){
+            if(id == this.gameClient.getMultiPlayer().getId()){
                 return;
             }
 
             int x = dis.readInt();
             int y = dis.readInt();
-            Player.Dir dir = Player.Dir.values()[dis.readInt()];
-
+            Direction dir = Direction.values()[dis.readInt()];
+            String tankName = dis.readUTF();
 
             boolean exist = false;
-            for (Player t : gameClient.getPlayers()){
-                if(id == t.id){
+            for (MultiPlayer t : gameClient.getPlayers()){
+                if(id == t.getId()){
                     exist = true;
                     break;
                 }
@@ -86,10 +89,11 @@ public class PlayerNewMessage implements Message {
             if(!exist) {
                 PlayerNewMessage msg = new PlayerNewMessage(gameClient);
                 gameClient.getNc().send(msg);
-                Player t = new Player(x, y, gameClient,dir);
-                t.id = id;
-                gameClient.getPlayers().add(t);
+                MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(),tankName,x,y,gameClient,dir);
+                newPlayer.setId(id);
+                gameClient.getPlayers().add(newPlayer);
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
