@@ -46,7 +46,7 @@ The package directory `com.project.mazegame.networking` contains all of the clas
 
   ##  Description 
 
-  In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. For JOIN MAZE mode, we need to open the server separately, which means we have to run GameServer.java in terminal , eclipse … Then run DesktopLauncher class under `package com.project.mazegame.desktop` package. we request that user enter server's ip and username to start multiplayer game.
+  In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. For JOIN MAZE mode, we need to open the server separately, which means we have to run GameServer.java (`GameServer.java` is in `yueyi` repo under `package gameNetworks` package) in terminal , eclipse … Then run DesktopLauncher class under `package com.project.mazegame.desktop` package. we request that user enter server's ip and username to start multiplayer game.
 
   ##  Update Logs
 
