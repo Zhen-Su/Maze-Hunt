@@ -43,6 +43,10 @@ public class AIPlayer extends Player{
             Pair moveToTake = direction(avaibleMoves(super.x, super.y));
             super.x = moveToTake.getX();
             super.y = moveToTake.getY();
+            if (IsCellCoin(super.x, super.y)) {
+                super.coins += 1;
+                // something will need to be done to remove coin from game after that
+            }
         }
     }
 
@@ -55,4 +59,13 @@ public class AIPlayer extends Player{
     public void loadPlayerTextures() {
         super.loadPlayerTextures();
     }
+    @Override
+    public boolean checkCollisionMap(float possibleX, float possibleY) {
+        return super.checkCollisionMap(possibleX, possibleY);
+    }
+
+    @Override
+    public boolean isCellBlocked(float x, float y) {return super.isCellBlocked(x, y);}
+    @Override
+    public boolean IsCellCoin(float x, float y) {return super.IsCellCoin(x, y);}
 }
