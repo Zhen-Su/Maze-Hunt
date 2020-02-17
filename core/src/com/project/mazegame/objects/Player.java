@@ -63,7 +63,9 @@ public class Player {
      
     public void update (float delta){
     	// update player movement
-    	
+    	this.position.setX((int) x + (int)CAMERA_X); 
+    	this.position.setY((int) y + (int)CAMERA_Y); 
+        
         if (RIGHT_TOUCHED) {
         	//try move player right
             CAMERA_X += speed; 

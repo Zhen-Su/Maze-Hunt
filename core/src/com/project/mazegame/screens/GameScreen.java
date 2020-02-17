@@ -89,7 +89,9 @@ public class GameScreen implements Screen {
         swordTexture = new Texture("sword.png");
         shieldTexture = new Texture("shield.png");
         
-        generateMapItems();
+        
+        //assuming it's a square map -> only need width of map and width of tile
+        generateMapItems((int) collisionLayer.getWidth(), 100);
         
        /* 
         
@@ -112,111 +114,45 @@ public class GameScreen implements Screen {
     public void show() {
 
     }
-    private static int mapItemSize = 0;
-    public static void generateMapItems() {
-		int maxShields = 3;
-		int maxCoins = 4;
-		int maxSwords = 5;
-		int maxCompasses = 5;
-		int maxPotions = 10;
-		int maxX = 1000;
-		int maxY = 500;
-		mapItems = new ArrayList<Item>();
-		ItemCell position = new ItemCell();
-
-		for (int i = 0; i < maxShields; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("shield", position);
-			mapItems.add(item);
-			position.setX(0);
-			position.setY(0);
-		}
-
-		for (int i = 0; i < maxCoins; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("coin", position);
-			mapItems.add(item);
-
-		}
-
-		for (int i = 0; i < maxSwords; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("sword", position);
-			mapItems.add(item);
-
-		}
-
-		for (int i = 0; i < maxCompasses; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("compass", position);
-			mapItems.add(item);
-
-		}
-
-		for (int i = 0; i < maxPotions; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			int whatPotion = (int)(Math.random() * 4);
-			
-			if (whatPotion == 1) {
-				Item item = new Item("healingPotion", position);
-				mapItems.add(item);
-			} else if (whatPotion == 2) {
-				Item item = new Item("damagingPotion", position);
-				mapItems.add(item);
-			} else {
-				Item item = new Item("gearEnchantment", position);
-				mapItems.add(item);
-			}
-
-			
-
-		}
-
-	}
+ 
+    
  
     @Override
     public void render(float delta) {
-    	
     	
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         delta = Gdx.graphics.getDeltaTime();
     
-        //updates
+        //updates - player position
         inputHandler.update();
         player.update(delta);
 
-        //tilemap
+        //draws tilemap
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
         
-        
-        //draw coins
-        
-
-        
-        
-        //rendering
         game.batch.begin();
-        
-        if (!(mapItemSize == mapItems.size())){
-	        for(int i = 0; i < mapItems.size(); i ++) { 
-	        	int x = mapItems.get(i).getPosition().getX(); 
-	        	int y = mapItems.get(i).getPosition().getY();
-	        	System.out.println(i + " , " + x + " , "+ y);
-	        	game.batch.draw(coinTexture,x , y  ,50,50); 
-	        	mapItemSize = mapItems.size();
-	        }
 
-        }
+        //draw coins
+	    for(int i = 0; i < mapItems.size(); i ++) { 
+	        int x = mapItems.get(i).getPosition().getX(); 
+	        int y = mapItems.get(i).getPosition().getY();
+	        //System.out.println(i + " , " + x + " , "+ y);
+	        //System.out.println("player " + player.getX()+ "  " + CAMERA_X);
+	        game.batch.draw(coinTexture,x   - CAMERA_X, y  - CAMERA_Y  ,100,100);   	
+	    }
+
+        //rendering
+        
         Collect co = new Collect();
+        System.out.println("nearest " + co.nearestItem(player).getPosition().getX() + " , " + co.nearestItem(player).getPosition().getY() );
+        System.out.println("player " + player.position.getX() + " , " + player.position.getY());
+        
+        //needs to be more general
         if (player.position == co.nearestItem(player).getPosition()) {
+        	
         	System.out.println("over item");
 			Item item = co.pickedUp(co.nearestItem(player));
 			Player player1 = new Player(collisionLayer,"James", 123);
@@ -245,8 +181,6 @@ public class GameScreen implements Screen {
 			}
 		}
       
-        
-        
         float x = player.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
         float y = player.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
         
@@ -275,7 +209,6 @@ public class GameScreen implements Screen {
         int lives = player.getLives();
         for(int i = 0; i < lives; i ++) {
         	  game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
-        	  
         	  xheart += (iconSize + buffer);
         }
         
@@ -310,11 +243,9 @@ public class GameScreen implements Screen {
         	drawable = new TextureRegionDrawable(new TextureRegion(audioButtonInactive));
         	audioButton.setBackground(drawable);
         }
-       
 
         player.render(game.batch);
         game.batch.end();
-
         //camera
         cam.update(player.x, player.y);
     }
@@ -347,4 +278,75 @@ public class GameScreen implements Screen {
         exitButtonInactive.dispose();
         player.dispose();
     }
+    
+    public static void generateMapItems( int widthInTiles, int tileWidth) {
+		int maxShields = 10;
+		int maxCoins = 0;
+		int maxSwords = 0;
+		int maxCompasses = 0;
+		int maxPotions = 0;
+		int maxX = widthInTiles;
+		int maxY = widthInTiles;
+		mapItems = new ArrayList<Item>();
+		//ItemCell position = new ItemCell();
+		
+		for (int i = 0; i <= maxShields; i++) {
+			ItemCell position = new ItemCell();
+			position.setX((int)((Math.random() * (maxX ))) * tileWidth);
+			
+			position.setY((int)((Math.random() * (maxY )))* tileWidth);
+			//System.out.println(position.getX() + " , " + position.getY());
+			Item item = new Item("shield", position);
+			mapItems.add(item);
+		}
+
+		for (int i = 0; i < maxCoins; i++) {
+			ItemCell position = new ItemCell();
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
+			Item item = new Item("coin", position);
+			mapItems.add(item);
+
+		}
+
+		for (int i = 0; i < maxSwords; i++) {
+			ItemCell position = new ItemCell();
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
+			Item item = new Item("sword", position);
+			mapItems.add(item);
+
+		}
+
+		for (int i = 0; i < maxCompasses; i++) {
+			ItemCell position = new ItemCell();
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
+			Item item = new Item("compass", position);
+			mapItems.add(item);
+
+		}
+
+		for (int i = 0; i < maxPotions; i++) {
+			ItemCell position = new ItemCell();
+			position.setX((int)(Math.random() * (maxX + 1)));
+			position.setY((int)(Math.random() * (maxY + 1)));
+			int whatPotion = (int)(Math.random() * 4);
+			
+			if (whatPotion == 1) {
+				Item item = new Item("healingPotion", position);
+				mapItems.add(item);
+			} else if (whatPotion == 2) {
+				Item item = new Item("damagingPotion", position);
+				mapItems.add(item);
+			} else {
+				Item item = new Item("gearEnchantment", position);
+				mapItems.add(item);
+			}
+
+			
+
+		}
+
+	}
 }

@@ -35,8 +35,8 @@ public class Collect {
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
 
-			int tempDist = player.getX() + player.getY() - tempX - tempY;
-			int shortDist = player.getX() + player.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
+			int tempDist = player.position.getX() + player.position.getY() - tempX - tempY;
+			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
 
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
