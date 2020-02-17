@@ -17,14 +17,14 @@ import java.util.ArrayList;
 
 public class Player {
     public float x, y;
-    private Texture player, player_up, player_middle, player_down, sword,shield;
-    private float speed = 6;
-    private float width, height;
-    private int lives = 5;
-    private boolean hasSword = true;
-    private boolean hasShield = true;
-    private TiledMapTileLayer collisionLayer, coinLayer;
-    private MapLayer objLayer;
+    protected Texture player, player_up, player_middle, player_down, sword,shield;
+    protected float speed = 6;
+    protected float width, height;
+    protected int lives = 5;
+    protected boolean hasSword = true;
+    protected boolean hasShield = true;
+    protected TiledMapTileLayer collisionLayer, coinLayer;
+    protected MapLayer objLayer;
 
 
     public boolean hasCompass;
