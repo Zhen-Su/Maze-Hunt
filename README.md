@@ -1,84 +1,93 @@
-# Game Rendering
+# Game Networking
 
-__I will post the image of the code structure real soon__
+Through Server-Client Construction/Mode to implement multiplay game.
 
-## Setting up the project
-1. Preferred IDE for this project: Android Studio/IntelliJ. (Eclipse works too but Android Studio/IntelliJ doesn't complain lol)
-2. Launch Android Studio/IntelliJ
-3. Import project
-4. Main code to edit is the class `Game` located under the `core` folder. under the package `com.project.mazegame`
-5. To adjust the window size, navigate to `DesktopLauncher` class under the  `desktop` folder (We won't be bothering much with this class)
+I've implemented multiplayer join the game, and everyone can see each other's movements with java Swing ,which is in `yueyi` branch.
+
+In this new `yueyi1` branch, i will merge my networking part into core, namly using LibGDX to implement multiplaye game.
+
+## Objects Package
+
+The package directory `package com.project.mazegame.objects` contains some of the classes that coordinate with the game network.
+
+* MultiPlayer
+* Direction
+
+## Screens Package
+
+The package directory `package com.project.mazegame.screens` contains some of the classes that coordinate with the game network.
+
+* MultiPlayerScreen
+
+* MultiPlayerGameScreen
+
+## Networking Package
+
+The package directory `com.project.mazegame.networking` contains all of the classes that deal with the game network
+
+* Server
+  * GameServer
+  * ServerThread
+
+* Messages
+  * Message
+  * PlayerNewMessage
+  * MoveMessage
+  * AttackMessage
+  * and more other messages need to add in further……
+
+* Client
+
+  * ClientInfo
+  * ClientThread
+  * NetClient
+
+  
+
+  ##  Description 
+
+  In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. For JOIN MAZE mode, we need to open the server separately, which means we have to run GameServer.java in terminal , eclipse … Then run DesktopLauncher class under `package com.project.mazegame.desktop` package. we request that user enter server's ip and username to start multiplayer game.
+
+  ##  Update Logs
+
+  * 1.1 When client connect to server (Through TCP socket) , client can send their own information to server,and server can save this client object and its info into a list. 
+  *  1.2 After client connect to server, server can give this player an ID and server's UDP port through TCP socket.
+  * 1.3 Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
+  * 1.4 Server can broadcast the messages which receive from someone to all Clients (players).
+  * 1.5  
+
+  
+
+  # TODO
+
+  * Try to make other player can see others movements.
+
+  * Try to fix bugs on player click cancel button on enter ip or username screen to back to menu Screen.
+
+  * Try to complete code on server can close relevant resources and close client's UDP socket after player exit game in multiplayer game mode (JOIN MAZE).
+
+  * Integration with game logic (make more message's types)
+
+    
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
 
 
-## Main class
-  The main class is the MazeGame.java right under the `com.project.mazegame` package directory. However, we wont be editing the class much, or at all.
 
-## Resources
-All of the resources needed in the game will be put in the folder `android/assets`.
-
-## Objects
-The package directory `com.project.mazegame.objects` contains all of the classes that deals with the game object and logic:
-```
-1. Player
-2. AI
-3. Collectibles
-4. etc
-```
-
-## Screens
-The package directory `com.project.mazegame.screens` contains all of the screens needed for the game to run.
-The screens are:
-
-```
-1. MenuScreen (halfway done)
-- Solo Play Button
-- Multiplayer Play Button
-- Settings Button
-- Exit Button
-
-2. PreferencesScreen (hasn't started)
-- Adjust volume (Enable/Disable/Up/Down)
-- Adjust Screen size
-
-3. GameScreen (working on)
-- The actual Game
-
-4. EndScreen (hasn't started)
-- Shows game result and leaderboard
-
-5. LobbyScreen (hasn't started)
-- For Multiplayer gameplay
-
-6. LoadingScreen (hasn't started)
-- As a placeholder between screens
-```
-## Tools
-The package `com.project.mazegame.tools` contains the classes for the other back-end stuffs:
-```
-1. AppPreferences
-
-2. InputHandler
-
-3. OrthoCam
-
-4. Variables
-```
----
-# Update Logs
-## Version 1.0
-```
-- Coded the basic building blocks for rendering
-- Managed to render the TMX file and the Player character
-```
-## Version 1.1
-```
-- Added orthographic camera
-- Added collision so that the player wont run into walls
-```
-## Version 1.2
-```
-- Refactored project structure for better scalability and easier implementation of upcoming features
-- Added Screens (Menu, preferences etc).
-- Player can now quit the game and go back to menu
-- Player now can exit the game by clicking the exit button in the menu screen
-```
+ 
