@@ -45,6 +45,7 @@ public class AIPlayer extends Player{
     public void update(float delta) {
         while(true) {
             Pair moveToTake = direction(avaibleMoves(x, y));
+            System.out.println(moveToTake.toString());
             x = moveToTake.getX();
             y = moveToTake.getY();
         }
