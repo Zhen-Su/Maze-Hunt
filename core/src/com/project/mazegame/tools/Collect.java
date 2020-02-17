@@ -1,96 +1,42 @@
-package com.project.mazegame;
+package com.project.mazegame.tools;
+import com.project.mazegame.objects.*;
+import com.project.mazegame.screens.GameScreen;
 import java.lang.Math;
 import java.lang.Integer;
 import java.util.ArrayList;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.project.mazegame.tools.ItemCell;
+//import com.project.mazegame.tools.Cell;
+//import com.project.mazegame.Pair;
+import com.project.mazegame.tools.Variables;
+
 public class Collect {
-	public Pair position = new Pair(0,0);
+	public ItemCell position = new ItemCell();
 	public Item item = new Item(" ", position);
 	public ArrayList<Item> items;
-	public ArrayList<Item> mapItems;
-
+	
+	public ArrayList<ItemCell> positions;
+	private ArrayList<Item> mapItems = Variables.mapItems;
+	
 	//if the player picks up an item, remove it from the map and return the item collected
 	public Item pickedUp(Item item) {
-
 		this.item = item;
 		mapItems.remove(item);
 
 		return item;
-
-	}
-
-
-
-	public void generateMapItems() {
-		int maxShields = 3;
-		int maxCoins = 40;
-		int maxSwords = 5;
-		int maxCompasses = 5;
-		int maxPotions = 10;
-		int maxX = 1000;
-		int maxY = 1000;
-
-		for (int i = 0; i < maxShields; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("shield", position);
-			mapItems.add(item);
-
-		}
-
-		for (int i = 0; i < maxCoins; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("coin", position);
-			mapItems.add(item);
-
-		}
-
-		for (int i = 0; i < maxSwords; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("sword", position);
-			mapItems.add(item);
-
-		}
-
-		for (int i = 0; i < maxCompasses; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			Item item = new Item("compass", position);
-			mapItems.add(item);
-
-		}
-
-		for (int i = 0; i < maxPotions; i++) {
-			position.setX((int)(Math.random() * (maxX + 1)));
-			position.setY((int)(Math.random() * (maxY + 1)));
-			int whatPotion = (int)(Math.random() * 4);
-
-			if (whatPotion == 1) {
-				Item item = new Item("healingPotion", position);
-			} else if (whatPotion == 2) {
-				Item item = new Item("damagingPotion", position);
-			} else {
-				Item item = new Item("gearEnchantment", position);
-			}
-
-			mapItems.add(item);
-
-		}
-
 	}
 
 	public Item nearestItem(Player player) {
-		Pair position = new Pair(1000, 1000);
+		ItemCell position = new ItemCell();
 		Item nearestItem = new Item(" ", position);
 
 		for (int i = 0; i < mapItems.size(); i++) {
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
 
-			int tempDist = player.position.getX() + player.position.getY() - tempX - tempY;
-			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
+			int tempDist = player.getX() + player.getY() - tempX - tempY;
+			int shortDist = player.getX() + player.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
 
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
@@ -100,9 +46,9 @@ public class Collect {
 	}
 
 	//if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
-	public void main() {
+	/*public void main() {
 
-		Player player = new Player("James", 123);
+		Player player = new Player(collisionLayer"James", 123);
 		if (player.position == player.nearestItem().position) {
 
 			Item item = pickedUp(player);
@@ -132,7 +78,7 @@ public class Collect {
 			}
 		}
 	}
-
+*/
 
 	public void shield(Item item, Player player1) {
 		// this.timer = timer;
@@ -191,8 +137,8 @@ public class Collect {
 	}
 
 	public void damagingPotion(Item item, Player player1) {
-		player1.decreaseHealth();
-		player1.decreaseHealth();
+		player1.decreaseHealth(1);
+		player1.decreaseHealth(1);
 		items.remove(item);
 	}
 

@@ -1,11 +1,11 @@
-package com.project.mazegame;
+package com.project.mazegame.tools;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class CountDown {
+public class Timer {
 public Timer timer;
 
-	public CountDown() {
+	public Timer() {
 		timer = new Timer();
 		timer.schedule(new DisplayCountdown(), 0, 1000);
 	}

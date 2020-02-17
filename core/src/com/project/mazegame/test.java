@@ -1,5 +1,7 @@
 package com.project.mazegame;
 import java.util.ArrayList;
+
+import com.project.mazegame.objects.AIPlayer;
 public class test {
   public static void main(String[] args) {
     int hi = 1;
