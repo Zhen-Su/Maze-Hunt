@@ -49,13 +49,13 @@ public class MultiPlayerScreen implements Screen {
                 ip=text;
                 hasEnterIP=true;
                 if(hasEnterIP){
-                    System.out.println("player has enter ip");
                     playerEnterUsername();
                 }
             }
             @Override
             public void canceled() {
                 System.out.println("Player cancel,GOOD_BYE");
+                //backToMenuScreen();
             }
         },"ENTER IP", "", "Your IP Please");
     }
@@ -67,37 +67,20 @@ public class MultiPlayerScreen implements Screen {
                 System.out.println("username: "+text);
                 username=text;
                 hasEnterUsername=true;
-                if(hasEnterUsername) {
-                    System.out.println("player has enter username");
-//                    AreYouServer();
-                }
             }
             @Override
             public void canceled() {
                 System.out.println("Player cancel,GOOD_BYE");
+               // backToMenuScreen();
             }
         },"ENTER USERNAME", "", "Your username Please");
     }
 
-//    private void AreYouServer(){
-//        Gdx.input.getTextInput(new Input.TextInputListener() {
-//            @Override
-//            public void input(String text) {
-//                if(text.equals("yes")) {
-//                    imServer=true;
-//                    System.out.println("i'm server!!");
-//                }else {
-//                    imClient=true;
-//                }
-//
-//           }
-//            @Override
-//            public void canceled() {
-//                System.out.println("Player cancel,GOOD_BYE");
-//            }
-//        },"Are you server?", "", "Are you server? yes OR no");
-//    }
-
+    private void backToMenuScreen(){
+       // cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
+        this.dispose();
+        game.setScreen(new MenuScreen(this.game));
+    }
     //----------------------------------------------------------------------------------------------
     //Override method
 

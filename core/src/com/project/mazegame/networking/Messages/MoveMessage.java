@@ -78,11 +78,11 @@ public class MoveMessage implements Message {
                     t.setY(y);
                     //change player texture
                     if(t.bU ==true && t.bD == false){
-                        t.setPlayer(t.getPlayer_up());
+                        t.setPlayerTexture(t.getPlayer_up());
                     }else if(t.bD==true&&t.bU==false){
-                        t.setPlayer(t.getPlayer_down());
+                        t.setPlayerTexture(t.getPlayer_down());
                     }else {
-                        t.setPlayer(t.getPlayer_middle());
+                        t.setPlayerTexture(t.getPlayer_middle());
                     }
                     break;
                 }

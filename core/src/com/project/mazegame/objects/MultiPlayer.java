@@ -31,6 +31,7 @@ public class MultiPlayer {
     public int swordDamage;
 
     private int id;
+    private MultiPlayer multiPlayer;
     private String name;
     private MultiPlayerGameScreen gameClient;
     public boolean bL, bU, bR, bD;
@@ -54,6 +55,7 @@ public class MultiPlayer {
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
         this(username, x, y,gameClient,dir);
 
+        System.out.println("gameClient has been constructed");
         this.collisionLayer = collisionLayer;
         loadPlayerTextures();
         width = player_middle.getWidth();
@@ -70,9 +72,7 @@ public class MultiPlayer {
         this.dir = dir;
     }
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
 
     public void setId(int id) {
         this.id = id;
@@ -94,25 +94,15 @@ public class MultiPlayer {
         this.x = x;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public void setName(String name) { this.name = name; }
 
-    public Texture getPlayer() {
-        return player;
-    }
+    public Texture getPlayerTexture() { return player; }
 
-    public void setPlayer(Texture player) {
-        this.player = player;
-    }
+    public void setPlayerTexture(Texture player) { this.player = player; }
 
-    public Texture getPlayer_up() {
-        return player_up;
-    }
+    public Texture getPlayer_up() { return player_up; }
 
     public Texture getPlayer_middle() {
         return player_middle;
@@ -219,16 +209,24 @@ public class MultiPlayer {
         else if(bD) dir=Direction.D;
 
         if (dir != oldDir) {
-           // MoveMessage message = new MoveMessage(id, (int)x,(int) y, dir);
-           // gameClient.getNc().send(message);
+            MoveMessage message = new MoveMessage(id, (int)x,(int) y, dir);
+            gameClient.getNc().send(message);
         }
     }
 
 
     public void render (SpriteBatch sb){
-        //sb.draw(player,x- (width/2),y - (height/2));
+        if(null!= gameClient.getMultiPlayer()) {
+            sb.draw(player, x - (width / 2), y - (height / 2));
+            if(hasSword) {
+                sb.draw(sword,(float)(x),y - (height/4),50,50);
+            }
+            if(hasShield) {
+                sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
+            }
+        }
 
-        System.out.println("Players number: "+gameClient.getPlayers().size());
+        //System.out.println("Players number: "+gameClient.getPlayers().size());
         for(int i=0;i<gameClient.getPlayers().size();i++){
 
             sb.draw(player,x- (width/2),y - (height/2));

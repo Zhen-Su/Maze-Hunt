@@ -44,7 +44,7 @@ public class MultiPlayerGameScreen implements Screen {
     private MultiPlayer multiPlayer;
     private GameServer gameServer;
     //private Boolean imServer;
-    private NetClient nc;
+    private  NetClient netClient = new NetClient(this);
     private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
 
 
@@ -84,11 +84,11 @@ public class MultiPlayerGameScreen implements Screen {
     }
 
     public NetClient getNc() {
-        return nc;
+        return netClient;
     }
 
-    public void setNc(NetClient nc) {
-        this.nc = nc;
+    public void setNc(NetClient netClient) {
+        this.netClient = netClient;
     }
     public TiledMapTileLayer getCollisionLayer() {
         return collisionLayer;
@@ -103,7 +103,7 @@ public class MultiPlayerGameScreen implements Screen {
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        NetClient netClient = new NetClient(this);
+       //NetClient netClient = new NetClient(this);
         multiPlayer=new MultiPlayer(collisionLayer,username,VIEWPORT_WIDTH / 2,VIEWPORT_HEIGHT / 2,this, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
 
@@ -161,9 +161,10 @@ public class MultiPlayerGameScreen implements Screen {
         //exit button in top right corner
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-//            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-//            this.dispose();
-//            game.setScreen(new MenuScreen(this.game));
+            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
+            this.dispose();
+//            game.batch.end();
+            game.setScreen(new MenuScreen(this.game));
         }
 //        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
 //            game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
