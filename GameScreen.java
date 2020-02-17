@@ -119,7 +119,7 @@ public class GameScreen implements Screen {
         delta = Gdx.graphics.getDeltaTime();
 
         //updates
-        inputHandler.update();
+//        inputHandler.update();
         aiPlayer.update(delta);
 
         //tilemap
