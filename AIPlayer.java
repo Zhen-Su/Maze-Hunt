@@ -34,19 +34,16 @@ public class AIPlayer extends Player{
             return null;
         }
         int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
-        return openDoor.get(openDoor.indexOf(randomTake));
+        return openDoor.get(randomTake);
     }
 
     @Override
     public void update(float delta) {
         while(true) {
-            Pair moveToTake = direction(avaibleMoves(super.x, super.y));
-            super.x = moveToTake.getX();
-            super.y = moveToTake.getY();
-            if (IsCellCoin(super.x, super.y)) {
-                super.coins += 1;
-                // something will need to be done to remove coin from game after that
-            }
+            Pair moveToTake = direction(avaibleMoves(x, y));
+            x = moveToTake.getX();
+            y = moveToTake.getY();
+
         }
     }
 
