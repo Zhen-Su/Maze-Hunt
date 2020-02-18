@@ -47,8 +47,8 @@ public class PlayerNewMessage implements Message {
         try {
             dos.writeInt(msgType);
             dos.writeInt(multiPlayer.getId());
-            dos.writeInt((int) multiPlayer.getX());
-            dos.writeInt((int) multiPlayer.getY());
+            dos.writeInt((int) multiPlayer.getpX());
+            dos.writeInt((int) multiPlayer.getpY());
             dos.writeInt(multiPlayer.getDir().ordinal());
             dos.writeUTF(multiPlayer.getName());
         } catch (IOException e) {

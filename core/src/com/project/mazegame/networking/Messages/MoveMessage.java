@@ -17,15 +17,15 @@ import java.net.InetSocketAddress;
 public class MoveMessage implements Message {
     private int msgType = Message.PLAYER_MOVE_MSG;
     private int id;
-    private int x, y;
+    private int pX, pY;
     private Direction dir;
     private MultiPlayerGameScreen gameClient;
 
-    public MoveMessage(int id, int x, int y, Direction dir) {
+    public MoveMessage(int id, int pX, int pY, Direction dir) {
         // TODO Auto-generated constructor stub
         this.id=id;
-        this.x=x;
-        this.y=y;
+        this.pX=pX;
+        this.pY=pY;
         this.dir=dir;
     }
 
@@ -44,8 +44,8 @@ public class MoveMessage implements Message {
             dos.writeInt(msgType);
             dos.writeInt(id);
             dos.writeInt(dir.ordinal());
-            dos.writeInt(x);
-            dos.writeInt(y);
+            dos.writeInt(pX);
+            dos.writeInt(pY);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -68,14 +68,16 @@ public class MoveMessage implements Message {
                 return;
             }
             Direction dir = Direction.values()[dis.readInt()];
-            int x = dis.readInt();
-            int y = dis.readInt();
+            int newx = dis.readInt();
+            int newy = dis.readInt();
             for(MultiPlayer t : gameClient.getPlayers()){
                 if(t.getId() == id){
                     //change coordinate and direction
                     t.setDir(dir);
-                    t.setX(x);
-                    t.setY(y);
+                    t.setpX(newx);
+                    t.setpY(newy);
+//                    System.out.println("zhen x: "+x);
+//                    System.out.println("zhen y:" +y);
                     //change player texture
                     if(t.bU ==true && t.bD == false){
                         t.setPlayerTexture(t.getPlayer_up());

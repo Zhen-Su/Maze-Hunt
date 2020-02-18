@@ -15,6 +15,8 @@ import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 public class MultiPlayer {
     public float x, y;
+    public float pX,pY;
+
     private Texture player, player_up, player_middle, player_down,sword,shield;
     //private Texture other_player,other_player_up,other_player_middle,other_player_down,other_player_sword,other_player_shield;
     private float speed = 6;
@@ -48,7 +50,6 @@ public class MultiPlayer {
 
     public MultiPlayer(String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
         this(x, y,username);
-
         this.gameClient = gameClient;
         this.dir = dir;
     }
@@ -57,6 +58,8 @@ public class MultiPlayer {
         this(username, x, y,gameClient,dir);
         System.out.println("multiplayer is constructing...");
         this.collisionLayer = collisionLayer;
+        pX = x+SCROLLTRACKER_X;
+        pY = y+SCROLLTRACKER_Y;
 //        loadPlayerTextures();
 //        width = player_middle.getWidth();
 //        height = player_middle.getHeight();
@@ -87,15 +90,21 @@ public class MultiPlayer {
     public int getId() { return id; }
 
     public void setId(int id) { this.id = id; }
+    public float getpX() {
+        return pX;
+    }
 
-    public float getY() { return y; }
+    public void setpX(float pX) {
+        this.pX = pX;
+    }
 
-    public void setY(float y) { this.y = y; }
+    public float getpY() {
+        return pY;
+    }
 
-    public float getX() { return x; }
-
-    public void setX(float x) { this.x = x; }
-
+    public void setpY(float pY) {
+        this.pY = pY;
+    }
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
@@ -122,6 +131,8 @@ public class MultiPlayer {
 
     // update player movement
     public void update (float delta){
+        pX = x+SCROLLTRACKER_X;
+        pY = y+SCROLLTRACKER_Y;
 
         if (RIGHT_TOUCHED) {
             //set direction boolean true
@@ -199,13 +210,15 @@ public class MultiPlayer {
         else if(bD) dir=Direction.D;
 
         if (dir != oldDir) {
-            MoveMessage message = new MoveMessage(id, (int)x,(int) y, dir);
+            MoveMessage message = new MoveMessage(id, (int)pX,(int) pY, dir);
             gameClient.getNc().send(message);
         }
     }
 
 
     public void render (SpriteBatch sb){
+//            System.out.println("Player x: "+ pX);
+//            System.out.println("Player y:" + pY);
             sb.draw(player, x - (width / 2), y - (height / 2));
             if(hasSword) {
                 sb.draw(sword,(float)(x),y - (height/4),50,50);
