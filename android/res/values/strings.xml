@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+<<<<<<< HEAD
     <string name="app_name">my-gdx-game</string>
+=======
+    <string name="app_name">Mambow2Tutorial</string>
+>>>>>>> charlotte
 
 </resources>

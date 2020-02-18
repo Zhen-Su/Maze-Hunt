@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<<<<<<< HEAD
     package="com.mygdx.game"
+=======
+    package="com.norakomi.mambow2"
+>>>>>>> charlotte
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -17,7 +21,11 @@
         android:label="@string/app_name"
         android:theme="@style/GdxTheme" >
         <activity
+<<<<<<< HEAD
             android:name="com.mygdx.game.AndroidLauncher"
+=======
+            android:name="com.project.mazegame.AndroidLauncher"
+>>>>>>> charlotte
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout"
             android:label="@string/app_name"
             android:screenOrientation="landscape" >
