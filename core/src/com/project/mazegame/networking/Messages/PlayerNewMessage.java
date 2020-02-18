@@ -77,7 +77,7 @@ public class PlayerNewMessage implements Message {
             int x = dis.readInt();
             int y = dis.readInt();
             Direction dir = Direction.values()[dis.readInt()];
-            String tankName = dis.readUTF();
+            String username = dis.readUTF();
 
             boolean exist = false;
             for (MultiPlayer t : gameClient.getPlayers()){
@@ -89,7 +89,8 @@ public class PlayerNewMessage implements Message {
             if(!exist) {
                 PlayerNewMessage msg = new PlayerNewMessage(gameClient);
                 gameClient.getNc().send(msg);
-                MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(),tankName,x,y,gameClient,dir);
+                MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir);
+                System.out.println("the new player has been construct!");
                 newPlayer.setId(id);
                 gameClient.getPlayers().add(newPlayer);
             }

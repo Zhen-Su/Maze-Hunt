@@ -38,14 +38,14 @@ public class MultiPlayerScreen implements Screen {
     public MultiPlayerScreen(MazeGame game) {
         this.game = game;
         this.playerEnterIp();
-        System.out.println("construction done!");
+      //  Gdx.app.log("MutiPlayerScreen: ","construction done!");
     }
 
     private void playerEnterIp(){
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
-                System.out.println("ip: "+text);
+                Gdx.app.log("IP:",text);
                 ip=text;
                 hasEnterIP=true;
                 if(hasEnterIP){
@@ -54,7 +54,7 @@ public class MultiPlayerScreen implements Screen {
             }
             @Override
             public void canceled() {
-                System.out.println("Player cancel,GOOD_BYE");
+                Gdx.app.log("MutiPlayerScreen: ","Player cancel,GOODBYE!");
                 //backToMenuScreen();
             }
         },"ENTER IP", "", "Your IP Please");
@@ -64,13 +64,13 @@ public class MultiPlayerScreen implements Screen {
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
-                System.out.println("username: "+text);
+                Gdx.app.log("Username:",text);
                 username=text;
                 hasEnterUsername=true;
             }
             @Override
             public void canceled() {
-                System.out.println("Player cancel,GOOD_BYE");
+                Gdx.app.log("MutiPlayerScreen: ","Player cancel,GOODBYE!");
                // backToMenuScreen();
             }
         },"ENTER USERNAME", "", "Your username Please");
@@ -86,7 +86,6 @@ public class MultiPlayerScreen implements Screen {
 
     @Override
     public void show() {
-
     }
 
     @Override

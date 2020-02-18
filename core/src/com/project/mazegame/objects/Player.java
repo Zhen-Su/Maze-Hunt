@@ -117,19 +117,10 @@ public class Player {
         sb.draw(player,x- (width/2),y - (height/2));
 
         if(hasSword) {
-
-
             sb.draw(sword,(float)(x),y - (height/4),50,50);
-
-
         }
         if(hasShield) {
-
-
             sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
-
-
-
         }
 
     }

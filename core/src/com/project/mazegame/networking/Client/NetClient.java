@@ -103,8 +103,8 @@ public class NetClient {
 
         @Override
         public void run() {
+            System.out.println("Client thread start...");
             while (null != datagramSocket) {
-                System.out.println("Client thread start...");
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try {
                     datagramSocket.receive(datagramPacket);

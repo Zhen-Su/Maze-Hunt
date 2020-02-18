@@ -3,6 +3,7 @@ package com.project.mazegame.objects;
 import static com.project.mazegame.tools.Variables.*;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
@@ -14,7 +15,8 @@ import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 public class MultiPlayer {
     public float x, y;
-    private Texture player, player_up, player_middle, player_down, sword,shield;
+    private Texture player, player_up, player_middle, player_down,sword,shield;
+    //private Texture other_player,other_player_up,other_player_middle,other_player_down,other_player_sword,other_player_shield;
     private float speed = 6;
     private float width, height;
     private int lives = 5;
@@ -31,7 +33,6 @@ public class MultiPlayer {
     public int swordDamage;
 
     private int id;
-    private MultiPlayer multiPlayer;
     private String name;
     private MultiPlayerGameScreen gameClient;
     public boolean bL, bU, bR, bD;
@@ -52,47 +53,48 @@ public class MultiPlayer {
         this.dir = dir;
     }
 
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir ) {
         this(username, x, y,gameClient,dir);
-
-        System.out.println("gameClient has been constructed");
+        System.out.println("multiplayer is constructing...");
         this.collisionLayer = collisionLayer;
-        loadPlayerTextures();
-        width = player_middle.getWidth();
-        height = player_middle.getHeight();
+//        loadPlayerTextures();
+//        width = player_middle.getWidth();
+//        height = player_middle.getHeight();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                            loadPlayerTextures();
+                            width = player_middle.getWidth();
+                            height = player_middle.getHeight();
+                        }
+                });
+            }
+        }).start();
+        System.out.println("multiplayer construction done!");
     }
 
 
     //Getter&Setter=================================================================================
-    public Direction getDir() {
-        return dir;
-    }
+    public Direction getDir() { return dir; }
 
-    public void setDir(Direction dir) {
-        this.dir = dir;
-    }
+    public void setDir(Direction dir) { this.dir = dir; }
 
     public int getId() { return id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+    public void setId(int id) { this.id = id; }
 
-    public float getY() {
-        return y;
-    }
+    public float getY() { return y; }
 
-    public void setY(float y) {
-        this.y = y;
-    }
+    public void setY(float y) { this.y = y; }
 
-    public float getX() {
-        return x;
-    }
+    public float getX() { return x; }
 
-    public void setX(float x) {
-        this.x = x;
-    }
+    public void setX(float x) { this.x = x; }
 
     public String getName() { return name; }
 
@@ -104,29 +106,17 @@ public class MultiPlayer {
 
     public Texture getPlayer_up() { return player_up; }
 
-    public Texture getPlayer_middle() {
-        return player_middle;
-    }
+    public Texture getPlayer_middle() { return player_middle; }
 
-    public Texture getPlayer_down() {
-        return player_down;
-    }
+    public Texture getPlayer_down() { return player_down; }
 
-    public boolean isHasSword() {
-        return hasSword;
-    }
+    public boolean isHasSword() { return hasSword; }
 
-    public void setHasSword(boolean hasSword) {
-        this.hasSword = hasSword;
-    }
+    public void setHasSword(boolean hasSword) { this.hasSword = hasSword; }
 
-    public boolean isHasShield() {
-        return hasShield;
-    }
+    public boolean isHasShield() { return hasShield; }
 
-    public void setHasShield(boolean hasShield) {
-        this.hasShield = hasShield;
-    }
+    public void setHasShield(boolean hasShield) { this.hasShield = hasShield; }
 
     //==============================================================================================
 
@@ -216,7 +206,6 @@ public class MultiPlayer {
 
 
     public void render (SpriteBatch sb){
-        if(null!= gameClient.getMultiPlayer()) {
             sb.draw(player, x - (width / 2), y - (height / 2));
             if(hasSword) {
                 sb.draw(sword,(float)(x),y - (height/4),50,50);
@@ -224,22 +213,6 @@ public class MultiPlayer {
             if(hasShield) {
                 sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
             }
-        }
-
-        //System.out.println("Players number: "+gameClient.getPlayers().size());
-        for(int i=0;i<gameClient.getPlayers().size();i++){
-
-            sb.draw(player,x- (width/2),y - (height/2));
-
-            if(hasSword) {
-                sb.draw(sword,(float)(x),y - (height/4),50,50);
-            }
-            if(hasShield) {
-                sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
-            }
-
-        }
-
     }
 
     public void loadPlayerTextures(){
@@ -249,6 +222,14 @@ public class MultiPlayer {
         sword = new Texture("sword.png");
         shield = new Texture("shield.png");
     }
+
+//    public void loadOtherPlayerTextures() {
+//        other_player_up = new Texture("playerBlueBackCrop.png");
+//        other_player_middle = new Texture("playerBlueFrontCrop.png");
+//        other_player_down = new Texture("playerBlueFrontCrop.png");
+//        other_player_sword = new Texture("sword1.png");
+//        other_player_shield = new Texture("shield1.png");
+//    }
 
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
         //Overall x and y of player

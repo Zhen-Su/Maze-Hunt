@@ -21,11 +21,9 @@ import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.MultiPlayer;
-import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.InputHandler;
 import com.project.mazegame.tools.OrthoCam;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +39,7 @@ public class MultiPlayerGameScreen implements Screen {
     private InputHandler inputHandler;
     private String serverIP;
     private String username;
-    private MultiPlayer multiPlayer;
+    private MultiPlayer myMultiPlayer;
     private GameServer gameServer;
     //private Boolean imServer;
     private  NetClient netClient = new NetClient(this);
@@ -69,10 +67,10 @@ public class MultiPlayerGameScreen implements Screen {
 
 
     public MultiPlayer getMultiPlayer() {
-        return multiPlayer;
+        return myMultiPlayer;
     }
     public void setMultiPlayer(MultiPlayer multiPlayer) {
-        this.multiPlayer = multiPlayer;
+        this.myMultiPlayer = multiPlayer;
     }
 
     public List<MultiPlayer> getPlayers() {
@@ -103,11 +101,10 @@ public class MultiPlayerGameScreen implements Screen {
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-       //NetClient netClient = new NetClient(this);
-        multiPlayer=new MultiPlayer(collisionLayer,username,VIEWPORT_WIDTH / 2,VIEWPORT_HEIGHT / 2,this, Direction.STOP);
+        myMultiPlayer=new MultiPlayer(collisionLayer,username,VIEWPORT_WIDTH / 2,VIEWPORT_HEIGHT / 2,this, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
 
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, multiPlayer.x, multiPlayer.y);
+        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.x, myMultiPlayer.y);
 
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");
@@ -146,7 +143,7 @@ public class MultiPlayerGameScreen implements Screen {
 
         //updates
         inputHandler.update();
-        multiPlayer.update(delta);
+        myMultiPlayer.update(delta);
 
         //tilemap
         tileMapRenderer.setView(cam.cam);
@@ -155,77 +152,74 @@ public class MultiPlayerGameScreen implements Screen {
         //rendering
         game.batch.begin();
 
-        float x = multiPlayer.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
-        float y = multiPlayer.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
+        float x = myMultiPlayer.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
+        float y = myMultiPlayer.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
 
         //exit button in top right corner
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
             this.dispose();
-//            game.batch.end();
             game.setScreen(new MenuScreen(this.game));
         }
-//        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
-//            game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-//            if (Gdx.input.isTouched())
-//                Gdx.app.exit();
-//        }
-//        else {
-//            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-//        }
-
 
         //draw hearts in top left corner
         float iconSize = 30;
         float buffer = 10;
-        float xheart = multiPlayer.x - VIEWPORT_WIDTH /2 +buffer;
-        float yheart = multiPlayer.y + VIEWPORT_HEIGHT/2 - iconSize -buffer;
-        int lives = multiPlayer.getLives();
+        float xheart = myMultiPlayer.x - VIEWPORT_WIDTH /2 +buffer;
+        float yheart = myMultiPlayer.y + VIEWPORT_HEIGHT/2 - iconSize -buffer;
+        int lives = myMultiPlayer.getLives();
         for(int i = 0; i < lives; i ++) {
             game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
-
             xheart += (iconSize + buffer);
         }
 
         //draw shield icon
         float shieldSize = 50;
-        float xShield =  multiPlayer.x + VIEWPORT_WIDTH /2 - shieldSize -buffer;
-        float yShield = multiPlayer.y + VIEWPORT_HEIGHT/2 - (shieldSize *3) ;
+        float xShield =  myMultiPlayer.x + VIEWPORT_WIDTH /2 - shieldSize -buffer;
+        float yShield = myMultiPlayer.y + VIEWPORT_HEIGHT/2 - (shieldSize *3) ;
         game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
 
         //sword icon
         float swordSize = 50;
-        float xSword =  multiPlayer.x + VIEWPORT_WIDTH /2 - swordSize - buffer;
-        float ySword = multiPlayer.y + VIEWPORT_HEIGHT/2 - (swordSize *2) ;
+        float xSword =  myMultiPlayer.x + VIEWPORT_WIDTH /2 - swordSize - buffer;
+        float ySword = myMultiPlayer.y + VIEWPORT_HEIGHT/2 - (swordSize *2) ;
         game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
 
         //draws coin icon
-        float xCoin = multiPlayer.x - (VIEWPORT_WIDTH /2) ;
-        float yCoin = multiPlayer.y + VIEWPORT_HEIGHT/2 - ( iconSize*3) -buffer;
+        float xCoin = myMultiPlayer.x - (VIEWPORT_WIDTH /2) ;
+        float yCoin = myMultiPlayer.y + VIEWPORT_HEIGHT/2 - ( iconSize*3) -buffer;
         game.batch.draw(coinTexture, xCoin, yCoin,iconSize*2 , iconSize*2);
 
         //audio icon
-        float xAudio = multiPlayer.x + VIEWPORT_WIDTH /2 -(iconSize*3);
-        float yAudio = multiPlayer.y + VIEWPORT_HEIGHT/2 - iconSize - buffer ;
+        float xAudio = myMultiPlayer.x + VIEWPORT_WIDTH /2 -(iconSize*3);
+        float yAudio = myMultiPlayer.y + VIEWPORT_HEIGHT/2 - iconSize - buffer ;
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(audioButtonActive));
         ImageButton audioButton= new ImageButton(drawable);
         audioButton.setX(xAudio);
         audioButton.setY(yAudio);
         audioButton.setWidth(iconSize);
         audioButton.setHeight(iconSize);
-        //audioButton.draw
         if (audioButton.isOver()) {
             drawable = new TextureRegionDrawable(new TextureRegion(audioButtonInactive));
             audioButton.setBackground(drawable);
         }
 
+        //draw myself
+        if(myMultiPlayer!=null){
+            myMultiPlayer.render(game.batch);
+        }
+        //draw other players
+        for(int i=0;i<players.size();i++){
+            MultiPlayer otherPlayer = players.get(i);
+            otherPlayer.update(delta);
+            otherPlayer.render(game.batch);
+        }
 
-        multiPlayer.render(game.batch);
         game.batch.end();
 
         //camera
-        cam.update(multiPlayer.x, multiPlayer.y);
+        cam.update(myMultiPlayer.x, myMultiPlayer.y);
     }
 
 
@@ -254,6 +248,10 @@ public class MultiPlayerGameScreen implements Screen {
         tileMap.dispose();
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
-        multiPlayer.dispose();
+        myMultiPlayer.dispose();
+        for(int i=0;i<players.size();i++){
+            MultiPlayer otherMultiPlayer = players.get(i);
+            otherMultiPlayer.dispose();
+        }
     }
 }
