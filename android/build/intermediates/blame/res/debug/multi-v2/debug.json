@@ -1,6 +1,7 @@
 {
     "logs": [
         {
+<<<<<<< HEAD
             "outputFile": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\build\\intermediates\\res\\merged\\debug\\values_values.arsc.flat",
             "map": [
                 {
@@ -22,6 +23,12 @@
                 },
                 {
                     "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\res\\values\\styles.xml",
+=======
+            "outputFile": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\build\\intermediates\\res\\merged\\debug\\values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\res\\values\\styles.xml",
+>>>>>>> origin/andin
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -40,7 +47,28 @@
                     }
                 },
                 {
+<<<<<<< HEAD
                     "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\res\\values\\color.xml",
+=======
+                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "56",
+                        "endColumns": "52",
+                        "endOffsets": "104"
+                    },
+                    "to": {
+                        "startLines": "3",
+                        "startColumns": "4",
+                        "startOffsets": "111",
+                        "endColumns": "52",
+                        "endOffsets": "159"
+                    }
+                },
+                {
+                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\res\\values\\color.xml",
+>>>>>>> origin/andin
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

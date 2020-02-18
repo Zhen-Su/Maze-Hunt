@@ -11,7 +11,10 @@ public class MazeGame extends Game {
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = 1000;
 
+<<<<<<< HEAD
 	public Player player;
+=======
+>>>>>>> origin/andin
 	
 	
 	@Override

@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< HEAD
 <module external.linked.project.id=":desktop" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+=======
+<module external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+>>>>>>> origin/andin
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
         <option name="GRADLE_PROJECT_PATH" value=":desktop" />
+<<<<<<< HEAD
         <option name="LAST_SUCCESSFUL_SYNC_AGP_VERSION" />
         <option name="LAST_KNOWN_AGP_VERSION" />
+=======
+>>>>>>> origin/andin
       </configuration>
     </facet>
     <facet type="java-gradle" name="Java-Gradle">
@@ -15,6 +22,7 @@
       </configuration>
     </facet>
   </component>
+<<<<<<< HEAD
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
     <output url="file://$MODULE_DIR$/build/classes/java/main" />
     <output-test url="file://$MODULE_DIR$/build/classes/java/test" />
@@ -61,4 +69,6 @@
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: jinput-platform-2.0.5-natives-windows" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: jinput-platform-2.0.5-natives-osx" level="project" />
   </component>
+=======
+>>>>>>> origin/andin
 </module>

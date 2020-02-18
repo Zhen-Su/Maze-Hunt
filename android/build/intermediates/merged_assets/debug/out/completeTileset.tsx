@@ -11,6 +11,14 @@
    </object>
   </objectgroup>
  </tile>
+<<<<<<< HEAD
+=======
+ <tile id="3">
+  <properties>
+   <property name="isCoin" value=""/>
+  </properties>
+ </tile>
+>>>>>>> origin/andin
  <tile id="5">
   <properties>
    <property name="isWall" value=""/>

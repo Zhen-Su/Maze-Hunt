@@ -4,7 +4,11 @@ sourceCompatibility = 1.7
 sourceSets.main.java.srcDirs = [ "src/" ]
 sourceSets.main.resources.srcDirs = ["../android/assets"]
 
+<<<<<<< HEAD
 project.ext.mainClassName = "com.mygdx.game.desktop.DesktopLauncher"
+=======
+project.ext.mainClassName = "com.norakomi.mambow2.desktop.DesktopLauncher"
+>>>>>>> origin/andin
 project.ext.assetsDir = new File("../android/assets")
 
 task run(dependsOn: classes, type: JavaExec) {
@@ -28,9 +32,14 @@ task dist(type: Jar) {
     manifest {
         attributes 'Main-Class': project.mainClassName
     }
+<<<<<<< HEAD
     dependsOn configurations.runtimeClasspath
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+=======
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+>>>>>>> origin/andin
     }
     with jar
 }
