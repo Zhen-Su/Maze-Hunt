@@ -81,7 +81,7 @@ public class GameScreen implements Screen {
 
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 0, 0);
 
-//        aiPlayer.runPlayer();
+
 
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");

@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 
+
 import java.util.ArrayList;
 //TODO Look into super class and work on rendering ai
 //TODO integrate collectibles

@@ -3,6 +3,7 @@ package com.project.mazegame.objects;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.project.mazegame.tools.Pair;
 
 import java.util.ArrayList;
 
@@ -13,7 +14,7 @@ public class AIPlayer extends Player{
     }
     // method which checks all valid moves may need to be fixed
     public ArrayList<Pair> avaibleMoves(float x, float y) {
-        int move = 1;
+        float move = 1;
         ArrayList<Pair> moves = new ArrayList<>();
         if (checkCollisionMap((x + move), y) ){
             moves.add(new Pair((x + move), y));
@@ -44,10 +45,15 @@ public class AIPlayer extends Player{
     @Override
     public void update(float delta) {
         while(true) {
-            Pair moveToTake = direction(avaibleMoves(x, y));
-            System.out.println(moveToTake.toString());
-            x = moveToTake.getX();
-            y = moveToTake.getY();
+            try {
+                Pair moveToTake = direction(avaibleMoves(x, y));
+                System.out.println(moveToTake.toString());
+                x = moveToTake.getX();
+                y = moveToTake.getY();
+                Thread.sleep(100);
+            } catch (Exception e) {
+                System.out.println("Something gone wrong");
+            }
         }
     }
     // overrides methos to make sure they are in the ai class
