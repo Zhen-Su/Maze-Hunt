@@ -21,6 +21,8 @@ import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.InputHandler;
 import com.project.mazegame.tools.OrthoCam;
 
+import static com.project.mazegame.tools.Variables.SCROLLTRACKER_X;
+import static com.project.mazegame.tools.Variables.SCROLLTRACKER_Y;
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 
@@ -112,6 +114,9 @@ public class GameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         delta = Gdx.graphics.getDeltaTime();
+
+        System.out.println("player x: " + (player.x + SCROLLTRACKER_X));
+        System.out.println("player y: " + (player.y + SCROLLTRACKER_Y));
 
         //updates
         inputHandler.update();
