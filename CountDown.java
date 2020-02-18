@@ -2,11 +2,29 @@ package com.badlogic.gdx.utils.Timer;
 import java.util.Timer; 
 import java.util.TimerTask;
 import java.lang.Object;
+import java.util.ArrayList;
 
 
 public class CountDown {
+
+	boolean collected = false;
+	ArrayList<Item> items = new ArrayList();
 	Timer timer = new Timer();
 	int time = 60000;
+	
+
+
+	public CountDown(boolean collected, ArrayList<Item> items) {
+		this.collected = collected;
+		this.items = items;
+		if (collected) {
+			time += 30000;		
+		}
+
+	}
+
+
+
 	TimerTask task = new TimerTask() {
 		public void run() {
 			for (int i = 0; i < items.size(); i++) {

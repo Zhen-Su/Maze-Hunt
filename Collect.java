@@ -34,7 +34,7 @@ public class Collect {
 			position.setY((int)(Math.random() * (maxY + 1)));
 			Item item = new Item("shield", position);
 			// make arrayList positions with all positions of items
-			if (!positions.contains(position) && !isCellBlocked(position)) {
+			if (!positions.contains(position) && !player.isCellBlocked(position)) {
 				mapItems.add(item);
 				positions.add(position);
 			}
@@ -115,12 +115,11 @@ public class Collect {
 	public void main() {
 
 		Player player = new Player(/*attributes*/);
-		if (player.getPosititon() == nearestItem(player).getPosition()) {
-
-			Item item = pickedUp(player);
+		if ((player.getPosititon().getX() > nearestItem(player).getPosition().getX() - 50) && (player.getPosititon().getX() < nearestItem(player).getPosition().getX() + 50) && (player.getPosititon().getY() > nearestItem(player).getPosition().getY() - 50) && (player.getPosititon().getY() < nearestItem(player).getPosition().getY() + 50)) {
 			//INCLUDE COINS!!!
 
 			if (!items.contains(item)) {
+				Item item = pickedUp(player);
 				if (item.getType() == "shield") {
 					shield(item);
 				}
@@ -147,11 +146,9 @@ public class Collect {
 
 
 	public void shield(Item item) {
-		if (gearEnchantment(item)) {
-			this.seconds += 30;
-		}
 
 		gotShield = true;
+
 
 
 
