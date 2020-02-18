@@ -29,6 +29,7 @@ public class GameScreen implements Screen {
 
     private MazeGame game;
     private OrthoCam cam;
+    private OrthoCam aiCam;
 
     private Player player;
     private AIPlayer aiPlayer;
@@ -57,7 +58,7 @@ public class GameScreen implements Screen {
 
     public GameScreen(MazeGame game) {
         this.game = game;
-        inputHandler = new InputHandler(this.game);
+        inputHandler = new InputHandler();
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -76,11 +77,10 @@ public class GameScreen implements Screen {
 
 
         //System.out.println("Tile's width " + collisionLayer.getWidth());
-//        player = new Player(this.collisionLayer, "All", 124);
-        aiPlayer = new AIPlayer(this.collisionLayer, "James", 123);
-
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, 0, 0);
-
+        player = new Player(this.collisionLayer, "James", 123);
+        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
+        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
+//        aiCam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, aiPlayer.x, aiPlayer.y);
 
 
         // buttons
@@ -91,7 +91,7 @@ public class GameScreen implements Screen {
 
 
         heartTexture = new Texture("heart.png");
-        coinTexture = new Texture("coin.png");
+        coinTexture = new Texture("shield.png");
         swordTexture = new Texture("sword.png");
         shieldTexture = new Texture("shield.png");
 
@@ -119,24 +119,30 @@ public class GameScreen implements Screen {
         delta = Gdx.graphics.getDeltaTime();
 
         //updates
-//        inputHandler.update();
+        inputHandler.update();
+        player.update(delta);
+
         aiPlayer.update(delta);
 
         //tilemap
         tileMapRenderer.setView(cam.cam);
+//        tileMapRenderer.setView(aiCam.cam);
         tileMapRenderer.render();
 
         //rendering
         game.batch.begin();
 
-        float x = aiPlayer.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
-        float y = aiPlayer.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
+        float x = player.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
+        float y = player.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
+//        System.out.println("X = " + x);
+//        System.out.println("Y = " + y);
 
         //exit button in top right corner
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
             this.dispose();
+//            game.batch.end();
             game.setScreen(new MenuScreen(this.game));
         }
 //        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
@@ -148,13 +154,13 @@ public class GameScreen implements Screen {
 //            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
 //        }
 
-
+	// ai player will have all this internally
         //draw hearts in top left corner
         float iconSize = 30;
         float buffer = 10;
-        float xheart = aiPlayer.x - VIEWPORT_WIDTH /2 +buffer;
-        float yheart = aiPlayer.y + VIEWPORT_HEIGHT/2 - iconSize -buffer;
-        int lives = aiPlayer.getLives();
+        float xheart = player.x - VIEWPORT_WIDTH /2 +buffer;
+        float yheart = player.y + VIEWPORT_HEIGHT/2 - iconSize -buffer;
+        int lives = player.getLives();
         for(int i = 0; i < lives; i ++) {
             game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
 
@@ -163,24 +169,26 @@ public class GameScreen implements Screen {
 
         //draw shield icon
         float shieldSize = 50;
-        float xShield =  aiPlayer.x + VIEWPORT_WIDTH /2 - shieldSize -buffer;
-        float yShield = aiPlayer.y + VIEWPORT_HEIGHT/2 - (shieldSize *3) ;
+        float xShield =  player.x + VIEWPORT_WIDTH /2 - shieldSize -buffer;
+        float yShield = player.y + VIEWPORT_HEIGHT/2 - (shieldSize *3) ;
         game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
 
         //sword icon
+        /*
         float swordSize = 50;
-        float xSword =  aiPlayer.x + VIEWPORT_WIDTH /2 - swordSize - buffer;
-        float ySword = aiPlayer.y + VIEWPORT_HEIGHT/2 - (swordSize *2) ;
+        float xSword =  player.x + VIEWPORT_WIDTH /2 - swordSize - buffer;
+        float ySword = player.y + VIEWPORT_HEIGHT/2 - (swordSize *2) ;
         game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
-
+        */
         //draws coin icon
-        float xCoin = aiPlayer.x - (VIEWPORT_WIDTH /2) ;
-        float yCoin = aiPlayer.y + VIEWPORT_HEIGHT/2 - ( iconSize*3) -buffer;
+
+        float xCoin = player.x - (VIEWPORT_WIDTH /2) ;
+        float yCoin = player.y + VIEWPORT_HEIGHT/2 - ( iconSize*3) -buffer;
         game.batch.draw(coinTexture, xCoin, yCoin,iconSize*2 , iconSize*2);
 
         //audio icon
-        float xAudio = aiPlayer.x + VIEWPORT_WIDTH /2 -(iconSize*3);
-        float yAudio = aiPlayer.y + VIEWPORT_HEIGHT/2 - iconSize - buffer ;
+        float xAudio = player.x + VIEWPORT_WIDTH /2 -(iconSize*3);
+        float yAudio = player.y + VIEWPORT_HEIGHT/2 - iconSize - buffer ;
         Drawable drawable = new TextureRegionDrawable(new TextureRegion(audioButtonActive));
         ImageButton audioButton= new ImageButton(drawable);
         audioButton.setX(xAudio);
@@ -193,13 +201,14 @@ public class GameScreen implements Screen {
             audioButton.setBackground(drawable);
         }
 
-
-        aiPlayer.render(game.batch);
+        // need way to physically move ai player
+        player.render(game.batch);
+//        aiPlayer.render(game.batch);
         game.batch.end();
 
         //camera
-//
-        cam.update(aiPlayer.x, aiPlayer.y);
+        cam.update(player.x, player.y);
+//        aiCam.update(aiPlayer.x, aiPlayer.y);
     }
 
 
@@ -228,6 +237,7 @@ public class GameScreen implements Screen {
         tileMap.dispose();
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
-        aiPlayer.dispose();
+        player.dispose();
+//        aiPlayer.dispose();
     }
 }

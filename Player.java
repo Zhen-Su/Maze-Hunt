@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.project.mazegame.tools.Pair;
 
 
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class Player {
 //        Pair gen = genSpace(60, 0, 60, 0);
 //        x = gen.getX();
 //        y = gen.getY();
+        // will need to adnust so cam is still central
         x = VIEWPORT_WIDTH / 2;
         y = VIEWPORT_HEIGHT / 2;
 
@@ -62,15 +64,18 @@ public class Player {
 
     }
     // modify and override
+
     public void update (float delta){
         // update player movement
-
+	// will look to see if there is some way of implementing that in ai class	
         if (RIGHT_TOUCHED) {
             //try move player right
             SCROLLTRACKER_X += speed;
             //check player isn't in a wall
             if(!checkCollisionMap(x, y)) {
                 //move player back if needed
+                System.out.println(x);
+                System.out.println(y);
                 System.out.println("hit right wall");
                 SCROLLTRACKER_X -= speed;
             }
@@ -78,8 +83,11 @@ public class Player {
         }
         if (LEFT_TOUCHED) {
             if (x > 0) {
+                System.out.println(x);
                 SCROLLTRACKER_X -= speed;
                 if(!checkCollisionMap(x,y)) {
+                    System.out.println(x);
+                    System.out.println(y);
                     System.out.println("hit left wall");
                     SCROLLTRACKER_X += speed;
                 }
@@ -89,6 +97,8 @@ public class Player {
             if (y < VIEWPORT_HEIGHT - height) {
                 SCROLLTRACKER_Y += speed;
                 if(!checkCollisionMap(x, y)) {
+                    System.out.println(x);
+                    System.out.println(y);
                     System.out.println("hit top wall");
                     SCROLLTRACKER_Y -= speed;
                 }
@@ -98,6 +108,8 @@ public class Player {
             if (y > 0) {
                 SCROLLTRACKER_Y -= speed;
                 if(!checkCollisionMap(x, y  )) {
+                    System.out.println(x);
+                    System.out.println(y);
                     System.out.println("hit bottom wall");
                     SCROLLTRACKER_Y += speed;
                 }
