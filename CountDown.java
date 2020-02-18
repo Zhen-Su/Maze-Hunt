@@ -4,7 +4,7 @@ import java.util.TimerTask;
 import java.lang.Object;
 
 
-Public class CountDown {
+public class CountDown {
 	Timer timer = new Timer();
 	int time = 60000;
 	TimerTask task = new TimerTask() {
@@ -19,7 +19,7 @@ Public class CountDown {
 	};
 
 	public void start() {
-		timer.scheduleAtFixedRate(task, time);
+		timer.scheduleAtFixedRate(task, time, 0);
 	}
 
 	public void main() {
