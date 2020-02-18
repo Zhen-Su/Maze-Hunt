@@ -20,6 +20,6 @@ public class ItemCell {
 	}
 
 	public String toString() {
-		return  x + " , " + y ;
+		return "(" + x + " , " + y + ")" ;
 	}
 }

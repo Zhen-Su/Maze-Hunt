@@ -1,6 +1,8 @@
 package com.project.mazegame.objects;
 
 import static com.project.mazegame.tools.Variables.*;
+
+import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
 import java.util.ArrayList;
 
@@ -28,7 +30,7 @@ public class Player {
     public boolean hasSword;
     
     public int coins;
-    public int health;
+    public int health = 5;
     private int ID;
     public int swordDamage;
     
@@ -44,11 +46,9 @@ public class Player {
         this.coins = 0;
         this.name = name;
         this.items = new ArrayList<>();
-        // this.position = new Point(0, 0);
         this.position = new ItemCell();
         this.swordDamage = 0;
         this.ID = ID;
-    	
     	this.collisionLayer = collisionLayer;
     	
         x = VIEWPORT_WIDTH / 2;
@@ -58,6 +58,7 @@ public class Player {
         
         width = player_middle.getWidth(); 
         height = player_middle.getHeight(); 
+        ArrayList<Item> items = new ArrayList<Item>();
         
     }
      
@@ -72,7 +73,7 @@ public class Player {
             //check player isn't in a wall
             if(!checkCollisionMap(x, y)) { 
             	//move player back if needed
-            	System.out.println("hit right wall");
+            	
                	CAMERA_X -= speed;
             }
           
@@ -81,7 +82,7 @@ public class Player {
             if (x > 0) {
             	CAMERA_X -= speed;
             	if(!checkCollisionMap(x,y)) {
-            		System.out.println("hit left wall");
+            		
             		CAMERA_X += speed;
             	}
             }
@@ -90,7 +91,7 @@ public class Player {
             if (y < VIEWPORT_HEIGHT - height) {
             	CAMERA_Y += speed;
                 if(!checkCollisionMap(x, y)) {
-                	System.out.println("hit top wall");
+                	
                 	CAMERA_Y -= speed;
                 }
             }
@@ -99,7 +100,7 @@ public class Player {
             if (y > 0) {
             	CAMERA_Y -= speed;
                 if(!checkCollisionMap(x, y  )) {
-                	System.out.println("hit bottom wall");
+                	
                 	CAMERA_Y += speed;
                 } 
             }
@@ -117,10 +118,10 @@ public class Player {
     public void render (SpriteBatch sb){
     	sb.draw(player,x- (width/2),y - (height/2));
     
-        if(hasSword) {	
+        if(this.items.contains("sword")) {	  // possible errors may occur
             sb.draw(sword,(float)(x),y - (height/4),50,50);
         }
-         if(hasShield) {
+         if(this.items.contains("shield")) {
             sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
         }
 
@@ -131,7 +132,7 @@ public class Player {
         player_up = new Texture("playerRedBackCrop.png");
         player_middle = new Texture("playerRedFrontCrop.png");
         player_down = new Texture("playerRedFrontCrop.png");
-        sword = new Texture("sword.png");
+        sword = new Texture("SWORDluv.png");
         shield = new Texture("shield.png");
     }
     
@@ -166,42 +167,30 @@ public class Player {
             & cell.getTile().getProperties().containsKey("isWall");
     }
     
-    /*public void decreaseHealth() {
-        this.health--;
-        
-        if (this.health == 0) {
-          this.death();
-        }
-      }*/
     public void decreaseHealth(int number) {
-        this.health -= number;
-        if(health <= 0) {
-          this.death();
-        }
+      this.health -= number;
+      if(health <= 0) {
+         this.death();
       }
+    }
     
     public void generateHealth() {
-        if(health != 5) {
+      if(this.health != 9) {
         this.health++;
-        }
       }
+    }
     
-    public void pickUpCoins(int coinPick) {
-        this.coins += coinPick;
+
+    private MazeGame game;
+    
+    public void pickUpItem(Item itemPicked , Collect co) {
         
-      }
-    
-    public void pickUpCoins() {
-        this.coins++;
-      }
-    
-    public void pickUpItem(Item itemPicked) {
-        Collect co = new Collect(); // will need to be changed maybe put the collect class in parameters
         switch(itemPicked.getType()) {
           case "Coin":
-            this.pickUpCoins();
+            this.coins++;
             //remove from map
-            co.pickedUp(itemPicked);
+//            co.pickedUp(itemPicked);
+            
             break;
           case "Shield":
 
@@ -229,8 +218,8 @@ public class Player {
             co.damagingPotion(itemPicked, this);
             hasDamagingPotion = false;
             break;
-          default:
-            throw new Exception("Item does not exist yet");
+          /*default:
+            throw new Exception("Item does not exist yet");*/
         }
       }
     
