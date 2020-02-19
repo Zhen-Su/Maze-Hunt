@@ -109,18 +109,8 @@ public class GameScreen implements Screen {
         player = new Player(this.collisionLayer,"james",123);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
         
-
-
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-        //coinLayer = (TiledMapTileLayer) tileMap.getLayers().get("coinLayer");
-        //objects
-
-
-        //System.out.println("Tile's width " + collisionLayer.getWidth());
-        
-
-
-
+     
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");
         exitButtonInactive = new Texture("exit_button_inactive.png");
@@ -134,10 +124,7 @@ public class GameScreen implements Screen {
         shieldTexture = new Texture("shield.png");
         healingPotionTexture = new Texture("Potion.png");
         compassTexture = new Texture("RolledMap.png");
-        
-       
-        
-        
+         
     }
     int size;
     @Override
@@ -145,6 +132,7 @@ public class GameScreen implements Screen {
     	 //assuming it's a square map -> only need width of map and width of tile
         System.out.println("generating from gamescreen");
         generateMapItems((int) collisionLayer.getWidth(), 100 );
+        
         co = new Collect(game, player);
         System.out.println(mapItems);
         //System.out.println(positions);
@@ -180,7 +168,7 @@ public class GameScreen implements Screen {
         
         
         //rendering
-        //draw coins
+        //draw coin collectibles
 	    for(int i = 0; i < mapItems.size(); i ++) { 
 	    	Texture texture = heartTexture;
 	    	if (mapItems.get(i).getType() == "shield") {
@@ -207,22 +195,15 @@ public class GameScreen implements Screen {
 	    	
 		    int x = mapItems.get(i).getPosition().getX(); 
 		    int y = mapItems.get(i).getPosition().getY();
-		   
 		    game.batch.draw(texture,x   - SCROLLTRACKER_X, y  - SCROLLTRACKER_Y  ,100,100);   	
-	    	
 	    }
 
       
         //Collectibles pick up
 	    if (!(mapItems.size() == 0)) {
 	    	
-		    //System.out.println(mapItems);
-	        
-	       
-	      
-	       
-	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()-50) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+50) && 
-	            (player.position.getY() > co.nearestItem(player).getPosition().getY()-50) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+50)){
+	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 
+	            (player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
 	        	System.out.println("nearest " + co.nearestItem(player).getPosition().getX() + " , " + co.nearestItem(player).getPosition().getY() );
 		        System.out.println("player " + player.position.getX() + " , " + player.position.getY());
 	        	  
