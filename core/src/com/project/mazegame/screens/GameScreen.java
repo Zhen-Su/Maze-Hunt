@@ -1,6 +1,7 @@
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.project.mazegame.objects.*;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -61,6 +62,7 @@ public class GameScreen implements Screen {
     private OrthoCam cam;
 
     private Player player;
+    private AIPlayer aiPlayer;
     private InputHandler inputHandler;
     private float delta;
 
@@ -107,20 +109,11 @@ public class GameScreen implements Screen {
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         player = new Player(this.collisionLayer,"james",123);
+        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
         
-
-
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-        //coinLayer = (TiledMapTileLayer) tileMap.getLayers().get("coinLayer");
-        //objects
-
-
-        //System.out.println("Tile's width " + collisionLayer.getWidth());
-        
-
-
-
+     
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");
         exitButtonInactive = new Texture("exit_button_inactive.png");
@@ -134,10 +127,7 @@ public class GameScreen implements Screen {
         shieldTexture = new Texture("shield.png");
         healingPotionTexture = new Texture("Potion.png");
         compassTexture = new Texture("RolledMap.png");
-        
-       
-        
-        
+         
     }
     int size;
     @Override
@@ -145,6 +135,7 @@ public class GameScreen implements Screen {
     	 //assuming it's a square map -> only need width of map and width of tile
         System.out.println("generating from gamescreen");
         generateMapItems((int) collisionLayer.getWidth(), 100 );
+        
         co = new Collect(game, player);
         System.out.println(mapItems);
         //System.out.println(positions);
@@ -171,7 +162,7 @@ public class GameScreen implements Screen {
         //updates - player position
         inputHandler.update();
         player.update(delta);
-
+//        aiPlayer.update(delta);
         //draws tilemap
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
@@ -180,7 +171,7 @@ public class GameScreen implements Screen {
         
         
         //rendering
-        //draw coins
+        //draw coin collectibles
 	    for(int i = 0; i < mapItems.size(); i ++) { 
 	    	Texture texture = heartTexture;
 	    	if (mapItems.get(i).getType() == "shield") {
@@ -207,22 +198,15 @@ public class GameScreen implements Screen {
 	    	
 		    int x = mapItems.get(i).getPosition().getX(); 
 		    int y = mapItems.get(i).getPosition().getY();
-		   
 		    game.batch.draw(texture,x   - SCROLLTRACKER_X, y  - SCROLLTRACKER_Y  ,100,100);   	
-	    	
 	    }
 
       
         //Collectibles pick up
 	    if (!(mapItems.size() == 0)) {
 	    	
-		    //System.out.println(mapItems);
-	        
-	       
-	      
-	       
-	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()-50) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+50) && 
-	            (player.position.getY() > co.nearestItem(player).getPosition().getY()-50) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+50)){
+	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 
+	            (player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
 	        	System.out.println("nearest " + co.nearestItem(player).getPosition().getX() + " , " + co.nearestItem(player).getPosition().getY() );
 		        System.out.println("player " + player.position.getX() + " , " + player.position.getY());
 	        	  
@@ -263,18 +247,18 @@ public class GameScreen implements Screen {
         //exit button in top right corner
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-//            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-//            this.dispose();
-//            game.setScreen(new MenuScreen(this.game));
+            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
+            this.dispose();
+            game.setScreen(new MenuScreen(this.game));
         }
-//        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
-//            game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-//            if (Gdx.input.isTouched())
-//                Gdx.app.exit();
-//        }
-//        else {
-//            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-//        }
+        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
+           game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+           if (Gdx.input.isTouched())
+                Gdx.app.exit();
+        }
+       else {
+            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+        }
         
 
         //draw hearts in top left corner

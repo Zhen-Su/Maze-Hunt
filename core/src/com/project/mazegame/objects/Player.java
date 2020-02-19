@@ -253,7 +253,18 @@ public class Player {
         }
         //need to add shield stuffr
       }
-    
+    public int getLives() {
+    	return health;
+    }
+    public void dispose()
+    {
+        player_up.dispose();
+        player_down.dispose();
+        player_middle.dispose();
+        player.dispose();
+    }
+   
+    /*
     public void playerKillAI(AIPlayer AI) {
         if (AI.health == 0) {
         this.pickUpCoins(5);
@@ -283,21 +294,12 @@ public class Player {
     	return speed;
     }
 
-    public void dispose()
-    {
-        player_up.dispose();
-        player_down.dispose();
-        player_middle.dispose();
-        player.dispose();
-    }
-   
+
     public String toString() {
         return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
       }
     
-    public int getLives() {
-    	return health;
-    }
+   
     
   
     
@@ -310,5 +312,5 @@ public class Player {
     public int getY () {
     	return (int) y;
     } 
-    
+    */
 }
