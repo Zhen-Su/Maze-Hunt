@@ -12,8 +12,8 @@ import java.util.ArrayList;
 public class AIPlayer extends Player{
     protected Texture aiPlayer, player_up, player_middle, player_down, sword, shield;
     // constructor for ai player takes in same things as player so that it can use all attribues from parent
-    public AIPlayer(TiledMapTileLayer collisionLayer) {
-        super(collisionLayer);
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
+        super(collisionLayer, String name, int ID);
         /*
         this.loadPlayerTextures();
         this.width = player_middle.getWidth();
