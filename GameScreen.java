@@ -77,8 +77,8 @@ public class GameScreen implements Screen {
 
 
         //System.out.println("Tile's width " + collisionLayer.getWidth());
-        player = new Player(this.collisionLayer, "James", 123);
-        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
+        player = new Player(this.collisionLayer);
+        aiPlayer = new AIPlayer(this.collisionLayer);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
 //        aiCam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, aiPlayer.x, aiPlayer.y);
 

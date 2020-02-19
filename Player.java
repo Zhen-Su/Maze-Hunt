@@ -42,7 +42,7 @@ public class Player {
 
 
 
-    public Player(TiledMapTileLayer collisionLayer, String name, int ID) {
+    public Player(TiledMapTileLayer collisionLayer) {
         this.collisionLayer = collisionLayer;
 //        Pair gen = genSpace(60, 0, 60, 0);
 //        x = gen.getX();
@@ -57,10 +57,10 @@ public class Player {
         height = player_middle.getHeight();
 
         this.coins = 0;
-        this.name = name;
+//        this.name = name;
         this.items = new ArrayList<String>();
         this.swordDamage = 0;
-        this.ID = ID;
+//        this.ID = ID;
 
     }
     // modify and override
