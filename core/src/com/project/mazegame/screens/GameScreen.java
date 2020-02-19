@@ -62,20 +62,13 @@ public class GameScreen implements Screen {
 
     private Player player;
     private InputHandler inputHandler;
-<<<<<<< HEAD
-   
-=======
     private float delta;
->>>>>>> origin/andin
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
-<<<<<<< HEAD
-=======
     //private MapLayer objectLayer;
 
->>>>>>> origin/andin
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
@@ -83,7 +76,6 @@ public class GameScreen implements Screen {
     private Texture coinTexture;
     private Texture swordTexture;
     private Texture shieldTexture;
-<<<<<<< HEAD
     private Texture compassTexture;
     private Texture healingPotionTexture;
     private Texture audioButtonActive;
@@ -101,11 +93,18 @@ public class GameScreen implements Screen {
     private final int EXIT_HEIGHT = 20;
    
     public static ArrayList<Item> mapItems = new ArrayList<Item>();
-   
+       private Texture audioButtonActive;
+    private Texture audioButtonInactive;
+
+
+    private final int EXIT_WIDTH = 50;
+    private final int EXIT_HEIGHT = 20;
+    private final int EXIT_Y = VIEWPORT_HEIGHT;
+
    
     public GameScreen(MazeGame game) {
         this.game = game;
-        inputHandler = new InputHandler(this.game);
+        inputHandler = new InputHandler();
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -115,28 +114,6 @@ public class GameScreen implements Screen {
         player = new Player(this.collisionLayer,"james",123);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
         
-=======
-    private Texture audioButtonActive;
-    private Texture audioButtonInactive;
-
-
-    private final int EXIT_WIDTH = 50;
-    private final int EXIT_HEIGHT = 20;
-    private final int EXIT_Y = VIEWPORT_HEIGHT;
-
-    public GameScreen(MazeGame game) {
-        this.game = game;
-        inputHandler = new InputHandler();
-
-        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
-        tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-
-        //MapObjects mapObjects = tileMap.getLayers().get("Object Layer 1").getObjects();
-        //System.out.println("coins : " + mapObjects.getCount());
-        //  MapObject mo = mapObjects.get(55);
-
-
-
 
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
@@ -145,17 +122,15 @@ public class GameScreen implements Screen {
 
 
         //System.out.println("Tile's width " + collisionLayer.getWidth());
-        player = new Player(this.collisionLayer);
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.x, player.y);
+        
 
 
->>>>>>> origin/andin
+
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");
         exitButtonInactive = new Texture("exit_button_inactive.png");
         audioButtonActive = new Texture("audioOn.png");
         audioButtonInactive = new Texture("audioOff.png");
-<<<<<<< HEAD
         
         
         heartTexture = new Texture("heart.png");
@@ -193,38 +168,10 @@ public class GameScreen implements Screen {
         
     	}
     	
-=======
-
-
-        heartTexture = new Texture("heart.png");
-        coinTexture = new Texture("coin.png");
-        swordTexture = new Texture("sword.png");
-        shieldTexture = new Texture("shield.png");
-
-
-        //sort out where coins are going
-
-        //choose the x and y cooridinates, multiply these with the collision layer tile widht/height. This should work
-
-        //then simply draw coins in a loop using the coin texture
-
-        //selma's code
-    }
-
-
-    @Override
-    public void show() {
-
-    }
-
-    @Override
-    public void render(float delta) {
->>>>>>> origin/andin
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         delta = Gdx.graphics.getDeltaTime();
-<<<<<<< HEAD
     
         //updates - player position
         inputHandler.update();
@@ -324,33 +271,6 @@ public class GameScreen implements Screen {
 //            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
 //            this.dispose();
 //            game.setScreen(new MenuScreen(this.game));
-=======
-
-        System.out.println("player x: " + (player.x + SCROLLTRACKER_X));
-        System.out.println("player y: " + (player.y + SCROLLTRACKER_Y));
-
-        //updates
-        inputHandler.update();
-        player.update(delta);
-
-        //tilemap
-        tileMapRenderer.setView(cam.cam);
-        tileMapRenderer.render();
-
-        //rendering
-        game.batch.begin();
-
-        float x = player.x + VIEWPORT_WIDTH / 2 - EXIT_WIDTH;
-        float y = player.y + VIEWPORT_HEIGHT / 2 - EXIT_HEIGHT;
-
-        //exit button in top right corner
-        game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-            this.dispose();
-//            game.batch.end();
-            game.setScreen(new MenuScreen(this.game));
->>>>>>> origin/andin
         }
 //        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
 //            game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
@@ -360,11 +280,7 @@ public class GameScreen implements Screen {
 //        else {
 //            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
 //        }
-<<<<<<< HEAD
         
-=======
-
->>>>>>> origin/andin
 
         //draw hearts in top left corner
         float iconSize = 30;
@@ -373,7 +289,6 @@ public class GameScreen implements Screen {
         float yheart = player.y + VIEWPORT_HEIGHT/2 - iconSize -buffer;
         int lives = player.getLives();
         for(int i = 0; i < lives; i ++) {
-<<<<<<< HEAD
         	  game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
         	  xheart += (iconSize + buffer);
         }
@@ -398,30 +313,6 @@ public class GameScreen implements Screen {
 	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin,iconSize*2 , iconSize*2);
         }
         
-=======
-            game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
-
-            xheart += (iconSize + buffer);
-        }
-
-        //draw shield icon
-        float shieldSize = 50;
-        float xShield =  player.x + VIEWPORT_WIDTH /2 - shieldSize -buffer;
-        float yShield = player.y + VIEWPORT_HEIGHT/2 - (shieldSize *3) ;
-        game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
-
-        //sword icon
-        float swordSize = 50;
-        float xSword =  player.x + VIEWPORT_WIDTH /2 - swordSize - buffer;
-        float ySword = player.y + VIEWPORT_HEIGHT/2 - (swordSize *2) ;
-        game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
-
-        //draws coin icon
-        float xCoin = player.x - (VIEWPORT_WIDTH /2) ;
-        float yCoin = player.y + VIEWPORT_HEIGHT/2 - ( iconSize*3) -buffer;
-        game.batch.draw(coinTexture, xCoin, yCoin,iconSize*2 , iconSize*2);
-
->>>>>>> origin/andin
         //audio icon
         float xAudio = player.x + VIEWPORT_WIDTH /2 -(iconSize*3);
         float yAudio = player.y + VIEWPORT_HEIGHT/2 - iconSize - buffer ;
@@ -433,23 +324,12 @@ public class GameScreen implements Screen {
         audioButton.setHeight(iconSize);
         //audioButton.draw
         if (audioButton.isOver()) {
-<<<<<<< HEAD
         	drawable = new TextureRegionDrawable(new TextureRegion(audioButtonInactive));
         	audioButton.setBackground(drawable);
         }
 
         player.render(game.batch);
         game.batch.end();
-=======
-            drawable = new TextureRegionDrawable(new TextureRegion(audioButtonInactive));
-            audioButton.setBackground(drawable);
-        }
-
-
-        player.render(game.batch);
-        game.batch.end();
-
->>>>>>> origin/andin
         //camera
         cam.update(player.x, player.y);
     }
@@ -482,7 +362,6 @@ public class GameScreen implements Screen {
         exitButtonInactive.dispose();
         player.dispose();
     }
-<<<<<<< HEAD
     
     public void generateMapItems( int widthInTiles, int tileWidth ) {
         HashSet<String> positions = new HashSet<String>();
@@ -579,6 +458,4 @@ public class GameScreen implements Screen {
 		}
 		System.out.println(positions);
 	}
-=======
->>>>>>> origin/andin
 }
