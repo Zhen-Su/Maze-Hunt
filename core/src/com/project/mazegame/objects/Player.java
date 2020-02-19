@@ -64,44 +64,44 @@ public class Player {
      
     public void update (float delta){
     	// update player movement
-    	this.position.setX((int) x + (int)CAMERA_X); 
-    	this.position.setY((int) y + (int)CAMERA_Y); 
+    	this.position.setX((int) x + (int)SCROLLTRACKER_X); 
+    	this.position.setY((int) y + (int)SCROLLTRACKER_Y); 
         
         if (RIGHT_TOUCHED) {
         	//try move player right
-            CAMERA_X += speed; 
+            SCROLLTRACKER_X += speed; 
             //check player isn't in a wall
             if(!checkCollisionMap(x, y)) { 
             	//move player back if needed
             	
-               	CAMERA_X -= speed;
+               	SCROLLTRACKER_X -= speed;
             }
           
         }
         if (LEFT_TOUCHED) {
             if (x > 0) {
-            	CAMERA_X -= speed;
+            	SCROLLTRACKER_X -= speed;
             	if(!checkCollisionMap(x,y)) {
             		
-            		CAMERA_X += speed;
+            		SCROLLTRACKER_X += speed;
             	}
             }
         }
         if (UP_TOUCHED) {
             if (y < VIEWPORT_HEIGHT - height) {
-            	CAMERA_Y += speed;
+            	SCROLLTRACKER_Y += speed;
                 if(!checkCollisionMap(x, y)) {
                 	
-                	CAMERA_Y -= speed;
+                	SCROLLTRACKER_Y -= speed;
                 }
             }
         }
         if (DOWN_TOUCHED) {
             if (y > 0) {
-            	CAMERA_Y -= speed;
+            	SCROLLTRACKER_Y -= speed;
                 if(!checkCollisionMap(x, y  )) {
                 	
-                	CAMERA_Y += speed;
+                	SCROLLTRACKER_Y += speed;
                 } 
             }
         }
@@ -132,14 +132,14 @@ public class Player {
         player_up = new Texture("playerRedBackCrop.png");
         player_middle = new Texture("playerRedFrontCrop.png");
         player_down = new Texture("playerRedFrontCrop.png");
-        sword = new Texture("SWORDluv.png");
+        sword = new Texture("sword2.png");
         shield = new Texture("shield.png");
     }
     
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
     	//Overall x and y of player
-        float xWorld = possibleX + CAMERA_X;
-        float yWorld = possibleY + CAMERA_Y; 
+        float xWorld = possibleX + SCROLLTRACKER_X;
+        float yWorld = possibleY + SCROLLTRACKER_Y; 
         
         boolean collisionWithMap = false;
   
@@ -210,7 +210,7 @@ public class Player {
             break;
           case "Healing Potion":
             hasHealingPotion = true;
-            co.healingPotion(itemPicked, this);
+            co.healingPotion(this);
             hasDamagingPotion = false;
             break;
           case "Damaging Potion":

@@ -93,12 +93,7 @@ public class GameScreen implements Screen {
     private final int EXIT_HEIGHT = 20;
    
     public static ArrayList<Item> mapItems = new ArrayList<Item>();
-       private Texture audioButtonActive;
-    private Texture audioButtonInactive;
 
-
-    private final int EXIT_WIDTH = 50;
-    private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
 
    
@@ -135,7 +130,7 @@ public class GameScreen implements Screen {
         
         heartTexture = new Texture("heart.png");
         coinTexture = new Texture("coin.png");
-        swordTexture = new Texture("SWORDluv.png");
+        swordTexture = new Texture("sword2.png");
         shieldTexture = new Texture("shield.png");
         healingPotionTexture = new Texture("Potion.png");
         compassTexture = new Texture("RolledMap.png");
@@ -213,7 +208,7 @@ public class GameScreen implements Screen {
 		    int x = mapItems.get(i).getPosition().getX(); 
 		    int y = mapItems.get(i).getPosition().getY();
 		   
-		    game.batch.draw(texture,x   - CAMERA_X, y  - CAMERA_Y  ,100,100);   	
+		    game.batch.draw(texture,x   - SCROLLTRACKER_X, y  - SCROLLTRACKER_Y  ,100,100);   	
 	    	
 	    }
 
