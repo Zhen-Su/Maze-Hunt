@@ -9,21 +9,19 @@ import java.lang.Integer;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.project.mazegame.tools.ItemCell;
+import com.project.mazegame.tools.Coordinate;
 //import com.project.mazegame.tools.Cell;
 //import com.project.mazegame.Pair;
 import com.project.mazegame.tools.Variables;
 
 public class Collect {
-	public ItemCell position = new ItemCell();
+	public Coordinate position = new Coordinate();
 	public Item item = new Item(" ", position);
-	
-	
 	
 	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
-	public ArrayList<ItemCell> positions;
+	public ArrayList<Coordinate> positions;
 	public Collect (MazeGame game ,Player player) {
 		test = new GameScreen(game);
 		
@@ -44,7 +42,7 @@ public class Collect {
 	}
 
 	public Item nearestItem(Player player) {
-		ItemCell position = new ItemCell();
+		Coordinate position = new Coordinate();
 		position = mapItems.get(0).getPosition();
 		
 //		Item nearestItem = new Item(" ", position);
@@ -55,7 +53,7 @@ public class Collect {
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
 
-//			int tempDist = player.position.getX() + player.position.getY() - tempX - tempY;
+//			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
 			int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
 			//System.out.println("temp Dist: " + tempDist);
 //			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
@@ -67,6 +65,7 @@ public class Collect {
 				//System.out.println("found shorter!");
 			}
 		}
+		System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
 		return nearestItem;
 	}
 	

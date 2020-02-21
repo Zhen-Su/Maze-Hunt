@@ -1,15 +1,15 @@
 package com.project.mazegame.objects;
 
 //import com.project.mazegame.Pair;
-import com.project.mazegame.tools.ItemCell;
+import com.project.mazegame.tools.Coordinate;
 
 public class Item {
 	private String type;
 	private int x;
 	private int y;
-	private ItemCell itemPosition = new ItemCell ();
+	private Coordinate itemPosition = new Coordinate (x,y);
 
-	public Item(String type, ItemCell itemPosition) {
+	public Item(String type, Coordinate itemPosition) {
 		this.type = type;
 		this.itemPosition = itemPosition;
 	}
@@ -23,11 +23,11 @@ public class Item {
 		return type;
 	}
 
-	public void setPosition(ItemCell itemPosition) {
+	public void setPosition(Coordinate itemPosition) {
 		this.itemPosition = itemPosition;
 	}
 
-	public ItemCell getPosition() {
+	public Coordinate getPosition() {
 		return itemPosition;
 	}
 

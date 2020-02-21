@@ -1,6 +1,7 @@
 package com.project.mazegame.objects;
 
 import com.badlogic.gdx.graphics.Texture;
+
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
@@ -13,7 +14,7 @@ public class AIPlayer extends Player{
     protected Texture aiPlayer, player_up, player_middle, player_down, sword, shield;
     // constructor for ai player takes in same things as player so that it can use all attribues from parent
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
-        super(collisionLayer, String name, int ID);
+        super(collisionLayer, name,  ID);
         /*
         this.loadPlayerTextures();
         this.width = player_middle.getWidth();
@@ -83,7 +84,8 @@ public class AIPlayer extends Player{
     }
     // overrides methos to make sure they are in the ai class
     @Override
-//    public void render (SpriteBatch sb) {super.render(sb); }
+    public void render (SpriteBatch sb) {super.render(sb); }
+    /*
     public void render (SpriteBatch sb){
         sb.draw(aiPlayer,super.x- (width/2),super.y - (height/2));
 
@@ -102,8 +104,9 @@ public class AIPlayer extends Player{
 
 
         }
+        */
 
-    }
+    
 
     @Override
     public void loadPlayerTextures() {super.loadPlayerTextures();
@@ -120,7 +123,4 @@ public class AIPlayer extends Player{
 
     @Override
     public boolean isCellBlocked(float x, float y) {return super.isCellBlocked(x, y);}
-
-    @Override
-    public boolean IsCellCoin(float x, float y) {return super.IsCellCoin(x, y);}
 }
