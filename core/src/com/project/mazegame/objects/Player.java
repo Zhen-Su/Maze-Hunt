@@ -245,7 +245,7 @@ public class Player {
         }
         //need to add shield stuffr
       }
-    public int getHealth() {
+    public int getLives() {
     	return health;
     }
     public void dispose()

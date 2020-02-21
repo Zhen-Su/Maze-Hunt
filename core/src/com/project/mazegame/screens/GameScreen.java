@@ -104,6 +104,7 @@ public class GameScreen implements Screen {
     public void show() {
     	 //assuming it's a square map -> only need width of map and width of tile
         generateMapItems((int) collisionLayer.getWidth(), 100 );
+        
         co = new Collect(game, player);
         tempMapItemssize = mapItems.size();
     }
