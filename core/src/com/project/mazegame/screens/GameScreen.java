@@ -104,7 +104,6 @@ public class GameScreen implements Screen {
     public void show() {
     	 //assuming it's a square map -> only need width of map and width of tile
         generateMapItems((int) collisionLayer.getWidth(), 100 );
-        
         co = new Collect(game, player);
         tempMapItemssize = mapItems.size();
     }
@@ -140,6 +139,7 @@ public class GameScreen implements Screen {
         drawCollectibles();
       
         System.out.println("here");
+        System.out.println(player.position.getX() + " , " + co.nearestItem(player).getPosition().getX());
         //Collectibles pick up
 	    if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception	
 	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 

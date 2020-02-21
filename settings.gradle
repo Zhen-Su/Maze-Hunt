@@ -1,5 +1,0 @@
-<<<<<<< HEAD
-include 'desktop', 'android', 'ios', 'html', 'core'
-=======
-include 'desktop', 'android', 'core'
->>>>>>> origin/andin

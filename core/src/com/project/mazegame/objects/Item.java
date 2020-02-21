@@ -7,7 +7,7 @@ public class Item {
 	private String type;
 	private int x;
 	private int y;
-	private Coordinate itemPosition = new Coordinate (x,y);
+	private Coordinate itemPosition = new Coordinate ();
 
 	public Item(String type, Coordinate itemPosition) {
 		this.type = type;

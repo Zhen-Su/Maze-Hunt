@@ -55,8 +55,8 @@ public class Player {
      
     public void update (float delta){
     	// update player movement
-    	this.position.changeX((int) x ); 
-    	this.position.changeY((int) y ); 
+    	this.position.setX((int) x ); 
+    	this.position.setY((int) y ); 
         
         if (RIGHT_TOUCHED) {
         	//try move player right
@@ -245,7 +245,7 @@ public class Player {
         }
         //need to add shield stuffr
       }
-    public int getLives() {
+    public int getHealth() {
     	return health;
     }
     public void dispose()
