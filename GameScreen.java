@@ -122,7 +122,7 @@ public class GameScreen implements Screen {
         inputHandler.update();
         player.update(delta);
 
-        aiPlayer.update(delta);
+//        aiPlayer.update(delta);
 
         //tilemap
         tileMapRenderer.setView(cam.cam);

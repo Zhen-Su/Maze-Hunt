@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.project.mazegame.tools.Pair;
+import com.project.mazegame.tools.Coordinate;
+//import com.project.mazegame.tools.Pair;
 import static com.project.mazegame.tools.Variables.SCROLLTRACKER_Y;
 import static com.project.mazegame.tools.Variables.SCROLLTRACKER_X;
 import java.util.ArrayList;
@@ -23,26 +24,26 @@ public class AIPlayer extends Player{
     }
 
     // method which checks all valid moves may need to be fixed
-    public ArrayList<Pair> avaibleMoves(float x, float y) {
-        float move = 5;
-        ArrayList<Pair> moves = new ArrayList<>();
+    public ArrayList<Coordinate> avaibleMoves(int x, int y) {
+        int move = 5;
+        ArrayList<Coordinate> moves = new ArrayList<>();
         if (checkCollisionMap((x + move), y) ){
-            moves.add(new Pair((x + move), y));
+            moves.add(new Coordinate((x + move), y));
         }
         if (checkCollisionMap((x -move), y)) {
-            moves.add(new Pair((x - move), y));
+            moves.add(new Coordinate((x - move), y));
         }
         if (checkCollisionMap(x, (y + move))) {
-            moves.add(new Pair(x, (y + move)));
+            moves.add(new Coordinate(x, (y + move)));
         }
         if (checkCollisionMap(x, (y - move))) {
-            moves.add(new Pair(x, (y - move)));
+            moves.add(new Coordinate(x, (y - move)));
         }
         return moves;
     }
 
     // takes in random number and applies it. if no open doors just stays in current position
-    public Pair direction(ArrayList<Pair> openDoor) {
+    public Coordinate direction(ArrayList<Coordinate> openDoor) {
         if (openDoor.size() <= 0) {
             return null;
         }
@@ -60,7 +61,7 @@ public class AIPlayer extends Player{
         while(true) {
             try {
                 // contantsnatly throwing exeption possibly becasue not linked to player
-                Pair moveToTake = direction(avaibleMoves(x, y));
+                Coordinate moveToTake = direction(avaibleMoves(x, y));
                 System.out.println(moveToTake.toString());
                 /*
                 if (x == moveToTake.getX() && y < moveToTake.getY()) {
@@ -73,8 +74,8 @@ public class AIPlayer extends Player{
                     SCROLLTRACKER_X -= super.speed;
                 }
                 */
-                this.x = moveToTake.getX();
-                this.y = moveToTake.getY();
+                this.x = (int) moveToTake.getX();
+                this.y = (int) moveToTake.getY();
                 Thread.sleep(500);
             } catch (Exception e) {
                 System.out.println("Something gone wrong");

@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.project.mazegame.tools.Pair;
+import com.project.mazegame.tools.Coordinate;
+//import com.project.mazegame.tools.Pair;
 
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 
 
 public class Player {
-    public float x, y;
+    public int x, y;
     protected Texture player, player_up, player_middle, player_down, sword,shield;
     protected float speed = 6;
     protected float width, height;
@@ -156,15 +157,15 @@ public class Player {
         shield = new Texture("shield.png");
     }
 
-    public Pair genSpace(float maxX, float minX, float maxY, float minY) {
-        float x = (float)Math.random() * (maxX - minX + 1) + minX;
-        float y = (float)Math.random() * (maxY - minY + 1) + minY;
+    public Coordinate genSpace(int maxX, int minX, int maxY, int minY) {
+        int x = (int)Math.random() * (maxX - minX + 1) + minX;
+        int y = (int)Math.random() * (maxY - minY + 1) + minY;
         while(!checkCollisionMap(x, y)) {
-            x = (float)Math.random() * (maxX - minX + 1) + minX;
-            y = (float)Math.random() * (maxY - minY + 1) + minY;
+            x = (int)Math.random() * (maxX - minX + 1) + minX;
+            y = (int)Math.random() * (maxY - minY + 1) + minY;
         }
 
-        return new Pair(x, y);
+        return new Coordinate(x, y);
     }
 
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
@@ -244,9 +245,9 @@ public class Player {
         System.out.println("Player has died respawning now");
         this.lives = 5;
         this.coins = 0;
-        Pair newSpace = genSpace(100, 0, 100, 0);
-        this.x = newSpace.getX();
-        this.y = newSpace.getY();
+        Coordinate newSpace = genSpace(100, 0, 100, 0);
+        this.x = (int) newSpace.getX();
+        this.y = (int) newSpace.getY();
 
         this.hasCompass = false;
         this.hasDamagingPotion = false;
