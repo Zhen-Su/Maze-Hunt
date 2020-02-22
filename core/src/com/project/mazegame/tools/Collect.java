@@ -54,6 +54,7 @@ public class Collect {
 			int tempY = mapItems.get(i).getPosition().getY();
 
 //			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
+			System.out.println("player.position x:"+player.position.getX());
 			int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
 			//System.out.println("temp Dist: " + tempDist);
 //			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
