@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-#Sun Feb 02 21:47:29 GMT 2020
-base.0=D\:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out
-=======
-#Thu Feb 13 14:37:00 GMT 2020
-base.0=D\:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out
->>>>>>> origin/andin
+#Sat Feb 22 00:56:53 GMT 2020
+base.0=/Users/kevin/Downloads/project/android/build/intermediates/dex/debug/mergeDexDebug/out
 path.0=classes.dex
 renamed.0=classes.dex

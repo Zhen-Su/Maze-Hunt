@@ -1,11 +1,20 @@
 {
     "logs": [
         {
-<<<<<<< HEAD
-            "outputFile": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
+            "outputFile": "/Users/kevin/Downloads/project/android/build/intermediates/incremental/mergeDebugResources/merged.dir/values/values.xml",
             "map": [
                 {
-                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\res\\values\\strings.xml",
+                    "source": "/Users/kevin/Downloads/project/android/res/values/color.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                },
+                {
+                    "source": "/Users/kevin/Downloads/project/android/res/values/strings.xml",
                     "from": {
                         "startLines": "3",
                         "startColumns": "4",
@@ -22,13 +31,7 @@
                     }
                 },
                 {
-                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\res\\values\\styles.xml",
-=======
-            "outputFile": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
-            "map": [
-                {
-                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\res\\values\\styles.xml",
->>>>>>> origin/andin
+                    "source": "/Users/kevin/Downloads/project/android/res/values/styles.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -44,37 +47,6 @@
                         "endLines": "11",
                         "endColumns": "12",
                         "endOffsets": "622"
-                    }
-                },
-                {
-<<<<<<< HEAD
-                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\Mambow2Tutorial\\android\\res\\values\\color.xml",
-=======
-                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\res\\values\\strings.xml",
-                    "from": {
-                        "startLines": "3",
-                        "startColumns": "4",
-                        "startOffsets": "56",
-                        "endColumns": "52",
-                        "endOffsets": "104"
-                    },
-                    "to": {
-                        "startLines": "3",
-                        "startColumns": "4",
-                        "startOffsets": "111",
-                        "endColumns": "52",
-                        "endOffsets": "159"
-                    }
-                },
-                {
-                    "source": "D:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\res\\values\\color.xml",
->>>>>>> origin/andin
-                    "from": {
-                        "startLines": "2",
-                        "startColumns": "4",
-                        "startOffsets": "55",
-                        "endColumns": "55",
-                        "endOffsets": "106"
                     }
                 }
             ]

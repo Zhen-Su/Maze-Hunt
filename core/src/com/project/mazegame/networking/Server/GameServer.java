@@ -52,7 +52,7 @@ public class GameServer {
         while(isRunning) {
             Socket s =null;
             try {
-                printMsg("Waiting for a client……");
+                printMsg("Waiting for a client");
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
 
                 //Receive client's UDP Port from GameClient

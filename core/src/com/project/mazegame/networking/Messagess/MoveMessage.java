@@ -72,19 +72,25 @@ public class MoveMessage implements Message {
             int newy = dis.readInt();
             for(MultiPlayer t : gameClient.getPlayers()){
                 if(t.getId() == id){
+
                     //change coordinate and direction
                     t.setDir(dir);
-                    t.setpX(newx);
-                    t.setpY(newy);
+                    t.getPosition().setX(newx);
+                    t.getPosition().setY(newy);
 //                    System.out.println("zhen x: "+x);
 //                    System.out.println("zhen y:" +y);
+
                     //change player texture
                     if(t.bU ==true && t.bD == false){
                         t.setPlayerTexture(t.getPlayer_up());
                     }else if(t.bD==true&&t.bU==false){
                         t.setPlayerTexture(t.getPlayer_down());
+                    }else if(t.bL==true&&t.bR==false){
+                        t.setPlayerTexture(t.getPlayer_left());
+                    }else if(t.bR==true&&t.bL==false){
+                        t.setPlayerTexture(t.getPlayer_right());
                     }else {
-                        t.setPlayerTexture(t.getPlayer_middle());
+                        t.setPlayerTexture(t.getPlayer_down());
                     }
                     break;
                 }

@@ -17,11 +17,7 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-<<<<<<< HEAD
-        applicationId "com.mygdx.game"
-=======
         applicationId "com.norakomi.mambow2"
->>>>>>> origin/andin
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 1
@@ -90,9 +86,5 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-<<<<<<< HEAD
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.mygdx.game/com.mygdx.game.AndroidLauncher'
-=======
     commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.norakomi.mambow2/com.norakomi.mambow2.AndroidLauncher'
->>>>>>> origin/andin
 }
