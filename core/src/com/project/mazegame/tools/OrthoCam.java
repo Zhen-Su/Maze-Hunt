@@ -24,7 +24,7 @@ public class OrthoCam {
     	//System.out.println(pX + " , " + pY);
         cam.position.x = pX ;
         cam.position.y = pY;
-       // System.out.println(cam.position.x + " , " + cam.position.y);
+        System.out.println(cam.position.x + " , " + cam.position.y);
         cam.update();
     }
 

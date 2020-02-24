@@ -142,7 +142,7 @@ public class GameScreen implements Screen {
         System.out.println(player.position.getX() + " , " + co.nearestItem(player).getPosition().getX());
         //Collectibles pick up
 	    if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception	
-	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) &&
+	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 
 	            (player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
 	        	System.out.println("over item");
 	        	pickUpItem();

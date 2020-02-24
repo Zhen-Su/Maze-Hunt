@@ -24,7 +24,7 @@ public class NetClient {
     private int clientUDPPort;
     private int serverUDPPort;
     private String serverIP;
-    private DatagramSocket datagramSocket = null;
+    public DatagramSocket datagramSocket = null;
     private Socket socket = null;
 
     public int getClientUDPPort() {
@@ -108,6 +108,7 @@ public class NetClient {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try {
                     datagramSocket.receive(datagramPacket);
+                    System.out.println("I've received a packet from server");
                     process(datagramPacket);
                 } catch (IOException e) {
                     e.printStackTrace();
