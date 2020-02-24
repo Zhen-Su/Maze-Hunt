@@ -17,7 +17,7 @@ import com.project.mazegame.tools.Collect;
 
 public class Player {
 	public int x, y;
-    private Texture player, player_up, player_right, player_left, player_down, sword,shield;
+    protected Texture player, player_up, player_right, player_left, player_down, sword,shield;
     private float speed = 6;
     private float width, height;
     public int coins;
@@ -30,6 +30,62 @@ public class Player {
     public Coordinate position;
     
     private TiledMapTileLayer collisionLayer;
+
+    public Texture getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Texture player) {
+        this.player = player;
+    }
+
+    public Texture getPlayer_up() {
+        return player_up;
+    }
+
+    public void setPlayer_up(Texture player_up) {
+        this.player_up = player_up;
+    }
+
+    public Texture getPlayer_right() {
+        return player_right;
+    }
+
+    public void setPlayer_right(Texture player_right) {
+        this.player_right = player_right;
+    }
+
+    public Texture getPlayer_left() {
+        return player_left;
+    }
+
+    public void setPlayer_left(Texture player_left) {
+        this.player_left = player_left;
+    }
+
+    public Texture getPlayer_down() {
+        return player_down;
+    }
+
+    public void setPlayer_down(Texture player_down) {
+        this.player_down = player_down;
+    }
+
+    public Texture getSword() {
+        return sword;
+    }
+
+    public void setSword(Texture sword) {
+        this.sword = sword;
+    }
+
+    public Texture getShield() {
+        return shield;
+    }
+
+    public void setShield(Texture shield) {
+        this.shield = shield;
+    }
 
     public Player(){}
 

@@ -1,5 +1,5 @@
 #Internal package file, do not edit.
-#Sat Feb 22 00:56:53 GMT 2020
+#Sat Feb 22 17:38:46 GMT 2020
 60.set=ASSET
 52.set=ASSET
 53.base=/Users/kevin/Downloads/project/android/build/intermediates/transforms/mergeJniLibs/debug/0

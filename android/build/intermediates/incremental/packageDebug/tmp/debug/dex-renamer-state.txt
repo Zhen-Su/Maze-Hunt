@@ -1,4 +1,4 @@
-#Sat Feb 22 00:56:53 GMT 2020
+#Sun Feb 23 21:37:33 GMT 2020
 base.0=/Users/kevin/Downloads/project/android/build/intermediates/dex/debug/mergeDexDebug/out
 path.0=classes.dex
 renamed.0=classes.dex

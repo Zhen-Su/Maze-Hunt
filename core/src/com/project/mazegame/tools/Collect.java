@@ -21,14 +21,15 @@ public class Collect {
 	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
+	Player player;
 	public ArrayList<Coordinate> positions;
 	public Collect (MazeGame game ,Player player) {
 		test = new GameScreen(game);
-		
+		this.player=player;
 		mapItems = GameScreen.mapItems;
 		items = player.items;
-		
-		
+		System.out.println("myMultiplayer x:"+player.position.getX());
+		System.out.println("myMultiplayer y:"+player.position.getY());
 	}
 	
 	
@@ -54,7 +55,7 @@ public class Collect {
 			int tempY = mapItems.get(i).getPosition().getY();
 
 //			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
-			System.out.println("player.position x:"+player.position.getX());
+//			System.out.println("player.position x:"+player.getPosition().getX());
 			int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
 			//System.out.println("temp Dist: " + tempDist);
 //			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();

@@ -35,7 +35,7 @@ public class MultiPlayerGameScreen implements Screen {
     private OrthoCam cam;
 
 
-    private InputHandler inputHandler;
+    //private InputHandler inputHandler;
     private String serverIP;
     private String username;
     private MultiPlayer myMultiPlayer;
@@ -99,7 +99,7 @@ public class MultiPlayerGameScreen implements Screen {
 
     public MultiPlayerGameScreen(MazeGame game,String username,String serverIP) {
         this.game = game;
-        inputHandler = new InputHandler();
+       // inputHandler = new InputHandler();
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -130,9 +130,9 @@ public class MultiPlayerGameScreen implements Screen {
     @Override
     public void show() {
         //assuming it's a square map -> only need width of map and width of tile
-        generateMapItems((int) collisionLayer.getWidth(), 100 );
-        co = new Collect(game, myMultiPlayer);
-        tempMapItemssize = mapItems.size();
+//        generateMapItems((int) collisionLayer.getWidth(), 100 );
+//        co = new Collect(game, myMultiPlayer);
+//        tempMapItemssize = mapItems.size();
     }
 
     @Override
@@ -149,8 +149,8 @@ public class MultiPlayerGameScreen implements Screen {
         delta = Gdx.graphics.getDeltaTime();
 
         //updates - player position
-        inputHandler.update();
-        myMultiPlayer.update(delta);
+//        inputHandler.update();
+//        myMultiPlayer.update(delta);
 
         //comment out ai player line to run correctly
 //       aiPlayer.update(delta);
@@ -163,19 +163,22 @@ public class MultiPlayerGameScreen implements Screen {
         game.batch.begin();
 
         //draw collectibles
-        drawCollectibles();
+       // drawCollectibles();
 
-        System.out.println("here");
-        System.out.println(myMultiPlayer.position.getX() + " , " + co.nearestItem(myMultiPlayer).getPosition().getX());
-        //Collectibles pick up
-        if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-            if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
-                    (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100)){
-                System.out.println("over item");
-                pickUpItem();
-
-            }
-        }
+//        System.out.println("here");
+//        System.out.println("player.position x:"+myMultiPlayer.position.getX());
+//        System.out.println("player.position y:"+myMultiPlayer.position.getY());
+//        System.out.println(myMultiPlayer.position.getX() + " , " + co.nearestItem(myMultiPlayer).getPosition().getX());
+//        //Collectibles pick up
+//        if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+//            if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
+//                    (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position).getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100)
+//            {
+//                System.out.println("over item");
+//                pickUpItem();
+//
+//            }
+//        }
 
         drawExitButton();
 
@@ -184,7 +187,13 @@ public class MultiPlayerGameScreen implements Screen {
 
         drawIcons(iconSize,buffer);
 
-        myMultiPlayer.render(game.batch);
+        //draw myself on my screen
+        myMultiPlayer.render(game.batch,myMultiPlayer);
+        //draw other players on my screen
+        for(int i=0;i<players.size();i++){
+            MultiPlayer otherPlayer = players.get(i);
+            otherPlayer.render(game.batch,otherPlayer);
+        }
 
         game.batch.end();
 
