@@ -52,7 +52,6 @@ public class MoveMessage implements Message {
         byte[] buf = baos.toByteArray();
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
-            System.out.println("I will send a move message");
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,22 +68,17 @@ public class MoveMessage implements Message {
                 return;
             }
             Direction dir = Direction.values()[dis.readInt()];
-            int newX = dis.readInt();
-            int newY = dis.readInt();
+            int newx = dis.readInt();
+            int newy = dis.readInt();
             for(MultiPlayer t : gameClient.getPlayers()){
                 if(t.getId() == id){
 
                     //change coordinate and direction
                     t.setDir(dir);
-                    t.setX(newX);
-                    t.setY(newY);
-
-                    System.out.println("****************************");
-                    System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
-                    System.out.println("This move message is from: id"+id);
-                    System.out.println("This (id"+id+ ") player's position x:" +newX);
-                    System.out.println("This (id"+id+ ") player's position y:" +newY);
-                    System.out.println("****************************");
+                    t.getPosition().setX(newx);
+                    t.getPosition().setY(newy);
+//                    System.out.println("zhen x: "+x);
+//                    System.out.println("zhen y:" +y);
 
                     //change player texture
                     if(t.bU ==true && t.bD == false){
