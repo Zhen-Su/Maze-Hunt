@@ -2,7 +2,6 @@ package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -19,7 +18,6 @@ import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
-import com.project.mazegame.tools.InputHandler;
 import com.project.mazegame.tools.OrthoCam;
 
 import java.util.ArrayList;
@@ -35,12 +33,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private MazeGame game;
     private OrthoCam cam;
 
-
-    //private InputHandler inputHandler;
     private MultiPlayer myMultiPlayer;
     private  NetClient netClient = new NetClient(this);
     private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
-
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
@@ -48,8 +43,6 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private int tempMapItemssize;
     private Collect co;
     private MultiPlayer player2;
-
-
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
@@ -63,41 +56,14 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private Texture healingPotionTexture;
     private Texture damagingPotionTexture;
 
-
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
 
-
-    public MultiPlayer getMultiPlayer() {
-        return myMultiPlayer;
-    }
-    public void setMultiPlayer(MultiPlayer multiPlayer) {
-        this.myMultiPlayer = multiPlayer;
-    }
-
-    public List<MultiPlayer> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(List<MultiPlayer> players) {
-        this.players = players;
-    }
-
-    public NetClient getNc() {
-        return netClient;
-    }
-
-    public void setNc(NetClient netClient) {
-        this.netClient = netClient;
-    }
-    public TiledMapTileLayer getCollisionLayer() {
-        return collisionLayer;
-    }
+    //=====================================constructors=============================================
 
     public MultiPlayerGameScreen(MazeGame game,String username,String serverIP) {
         this.game = game;
-       // inputHandler = new InputHandler();
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -124,6 +90,32 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         compassTexture = new Texture("RolledMap.png");
         damagingPotionTexture = new Texture("Potion3.png");
     }
+
+    //===================================Getter&Setter==============================================
+
+    public MultiPlayer getMultiPlayer() { return myMultiPlayer; }
+
+    public void setMultiPlayer(MultiPlayer multiPlayer) {
+        this.myMultiPlayer = multiPlayer;
+    }
+
+    public List<MultiPlayer> getPlayers() { return players; }
+
+    public void setPlayers(List<MultiPlayer> players) {
+        this.players = players;
+    }
+
+    public NetClient getNc() { return netClient; }
+
+    public void setNc(NetClient netClient) {
+        this.netClient = netClient;
+    }
+
+    public TiledMapTileLayer getCollisionLayer() {
+        return collisionLayer;
+    }
+
+    //==============================================================================================
 
     @Override
     public void show() {
@@ -194,7 +186,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
         game.batch.end();
 
-        //camerafollow player
+        //camera follow player
         cam.update(500,500);
 
     }
@@ -441,7 +433,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         System.out.println(positions);
     }
 
-    //------------------------------------InputProcessor------------------------------------------------
+    //------------------------------------InputProcessor--------------------------------------------
+    //----------------------------------------------------------------------------------------------
     @Override
     public boolean keyUp(int keycode){
         return myMultiPlayer.keyUp(keycode);

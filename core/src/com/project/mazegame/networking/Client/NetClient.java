@@ -26,6 +26,7 @@ public class NetClient {
     private String serverIP;
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
+    public static boolean debug=true;
 
     public int getClientUDPPort() {
         return clientUDPPort;
@@ -45,20 +46,20 @@ public class NetClient {
         serverIP = ip;
         try {
             try {
-                System.out.println("Client UDP socket have be opened");
+                if(debug) System.out.println("Client UDP socket have be opened");
                 datagramSocket = new DatagramSocket(clientUDPPort);  // UDPSocket
             } catch (SocketException e) {
                 e.printStackTrace();
             }
             //ds = new DatagramSocket(serverUDPPort);   //UDPSocket
             socket = new Socket(ip, serverTCPPort);   // TCPSocket
-            printMsg("Connected to server");
+            if(debug) printMsg("Connected to server!");
 
             //Send client udp port to GameServer.
             OutputStream os = socket.getOutputStream();
             DataOutputStream dos = new DataOutputStream(os);
             dos.writeInt(clientUDPPort);
-            printMsg("I've sent my udp port to Game Server!");
+            if(debug) printMsg("I've sent my udp port to Game Server!");
 
             //Receive an unique ID and Server udp port
             InputStream is = socket.getInputStream();
@@ -103,7 +104,7 @@ public class NetClient {
 
         @Override
         public void run() {
-            System.out.println("Client thread start...");
+            if(debug) System.out.println("Client thread start...");
             while (null != datagramSocket) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try {

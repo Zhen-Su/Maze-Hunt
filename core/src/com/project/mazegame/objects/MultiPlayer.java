@@ -12,7 +12,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Coordinate;
-import com.project.mazegame.tools.InputHandler;
 
 import java.util.ArrayList;
 
@@ -35,12 +34,13 @@ public class MultiPlayer extends Player {
     public boolean bL, bU, bR, bD;
     private Direction dir;
     private TiledMapTileLayer collisionLayer;
-
+    public static boolean debug = false;
 
     //constructors=================================================================================
+
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir ) {
         super();
-        System.out.println("multiplayer is constructing...");
+        if (debug)System.out.println("Multiplayer is constructing...");
         this.collisionLayer = collisionLayer;
         this.health=5;
         this.coins=0;
@@ -62,9 +62,8 @@ public class MultiPlayer extends Player {
                         }
                 });
 
-        System.out.println("multiplayer construction done!");
+        if (debug) System.out.println("Multiplayer construction done!");
     }
-
 
     //Getter&Setter=================================================================================
     public int getX() { return x; }
@@ -111,8 +110,6 @@ public class MultiPlayer extends Player {
 
     public void render (SpriteBatch sb){
 
-       // update(Gdx.graphics.getDeltaTime());
-
         switch(dir){
             case U:
                 sb.draw(player_up,this.position.getX()- (width/2),this.position.getY() - (height/2));
@@ -130,7 +127,7 @@ public class MultiPlayer extends Player {
                 sb.draw(player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
                 break;
         }
-        move();
+        updateMotion();
 
         if(this.items.contains("sword")) {	  // possible errors may occur
             sb.draw(sword,(float)(x),y - (height/4),50,50);
@@ -178,53 +175,7 @@ public class MultiPlayer extends Player {
         return true;
     }
 
-    // update player movement
-//    @Override
-//    public void update (float delta){
-//        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-//            bR=true;
-//        }else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-//                bL=true;
-//        }else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-//                bU=true;
-//        }else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-//                bD=true;
-//        }else{
-//            //if no input, then this player direction is STOP.
-//            bR=false;
-//            bL=false;
-//            bU=false;
-//            bD=false;
-//        }
-//        locateDirection();
-//        move();
-//        changeTexture();
-//
-//        //reset,and reset direction
-//        bR=false;
-//        bL=false;
-//        bU=false;
-//        bD=false;
-//        locateDirection();
-//        //move();
-//
-//    }
-//
-//    public void changeTexture(){
-//        if (bU&& !bD) {
-//            player = player_up;
-//        } else if (bD&& !bU) {
-//            player = player_down;
-//        }  else if (bL&& !bR) {
-//            player = player_left;
-//        } else if (bR && !bL) {
-//            player = player_right;
-//        }else {
-//            player = player_down;
-//        }
-//    }
-
-    public void move(){
+    public void updateMotion(){
 
         this.position.setX(x);
         this.position.setY(y);
@@ -234,7 +185,7 @@ public class MultiPlayer extends Player {
                 this.x+=speed;
                 if(!checkCollisionMap(x, y)) {
                     this.x -= speed;
-                    System.out.println("hit right wall");
+                    if (debug) System.out.println("hit right wall");
                 }
                 break;
             case L:
@@ -242,7 +193,7 @@ public class MultiPlayer extends Player {
                     this.x -= speed;
                     if(!checkCollisionMap(x,y)) {
                         this.x += speed;
-                        System.out.println("hit left wall");
+                        if (debug)  System.out.println("hit left wall");
                     }
                 }
                 break;
@@ -251,7 +202,7 @@ public class MultiPlayer extends Player {
                     this.y += speed;
                     if(!checkCollisionMap(x, y)) {
                         this.y -= speed;
-                        System.out.println("hit up wall");
+                        if (debug)  System.out.println("hit up wall");
                     }
                 }
                 break;
@@ -260,7 +211,7 @@ public class MultiPlayer extends Player {
                     this.y -= speed;
                     if(!checkCollisionMap(x, y)) {
                         this.y += speed;
-                        System.out.println("hit down wall");
+                        if (debug)  System.out.println("hit down wall");
                     }
                 }
                 break;
@@ -462,10 +413,6 @@ public class MultiPlayer extends Player {
     public String toString() {
         return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
       }
-
-
-
-
 
     public int getID() {
         return this.ID;
