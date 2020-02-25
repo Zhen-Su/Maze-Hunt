@@ -66,6 +66,7 @@ public class MenuScreen implements Screen {
         createMazeActive = new Texture("UI\\MenuButtons\\StartNewMazeButton.png");
         createMazeInactive = new Texture("UI\\MenuButtons\\StartNewMazeButtonPressed.png");
 
+
         audioOn = new Texture("UI\\audioOn.png");
         audioOff = new Texture("UI\\audioOff.png");
 
@@ -101,6 +102,7 @@ public class MenuScreen implements Screen {
         } else {
             game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
         }
+
 
         if (isHovering(drawX, JOIN_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);

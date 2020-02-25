@@ -7,10 +7,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.networking.Client.NetClient;
-import com.project.mazegame.networking.Server.GameServer;
-import com.project.mazegame.objects.Direction;
-import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.InputHandler;
 import com.project.mazegame.tools.OrthoCam;
@@ -24,8 +20,8 @@ import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class MultiPlayerScreen implements Screen {
 
     private MazeGame game;
-    private OrthoCam cam;
-    private Music bgm;
+   // private OrthoCam cam;
+//    private Music bgm;
 
     public String ip;
     public String username;

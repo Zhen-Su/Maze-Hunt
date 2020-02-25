@@ -1,4 +1,4 @@
-package com.project.mazegame.objects;
+package com.project.mazegame.tools;
 
 public class Pair {
     float x;

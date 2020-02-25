@@ -1,4 +1,4 @@
-package com.project.mazegame.networking.Messages;
+package com.project.mazegame.networking.Messagess;
 
 import java.io.DataInputStream;
 import java.net.DatagramSocket;

@@ -1,8 +1,8 @@
 package com.project.mazegame.networking.Client;
 
-import com.project.mazegame.networking.Messages.Message;
-import com.project.mazegame.networking.Messages.MoveMessage;
-import com.project.mazegame.networking.Messages.PlayerNewMessage;
+import com.project.mazegame.networking.Messagess.Message;
+import com.project.mazegame.networking.Messagess.MoveMessage;
+import com.project.mazegame.networking.Messagess.PlayerNewMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +24,7 @@ public class NetClient {
     private int clientUDPPort;
     private int serverUDPPort;
     private String serverIP;
-    public DatagramSocket datagramSocket = null;
+    private DatagramSocket datagramSocket = null;
     private Socket socket = null;
 
     public int getClientUDPPort() {
@@ -82,11 +82,11 @@ public class NetClient {
             }
         }
 
-        new Thread(new ClientThread()).start();
 
         PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
         send(msg);
 
+        new Thread(new ClientThread()).start();
     }
 
     public void send(Message msg) {
@@ -108,7 +108,6 @@ public class NetClient {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try {
                     datagramSocket.receive(datagramPacket);
-                    System.out.println("I've received a packet from server");
                     process(datagramPacket);
                 } catch (IOException e) {
                     e.printStackTrace();
