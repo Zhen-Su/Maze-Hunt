@@ -54,28 +54,24 @@ The package directory `com.project.mazegame.networking` contains all of the clas
   *  1.2 After client connect to server, server can give this player an ID and server's UDP port through TCP socket.
   * 1.3 Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
   * 1.4 Server can broadcast the messages which receive from someone to all Clients (players).
-  * 1.5  
-
-  
-
-  # TODO
-
-  * Try to make other player can see others movements.
-
-  * Try to fix bugs on player click cancel button on enter ip or username screen to back to menu Screen.
-
-  * Try to complete code on server can close relevant resources and close client's UDP socket after player exit game in multiplayer game mode (JOIN MAZE).
-
-  * Integration with game logic (make more message's types)
-
-    
-
+  * 1.5  Player can see each other movements,but still some bugs.
+* 1.6 fixed bugs, player can see each other's movements with no bugs!
   
 
   
-
+# TODO
   
-
+* Try to make other player can see others movements.
+  
+* Try to fix bugs on player click cancel button on enter ip or username screen to back to menu Screen.
+  
+* Try to complete code on server can close relevant resources and close client's UDP socket after player exit game in multiplayer game mode (JOIN MAZE).
+  
+* Integration with game logic (make more message's types)
+  
+* Complete `GDX.app.log(info,error…)` system
+  
+  
   
 
   
@@ -86,6 +82,13 @@ The package directory `com.project.mazegame.networking` contains all of the clas
 
   
 
+  
+
+  
+
+  
+
+  
   
 
 

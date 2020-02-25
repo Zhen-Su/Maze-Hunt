@@ -87,10 +87,6 @@ public class MultiPlayer extends Player {
 
     public void setName(String name) { this.name = name; }
 
-//    public Coordinate getPosition() { return position; }
-//
-//    public void setPosition(Coordinate position) { this.position = position; }
-
     public Texture getPlayerTexture() { return player; }
 
     public void setPlayerTexture(Texture player) { this.player = player; }
@@ -115,9 +111,26 @@ public class MultiPlayer extends Player {
 
     public void render (SpriteBatch sb){
 
-        update(Gdx.graphics.getDeltaTime());
-        sb.draw(player,this.position.getX()- (width/2),this.position.getY() - (height/2));
+       // update(Gdx.graphics.getDeltaTime());
 
+        switch(dir){
+            case U:
+                sb.draw(player_up,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                break;
+            case D:
+                sb.draw(player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                break;
+            case L:
+                sb.draw(player_left,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                break;
+            case R:
+                sb.draw(player_right,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                break;
+            case STOP:
+                sb.draw(player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                break;
+        }
+        move();
 
         if(this.items.contains("sword")) {	  // possible errors may occur
             sb.draw(sword,(float)(x),y - (height/4),50,50);
@@ -125,53 +138,91 @@ public class MultiPlayer extends Player {
         if(this.items.contains("shield")) {
             sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
         }
+    }
 
+    public boolean keyDown(int keycode) {
+        switch(keycode){
+            case Input.Keys.RIGHT:
+                bR=true;
+                break;
+            case Input.Keys.LEFT:
+                bL=true;
+                break;
+            case Input.Keys.UP:
+                bU=true;
+                break;
+            case Input.Keys.DOWN:
+                bD=true;
+                break;
+        }
+        locateDirection();
+        return true;
+    }
+
+    public boolean keyUp (int keycode){
+        switch(keycode){
+            case Input.Keys.RIGHT:
+                bR=false;
+                break;
+            case Input.Keys.LEFT:
+                bL=false;
+                break;
+            case Input.Keys.UP:
+                bU=false;
+                break;
+            case Input.Keys.DOWN:
+                bD=false;
+                break;
+        }
+        locateDirection();
+        return true;
     }
 
     // update player movement
-    @Override
-    public void update (float delta){
-
-
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            bR=true;
-        }else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                bL=true;
-        }else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                bU=true;
-        }else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                bD=true;
-        }else{
-            //if no input, then this player direction is STOP.
-            bR=false;
-            bL=false;
-            bU=false;
-            bD=false;
-        }
-        locateDirection();
-        move();
-        //change player texture
-        if (bU&& !bD) {
-            player = player_up;
-        } else if (bD&& !bU) {
-            player = player_down;
-        }  else if (bL&& !bR) {
-            player = player_left;
-        } else if (bR && !bL) {
-            player = player_right;
-        }else {
-            player = player_down;
-        }
-
-        //reset,and reset direction
-        bR=false;
-        bL=false;
-        bU=false;
-        bD=false;
-        locateDirection();
-        move();
-
-    }
+//    @Override
+//    public void update (float delta){
+//        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+//            bR=true;
+//        }else if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+//                bL=true;
+//        }else if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+//                bU=true;
+//        }else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+//                bD=true;
+//        }else{
+//            //if no input, then this player direction is STOP.
+//            bR=false;
+//            bL=false;
+//            bU=false;
+//            bD=false;
+//        }
+//        locateDirection();
+//        move();
+//        changeTexture();
+//
+//        //reset,and reset direction
+//        bR=false;
+//        bL=false;
+//        bU=false;
+//        bD=false;
+//        locateDirection();
+//        //move();
+//
+//    }
+//
+//    public void changeTexture(){
+//        if (bU&& !bD) {
+//            player = player_up;
+//        } else if (bD&& !bU) {
+//            player = player_down;
+//        }  else if (bL&& !bR) {
+//            player = player_left;
+//        } else if (bR && !bL) {
+//            player = player_right;
+//        }else {
+//            player = player_down;
+//        }
+//    }
 
     public void move(){
 
@@ -181,12 +232,17 @@ public class MultiPlayer extends Player {
         switch (dir){
             case R:
                 this.x+=speed;
+                if(!checkCollisionMap(x, y)) {
+                    this.x -= speed;
+                    System.out.println("hit right wall");
+                }
                 break;
             case L:
                 if(x>0) {
                     this.x -= speed;
                     if(!checkCollisionMap(x,y)) {
                         this.x += speed;
+                        System.out.println("hit left wall");
                     }
                 }
                 break;
@@ -195,6 +251,7 @@ public class MultiPlayer extends Player {
                     this.y += speed;
                     if(!checkCollisionMap(x, y)) {
                         this.y -= speed;
+                        System.out.println("hit up wall");
                     }
                 }
                 break;
@@ -203,6 +260,7 @@ public class MultiPlayer extends Player {
                     this.y -= speed;
                     if(!checkCollisionMap(x, y)) {
                         this.y += speed;
+                        System.out.println("hit down wall");
                     }
                 }
                 break;
@@ -218,11 +276,16 @@ public class MultiPlayer extends Player {
     private void locateDirection(){
         Direction oldDir = this.dir;
 
-        if(bR&&!bL&&!bD&&!bU) dir = Direction.R;
-        else if(bL&&!bR&&!bU&&!bD) dir=Direction.L;
-        else if(bU&&!bD&&!bL&&!bR) dir=Direction.U;
-        else if(bD&&!bU&&!bR&&!bL) dir=Direction.D;
-        else if(!bL&&!bD&&!bR&&!bU) dir=Direction.STOP;
+        if(bR&&!bL&&!bD&&!bU)
+            dir = Direction.R;
+        else if(bL&&!bR&&!bU&&!bD)
+            dir=Direction.L;
+        else if(bU&&!bD&&!bL&&!bR)
+            dir=Direction.U;
+        else if(bD&&!bU&&!bR&&!bL)
+            dir=Direction.D;
+        else if(!bL&&!bD&&!bR&&!bU)
+            dir=Direction.STOP;
 
         if (dir != oldDir) {
             MoveMessage message = new MoveMessage(id, this.position.getX(),this.position.getY(), dir);
@@ -362,8 +425,8 @@ public class MultiPlayer extends Player {
         player_down.dispose();
         player_right.dispose();
         player_left.dispose();
-        player.dispose();
     }
+
 
     /*
     public void playerKillAI(AIPlayer AI) {

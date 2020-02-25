@@ -2,6 +2,8 @@ package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -15,7 +17,6 @@ import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
-import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.InputHandler;
@@ -29,17 +30,14 @@ import static com.project.mazegame.screens.GameScreen.mapItems;
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 
-public class MultiPlayerGameScreen implements Screen {
+public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     private MazeGame game;
     private OrthoCam cam;
 
 
     //private InputHandler inputHandler;
-    private String serverIP;
-    private String username;
     private MultiPlayer myMultiPlayer;
-    //private Boolean imServer;
     private  NetClient netClient = new NetClient(this);
     private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
 
@@ -108,7 +106,7 @@ public class MultiPlayerGameScreen implements Screen {
 
         myMultiPlayer=new MultiPlayer(this.collisionLayer,username,VIEWPORT_WIDTH / 2,VIEWPORT_HEIGHT / 2,this, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
-
+        Gdx.input.setInputProcessor(this);
 
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, VIEWPORT_WIDTH/2,VIEWPORT_HEIGHT/2);
 
@@ -126,7 +124,6 @@ public class MultiPlayerGameScreen implements Screen {
         compassTexture = new Texture("RolledMap.png");
         damagingPotionTexture = new Texture("Potion3.png");
     }
-
 
     @Override
     public void show() {
@@ -148,10 +145,6 @@ public class MultiPlayerGameScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         delta = Gdx.graphics.getDeltaTime();
-
-        //updates - player position
-//        inputHandler.update();
-//        myMultiPlayer.update(delta);
 
         //comment out ai player line to run correctly
 //       aiPlayer.update(delta);
@@ -193,15 +186,15 @@ public class MultiPlayerGameScreen implements Screen {
             MultiPlayer otherPlayer = players.get(i);
             otherPlayer.render(game.batch);
         }
+
         //draw myself on my screen
-        myMultiPlayer.render(game.batch);
+        if(null!=myMultiPlayer) {
+            myMultiPlayer.render(game.batch);
+        }
 
         game.batch.end();
 
-        //camera
-
-        //follow player
-
+        //camerafollow player
         cam.update(500,500);
 
     }
@@ -446,5 +439,46 @@ public class MultiPlayerGameScreen implements Screen {
             }
         }
         System.out.println(positions);
+    }
+
+    //------------------------------------InputProcessor------------------------------------------------
+    @Override
+    public boolean keyUp(int keycode){
+        return myMultiPlayer.keyUp(keycode);
+    }
+
+    @Override
+    public boolean keyDown(int keycode){
+        return myMultiPlayer.keyDown(keycode);
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }

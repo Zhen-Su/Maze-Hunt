@@ -1,4 +1,4 @@
-#Tue Feb 11 13:24:16 GMT 2020
-base.0=D\:\\UNI\\YearTwo\\Term2\\TeamProject\\anotherworld\\android\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out
+#Tue Feb 25 00:35:23 GMT 2020
+base.0=/Users/kevin/Downloads/project/android/build/intermediates/dex/debug/mergeDexDebug/out
 path.0=classes.dex
 renamed.0=classes.dex
