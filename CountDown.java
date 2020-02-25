@@ -7,35 +7,19 @@ import java.util.ArrayList;
 
 public class CountDown {
 
-	boolean collected = false;
 	ArrayList<Item> items = new ArrayList<Item>();
 	Timer timer = new Timer();
-	int time = 60000;
+	int time;
+	TimerTask task = new TimerTask();
 	
 
 
-	public CountDown(boolean collected, ArrayList<Item> items) {
-		this.collected = collected;
-		this.items = items;
-		if (collected) {
-			time += 30000;		
-		}
+	public CountDown(Timertask task, int time) {
+		this.task = task;
+		this.time = time;
 
 	}
-
-
-
-	TimerTask task = new TimerTask() {
-		public void run() {
-			for (int i = 0; i < items.size(); i++) {
-				if (items.get(i).getType() == "shield") {
-					items.remove(items.get(i));
-				}
-			} 
-
-		}
-	};
-
+	
 	public void start() {
 		timer.scheduleAtFixedRate(task, time, 0);
 	}

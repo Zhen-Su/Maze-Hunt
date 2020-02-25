@@ -148,6 +148,20 @@ public class Collect {
 	public void shield(Item item) {
 
 		gotShield = true;
+		int time = 60000;
+		if (collected) {
+			time += 30000;
+		}
+
+		TimerTask task = new TimerTask() {
+			public void run() {
+				items.remove("shield");
+
+			}
+		};
+
+		CountDown countDown =  new CountDown(task, time);
+		
 
 
 
