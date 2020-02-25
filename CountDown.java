@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class CountDown {
 
 	boolean collected = false;
-	ArrayList<Item> items = new ArrayList();
+	ArrayList<Item> items = new ArrayList<Item>();
 	Timer timer = new Timer();
 	int time = 60000;
 	
