@@ -110,7 +110,7 @@ public class Player {
                 player = player_down;
             }
         } else if (mode == 2) {
-
+            Coordinate old = this.position;
             this.position.setX((int) x);
             this.position.setY((int) y);
                     // contantsnatly throwing exeption possibly becasue not linked to player
@@ -119,7 +119,7 @@ public class Player {
                     System.out.println(moveToTake.toString());
                     this.x = (int) moveToTake.getX();
                     this.y = (int) moveToTake.getY();
-                    player = player_up;
+                    player = change(old, moveToTake);
             try {
                 Thread.sleep(200);
             } catch (InterruptedException e) {
@@ -128,7 +128,20 @@ public class Player {
 
         }
     }
+    private Texture change(Coordinate old, Coordinate update) {
+        if (old.getX() < update.getX() && old.getY() == update.getY()) {
+            return player_right;
+        } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
+            return player_left;
+        } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
+            return player_up;
+        } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
+            return player_down;
+        } else {
+            return player;
+        }
 
+    }
     public void render (SpriteBatch sb){
     	sb.draw(player,x- (width/2),y - (height/2));
     
