@@ -22,7 +22,6 @@ public class MoveMessage implements Message {
     private MultiPlayerGameScreen gameClient;
 
     public MoveMessage(int id, int pX, int pY, Direction dir) {
-        // TODO Auto-generated constructor stub
         this.id=id;
         this.pX=pX;
         this.pY=pY;
@@ -30,14 +29,12 @@ public class MoveMessage implements Message {
     }
 
     public MoveMessage(MultiPlayerGameScreen gameClient) {
-        // TODO Auto-generated constructor stub
         this.gameClient=gameClient;
     }
 
 
     @Override
     public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
-        // TODO Auto-generated method stub
         ByteArrayOutputStream baos = new ByteArrayOutputStream(30);
         DataOutputStream dos = new DataOutputStream(baos);
         try {
@@ -52,7 +49,7 @@ public class MoveMessage implements Message {
         byte[] buf = baos.toByteArray();
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
-            System.out.println("I'm id"+id+", I'll send a move message.");
+            if(DEBUG) System.out.println("I'm id"+id+", I'll send a move message.");
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,20 +70,17 @@ public class MoveMessage implements Message {
             int newY = dis.readInt();
             for(MultiPlayer t : gameClient.getPlayers()){
                 if(t.getId() == id){
-
                     //change coordinate and direction
                     t.setDir(dir);
                     t.setX(newX);
                     t.setY(newY);
-//                    t.position.setX(newX);
-//                    t.position.setY(newY);
 
-                    System.out.println("****************************");
-                    System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
-                    System.out.println("This move message is from: id"+id);
-                    System.out.println("This (id"+id+ ") player's position x: " +newX);
-                    System.out.println("This (id"+id+ ") player's position y: " +newY);
-                    System.out.println("****************************");
+                    if(DEBUG) System.out.println("****************************");
+                    if(DEBUG) System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
+                    if(DEBUG) System.out.println("This move message is from: id"+id);
+                    if(DEBUG) System.out.println("This (id"+id+ ") player's position x: " +newX);
+                    if(DEBUG) System.out.println("This (id"+id+ ") player's position y: " +newY);
+                    if(DEBUG) System.out.println("****************************");
 
                     //change player texture
                     if(t.bU ==true && t.bD == false){

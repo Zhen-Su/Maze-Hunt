@@ -1,18 +1,10 @@
 package com.project.mazegame.tools;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
-import com.project.mazegame.tools.Variables.*;
 
 import com.project.mazegame.screens.GameScreen;
-import java.lang.Math;
-import java.lang.Integer;
 import java.util.ArrayList;
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.project.mazegame.tools.Coordinate;
-//import com.project.mazegame.tools.Cell;
-//import com.project.mazegame.Pair;
-import com.project.mazegame.tools.Variables;
 
 public class Collect {
 	public Coordinate position = new Coordinate();

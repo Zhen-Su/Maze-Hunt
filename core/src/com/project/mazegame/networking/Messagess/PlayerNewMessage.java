@@ -91,15 +91,15 @@ public class PlayerNewMessage implements Message {
                 gameClient.getNc().send(msg);
                 MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir);
 
-                System.out.println("--------------------------------------");
-                System.out.println("my id: "+this.gameClient.getMultiPlayer().getId());
-                System.out.println("this player new message is from: id "+id);
+                if(DEBUG) System.out.println("--------------------------------------");
+                if(DEBUG) System.out.println("my id: "+this.gameClient.getMultiPlayer().getId());
+                if(DEBUG) System.out.println("this player new message is from: id "+id);
 
                 newPlayer.setId(id);
                 gameClient.getPlayers().add(newPlayer);
 
-                System.out.println("I've added this player to list!!");
-                System.out.println("--------------------------------------");
+                if(DEBUG) System.out.println("I've added this player to list!!");
+                if(DEBUG) System.out.println("--------------------------------------");
             }
 
         } catch (IOException e) {

@@ -1,4 +1,5 @@
 package com.project.mazegame.tools;
+
 public class Coordinate {
 	private int x;
 	private int y;

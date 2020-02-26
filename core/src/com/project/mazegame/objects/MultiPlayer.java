@@ -1,8 +1,6 @@
 package com.project.mazegame.objects;
 
 import static com.project.mazegame.tools.Variables.*;
-
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -19,7 +17,7 @@ import java.util.ArrayList;
 public class MultiPlayer extends Player {
 
     private int x, y;
-    private Texture player, player_up, player_right, player_left, player_down, sword,shield;
+    private Texture player_up, player_right, player_left, player_down, sword,shield;
     private float speed = 6;
     private float width, height;
     public int coins;
@@ -29,7 +27,7 @@ public class MultiPlayer extends Player {
     public Coordinate position;
 
     private String name;
-    public ArrayList<String> items;
+    private ArrayList<String> items;
     private MultiPlayerGameScreen gameClient;
     public boolean bL, bU, bR, bD;
     private Direction dir;
@@ -66,6 +64,7 @@ public class MultiPlayer extends Player {
     }
 
     //Getter&Setter=================================================================================
+
     public int getX() { return x; }
 
     public void setX(int x) { this.x = x; }
@@ -86,8 +85,6 @@ public class MultiPlayer extends Player {
 
     public void setName(String name) { this.name = name; }
 
-    public Texture getPlayerTexture() { return player; }
-
     public void setPlayerTexture(Texture player) { this.player = player; }
 
     public Texture getPlayer_up() { return player_up; }
@@ -106,8 +103,16 @@ public class MultiPlayer extends Player {
 
     public void setPlayer_down(Texture player_down) { this.player_down = player_down; }
 
+    public ArrayList<String> getItems() { return items; }
+
+    public void setItems(ArrayList<String> items) { this.items = items; }
+
     //==============================================================================================
 
+    /**
+     * draw player
+     * @param sb
+     */
     public void render (SpriteBatch sb){
 
         switch(dir){
@@ -137,6 +142,11 @@ public class MultiPlayer extends Player {
         }
     }
 
+    /**
+     * Handle player press button event
+     * @param keycode
+     * @return
+     */
     public boolean keyDown(int keycode) {
         switch(keycode){
             case Input.Keys.RIGHT:
@@ -156,6 +166,11 @@ public class MultiPlayer extends Player {
         return true;
     }
 
+    /**
+     * Handle player release button event
+     * @param keycode
+     * @return
+     */
     public boolean keyUp (int keycode){
         switch(keycode){
             case Input.Keys.RIGHT:
@@ -175,6 +190,9 @@ public class MultiPlayer extends Player {
         return true;
     }
 
+    /**
+     * update player position according to direction
+     */
     public void updateMotion(){
 
         this.position.setX(x);

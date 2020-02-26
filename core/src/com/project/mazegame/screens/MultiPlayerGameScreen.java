@@ -35,7 +35,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     private MultiPlayer myMultiPlayer;
     private  NetClient netClient = new NetClient(this);
-    private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
+    private List<MultiPlayer> players = new ArrayList<>();
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
@@ -202,7 +202,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
             xheart += (iconSize + buffer);
         }
-        if (myMultiPlayer.items.contains("shield")) {
+        if (myMultiPlayer.getItems().contains("shield")) {
             //draw shield icon
             float shieldSize = 50;
             float xShield = VIEWPORT_WIDTH - shieldSize -buffer;
@@ -210,7 +210,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
         }
         //sword icon
-        if ( myMultiPlayer.items.contains("sword")) {
+        if ( myMultiPlayer.getItems().contains("sword")) {
             float swordSize = 50;
             float xSword = VIEWPORT_WIDTH  - swordSize - buffer;
             float ySword = VIEWPORT_HEIGHT - (swordSize *2) ;
@@ -260,7 +260,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private void pickUpItem() {
         Item item =  co.nearestItem(myMultiPlayer);
 
-        if (!(myMultiPlayer.items.contains(item.getType())) && !(item.getType() == "coin")) {
+        if (!(myMultiPlayer.getItems().contains(item.getType())) && !(item.getType() == "coin")) {
             item = co.pickedUp(co.nearestItem(myMultiPlayer));
 
             if (item.getType() == "shield") {
