@@ -1,4 +1,4 @@
-package com.badlogic.gdx.utils.Timer;
+package com.project.mazegame;
 import java.util.Timer; 
 import java.util.TimerTask;
 import java.lang.Object;
@@ -7,17 +7,25 @@ import java.util.ArrayList;
 
 public class CountDown {
 
-	ArrayList<Item> items = new ArrayList<Item>();
+	
 	Timer timer = new Timer();
 	int time;
-	TimerTask task = new TimerTask();
 	
+	boolean taskDone = false;
 
-
-	public CountDown(Timertask task, int time) {
-		this.task = task;
+	public CountDown(boolean taskDone, int time) {
+		
 		this.time = time;
-
+		this.taskDone = taskDone;
+		
+		TimerTask task = new TimerTask() {
+			
+			public void run() {
+				taskDone = true;
+			
+			}
+		};
+	
 	}
 	
 	public void start() {

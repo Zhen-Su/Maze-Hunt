@@ -3,7 +3,7 @@
 <module external.linked.project.id=":core" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
 =======
 <module external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
->>>>>>> charlotte
+>>>>>>> origin/andin
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -12,7 +12,7 @@
         <option name="LAST_SUCCESSFUL_SYNC_AGP_VERSION" />
         <option name="LAST_KNOWN_AGP_VERSION" />
 =======
->>>>>>> charlotte
+>>>>>>> origin/andin
       </configuration>
     </facet>
     <facet type="java-gradle" name="Java-Gradle">
@@ -46,5 +46,5 @@
     <orderEntry type="library" exported="" name="Gradle: gdx-1.9.10" level="project" />
   </component>
 =======
->>>>>>> charlotte
+>>>>>>> origin/andin
 </module>
