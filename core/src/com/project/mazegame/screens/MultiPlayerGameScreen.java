@@ -155,7 +155,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     @Override
     public void show() {
         //assuming it's a square map -> only need width of map and width of tile
-        generateMapItems((int) collisionLayer.getWidth(), 100 );
+        generateMapItems(collisionLayer.getWidth(),100 );
         co = new MultiCollect(game, myMultiPlayer);
         tempMapItemssize = mapItems.size();
     }

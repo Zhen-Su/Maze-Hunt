@@ -78,8 +78,6 @@ public class MoveMessage implements Message {
                     t.setDir(dir);
                     t.setX(newX);
                     t.setY(newY);
-//                    t.position.setX(newX);
-//                    t.position.setY(newY);
 
                     System.out.println("****************************");
                     System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());

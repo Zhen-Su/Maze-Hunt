@@ -54,27 +54,19 @@ public class CreateMazeScreen implements Screen {
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
+
             new Thread(new GameServer()).start();
-            //System.out.println("here");
-           // new Thread(new MultiPlayerGameScreenThread()).start();
 
-            Gdx.app.postRunnable(new Runnable() {
-                @Override
-                public void run() {
-                    game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
-                }
-            });
-
-            //game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
+            game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
+//            Gdx.app.postRunnable(new Runnable() {
+//                @Override
+//                public void run() {
+//                    game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
+//                }
+//            });
         }
     }
 
-//    private class MultiPlayerGameScreenThread implements Runnable{
-//        @Override
-//        public void run() {
-//            game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
-//        }
-//    }
 
     @Override
     public void resize(int width, int height) {

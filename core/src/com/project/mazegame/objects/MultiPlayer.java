@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 
 public class MultiPlayer extends Player {
-
     private int x, y;
     private float speed = 6;
     private float width, height;
@@ -38,10 +37,9 @@ public class MultiPlayer extends Player {
 
 
     //constructors=================================================================================
-
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir ) {
         super();
-        if (debug)System.out.println("Multiplayer is constructing...");
+        if (debug) System.out.println("Multiplayer is constructing...");
         this.collisionLayer = collisionLayer;
         this.health=5;
         this.coins=0;
@@ -55,10 +53,8 @@ public class MultiPlayer extends Player {
         ArrayList<Item> items = new ArrayList<Item>();
         width = gameClient.player_up.getWidth();
         height = gameClient.player_up.getHeight();
-
         if (debug) System.out.println("Multiplayer construction done!");
     }
-
     //Getter&Setter=================================================================================
     public int getX() { return x; }
 
@@ -89,22 +85,14 @@ public class MultiPlayer extends Player {
     public void setPlayer_up(Texture player_up) { this.player_up = player_up; }
 
     @Override
-    public Texture getSword() {
-        return sword;
-    }
+    public Texture getSword() { return sword; }
 
     @Override
-    public void setSword(Texture sword) {
-        this.sword = sword;
-    }
+    public void setSword(Texture sword) { this.sword = sword; }
 
-    public int getCoins() {
-        return coins;
-    }
+    public int getCoins() { return coins; }
 
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
+    public void setCoins(int coins) { this.coins = coins; }
 
     public Texture getPlayer_right() { return player_right; }
 
@@ -256,15 +244,6 @@ public class MultiPlayer extends Player {
         }
     }
 
-    @Override
-    public void loadPlayerTextures(){
-        player_up = new Texture("playerRedBackCrop.png");
-        player_right = new Texture("playerRedRightCrop.png");
-        player_left = new Texture("playerRedLeftCrop.png");
-        player_down = new Texture("playerRedFrontCrop.png");
-        sword = new Texture("sword2.png");
-        shield = new Texture("shield.png");
-    }
 
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
         //Overall x and y of player
