@@ -95,6 +95,7 @@ public class MultiPlayerGameScreen implements Screen {
     public MultiPlayerGameScreen(MazeGame game,String username,String serverIP) {
         this.game = game;
         inputHandler = new InputHandler();
+        System.out.println("multi");
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -104,7 +105,7 @@ public class MultiPlayerGameScreen implements Screen {
         myMultiPlayer=new MultiPlayer(collisionLayer,username,VIEWPORT_WIDTH / 2,VIEWPORT_HEIGHT / 2,this, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
 
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.x, myMultiPlayer.y);
+        //cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.x, myMultiPlayer.y);
 
         // buttons
         exitButtonActive = new Texture("exit_button_active.png");

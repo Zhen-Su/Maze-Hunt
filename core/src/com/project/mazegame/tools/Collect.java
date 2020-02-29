@@ -1,4 +1,5 @@
 package com.project.mazegame.tools;
+import com.project.mazegame.CountDown;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
 import com.project.mazegame.tools.Variables.*;
@@ -7,6 +8,7 @@ import com.project.mazegame.screens.GameScreen;
 import java.lang.Math;
 import java.lang.Integer;
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.tools.Coordinate;
@@ -65,7 +67,7 @@ public class Collect {
 				//System.out.println("found shorter!");
 			}
 		}
-		System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
+		//System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
 		return nearestItem;
 	}
 	
@@ -75,70 +77,19 @@ public class Collect {
 		return sqrEucl;
 	}
 
-	//if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
-	/*public void main() {
 
-		Player player = new Player(collisionLayer"James", 123);
-		if (player.position == player.nearestItem().position) {
-
-			Item item = pickedUp(player);
-			Player player1 = new Player("James", 123);
-			Player player2 = new Player("James", 123);
-			if (!items.contains(item)) {
-				if (item.getType() == "shield") {
-					shield(item, player1);
-				}
-				if (item.getType() == "sword") {
-					sword(item, player1, player2);
-				}
-				if (item.getType() == "compass") {
-					compass(item);
-				}
-				if (item.getType() == "healingPotion") {
-					healingPotion(item, player1);
-				}
-				if (item.getType() == "damagingPotion") {
-					damagingPotion(item, player1);
-				}
-				if (item.getType() == "gearEnchantment") {
-					gearEnchantment(item);
-				}
-			} else {
-				items.remove(item);
-			}
-		}
-	}
-*/
 
 	public void shield(Item item, Player player1) {
 		
-		ArrayList<String> items = player1.items;
-		// this.timer = timer;
-		// this.seconds = 60;
-		// temp solutions
-		int timer = 20;
+		
+		final ArrayList<String> items = player1.items;
 		int seconds = 60;
-		System.out.println("player health " +player1.health);
 		int startHealth = player1.health;
-		/*if (gearEnchantment(item)) {
-			seconds += 30;
-		}*/
-
-
-//		while (timer != 0) {
-//			System.out.println("timer");
-//			if (player1.health != startHealth) {
-//				player1.health = startHealth;
-//			}
-//
-//				//change that in the decreaseHealth class in Player
-//
-//
-//			//display shield icon on screen
-//
-//		}
-
-		//items.remove(item);
+		
+		int time = 60000;
+		if (items.contains("gearEnchantment")) {
+			time += 30000;
+		}
 
 	}
 

@@ -62,7 +62,7 @@ public class AIPlayer extends Player{
             try {
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 Pair moveToTake = direction(avaibleMoves(x, y));
-                System.out.println(moveToTake.toString());
+             //   System.out.println(moveToTake.toString());
                 /*
                 if (x == moveToTake.getX() && y < moveToTake.getY()) {
                     SCROLLTRACKER_Y += super.speed;
@@ -78,7 +78,7 @@ public class AIPlayer extends Player{
                 this.y = moveToTake.getY();
                 Thread.sleep(500);
             } catch (Exception e) {
-                System.out.println("Something gone wrong");
+         //       System.out.println("Something gone wrong");
             }
         }
     }

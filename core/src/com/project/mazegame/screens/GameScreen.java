@@ -18,11 +18,14 @@ import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.*;
 
+import java.awt.ItemSelectable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
+import static com.project.mazegame.tools.Variables.V_HEIGHT;
+import static com.project.mazegame.tools.Variables.V_WIDTH;
 
 import com.project.mazegame.tools.InputHandler;
 import com.project.mazegame.tools.OrthoCam;
@@ -54,6 +57,10 @@ public class GameScreen implements Screen {
     private Texture damagingPotionTexture;
     private Texture audioButtonActive; //-------need to  implemented
     private Texture audioButtonInactive;
+    private Texture overlay;
+    
+    private float timer;
+    private float worldTimer;
     
     private Player player2;
     
@@ -61,6 +68,8 @@ public class GameScreen implements Screen {
  
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
+    
+    private float initialisedShieldTime;
    
     public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
@@ -68,9 +77,15 @@ public class GameScreen implements Screen {
     
     private int tempMapItemssize;
     
+    int w;
+    int h;
+    
     public GameScreen(MazeGame game) {
         this.game = game;
         inputHandler = new InputHandler();
+        
+        timer = 0;
+        worldTimer = 50;
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -78,8 +93,9 @@ public class GameScreen implements Screen {
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         player = new Player(this.collisionLayer,"james",123);
+       // player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, VIEWPORT_WIDTH/2,VIEWPORT_HEIGHT/2);
+        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
      
@@ -96,8 +112,10 @@ public class GameScreen implements Screen {
         healingPotionTexture = new Texture("Potion2.png");
         compassTexture = new Texture("RolledMap.png");
         damagingPotionTexture = new Texture("Potion3.png");
+        overlay = new Texture("circularOverlay.png");
         
-        
+        w = overlay.getWidth();
+        h = overlay.getHeight();
     }
     
     @Override
@@ -106,10 +124,26 @@ public class GameScreen implements Screen {
         generateMapItems((int) collisionLayer.getWidth(), 100 );
         co = new Collect(game, player);
         tempMapItemssize = mapItems.size();
+        //start timer
+        player.initialPosition();
+        
     }
     
     @Override
     public void render(float delta) { //method repeats a lot
+    	updateTime(delta);
+    	removeShield();
+    	
+    	//if timer runs out 
+    	if(worldTimer < 0) {
+    	   w -= 5;
+    	   h -= 5;
+    	  
+    	   if(worldTimer < -5) {
+    		   this.dispose();
+    		   game.setScreen(new EndScreen(this.game));
+    	   }
+    	}
     	
     	//only draw mapItems if one gets picked up
     	if (!(mapItems.size() == tempMapItemssize)) {
@@ -124,6 +158,8 @@ public class GameScreen implements Screen {
         //updates - player position
         inputHandler.update();
         player.update(delta);
+        //camera
+        cam.update(player.position.getX(),player.position.getY(),game);
         
         //comment out ai player line to run correctly
 //       aiPlayer.update(delta);
@@ -131,6 +167,7 @@ public class GameScreen implements Screen {
         //draws tilemap
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
+      
         
         
         game.batch.begin();
@@ -138,44 +175,60 @@ public class GameScreen implements Screen {
         //draw collectibles
         drawCollectibles();
       
-        System.out.println("here");
-        System.out.println(player.position.getX() + " , " + co.nearestItem(player).getPosition().getX());
         //Collectibles pick up
 	    if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception	
 	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 
 	            (player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
-	        	System.out.println("over item");
 	        	pickUpItem();
 	        	
 	        }
 		}
 	    
-	    drawExitButton();
+	    game.batch.draw(overlay,player.position.getX() - w/2,player.position.getY() - h/2 , w ,h);
         
         int iconSize = 30;
         int buffer = 10;
-        
-        drawIcons(iconSize,buffer);
+        Coordinate playerPos = new Coordinate(player.position.getX(), player.position.getY());
+        drawIcons(iconSize,buffer,playerPos);
+        drawExitButton(playerPos);
         
         player.render(game.batch);
         
         game.batch.end();
         
         
-        //camera
-        
-        //follow player
-        
-        cam.update(500,500);
+  
+ 
         
     }
     
-    private void drawIcons(int iconSize, int buffer) {
-
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    private void drawIcons(int iconSize, int buffer, Coordinate position) {
+    	//take player x and y into account
+    	int playerX = position.getX() - VIEWPORT_WIDTH/2;
+    	int playerY = position.getY() - VIEWPORT_HEIGHT/2;
         //draw hearts in top left corner
  
-        int xheart = buffer;
-        int yheart = VIEWPORT_HEIGHT - iconSize -buffer;
+        int xheart = buffer + playerX;
+        int yheart = VIEWPORT_HEIGHT - iconSize -buffer + playerY;
         int lives = player.getHealth();
         for(int i = 0; i < lives; i ++) {
         	  game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
@@ -184,28 +237,33 @@ public class GameScreen implements Screen {
         if (player.items.contains("shield")) {
         //draw shield icon
 	        float shieldSize = 50;
-	        float xShield = VIEWPORT_WIDTH - shieldSize -buffer;
-	        float yShield = VIEWPORT_HEIGHT - (shieldSize *3) ;
+	        float xShield = VIEWPORT_WIDTH - shieldSize -buffer + playerX;
+	        float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY;
 	        game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
         }
         //sword icon
         if ( player.items.contains("sword")) {
 	        float swordSize = 50;
-	        float xSword = VIEWPORT_WIDTH  - swordSize - buffer;
-	        float ySword = VIEWPORT_HEIGHT - (swordSize *2) ;
+	        float xSword = VIEWPORT_WIDTH  - swordSize - buffer + playerX;
+	        float ySword = VIEWPORT_HEIGHT - (swordSize *2) + playerY;
 	        game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
         }
         //draws coin icon
         for ( int i = 0; i < player.coins; i ++ ) {
-	        float xCoin = buffer;
-	        float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer;
+	        float xCoin = buffer + playerX;
+	        float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer + playerY;
 	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin,iconSize*2 , iconSize*2);
         }
     }
     
-    private void drawExitButton() {
-    	float x = VIEWPORT_WIDTH  - EXIT_WIDTH;
-        float y = VIEWPORT_HEIGHT - EXIT_HEIGHT;
+    private void drawExitButton(Coordinate position) {
+    	
+    	//take player x and y into account
+    	int playerX = position.getX() - VIEWPORT_WIDTH/2;
+    	int playerY = position.getY() - VIEWPORT_HEIGHT/2;
+    	
+    	float x = VIEWPORT_WIDTH  - EXIT_WIDTH + playerX;
+        float y = VIEWPORT_HEIGHT - EXIT_HEIGHT + playerY;
         
         //exit button in top right corner
         game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
@@ -264,6 +322,8 @@ public class GameScreen implements Screen {
     		item = co.pickedUp(co.nearestItem(player));
     		
 			if (item.getType() == "shield") {
+				item.setInitialisedTime(worldTimer);
+				initialisedShieldTime = worldTimer;
 				co.shield(item, player);
 			}
 			if (item.getType() == "sword") {
@@ -282,6 +342,15 @@ public class GameScreen implements Screen {
 			mapItems.remove(item);
 			player.coins++;
 		}
+    }
+    
+    private void removeShield() {
+    	if(!player.items.contains("shield")) {
+    		return;
+    	}
+    	if (initialisedShieldTime - worldTimer == 10) {
+    		player.items.remove("shield");
+    	}
     }
 
     @Override
@@ -315,11 +384,16 @@ public class GameScreen implements Screen {
         exitButtonInactive.dispose();
         player.dispose();
         mapItems.clear();
+//        cam.update(V_WIDTH/2, V_HEIGHT/2, game);
+        cam.cam.viewportHeight = 1000;
+        cam.cam.viewportWidth = 1000;
+        cam.update(V_WIDTH/2, V_HEIGHT/2, game);
+        cam.cam.update();
+        
     }
     
     public void generateMapItems( int widthInTiles, int tileWidth ) {
         HashSet<String> positions = new HashSet<String>();
-    	System.out.println("generating");
     	int maxShields = 3;
 		int maxCoins = 10;
 		int maxSwords = 5;
@@ -338,11 +412,9 @@ public class GameScreen implements Screen {
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			
 			Item item = new Item("shield", position);
-			System.out.println(position);
+
 			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
-//				System.out.println(position);
 				mapItems.add(item);
-				System.out.println("adding to positions");
 				positions.add(position.toString());
 			}
 		}
@@ -353,7 +425,6 @@ public class GameScreen implements Screen {
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			Item item = new Item("coin", position);
 			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
-//				System.out.println(position);
 				mapItems.add(item);
 				positions.add(position.toString());
 			}
@@ -410,6 +481,18 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
-		System.out.println(positions);
 	}
+    
+    private float timePassed(float theTime) {
+    	return worldTimer - theTime;
+    }
+    
+    private void updateTime(float dt) {
+    	timer += dt;
+    	if (timer >= 1) {
+    		worldTimer--;
+//    		System.out.println("World Timer: " + worldTimer);
+    		timer = 0;
+    	}
+    }
 }

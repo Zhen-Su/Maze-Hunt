@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import com.project.mazegame.objects.Item;
 
 public class Variables {
-	public static int V_WIDTH = 800;
-    public static int V_HEIGHT = 400;
-    public static int VIEWPORT_WIDTH = 1000; // 500 ;
-    public static int VIEWPORT_HEIGHT =  1000;
+	public static int V_WIDTH = 1000;
+    public static int V_HEIGHT = 1000;
+    public static int VIEWPORT_WIDTH = 700; // 500 ;
+    public static int VIEWPORT_HEIGHT =  700;
 
 	  
 	  public static boolean UP_TOUCHED;

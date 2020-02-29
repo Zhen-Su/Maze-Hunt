@@ -10,10 +10,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.project.mazegame.tools.*;
 //import com.project.mazegame.Pair;
 //import com.project.mazegame.Player;
-import com.project.mazegame.tools.Collect;
+import com.project.mazegame.tools.*;
 
 public class Player {
 	public int x, y;
@@ -42,8 +41,10 @@ public class Player {
         this.ID = ID;
     	this.collisionLayer = collisionLayer;
     	
-        x = VIEWPORT_WIDTH / 2;
-        y = VIEWPORT_HEIGHT / 2;
+    	initialPosition();
+        x = this.position.getX();
+        y = this.position.getY();
+//        System.out.println("play cons "+ x + " , " + y);
        
         loadPlayerTextures();
         
@@ -52,48 +53,71 @@ public class Player {
         ArrayList<Item> items = new ArrayList<Item>();
         
     }
+    
+    public void initialPosition () {
+    	//Coordinate position = new Coordinate();
+		
+    	int maxX = collisionLayer.getWidth() ;	
+    	int maxY= collisionLayer.getHeight();	
+//    	System.out.println("maxX" + maxX + " , " + maxY);
+    	
+    	int ranx = (int)  (( Math.random() * (maxX) ));
+    	int rany = (int)  (( Math.random() * (maxY) ));
+//    	System.out.println("ran" + ranx + " , " + rany);
+    	
+    	
+		this.position.setX( ranx * (int) collisionLayer.getTileWidth() + 50);			
+		this.position.setY( rany * (int) collisionLayer.getTileHeight() + 50);
+		
+	
+		if(isCellBlocked((float)position.getX(), (float)position.getY())) {
+			initialPosition();
+		}
+    }
      
     public void update (float delta){
     	// update player movement
-    	this.position.setX((int) x ); 
-    	this.position.setY((int) y ); 
-        
+    	this.position.setX(x); 
+    	this.position.setY(y); 
+//        System.out.println(collisionLayer.getWidth());
         if (RIGHT_TOUCHED) {
-        	//try move player right
-            this.x += speed; 
-            //check player isn't in a wall
-            if(!checkCollisionMap(x, y)) { 
-            	//move player back if needed
-            	
-               	this.x -= speed;
-            }
+        	if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
+	        	//try move player right
+	            x += speed; 
+	            //check player isn't in a wall
+	            if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
+	               	x -= speed;
+	            }else 
+	            	this.position.setX( x ); 
+	            	
+        	}
           
         }
         if (LEFT_TOUCHED) {
             if (x > 0) {
-            	this.x -= speed;
+            	x -= speed;
             	if(!checkCollisionMap(x,y)) {
-            		
-            		this.x += speed;
-            	}
+            		x += speed;
+            	}else 
+	            	this.position.setX( x ); 
             }
         }
         if (UP_TOUCHED) {
-            if (y < VIEWPORT_HEIGHT - height) {
-            	this.y += speed;
+            if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
+            	y += speed;
                 if(!checkCollisionMap(x, y)) {
-                	
-                	this.y -= speed;
-                }
+                	y -= speed;
+                }else 
+	            	this.position.setY( y ); 
             }
         }
         if (DOWN_TOUCHED) {
             if (y > 0) {
-            	this.y -= speed;
-                if(!checkCollisionMap(x, y  )) {
-                	
-                	this.y += speed;
-                } 
+            	y -= speed;
+                if(!checkCollisionMap(x, y  )) { 
+                	y += speed;
+                } else 
+	            	this.position.setY( y ); 
             }
         }
         //change player texture
@@ -255,6 +279,7 @@ public class Player {
         player_right.dispose();
         player_left.dispose();
         player.dispose();
+        
     }
    
     /*

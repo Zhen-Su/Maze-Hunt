@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.project.mazegame.MazeGame;
@@ -25,6 +27,8 @@ public class MultiPlayerScreen implements Screen {
 
     public String ip;
     public String username;
+    
+    Texture backGround;
 
     private boolean hasEnterIP = false;
     private boolean hasEnterUsername =false;
@@ -32,16 +36,19 @@ public class MultiPlayerScreen implements Screen {
 //    private boolean imClient = false;
 
     public MultiPlayerScreen(MazeGame game) {
+    	backGround = new Texture("UI\\MenuButtons\\menuBackground.png");
         this.game = game;
         this.playerEnterIp();
       //  Gdx.app.log("MutiPlayerScreen: ","construction done!");
     }
 
     private void playerEnterIp(){
+    	
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
             public void input(String text) {
                 Gdx.app.log("IP:",text);
+                this.
                 ip=text;
                 hasEnterIP=true;
                 if(hasEnterIP){
@@ -51,7 +58,8 @@ public class MultiPlayerScreen implements Screen {
             @Override
             public void canceled() {
                 Gdx.app.log("MutiPlayerScreen: ","Player cancel,GOODBYE!");
-                //backToMenuScreen();
+                //this.dispose();
+                backToMenuScreen();
             }
         },"ENTER IP", "", "Your IP Please");
     }
@@ -67,15 +75,17 @@ public class MultiPlayerScreen implements Screen {
             @Override
             public void canceled() {
                 Gdx.app.log("MutiPlayerScreen: ","Player cancel,GOODBYE!");
-               // backToMenuScreen();
+                backToMenuScreen();
             }
         },"ENTER USERNAME", "", "Your username Please");
     }
 
     private void backToMenuScreen(){
+    	System.out.println("back to");
        // cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-        this.dispose();
+        //this.dispose();
         game.setScreen(new MenuScreen(this.game));
+        System.out.println("shouldn't see");
     }
     //----------------------------------------------------------------------------------------------
     //Override method
@@ -86,10 +96,13 @@ public class MultiPlayerScreen implements Screen {
 
     @Override
     public void render(float delta) {
+    	Gdx.gl.glClearColor(0.325f, 0.343f, 0.604f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         if(hasEnterUsername){
+        	//this.dispose();
             game.setScreen(new MultiPlayerGameScreen(game,username,ip));
         }
-        this.dispose();
+        
     }
 
     @Override
