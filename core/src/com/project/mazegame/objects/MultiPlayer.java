@@ -1,8 +1,11 @@
 package com.project.mazegame.objects;
 
 import static com.project.mazegame.tools.Variables.*;
+
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -17,22 +20,22 @@ import java.util.ArrayList;
 public class MultiPlayer extends Player {
 
     private int x, y;
-    private Texture player_up, player_right, player_left, player_down, sword,shield;
     private float speed = 6;
     private float width, height;
     public int coins;
-    private int health = 5;
+    public int health = 5;
     private int id;
     public int swordDamage;
     public Coordinate position;
 
     private String name;
-    private ArrayList<String> items;
+    public ArrayList<String> items;
     private MultiPlayerGameScreen gameClient;
     public boolean bL, bU, bR, bD;
     private Direction dir;
     private TiledMapTileLayer collisionLayer;
     public static boolean debug = false;
+
 
     //constructors=================================================================================
 
@@ -50,21 +53,13 @@ public class MultiPlayer extends Player {
         this.gameClient=gameClient;
         this.dir=dir;
         ArrayList<Item> items = new ArrayList<Item>();
-
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                            loadPlayerTextures();
-                            width = player_up.getWidth();
-                            height = player_up.getHeight();
-                        }
-                });
+        width = gameClient.player_up.getWidth();
+        height = gameClient.player_up.getHeight();
 
         if (debug) System.out.println("Multiplayer construction done!");
     }
 
     //Getter&Setter=================================================================================
-
     public int getX() { return x; }
 
     public void setX(int x) { this.x = x; }
@@ -85,11 +80,31 @@ public class MultiPlayer extends Player {
 
     public void setName(String name) { this.name = name; }
 
+    public Texture getPlayerTexture() { return player; }
+
     public void setPlayerTexture(Texture player) { this.player = player; }
 
     public Texture getPlayer_up() { return player_up; }
 
     public void setPlayer_up(Texture player_up) { this.player_up = player_up; }
+
+    @Override
+    public Texture getSword() {
+        return sword;
+    }
+
+    @Override
+    public void setSword(Texture sword) {
+        this.sword = sword;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
 
     public Texture getPlayer_right() { return player_right; }
 
@@ -103,50 +118,37 @@ public class MultiPlayer extends Player {
 
     public void setPlayer_down(Texture player_down) { this.player_down = player_down; }
 
-    public ArrayList<String> getItems() { return items; }
-
-    public void setItems(ArrayList<String> items) { this.items = items; }
-
     //==============================================================================================
 
-    /**
-     * draw player
-     * @param sb
-     */
     public void render (SpriteBatch sb){
 
         switch(dir){
             case U:
-                sb.draw(player_up,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_up,this.position.getX()- (width/2),this.position.getY() - (height/2));
                 break;
             case D:
-                sb.draw(player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
                 break;
             case L:
-                sb.draw(player_left,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_left,this.position.getX()- (width/2),this.position.getY() - (height/2));
                 break;
             case R:
-                sb.draw(player_right,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_right,this.position.getX()- (width/2),this.position.getY() - (height/2));
                 break;
             case STOP:
-                sb.draw(player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
                 break;
         }
         updateMotion();
 
         if(this.items.contains("sword")) {	  // possible errors may occur
-            sb.draw(sword,(float)(x),y - (height/4),50,50);
+            sb.draw(gameClient.sword,(float)(x),y - (height/4),50,50);
         }
         if(this.items.contains("shield")) {
-            sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
+            sb.draw(gameClient.shield,(float) (x- (width/1.5)),y - (height/2),50,50);
         }
     }
 
-    /**
-     * Handle player press button event
-     * @param keycode
-     * @return
-     */
     public boolean keyDown(int keycode) {
         switch(keycode){
             case Input.Keys.RIGHT:
@@ -166,11 +168,6 @@ public class MultiPlayer extends Player {
         return true;
     }
 
-    /**
-     * Handle player release button event
-     * @param keycode
-     * @return
-     */
     public boolean keyUp (int keycode){
         switch(keycode){
             case Input.Keys.RIGHT:
@@ -190,9 +187,6 @@ public class MultiPlayer extends Player {
         return true;
     }
 
-    /**
-     * update player position according to direction
-     */
     public void updateMotion(){
 
         this.position.setX(x);
@@ -360,7 +354,7 @@ public class MultiPlayer extends Player {
 //      }
 //
     public void death() {
-        System.out.println("Player has died respawning now");
+        if(debug) System.out.println("Player has died respawning now");
         this.health = 5;
         this.coins = 0;
 
@@ -388,13 +382,8 @@ public class MultiPlayer extends Player {
     public int getHealth() {
         return health;
     }
-    public void dispose()
-    {
-        player_up.dispose();
-        player_down.dispose();
-        player_right.dispose();
-        player_left.dispose();
-    }
+
+    public void dispose() { }
 
 
     /*

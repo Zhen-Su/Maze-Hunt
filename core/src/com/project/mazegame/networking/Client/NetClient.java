@@ -1,5 +1,6 @@
 package com.project.mazegame.networking.Client;
 
+import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
@@ -51,7 +52,6 @@ public class NetClient {
             } catch (SocketException e) {
                 e.printStackTrace();
             }
-            //ds = new DatagramSocket(serverUDPPort);   //UDPSocket
             socket = new Socket(ip, serverTCPPort);   // TCPSocket
             if(debug) printMsg("Connected to server!");
 
@@ -104,7 +104,8 @@ public class NetClient {
 
         @Override
         public void run() {
-            if(debug) System.out.println("Client thread start...");
+            if(debug) System.out.println("Client UDP thread start...");
+            Thread.currentThread().setName("Client UDP Thread");
             while (null != datagramSocket) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try {
@@ -134,6 +135,9 @@ public class NetClient {
 
             Message msg = null;
             switch (msgType) {
+                case Message.PLAYER_COLLECT_MSG:
+                    msg = new CollectMessage(gameClient);
+                    msg.process(dis);
                 case Message.PLAYER_NEW_MSG:
                     msg = new PlayerNewMessage(gameClient);
                     msg.process(dis);

@@ -13,7 +13,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameServer {
+public class GameServer implements Runnable {
 
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
@@ -29,15 +29,12 @@ public class GameServer {
      * @param args
      */
     public static void main(String[] args) {
-        new GameServer().start();
+        new Thread(new GameServer()).start();
     }
 
-    /**
-     * Start game! (NOT A THREAD)
-     * For the final integration, remove main() method in this class, and put this start() method into constructor
-     */
-    @SuppressWarnings("resource")
-    public void start(){
+
+    @Override
+    public void run() {
 
         isRunning = true;
 
@@ -53,6 +50,7 @@ public class GameServer {
             Socket s =null;
             try {
                 printMsg("Waiting for a client");
+                Thread.currentThread().setName("Server TCP Thread");
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
 
                 //Receive client's UDP Port from GameClient
@@ -82,8 +80,6 @@ public class GameServer {
         }
     }
 
-
-
     /**
      * Client inner class
      * @author kevin
@@ -111,6 +107,7 @@ public class GameServer {
 
         @Override
         public void run() {
+            Thread.currentThread().setName("Server UDP Thread");
             DatagramSocket ds =null;
             try {
                 ds = new DatagramSocket(SERVER_UDP_PORT);

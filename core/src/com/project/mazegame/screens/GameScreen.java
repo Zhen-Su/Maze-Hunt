@@ -96,6 +96,8 @@ public class GameScreen implements Screen {
         healingPotionTexture = new Texture("Potion2.png");
         compassTexture = new Texture("RolledMap.png");
         damagingPotionTexture = new Texture("Potion3.png");
+
+
         
         
     }

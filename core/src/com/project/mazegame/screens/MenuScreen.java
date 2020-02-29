@@ -116,7 +116,12 @@ public class MenuScreen implements Screen {
 
         if (isHovering(drawX, CREATE_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
-            // bring to maze creation thing
+             //bring to maze creation thing
+            if(Gdx.input.isTouched())
+            {
+                bgm.stop();
+                game.setScreen(new CreateMazeScreen(game));
+            }
         } else {
             game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
         }

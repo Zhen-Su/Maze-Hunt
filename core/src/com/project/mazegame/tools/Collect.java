@@ -5,7 +5,6 @@ import com.project.mazegame.objects.*;
 import com.project.mazegame.screens.GameScreen;
 import java.util.ArrayList;
 
-
 public class Collect {
 	public Coordinate position = new Coordinate();
 	public Item item = new Item(" ", position);

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -18,6 +19,7 @@ import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
+import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
 
 import java.util.ArrayList;
@@ -35,13 +37,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     private MultiPlayer myMultiPlayer;
     private  NetClient netClient = new NetClient(this);
-    private List<MultiPlayer> players = new ArrayList<>();
+    private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
     private int tempMapItemssize;
-    private Collect co;
+    private MultiCollect co;
     private MultiPlayer player2;
 
     private Texture exitButtonActive;
@@ -59,6 +61,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
+    private AssetManager manager;
+    public Texture player, player_up, player_right, player_left, player_down, sword,shield;
 
     //=====================================constructors=============================================
 
@@ -70,8 +74,12 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
+        manager = new AssetManager();
+        loadAsset();
+
         myMultiPlayer=new MultiPlayer(this.collisionLayer,username,VIEWPORT_WIDTH / 2,VIEWPORT_HEIGHT / 2,this, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
+
         Gdx.input.setInputProcessor(this);
 
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, VIEWPORT_WIDTH/2,VIEWPORT_HEIGHT/2);
@@ -117,12 +125,39 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     //==============================================================================================
 
+    public void loadAsset(){
+        manager.load("playerRedBackCrop.png", Texture.class);
+        manager.load("playerRedRightCrop.png", Texture.class);
+        manager.load("playerRedLeftCrop.png", Texture.class);
+        manager.load("playerRedFrontCrop.png", Texture.class);
+        manager.load("sword2.png", Texture.class);
+        manager.load("shield.png", Texture.class);
+
+        manager.finishLoading();// waiting for all assets load.
+
+        player_up = manager.get("playerRedBackCrop.png", Texture.class);
+        player_right = manager.get("playerRedRightCrop.png", Texture.class);
+        player_left = manager.get("playerRedLeftCrop.png", Texture.class);
+        player_down = manager.get("playerRedFrontCrop.png", Texture.class);
+        sword = manager.get("sword2.png", Texture.class);
+        shield = manager.get("shield.png", Texture.class);
+    }
+
+    public void unloadAsset(){
+        manager.unload("playerRedBackCrop.png");
+        manager.unload("playerRedRightCrop.png");
+        manager.unload("playerRedLeftCrop.png");
+        manager.unload("playerRedFrontCrop.png");
+        manager.unload("sword2.png");
+        manager.unload("shield.png");
+    }
+
     @Override
     public void show() {
         //assuming it's a square map -> only need width of map and width of tile
-//        generateMapItems((int) collisionLayer.getWidth(), 100 );
-//        co = new Collect(game, myMultiPlayer);
-//        tempMapItemssize = mapItems.size();
+        generateMapItems((int) collisionLayer.getWidth(), 100 );
+        co = new MultiCollect(game, myMultiPlayer);
+        tempMapItemssize = mapItems.size();
     }
 
     @Override
@@ -148,23 +183,23 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
         game.batch.begin();
 
-        //draw collectibles
-       // drawCollectibles();
+//        draw collectibles
+        drawCollectibles();
 
 //        System.out.println("here");
 //        System.out.println("player.position x:"+myMultiPlayer.position.getX());
 //        System.out.println("player.position y:"+myMultiPlayer.position.getY());
 //        System.out.println(myMultiPlayer.position.getX() + " , " + co.nearestItem(myMultiPlayer).getPosition().getX());
-//        //Collectibles pick up
-//        if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-//            if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
-//                    (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position).getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100)
-//            {
-//                System.out.println("over item");
-//                pickUpItem();
-//
-//            }
-//        }
+        //Collectibles pick up
+        if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+            if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
+                    (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position).getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100)
+            {
+                System.out.println("over item");
+                pickUpItem();
+
+            }
+        }
 
         drawExitButton();
 
@@ -202,7 +237,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
             xheart += (iconSize + buffer);
         }
-        if (myMultiPlayer.getItems().contains("shield")) {
+        if (myMultiPlayer.items.contains("shield")) {
             //draw shield icon
             float shieldSize = 50;
             float xShield = VIEWPORT_WIDTH - shieldSize -buffer;
@@ -210,7 +245,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
         }
         //sword icon
-        if ( myMultiPlayer.getItems().contains("sword")) {
+        if ( myMultiPlayer.items.contains("sword")) {
             float swordSize = 50;
             float xSword = VIEWPORT_WIDTH  - swordSize - buffer;
             float ySword = VIEWPORT_HEIGHT - (swordSize *2) ;
@@ -260,7 +295,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private void pickUpItem() {
         Item item =  co.nearestItem(myMultiPlayer);
 
-        if (!(myMultiPlayer.getItems().contains(item.getType())) && !(item.getType() == "coin")) {
+        if (!(myMultiPlayer.items.contains(item.getType())) && !(item.getType() == "coin")) {
             item = co.pickedUp(co.nearestItem(myMultiPlayer));
 
             if (item.getType() == "shield") {
@@ -336,6 +371,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             MultiPlayer otherMultiPlayer = players.get(i);
             otherMultiPlayer.dispose();
         }
+        unloadAsset();
+        manager.clear();
+        manager.dispose();
     }
     public void generateMapItems( int widthInTiles, int tileWidth ) {
         HashSet<String> positions = new HashSet<String>();
