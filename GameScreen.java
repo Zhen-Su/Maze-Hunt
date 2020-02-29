@@ -56,8 +56,9 @@ public class GameScreen implements Screen {
     private Texture audioButtonInactive;
     
     private Player player2;
-
+	private Player player3;
     private Collect co;
+    private Collect co1;
  
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
@@ -78,7 +79,7 @@ public class GameScreen implements Screen {
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         player = new Player(this.collisionLayer,"james",123);
-//        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
+		player2 = new Player(this.collisionLayer, "Albert", 124);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, VIEWPORT_WIDTH/2,VIEWPORT_HEIGHT/2);
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
@@ -105,6 +106,7 @@ public class GameScreen implements Screen {
     	 //assuming it's a square map -> only need width of map and width of tile
         generateMapItems((int) collisionLayer.getWidth(), 100 );
         co = new Collect(game, player);
+        co1 = new Collect(game, player2);
         tempMapItemssize = mapItems.size();
     }
     
@@ -124,6 +126,7 @@ public class GameScreen implements Screen {
         //updates - player position
         inputHandler.update();
         player.update(delta, 2);
+        player2.update(delta, 1);
         
         //comment out ai player line to run correctly
 //       aiPlayer.update(delta);
@@ -140,6 +143,7 @@ public class GameScreen implements Screen {
       
         System.out.println("here");
         System.out.println(player.position.getX() + " , " + co.nearestItem(player).getPosition().getX());
+		System.out.println(player2.position.getX() + " , " + co1.nearestItem(player2).getPosition().getX());
         //Collectibles pick up
 	    if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception	
 	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 
@@ -148,6 +152,14 @@ public class GameScreen implements Screen {
 	        	pickUpItem();
 	        	
 	        }
+		}
+		if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+			if ((player2.position.getX() > co1.nearestItem(player2).getPosition().getX()) && (player2.position.getX() < co1.nearestItem(player2).getPosition().getX()+100) &&
+					(player2.position.getY() > co1.nearestItem(player2).getPosition().getY()) && (player2.position.getY() < co1.nearestItem(player2).getPosition().getY()+100)){
+				System.out.println("over item");
+				pickUpItem();
+
+			}
 		}
 	    
 	    drawExitButton();
@@ -158,6 +170,7 @@ public class GameScreen implements Screen {
         drawIcons(iconSize,buffer);
         
         player.render(game.batch);
+        player2.render(game.batch);
 
         game.batch.end();
         
@@ -176,7 +189,7 @@ public class GameScreen implements Screen {
  
         int xheart = buffer;
         int yheart = VIEWPORT_HEIGHT - iconSize -buffer;
-        int lives = player.getHealth();
+        int lives = player2.getHealth();
         for(int i = 0; i < lives; i ++) {
         	  game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
         	  xheart += (iconSize + buffer);
@@ -189,14 +202,14 @@ public class GameScreen implements Screen {
 	        game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
         }
         //sword icon
-        if ( player.items.contains("sword")) {
+        if ( player2.items.contains("sword")) {
 	        float swordSize = 50;
 	        float xSword = VIEWPORT_WIDTH  - swordSize - buffer;
 	        float ySword = VIEWPORT_HEIGHT - (swordSize *2) ;
 	        game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
         }
         //draws coin icon
-        for ( int i = 0; i < player.coins; i ++ ) {
+        for ( int i = 0; i < player2.coins; i ++ ) {
 	        float xCoin = buffer;
 	        float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer;
 	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin,iconSize*2 , iconSize*2);
@@ -267,7 +280,7 @@ public class GameScreen implements Screen {
 				co.shield(item, player);
 			}
 			if (item.getType() == "sword") {
-				co.sword(item, player, player2);
+				co.sword(item, player, player3);
 			}
 			if (item.getType() == "healingPotion") {
 				co.healingPotion (player);
@@ -281,6 +294,30 @@ public class GameScreen implements Screen {
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
+		}
+		Item item1 =  co1.nearestItem(player2);
+
+		if (!(player2.items.contains(item1.getType())) && !(item1.getType() == "coin")) {
+			item1 = co1.pickedUp(co1.nearestItem(player2));
+
+			if (item1.getType() == "shield") {
+				co1.shield(item1, player2);
+			}
+			if (item1.getType() == "sword") {
+				co1.sword(item1, player2, player3);
+			}
+			if (item1.getType() == "healingPotion") {
+				co1.healingPotion (player2);
+			}
+			if (item1.getType() == "damagingPotion") {
+				co1.damagingPotion(item1, player2);
+			}
+			if (item1.getType() == "gearEnchantment") {
+				co1.gearEnchantment(item1 , player2);
+			}
+		} else if (item1.getType() == "coin") {
+			mapItems.remove(item1);
+			player2.coins++;
 		}
     }
 
@@ -305,6 +342,7 @@ public class GameScreen implements Screen {
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
         player.dispose();
+        player2.dispose();
         mapItems.clear();
     }
 
@@ -314,6 +352,7 @@ public class GameScreen implements Screen {
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
         player.dispose();
+        player2.dispose();
         mapItems.clear();
     }
     
@@ -405,6 +444,86 @@ public class GameScreen implements Screen {
 			} else {
 				Item item = new Item("gearEnchantment", position);
 				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+					mapItems.add(item);
+					positions.add(position.toString());
+				}
+			}
+		}
+		for (int i = 0; i <= maxShields; i++) {
+			Coordinate position = new Coordinate(0,0);
+
+
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
+			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+
+			Item item = new Item("shield", position);
+			System.out.println(position);
+			if(!(positions.contains(position.toString())) && !(player2.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+//				System.out.println(position);
+				mapItems.add(item);
+				System.out.println("adding to positions");
+				positions.add(position.toString());
+			}
+		}
+
+		for (int i = 0; i < maxCoins; i++) {
+			Coordinate position = new Coordinate(0,0);
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
+			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+			Item item = new Item("coin", position);
+			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+//				System.out.println(position);
+				mapItems.add(item);
+				positions.add(position.toString());
+			}
+
+		}
+
+		for (int i = 0; i < maxSwords; i++) {
+			Coordinate position = new Coordinate(0,0);
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
+			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+			Item item = new Item("sword", position);
+			if(!(positions.contains(position.toString())) && !(player2.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+				mapItems.add(item);
+				positions.add(position.toString());
+			}
+
+		}
+
+		for (int i = 0; i < maxCompasses; i++) {
+			Coordinate position = new Coordinate(0,0);
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
+			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+			Item item = new Item("compass", position);
+			if(!(positions.contains(position.toString())) && !(player2.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+				mapItems.add(item);
+				positions.add(position.toString());
+			}
+
+		}
+
+		for (int i = 0; i < maxPotions; i++) {
+			Coordinate position = new Coordinate(0,0);
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
+			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+			int whatPotion = (int)(Math.random() * 4);
+
+			if (whatPotion == 1) {
+				Item item = new Item("healingPotion", position);
+				if(!(positions.contains(position.toString())) && !(player2.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+					mapItems.add(item);
+					positions.add(position.toString());
+				}
+			} else if (whatPotion == 2) {
+				Item item = new Item("damagingPotion", position);
+				if(!(positions.contains(position.toString())) && !(player2.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+					mapItems.add(item);
+					positions.add(position.toString());
+				}
+			} else {
+				Item item = new Item("gearEnchantment", position);
+				if(!(positions.contains(position.toString())) && !(player2.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 					mapItems.add(item);
 					positions.add(position.toString());
 				}

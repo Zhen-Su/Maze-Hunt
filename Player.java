@@ -121,7 +121,7 @@ public class Player {
                     this.y = (int) moveToTake.getY();
                     player = change(old, moveToTake);
             try {
-                Thread.sleep(200);
+                Thread.sleep(400);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -209,7 +209,7 @@ public class Player {
     }
 
     public ArrayList<Coordinate> avaibleMoves(int x, int y) {
-        int move = 30;
+        int move = 40;
         ArrayList<Coordinate> moves = new ArrayList<>();
         if (checkCollisionMap((x + move), y) ){
             moves.add(new Coordinate((x + move), y));
