@@ -33,13 +33,35 @@ public class MultiPlayer extends Player {
     public boolean bL, bU, bR, bD;
     private Direction dir;
     private TiledMapTileLayer collisionLayer;
-    public static boolean debug = true;
+    public static boolean debug = false;
 
 
     //constructors=================================================================================
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir ){
+        super();
+        if (debug) System.out.println("My Multiplayer instance is constructing...");
+        this.collisionLayer = collisionLayer;
+        this.health=5;
+        this.coins=0;
+        this.name=username;
+        this.items=new ArrayList<>();
+        this.position=new Coordinate(x,y);
+
+        initialPosition();
+        x = this.position.getX();
+        y = this.position.getY();
+
+        this.gameClient=gameClient;
+        this.dir=dir;
+        ArrayList<Item> items = new ArrayList<Item>();
+        width = gameClient.player_up.getWidth();
+        height = gameClient.player_up.getHeight();
+        if (debug) System.out.println("My Multiplayer instance construction done!");
+
+    }
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir ) {
         super();
-        if (debug) System.out.println("Multiplayer is constructing...");
+        if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health=5;
         this.coins=0;
@@ -53,7 +75,7 @@ public class MultiPlayer extends Player {
         ArrayList<Item> items = new ArrayList<Item>();
         width = gameClient.player_up.getWidth();
         height = gameClient.player_up.getHeight();
-        if (debug) System.out.println("Multiplayer construction done!");
+        if (debug) System.out.println("Other Multiplayer instance construction done!");
     }
     //Getter&Setter=================================================================================
     public int getX() { return x; }
@@ -171,37 +193,41 @@ public class MultiPlayer extends Player {
 
         switch (dir){
             case R:
-                this.x+=speed;
-                if(!checkCollisionMap(x, y)) {
-                    this.x -= speed;
-                    if (debug) System.out.println("hit right wall");
+                if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
+                    //try move player right
+                    x += speed;
+                    //check player isn't in a wall
+                    if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
+                        x -= speed;
+                    }else
+                        this.position.setX( x );
                 }
                 break;
             case L:
-                if(x>0) {
-                    this.x -= speed;
+                if (x > 0) {
+                    x -= speed;
                     if(!checkCollisionMap(x,y)) {
-                        this.x += speed;
-                        if (debug)  System.out.println("hit left wall");
-                    }
+                        x += speed;
+                    }else
+                        this.position.setX( x );
                 }
                 break;
             case U:
-                if (y < VIEWPORT_HEIGHT - height) {
-                    this.y += speed;
+                if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
+                    y += speed;
                     if(!checkCollisionMap(x, y)) {
-                        this.y -= speed;
-                        if (debug)  System.out.println("hit up wall");
-                    }
+                        y -= speed;
+                    }else
+                        this.position.setY( y );
                 }
                 break;
             case D:
-                if(y>0){
-                    this.y -= speed;
-                    if(!checkCollisionMap(x, y)) {
-                        this.y += speed;
-                        if (debug)  System.out.println("hit down wall");
-                    }
+                if (y > 0) {
+                    y -= speed;
+                    if(!checkCollisionMap(x, y  )) {
+                        y += speed;
+                    } else
+                        this.position.setY( y );
                 }
                 break;
             case STOP:
@@ -254,17 +280,6 @@ public class MultiPlayer extends Player {
         }
     }
 
-    public boolean isCellBlocked(float x, float y) {
-
-        Cell cell = collisionLayer.getCell(
-                (int) (x / collisionLayer.getTileWidth()),
-                (int) (y / collisionLayer.getTileHeight()));
-
-        return cell != null && cell.getTile() != null
-                & cell.getTile().getProperties().containsKey("isWall");
-    }
-
-
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
         //Overall x and y of player
         float xWorld = possibleX ;
@@ -274,10 +289,10 @@ public class MultiPlayer extends Player {
 
         //Check corners of player to check for collision
         //check corners T = top, B = bottom, R = right, L = left
-        boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2),collisionLayer );
-        boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2),collisionLayer);
-        boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2),collisionLayer);
-        boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2),collisionLayer);
+        boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2) );
+        boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2));
+        boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2));
+        boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2));
 
         collisionWithMap = TLbool || TRbool || BLbool || BRbool;
 
@@ -286,11 +301,11 @@ public class MultiPlayer extends Player {
         else return true;
     }
 
-    public boolean isCellBlocked(float x, float y,TiledMapTileLayer collisionLayer) {
+    public boolean isCellBlocked(float x, float y) {
 
         Cell cell = collisionLayer.getCell(
                 (int) (x / collisionLayer.getTileWidth()),
-                (int) (y /collisionLayer.getTileHeight()));
+                (int) (y / collisionLayer.getTileHeight()));
 
         return cell != null && cell.getTile() != null
                 & cell.getTile().getProperties().containsKey("isWall");

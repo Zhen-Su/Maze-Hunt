@@ -178,6 +178,7 @@ public class GameScreen implements Screen {
 		game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
 
 
+		int iconSize = 30;
 		int buffer = 10;
 		Coordinate playerPos = new Coordinate(player.position.getX(), player.position.getY());
 		drawIcons(iconSize,buffer,playerPos);
@@ -199,10 +200,6 @@ public class GameScreen implements Screen {
 				//System.out.println("get here");
 			}
 		}
-
-
-
-
 	}
 
 

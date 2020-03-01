@@ -36,10 +36,9 @@ public class JoinMazeScreen implements Screen {
 //    private boolean imClient = false;
 
     public JoinMazeScreen(MazeGame game) {
-        backGround = new Texture("UI\\MenuButtons\\menuBackground.png");
+        backGround = new Texture("UI\\MenuButtons\\MenuBackground.png");
         this.game = game;
         this.playerEnterIp();
-        //  Gdx.app.log("MutiPlayerScreen: ","construction done!");
     }
 
     private void playerEnterIp(){

@@ -58,12 +58,7 @@ public class CreateMazeScreen implements Screen {
             new Thread(new GameServer()).start();
 
             game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
-//            Gdx.app.postRunnable(new Runnable() {
-//                @Override
-//                public void run() {
-//                    game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
-//                }
-//            });
+
         }
     }
 

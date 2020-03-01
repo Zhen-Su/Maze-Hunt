@@ -52,7 +52,6 @@ public class Player {
         width = player_up.getWidth();
         height = player_up.getHeight();
         ArrayList<Item> items = new ArrayList<Item>();
-
     }
 
     public void initialPosition () {
@@ -90,9 +89,7 @@ public class Player {
                     x -= speed;
                 }else
                     this.position.setX( x );
-
             }
-
         }
         if (LEFT_TOUCHED) {
             if (x > 0) {
