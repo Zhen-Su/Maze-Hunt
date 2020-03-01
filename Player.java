@@ -17,7 +17,7 @@ import com.project.mazegame.tools.Collect;
 
 public class Player {
 	public int x, y;
-    private Texture player, player_up, player_right, player_left, player_down, sword,shield;
+    protected Texture player, player_up, player_right, player_left, player_down, sword,shield;
     private float speed = 6;
     private float width, height;
     public int coins;
@@ -53,9 +53,9 @@ public class Player {
         
     }
      
-    public void update (float delta, int mode){
+    public void update (float delta, int mode, Collect lets){
     	// update player movement
-        if(mode == 1) {
+
             this.position.setX((int) x);
             this.position.setY((int) y);
 
@@ -109,24 +109,9 @@ public class Player {
             } else {
                 player = player_down;
             }
-        } else if (mode == 2) {
-            Coordinate old = this.position;
-            this.position.setX((int) x);
-            this.position.setY((int) y);
-                    // contantsnatly throwing exeption possibly becasue not linked to player
-                    // will need to do something with the speed
-                    Coordinate moveToTake = direction(avaibleMoves(x, y));
-                    System.out.println(moveToTake.toString());
-                    this.x = (int) moveToTake.getX();
-                    this.y = (int) moveToTake.getY();
-                    player = change(old, moveToTake);
-            try {
-                Thread.sleep(400);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
-        }
+
+
     }
     private Texture change(Coordinate old, Coordinate update) {
         if (old.getX() < update.getX() && old.getY() == update.getY()) {
@@ -208,32 +193,6 @@ public class Player {
       }
     }
 
-    public ArrayList<Coordinate> avaibleMoves(int x, int y) {
-        int move = 40;
-        ArrayList<Coordinate> moves = new ArrayList<>();
-        if (checkCollisionMap((x + move), y) ){
-            moves.add(new Coordinate((x + move), y));
-        }
-        if (checkCollisionMap((x -move), y)) {
-            moves.add(new Coordinate((x - move), y));
-        }
-        if (checkCollisionMap(x, (y + move))) {
-            moves.add(new Coordinate(x, (y + move)));
-        }
-        if (checkCollisionMap(x, (y - move))) {
-            moves.add(new Coordinate(x, (y - move)));
-        }
-        return moves;
-    }
-
-    public Coordinate direction(ArrayList<Coordinate> openDoor) {
-        if (openDoor.size() <= 0) {
-            return null;
-        }
-
-        int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
-        return openDoor.get(randomTake);
-    }
 
     /*
     public void update(float delta) {

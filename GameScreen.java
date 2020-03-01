@@ -34,7 +34,7 @@ public class GameScreen implements Screen {
     private MazeGame game;
     private OrthoCam cam;
 
-    private Player player;
+    private AIPlayer player;
 //    private AIPlayer aiPlayer;// ---------need to be implemented
     private InputHandler inputHandler;
     private float delta;
@@ -78,7 +78,7 @@ public class GameScreen implements Screen {
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        player = new Player(this.collisionLayer,"james",123);
+        player = new AIPlayer(this.collisionLayer,"james",123);
 		player2 = new Player(this.collisionLayer, "Albert", 124);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, VIEWPORT_WIDTH/2,VIEWPORT_HEIGHT/2);
         
