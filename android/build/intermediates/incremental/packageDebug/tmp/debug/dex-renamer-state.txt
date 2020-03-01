@@ -1,4 +1,0 @@
-#Sat Feb 29 21:59:45 GMT 2020
-base.0=/Users/kevin/Downloads/project/android/build/intermediates/dex/debug/mergeDexDebug/out
-path.0=classes.dex
-renamed.0=classes.dex
