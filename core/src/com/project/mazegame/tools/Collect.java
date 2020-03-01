@@ -128,9 +128,15 @@ public class Collect {
 
 	public void damagingPotion(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
+		
+		
 		player1.decreaseHealth(1);
 		player1.decreaseHealth(1);
-		items.remove("damagingPotion");
+		
+		player1.playerPosioned();
+		
+		//items.remove("damagingPotion");
+		//player1.loadPlayerTextures();
 	}
 
 	public boolean gearEnchantment(Item item, Player player1) {
@@ -141,6 +147,8 @@ public class Collect {
 
 
 	}
+	
+
 
 
 }

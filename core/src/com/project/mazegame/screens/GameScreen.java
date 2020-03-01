@@ -60,7 +60,7 @@ public class GameScreen implements Screen {
     private Texture overlay;
     
     private float timer;
-    private float worldTimer;
+    public float worldTimer;
     
     private Player player2;
     
@@ -70,6 +70,7 @@ public class GameScreen implements Screen {
     private final int EXIT_HEIGHT = 20;
     
     private float initialisedShieldTime;
+    private float initialisedPotionTime;
    
     public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
@@ -77,15 +78,15 @@ public class GameScreen implements Screen {
     
     private int tempMapItemssize;
     
-    int w;
-    int h;
+    int overlayWidth;
+    int overlayHeight;
     
     public GameScreen(MazeGame game) {
         this.game = game;
         inputHandler = new InputHandler();
         
         timer = 0;
-        worldTimer = 50;
+        worldTimer = 60;
 
         tileMap = new TmxMapLoader().load("prototypeMap.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -114,8 +115,8 @@ public class GameScreen implements Screen {
         damagingPotionTexture = new Texture("Potion3.png");
         overlay = new Texture("circularOverlay.png");
         
-        w = overlay.getWidth();
-        h = overlay.getHeight();
+        overlayWidth = overlay.getWidth();
+        overlayHeight = overlay.getHeight();
     }
     
     @Override
@@ -128,22 +129,14 @@ public class GameScreen implements Screen {
         player.initialPosition();
         
     }
-    
+    int iconSize = 30;
     @Override
     public void render(float delta) { //method repeats a lot
     	updateTime(delta);
     	removeShield();
+    	playerDamaging();
     	
-    	//if timer runs out 
-    	if(worldTimer < 0) {
-    	   w -= 5;
-    	   h -= 5;
-    	  
-    	   if(worldTimer < -5) {
-    		   this.dispose();
-    		   game.setScreen(new EndScreen(this.game));
-    	   }
-    	}
+    
     	
     	//only draw mapItems if one gets picked up
     	if (!(mapItems.size() == tempMapItemssize)) {
@@ -184,9 +177,9 @@ public class GameScreen implements Screen {
 	        }
 		}
 	    
-	    game.batch.draw(overlay,player.position.getX() - w/2,player.position.getY() - h/2 , w ,h);
+	    game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
         
-        int iconSize = 30;
+        
         int buffer = 10;
         Coordinate playerPos = new Coordinate(player.position.getX(), player.position.getY());
         drawIcons(iconSize,buffer,playerPos);
@@ -196,6 +189,18 @@ public class GameScreen implements Screen {
         
         game.batch.end();
         
+    	//if timer runs out 
+    	if(worldTimer < 0) {
+    		overlayWidth -= 15;
+    		overlayHeight -= 15;
+    	  
+    	   if(worldTimer < -3) {
+    		   this.dispose();
+    		   //System.out.println("cam " + cam.cam.position.x + " , " + cam.cam.position.y);
+    		   game.setScreen(new EndScreen(this.game));
+    		   //System.out.println("get here");
+    	   }
+    	}
         
   
  
@@ -209,7 +214,7 @@ public class GameScreen implements Screen {
     
     
     
-    
+    int coinSize = iconSize*2;
     
     
     
@@ -252,7 +257,8 @@ public class GameScreen implements Screen {
         for ( int i = 0; i < player.coins; i ++ ) {
 	        float xCoin = buffer + playerX;
 	        float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer + playerY;
-	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin,iconSize*2 , iconSize*2);
+	        if ( coinSize != iconSize*2) coinSize -=5;
+	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
         }
     }
     
@@ -318,8 +324,11 @@ public class GameScreen implements Screen {
     private void pickUpItem() {
     	Item item =  co.nearestItem(player);
     	
+    	//System.out.println(player.items);
+    	
     	if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")) {
     		item = co.pickedUp(co.nearestItem(player));
+    		
     		
 			if (item.getType() == "shield") {
 				item.setInitialisedTime(worldTimer);
@@ -330,10 +339,15 @@ public class GameScreen implements Screen {
 				co.sword(item, player, player2);
 			}
 			if (item.getType() == "healingPotion") {
+				player.loadPlayerTextures();
 				co.healingPotion (player);
 			}
 			if (item.getType() == "damagingPotion") {
+				item.setInitialisedTime(worldTimer);
+				initialisedPotionTime = worldTimer;
 				co.damagingPotion(item, player);
+				
+				//System.out.println("posion");
 			}
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
@@ -341,6 +355,7 @@ public class GameScreen implements Screen {
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
+			coinSize = 100;
 		}
     }
     
@@ -350,6 +365,16 @@ public class GameScreen implements Screen {
     	}
     	if (initialisedShieldTime - worldTimer == 10) {
     		player.items.remove("shield");
+    	}
+    }
+    
+    private void playerDamaging() {
+    	if(!player.items.contains("damagingPotion")) {
+    		return;
+    	}
+    	if (initialisedPotionTime - worldTimer == 2) {
+    		player.loadPlayerTextures();
+    		player.items.remove("damagingPotion");
     	}
     }
 

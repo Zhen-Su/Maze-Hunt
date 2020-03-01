@@ -17,7 +17,7 @@ import com.project.mazegame.tools.OrthoCam;
 public class MenuScreen implements Screen {
 
     private MazeGame game;
-    private OrthoCam cam;
+ //   private OrthoCam cam;
     private Music bgm;
 
     /*

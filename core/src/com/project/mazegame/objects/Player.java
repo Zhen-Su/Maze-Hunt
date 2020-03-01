@@ -155,6 +155,14 @@ public class Player {
         sword = new Texture("sword2.png");
         shield = new Texture("shield.png");
     }
+    public void playerPosioned() {
+    	
+        player_up = new Texture("playerRedBackIll.png");
+        player_right = new Texture("playerRedRightIll.png");
+        player_left = new Texture("playerRedLeftIll.png");
+        player_down = new Texture("playerRedFrontIll.png");
+    }
+    
     
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
     	//Overall x and y of player

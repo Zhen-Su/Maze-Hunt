@@ -36,9 +36,9 @@ public class EndScreen implements Screen {
         backGround = new Texture("UI\\menuBackground.png");
         title = new Texture("UI//GAMEOVER!.png");
         playButtonActive = new Texture("UI\\BackToMenuButton.png");
-        System.out.println("overwhwlemed");
         playButtonInactive = new Texture ("UI\\backToMenuButtonPressed.png");
         leaderboard = new Texture("UI\\Leaderboard.png");
+        
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
