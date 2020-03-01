@@ -33,7 +33,7 @@ public class MultiPlayer extends Player {
     public boolean bL, bU, bR, bD;
     private Direction dir;
     private TiledMapTileLayer collisionLayer;
-    public static boolean debug = false;
+    public static boolean debug = true;
 
 
     //constructors=================================================================================
@@ -76,35 +76,21 @@ public class MultiPlayer extends Player {
 
     public void setName(String name) { this.name = name; }
 
-    public Texture getPlayerTexture() { return player; }
-
-    public void setPlayerTexture(Texture player) { this.player = player; }
-
-    public Texture getPlayer_up() { return player_up; }
-
-    public void setPlayer_up(Texture player_up) { this.player_up = player_up; }
-
-    @Override
-    public Texture getSword() { return sword; }
-
-    @Override
-    public void setSword(Texture sword) { this.sword = sword; }
-
     public int getCoins() { return coins; }
 
     public void setCoins(int coins) { this.coins = coins; }
 
-    public Texture getPlayer_right() { return player_right; }
+//    public void setPlayerTexture(Texture player) { this.player = player; }
+//
+//    public Texture getPlayer_up() { return player_up; }
+//
+//    public Texture getPlayer_right() { return player_right; }
+//
+//    public Texture getPlayer_left() { return player_left; }
+//
+//    public Texture getPlayer_down() { return player_down; }
 
-    public void setPlayer_right(Texture player_right) { this.player_right = player_right; }
 
-    public Texture getPlayer_left() { return player_left; }
-
-    public void setPlayer_left(Texture player_left) { this.player_left = player_left; }
-
-    public Texture getPlayer_down() { return player_down; }
-
-    public void setPlayer_down(Texture player_down) { this.player_down = player_down; }
 
     //==============================================================================================
 
@@ -129,7 +115,7 @@ public class MultiPlayer extends Player {
         }
         updateMotion();
 
-        if(this.items.contains("sword")) {	  // possible errors may occur
+        if(this.items.contains("sword")) {
             sb.draw(gameClient.sword,(float)(x),y - (height/4),50,50);
         }
         if(this.items.contains("shield")) {
@@ -179,6 +165,9 @@ public class MultiPlayer extends Player {
 
         this.position.setX(x);
         this.position.setY(y);
+//        System.out.println(position.getX()+","+position.getY());
+//        System.out.println("-------------");
+//        System.out.println(x+","+y);
 
         switch (dir){
             case R:
@@ -242,6 +231,37 @@ public class MultiPlayer extends Player {
             MoveMessage message = new MoveMessage(id, this.position.getX(),this.position.getY(), dir);
             gameClient.getNc().send(message);
         }
+    }
+
+    public void initialPosition () {
+        //Coordinate position = new Coordinate();
+
+        int maxX = collisionLayer.getWidth() ;
+        int maxY= collisionLayer.getHeight();
+//    	System.out.println("maxX" + maxX + " , " + maxY);
+
+        int ranx = (int)  (( Math.random() * (maxX) ));
+        int rany = (int)  (( Math.random() * (maxY) ));
+//    	System.out.println("ran" + ranx + " , " + rany);
+
+
+        this.position.setX( ranx * (int) collisionLayer.getTileWidth() + 50);
+        this.position.setY( rany * (int) collisionLayer.getTileHeight() + 50);
+
+
+        if(isCellBlocked((float)position.getX(), (float)position.getY())) {
+            initialPosition();
+        }
+    }
+
+    public boolean isCellBlocked(float x, float y) {
+
+        Cell cell = collisionLayer.getCell(
+                (int) (x / collisionLayer.getTileWidth()),
+                (int) (y / collisionLayer.getTileHeight()));
+
+        return cell != null && cell.getTile() != null
+                & cell.getTile().getProperties().containsKey("isWall");
     }
 
 

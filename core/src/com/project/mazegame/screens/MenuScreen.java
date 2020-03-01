@@ -1,5 +1,10 @@
 package com.project.mazegame.screens;
 
+//import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
+//import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
+import static com.project.mazegame.tools.Variables.V_HEIGHT;
+import static com.project.mazegame.tools.Variables.V_WIDTH;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -8,10 +13,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.OrthoCam;
 
+
 public class MenuScreen implements Screen {
 
     private MazeGame game;
-    private OrthoCam cam;
+
     private Music bgm;
 
     /*
@@ -51,9 +57,11 @@ public class MenuScreen implements Screen {
     Texture backGround;
     Texture createMazeActive;
     Texture createMazeInactive;
+    Texture mazeGame;
 
     public MenuScreen(MazeGame game) {
         this.game = game;
+
         playButtonActive = new Texture("UI\\MenuButtons\\playSoloButton.png");
         playButtonInactive = new Texture ("UI\\MenuButtons\\playSoloButtonPressed.png");
 
@@ -65,33 +73,34 @@ public class MenuScreen implements Screen {
 
         createMazeActive = new Texture("UI\\MenuButtons\\StartNewMazeButton.png");
         createMazeInactive = new Texture("UI\\MenuButtons\\StartNewMazeButtonPressed.png");
-
+        mazeGame = new Texture("UI\\MazeHunt.png");
 
         audioOn = new Texture("UI\\audioOn.png");
         audioOff = new Texture("UI\\audioOff.png");
 
-        backGround = new Texture("UI\\MenuButtons\\menuBackground.png");
+        backGround = new Texture("UI\\menuBackground.png");
 
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
+
     }
 
     @Override
     public void show() {
-
+//    	cam = new OrthoCam(game,false, V_WIDTH, V_HEIGHT, V_WIDTH/2,V_HEIGHT/2);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.325f, 0.343f, 0.604f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        //cam.update(500, 500, game);
         //rendering
         game.batch.begin();
 
         game.batch.draw(backGround,0,0,1000,1000);
-
+        game.batch.draw(mazeGame,25, 650, 950, 325);
         int drawX = xMid("MB");
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
@@ -107,7 +116,9 @@ public class MenuScreen implements Screen {
         if (isHovering(drawX, JOIN_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
+                System.out.println("mult2i");
                 bgm.stop();
+                this.dispose();
                 game.setScreen(new JoinMazeScreen(game));
             }
         } else {
@@ -116,7 +127,6 @@ public class MenuScreen implements Screen {
 
         if (isHovering(drawX, CREATE_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
-             //bring to maze creation thing
             if(Gdx.input.isTouched())
             {
                 bgm.stop();
@@ -200,6 +210,14 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        playButtonActive.dispose();
+        playButtonInactive.dispose();
+        exitButtonActive.dispose();
+        exitButtonInactive.dispose();
+        audioOn.dispose();
+        audioOff.dispose();
+        joinMazeButtonActive.dispose();
+        joinMazeButtonInactive.dispose();
 
     }
 }
