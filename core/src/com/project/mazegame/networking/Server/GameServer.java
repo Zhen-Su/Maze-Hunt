@@ -13,7 +13,11 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+<<<<<<< HEAD
 public class GameServer {
+=======
+public class GameServer implements Runnable {
+>>>>>>> origin/yueyi1
 
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
@@ -29,6 +33,7 @@ public class GameServer {
      * @param args
      */
     public static void main(String[] args) {
+<<<<<<< HEAD
         new GameServer().start();
     }
 
@@ -38,6 +43,14 @@ public class GameServer {
      */
     @SuppressWarnings("resource")
     public void start(){
+=======
+        new Thread(new GameServer()).start();
+    }
+
+
+    @Override
+    public void run() {
+>>>>>>> origin/yueyi1
 
         isRunning = true;
 
@@ -52,7 +65,12 @@ public class GameServer {
         while(isRunning) {
             Socket s =null;
             try {
+<<<<<<< HEAD
                 printMsg("Waiting for a client……");
+=======
+                printMsg("Waiting for a client");
+                Thread.currentThread().setName("Server TCP Thread");
+>>>>>>> origin/yueyi1
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
 
                 //Receive client's UDP Port from GameClient
@@ -82,8 +100,11 @@ public class GameServer {
         }
     }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> origin/yueyi1
     /**
      * Client inner class
      * @author kevin
@@ -111,6 +132,10 @@ public class GameServer {
 
         @Override
         public void run() {
+<<<<<<< HEAD
+=======
+            Thread.currentThread().setName("Server UDP Thread");
+>>>>>>> origin/yueyi1
             DatagramSocket ds =null;
             try {
                 ds = new DatagramSocket(SERVER_UDP_PORT);

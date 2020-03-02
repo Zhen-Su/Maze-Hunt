@@ -3,8 +3,6 @@ package com.project.mazegame.tools;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.project.mazegame.MazeGame;
 
 import static com.project.mazegame.tools.Variables.*;
 

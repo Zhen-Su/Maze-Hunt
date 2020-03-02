@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.project.mazegame.tools.Pair;
-import static com.project.mazegame.tools.Variables.SCROLLTRACKER_Y;
-import static com.project.mazegame.tools.Variables.SCROLLTRACKER_X;
 import java.util.ArrayList;
 // will need to separate x and y from ai player
 public class AIPlayer extends Player{

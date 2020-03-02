@@ -76,30 +76,28 @@ public class Player {
     }
      
     public void update (float delta){
-    	// update player movement
-    	this.position.setX(x); 
-    	this.position.setY(y); 
+        // update player movement
+        this.position.setX(x);
+        this.position.setY(y);
 //        System.out.println(collisionLayer.getWidth());
         if (RIGHT_TOUCHED) {
-        	if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
-	        	//try move player right
-	            x += speed; 
-	            //check player isn't in a wall
-	            if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
-	               	x -= speed;
-	            }else 
-	            	this.position.setX( x ); 
-	            	
-        	}
-          
+            if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
+                //try move player right
+                x += speed;
+                //check player isn't in a wall
+                if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
+                    x -= speed;
+                }else
+                    this.position.setX( x );
+            }
         }
         if (LEFT_TOUCHED) {
             if (x > 0) {
-            	x -= speed;
-            	if(!checkCollisionMap(x,y)) {
-            		x += speed;
-            	}else 
-	            	this.position.setX( x ); 
+                x -= speed;
+                if(!checkCollisionMap(x,y)) {
+                    x += speed;
+                }else
+                    this.position.setX( x );
             }
         }
         if (UP_TOUCHED) {
@@ -287,7 +285,7 @@ public class Player {
         player_right.dispose();
         player_left.dispose();
         player.dispose();
-        
+
     }
    
     /*
@@ -297,6 +295,27 @@ public class Player {
       } else {
         AI.decreaseHealth(1);
       }
+    }
+    
+    public void move(ItemCell coord) {
+        this.position = (ItemCell) coord;
+      }
+    
+    public void changeXAndY(int x, int y) {
+
+        this.position.changeX(x);
+        this.position.changeY(y);
+     }
+    
+    public boolean sameSpot(Player h) {
+       return this.position.same(h.position);
+    }
+    public boolean itemOnSquare(Item item) {
+       return this.position.same(item.getPosition());
+    }
+    
+    public float getSpeed() {
+    	return speed;
     }
     
     public void move(ItemCell coord) {

@@ -52,6 +52,10 @@ public class MoveMessage implements Message {
         byte[] buf = baos.toByteArray();
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
+<<<<<<< HEAD
+=======
+            System.out.println("I'm id"+id+", I'll send a move message.");
+>>>>>>> origin/yueyi1
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,6 +72,7 @@ public class MoveMessage implements Message {
                 return;
             }
             Direction dir = Direction.values()[dis.readInt()];
+<<<<<<< HEAD
             int newx = dis.readInt();
             int newy = dis.readInt();
             for(MultiPlayer t : gameClient.getPlayers()){
@@ -87,6 +92,38 @@ public class MoveMessage implements Message {
                         t.setPlayerTexture(t.getPlayer_middle());
                     }
                     break;
+=======
+            int newX = dis.readInt();
+            int newY = dis.readInt();
+            for(MultiPlayer t : gameClient.getPlayers()){
+                if(t.getId() == id){
+
+                    //change coordinate and direction
+                    t.setDir(dir);
+                    t.setX(newX);
+                    t.setY(newY);
+
+                    System.out.println("****************************");
+                    System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
+                    System.out.println("This move message is from: id"+id);
+                    System.out.println("This (id"+id+ ") player's position x: " +newX);
+                    System.out.println("This (id"+id+ ") player's position y: " +newY);
+                    System.out.println("****************************");
+
+                    //change player texture
+//                    if(t.bU ==true && t.bD == false){
+//                        t.setPlayerTexture(t.getPlayer_up());
+//                    }else if(t.bD==true&&t.bU==false){
+//                        t.setPlayerTexture(t.getPlayer_down());
+//                    }else if(t.bL==true&&t.bR==false){
+//                        t.setPlayerTexture(t.getPlayer_left());
+//                    }else if(t.bR==true&&t.bL==false){
+//                        t.setPlayerTexture(t.getPlayer_right());
+//                    }else {
+//                        t.setPlayerTexture(t.getPlayer_down());
+//                    }
+//                    break;
+>>>>>>> origin/yueyi1
                 }
             }
         } catch (IOException e) {

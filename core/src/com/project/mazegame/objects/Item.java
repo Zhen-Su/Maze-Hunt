@@ -26,7 +26,6 @@ public class Item {
 	public void setType(String type) {
 		this.type = type;
 	}
-	
 	public float getInitialisedTime() {
 		return this.initialisedTime;
 	}

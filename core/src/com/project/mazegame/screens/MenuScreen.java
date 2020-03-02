@@ -83,7 +83,6 @@ public class MenuScreen implements Screen {
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
-        
     }
 
     @Override
@@ -116,10 +115,10 @@ public class MenuScreen implements Screen {
         if (isHovering(drawX, JOIN_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
-            	System.out.println("mult2i");
+                System.out.println("mult2i");
                 bgm.stop();
                 this.dispose();
-                game.setScreen(new MultiPlayerScreen(game));
+                game.setScreen(new JoinMazeScreen(game));
             }
         } else {
             game.batch.draw(joinMazeButtonInactive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
@@ -127,7 +126,11 @@ public class MenuScreen implements Screen {
 
         if (isHovering(drawX, CREATE_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
-            // bring to maze creation thing
+            if(Gdx.input.isTouched())
+            {
+                bgm.stop();
+                game.setScreen(new CreateMazeScreen(game));
+            }
         } else {
             game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
         }
@@ -206,14 +209,13 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-    	playButtonActive.dispose();
-    	playButtonInactive.dispose();
+        playButtonActive.dispose();
+        playButtonInactive.dispose();
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
         audioOn.dispose();
         audioOff.dispose();
         joinMazeButtonActive.dispose();
         joinMazeButtonInactive.dispose();
-        
     }
 }

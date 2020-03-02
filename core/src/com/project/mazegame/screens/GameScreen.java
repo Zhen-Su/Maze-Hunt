@@ -34,8 +34,37 @@ import com.project.mazegame.tools.OrthoCam;
 
 public class GameScreen implements Screen {
 
-    private MazeGame game;
-    private OrthoCam cam;
+	private MazeGame game;
+	private OrthoCam cam;
+
+	private Player player;
+	private AIPlayer aiPlayer;// ---------need to be implemented
+	private InputHandler inputHandler;
+	private float delta;
+
+	private TiledMap tileMap;//
+	private OrthogonalTiledMapRenderer tileMapRenderer;//
+	private TiledMapTileLayer collisionLayer;
+
+	private Texture exitButtonActive;
+	private Texture exitButtonInactive;
+	private Texture heartTexture;
+	private Texture coinTexture;
+	private Texture swordTexture;
+	private Texture shieldTexture;
+	private Texture compassTexture;
+	private Texture healingPotionTexture;
+	private Texture damagingPotionTexture;
+	private Texture audioButtonActive; //-------need to  implemented
+	private Texture audioButtonInactive;
+	private Texture overlay;
+
+	private float timer;
+	public float worldTimer;
+
+	private Player player2;
+
+	private Collect co;
 
     private Player player;
     private AIPlayer aiPlayer;// ---------need to be implemented
@@ -347,6 +376,7 @@ public class GameScreen implements Screen {
 				initialisedPotionTime = worldTimer;
 				co.damagingPotion(item, player);
 				
+
 				//System.out.println("posion");
 			}
 			if (item.getType() == "gearEnchantment") {
