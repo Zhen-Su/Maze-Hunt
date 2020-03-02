@@ -1,19 +1,14 @@
 package com.project.mazegame.tools;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.project.mazegame.MazeGame;
+
 
 import static com.project.mazegame.tools.Variables.*;
 
-public class InputHandler implements Input.TextInputListener {
-	private static String txt;
-  	public InputHandler() {
+public class InputHandler {
 
-  	}
-  	public void update(){
+	public void update(){
 		// reset all variables
 		UP_TOUCHED = false;
 		DOWN_TOUCHED = false;
@@ -38,17 +33,4 @@ public class InputHandler implements Input.TextInputListener {
 //		}
 	}
 
-	@Override
-	public void input(String text) {
-  		this.txt = text;
-	}
-
-	public String getTxt() {
-  		return this.txt;
-	}
-
-	@Override
-	public void canceled() {
-		System.out.println("Canceled");
-	}
 }
