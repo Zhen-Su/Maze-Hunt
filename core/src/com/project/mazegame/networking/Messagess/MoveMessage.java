@@ -22,7 +22,6 @@ public class MoveMessage implements Message {
     private MultiPlayerGameScreen gameClient;
 
     public MoveMessage(int id, int pX, int pY, Direction dir) {
-        // TODO Auto-generated constructor stub
         this.id=id;
         this.pX=pX;
         this.pY=pY;
@@ -30,14 +29,12 @@ public class MoveMessage implements Message {
     }
 
     public MoveMessage(MultiPlayerGameScreen gameClient) {
-        // TODO Auto-generated constructor stub
         this.gameClient=gameClient;
     }
 
 
     @Override
     public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
-        // TODO Auto-generated method stub
         ByteArrayOutputStream baos = new ByteArrayOutputStream(30);
         DataOutputStream dos = new DataOutputStream(baos);
         try {
@@ -62,7 +59,6 @@ public class MoveMessage implements Message {
 
     @Override
     public void process(DataInputStream dis) {
-        // TODO Auto-generated method stub
         try{
             int id = dis.readInt();
             if(id == this.gameClient.getMultiPlayer().getId()){

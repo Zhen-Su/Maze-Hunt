@@ -135,9 +135,6 @@ public class NetClient {
 
             Message msg = null;
             switch (msgType) {
-                case Message.PLAYER_COLLECT_MSG:
-                    msg = new CollectMessage(gameClient);
-                    msg.process(dis);
                 case Message.PLAYER_NEW_MSG:
                     msg = new PlayerNewMessage(gameClient);
                     msg.process(dis);
@@ -146,6 +143,9 @@ public class NetClient {
                     msg = new MoveMessage(gameClient);
                     msg.process(dis);
                     break;
+                case Message.PLAYER_COLLECT_MSG:
+                    msg = new CollectMessage(gameClient);
+                    msg.process(dis);
             }
         }
     }

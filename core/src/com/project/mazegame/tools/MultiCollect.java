@@ -32,8 +32,6 @@ public class MultiCollect {
         this.player=player;
         mapItems = GameScreen.mapItems;
         items = player.items;
-        //System.out.println("myMultiplayer x:"+player.position.getX());
-        //System.out.println("myMultiplayer y:"+player.position.getY());
     }
 
 
@@ -81,70 +79,18 @@ public class MultiCollect {
         return sqrEucl;
     }
 
-    //if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
-	/*public void main() {
-
-		Player player = new Player(collisionLayer"James", 123);
-		if (player.position == player.nearestItem().position) {
-
-			Item item = pickedUp(player);
-			Player player1 = new Player("James", 123);
-			Player player2 = new Player("James", 123);
-			if (!items.contains(item)) {
-				if (item.getType() == "shield") {
-					shield(item, player1);
-				}
-				if (item.getType() == "sword") {
-					sword(item, player1, player2);
-				}
-				if (item.getType() == "compass") {
-					compass(item);
-				}
-				if (item.getType() == "healingPotion") {
-					healingPotion(item, player1);
-				}
-				if (item.getType() == "damagingPotion") {
-					damagingPotion(item, player1);
-				}
-				if (item.getType() == "gearEnchantment") {
-					gearEnchantment(item);
-				}
-			} else {
-				items.remove(item);
-			}
-		}
-	}
-*/
 
     public void shield(Item item, MultiPlayer player1) {
 
-        ArrayList<String> items = player1.items;
-        // this.timer = timer;
-        // this.seconds = 60;
-        // temp solutions
-        int timer = 20;
+
+        final ArrayList<String> items = player1.items;
         int seconds = 60;
-        System.out.println("player health " +player1.health);
         int startHealth = player1.health;
-		/*if (gearEnchantment(item)) {
-			seconds += 30;
-		}*/
 
-
-//		while (timer != 0) {
-//			System.out.println("timer");
-//			if (player1.health != startHealth) {
-//				player1.health = startHealth;
-//			}
-//
-//				//change that in the decreaseHealth class in Player
-//
-//
-//			//display shield icon on screen
-//
-//		}
-
-        //items.remove(item);
+        int time = 60000;
+        if (items.contains("gearEnchantment")) {
+            time += 30000;
+        }
 
     }
 
@@ -177,6 +123,9 @@ public class MultiCollect {
         //ArrayList<String> items = player1.items;
         player1.generateHealth();
         player1.generateHealth();
+
+        //TODO multiplayer posisoned texture
+       // player1.isPoisoned=true;
 
         items.remove("healingPotion");
     }

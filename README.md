@@ -65,10 +65,9 @@ The package directory `com.project.mazegame.networking` contains all of the clas
   * 1.7 CREATEMAZE mode: When Player1 click CREATEMAZE then he/she create a room, player1 will be a server. Other player2 click JOINMAZE then enter Player1 ip ,this player2 can join the room which created by Player1.
   
     * 1.7.2 fix camera and integrate with collectable ……
-  
-    * 1.7.3 pleayer can genearte in random position in multiplayer mode
-  
+  * 1.7.3 pleayer can genearte in random position in multiplayer mode
     * 1.7.4 fix motion bugs in multiplayer mode
+  * 1.8 Players can see what items the opponent picks up.
   
   
   

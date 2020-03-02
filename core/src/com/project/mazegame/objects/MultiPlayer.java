@@ -26,6 +26,7 @@ public class MultiPlayer extends Player {
     private int id;
     public int swordDamage;
     public Coordinate position;
+    public boolean isPoisoned;
 
     private String name;
     public ArrayList<String> items;
@@ -118,23 +119,44 @@ public class MultiPlayer extends Player {
 
     public void render (SpriteBatch sb){
 
-        switch(dir){
-            case U:
-                sb.draw(gameClient.player_up,this.position.getX()- (width/2),this.position.getY() - (height/2));
-                break;
-            case D:
-                sb.draw(gameClient.player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
-                break;
-            case L:
-                sb.draw(gameClient.player_left,this.position.getX()- (width/2),this.position.getY() - (height/2));
-                break;
-            case R:
-                sb.draw(gameClient.player_right,this.position.getX()- (width/2),this.position.getY() - (height/2));
-                break;
-            case STOP:
-                sb.draw(gameClient.player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
-                break;
-        }
+//        if(isPoisoned){
+//            switch (dir) {
+//                case U:
+//                    sb.draw(gameClient.player_up1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case D:
+//                    sb.draw(gameClient.player_down1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case L:
+//                    sb.draw(gameClient.player_left1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case R:
+//                    sb.draw(gameClient.player_right1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case STOP:
+//                    sb.draw(gameClient.player_down1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//            }
+//        }else {
+            switch (dir) {
+                case U:
+                    sb.draw(gameClient.player_up, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                    break;
+                case D:
+                    sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                    break;
+                case L:
+                    sb.draw(gameClient.player_left, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                    break;
+                case R:
+                    sb.draw(gameClient.player_right, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                    break;
+                case STOP:
+                    sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                    break;
+            }
+        //}
+
         updateMotion();
 
         if(this.items.contains("sword")) {
@@ -187,9 +209,6 @@ public class MultiPlayer extends Player {
 
         this.position.setX(x);
         this.position.setY(y);
-//        System.out.println(position.getX()+","+position.getY());
-//        System.out.println("-------------");
-//        System.out.println(x+","+y);
 
         switch (dir){
             case R:

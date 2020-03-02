@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Client.NetClient;
+import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
@@ -49,7 +50,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private MultiPlayer player2;
 
     private AssetManager manager;
-    public Texture player, player_up, player_right, player_left, player_down, sword,shield;
+    public Texture player_up, player_right, player_left, player_down, sword,shield;
+    public Texture player_up1, player_right1, player_left1, player_down1; // player been poisoned.
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
     private Texture heartTexture;
@@ -150,6 +152,10 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         manager.load("playerRedFrontCrop.png", Texture.class);
         manager.load("sword2.png", Texture.class);
         manager.load("shield.png", Texture.class);
+//        manager.load("playerRedBackIll.png", Texture.class);
+//        manager.load("playerRedRightIll", Texture.class);
+//        manager.load("playerRedLeftIll.png", Texture.class);
+//        manager.load("playerRedFrontIll.png", Texture.class);
 
         manager.finishLoading();// waiting for all assets load.
 
@@ -159,6 +165,10 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         player_down = manager.get("playerRedFrontCrop.png", Texture.class);
         sword = manager.get("sword2.png", Texture.class);
         shield = manager.get("shield.png", Texture.class);
+//        player_up1 = manager.get("playerRedBackIll.png", Texture.class);
+//        player_right1 = manager.get("playerRedRightIll.png", Texture.class);
+//        player_left1 = manager.get("playerRedLeftIll.png", Texture.class);
+//        player_down1 = manager.get("playerRedFrontIll.png", Texture.class);
     }
 
     public void unloadAsset(){
@@ -168,6 +178,10 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         manager.unload("playerRedFrontCrop.png");
         manager.unload("sword2.png");
         manager.unload("shield.png");
+//        manager.unload("playerRedBackIll.png");
+//        manager.unload("playerRedRightIll.png");
+//        manager.unload("playerRedLeftIll.png");
+//        manager.unload("playerRedFrontIll.png");
     }
 
     @Override
@@ -216,11 +230,10 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         //Collectibles pick up
         if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
             if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
-                    (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position).getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100)
+                    (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100))
             {
-                System.out.println("over item");
+                System.out.println("Over items");
                 pickUpItem();
-
             }
         }
 
@@ -337,12 +350,16 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         Item item =  co.nearestItem(myMultiPlayer);
 
         if (!(myMultiPlayer.items.contains(item.getType())) && !(item.getType() == "coin")) {
+
             item = co.pickedUp(co.nearestItem(myMultiPlayer));
 
+            CollectMessage collectMessage = new CollectMessage(this.getMultiPlayer().getId(),this,item.getType());
+            this.getNc().send(collectMessage);
 
             if (item.getType() == "shield") {
                 item.setInitialisedTime(worldTimer);
                 initialisedShieldTime = worldTimer;
+                //TODO here is a bug need to fix
                 co.shield(item, myMultiPlayer);
             }
             if (item.getType() == "sword") {
@@ -356,8 +373,6 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
                 item.setInitialisedTime(worldTimer);
                 initialisedPotionTime = worldTimer;
                 co.damagingPotion(item, myMultiPlayer);
-
-                //System.out.println("posion");
             }
             if (item.getType() == "gearEnchantment") {
                 co.gearEnchantment(item , myMultiPlayer);
@@ -426,6 +441,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             MultiPlayer otherMultiPlayer = players.get(i);
             otherMultiPlayer.dispose();
         }
+
+        //TODO handle client and server exit game events here
         unloadAsset();
         manager.clear();
         manager.dispose();

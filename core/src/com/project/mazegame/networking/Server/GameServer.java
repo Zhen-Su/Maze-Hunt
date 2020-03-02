@@ -124,7 +124,7 @@ public class GameServer implements Runnable {
                         if(c!=null) {
                             dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
                             ds.send(dp);
-                            printMsg("I've broadcasted to client");
+                            //printMsg("I've broadcasted to client");
                         }
                     }
                 } catch (IOException e) {
