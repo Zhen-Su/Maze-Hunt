@@ -34,37 +34,8 @@ import com.project.mazegame.tools.OrthoCam;
 
 public class GameScreen implements Screen {
 
-	private MazeGame game;
-	private OrthoCam cam;
-
-	private Player player;
-	private AIPlayer aiPlayer;// ---------need to be implemented
-	private InputHandler inputHandler;
-	private float delta;
-
-	private TiledMap tileMap;//
-	private OrthogonalTiledMapRenderer tileMapRenderer;//
-	private TiledMapTileLayer collisionLayer;
-
-	private Texture exitButtonActive;
-	private Texture exitButtonInactive;
-	private Texture heartTexture;
-	private Texture coinTexture;
-	private Texture swordTexture;
-	private Texture shieldTexture;
-	private Texture compassTexture;
-	private Texture healingPotionTexture;
-	private Texture damagingPotionTexture;
-	private Texture audioButtonActive; //-------need to  implemented
-	private Texture audioButtonInactive;
-	private Texture overlay;
-
-	private float timer;
-	public float worldTimer;
-
-	private Player player2;
-
-	private Collect co;
+    private MazeGame game;
+    private OrthoCam cam;
 
     private Player player;
     private AIPlayer aiPlayer;// ---------need to be implemented
@@ -84,6 +55,7 @@ public class GameScreen implements Screen {
     private Texture compassTexture;
     private Texture healingPotionTexture;
     private Texture damagingPotionTexture;
+    private Texture gearEnchantmentTexture;
     private Texture audioButtonActive; //-------need to  implemented
     private Texture audioButtonInactive;
     private Texture overlay;
@@ -117,32 +89,33 @@ public class GameScreen implements Screen {
         timer = 0;
         worldTimer = 60;
 
-        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
+        tileMap = new TmxMapLoader().load("Map1.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         player = new Player(this.collisionLayer,"james",123);
-       // player.initialPosition();
+//       player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
      
         // buttons
-        exitButtonActive = new Texture("exit_button_active.png");
-        exitButtonInactive = new Texture("exit_button_inactive.png");
-        audioButtonActive = new Texture("audioOn.png");
-        audioButtonInactive = new Texture("audioOff.png");
+        exitButtonActive = new Texture("UI\\MenuButtons\\exit_button_active.png");
+        exitButtonInactive = new Texture("UI\\MenuButtons\\exit_button_inactive.png");
+        audioButtonActive = new Texture("UI\\MenuButtons\\audioOn.png");
+        audioButtonInactive = new Texture("UI\\MenuButtons\\audioOff.png");
         
-        heartTexture = new Texture("heart.png");
-        coinTexture = new Texture("coin.png");
-        swordTexture = new Texture("sword2.png");
-        shieldTexture = new Texture("shield.png");
-        healingPotionTexture = new Texture("Potion2.png");
-        compassTexture = new Texture("RolledMap.png");
-        damagingPotionTexture = new Texture("Potion3.png");
-        overlay = new Texture("circularOverlay.png");
+        heartTexture = new Texture("Collectibles\\heart.png");
+        coinTexture = new Texture("Collectibles\\\\coin.png");
+        swordTexture = new Texture("Collectibles\\\\sword2.png");
+        shieldTexture = new Texture("Collectibles\\\\shield.png");
+        healingPotionTexture = new Texture("Collectibles\\\\Potion.png");
+        gearEnchantmentTexture = new Texture("Collectibles\\\\Potion2.png");
+        compassTexture = new Texture("Collectibles\\\\RolledMap.png");
+        damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
+        overlay = new Texture("UI\\circularOverlay.png");
         
         overlayWidth = overlay.getWidth();
         overlayHeight = overlay.getHeight();
@@ -164,6 +137,7 @@ public class GameScreen implements Screen {
     	updateTime(delta);
     	removeShield();
     	playerDamaging();
+    	
     	
     
     	
@@ -214,6 +188,9 @@ public class GameScreen implements Screen {
         drawIcons(iconSize,buffer,playerPos);
         drawExitButton(playerPos);
         
+        
+        player.attack();
+        
         player.render(game.batch);
         
         game.batch.end();
@@ -246,8 +223,7 @@ public class GameScreen implements Screen {
     int coinSize = iconSize*2;
     
     
-    
-    
+
     
     
     
@@ -297,24 +273,26 @@ public class GameScreen implements Screen {
     	int playerX = position.getX() - VIEWPORT_WIDTH/2;
     	int playerY = position.getY() - VIEWPORT_HEIGHT/2;
     	
-    	float x = VIEWPORT_WIDTH  - EXIT_WIDTH + playerX;
-        float y = VIEWPORT_HEIGHT - EXIT_HEIGHT + playerY;
+    	int x = VIEWPORT_WIDTH  - EXIT_WIDTH + playerX;
+        int y = VIEWPORT_HEIGHT - EXIT_HEIGHT + playerY;
         
+        //origin of cursor is top left hand corner
         //exit button in top right corner
-        game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+      
+        
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            //cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
             this.dispose();
             game.setScreen(new MenuScreen(this.game));
         }
-        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
-           game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-           if (Gdx.input.isTouched())
-                Gdx.app.exit();
+        
+        if (Gdx.input.getX()  < V_WIDTH  && Gdx.input.getX()  >  V_WIDTH - EXIT_WIDTH && Gdx.input.getY() < EXIT_HEIGHT && Gdx.input.getY() > 0 ) {
+        	game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+	        if (Gdx.input.justTouched()) {
+	        	this.dispose();
+	        	game.setScreen(new MenuScreen(this.game));
+	        }
         }
-       else {
-            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-        }
+        else game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
     }
     
     private void drawCollectibles() {
@@ -337,7 +315,7 @@ public class GameScreen implements Screen {
   	    		texture = damagingPotionTexture;
   	    	}
   	    	if (mapItems.get(i).getType() == "gearEnchantment") {
-  	    		texture = healingPotionTexture;
+  	    		texture = gearEnchantmentTexture;
   	    	}
   	    	if (mapItems.get(i).getType() == "compass") {
   	    		texture = compassTexture;
@@ -349,7 +327,7 @@ public class GameScreen implements Screen {
   	    }
 
     }
-    
+    // -------------------------------------------------could move to collect class
     private void pickUpItem() {
     	Item item =  co.nearestItem(player);
     	
@@ -376,7 +354,6 @@ public class GameScreen implements Screen {
 				initialisedPotionTime = worldTimer;
 				co.damagingPotion(item, player);
 				
-
 				//System.out.println("posion");
 			}
 			if (item.getType() == "gearEnchantment") {
@@ -449,11 +426,11 @@ public class GameScreen implements Screen {
     
     public void generateMapItems( int widthInTiles, int tileWidth ) {
         HashSet<String> positions = new HashSet<String>();
-    	int maxShields = 3;
-		int maxCoins = 10;
-		int maxSwords = 5;
-		int maxCompasses = 3;
-		int maxPotions = 10;
+    	int maxShields = 30;
+		int maxCoins = 100;
+		int maxSwords = 50;
+		int maxCompasses = 30;
+		int maxPotions = 100;
 		int maxX = widthInTiles;
 		int maxY = widthInTiles;
 	

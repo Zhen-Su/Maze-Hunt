@@ -6,6 +6,8 @@ import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -16,13 +18,15 @@ import com.project.mazegame.tools.*;
 
 public class Player {
 	public int x, y;
-    private Texture player, player_up, player_right, player_left, player_down, sword,shield;
+    private Texture player, player_up, player_right, player_left, player_down, sword,swordAttack,swordNotAttack,shield;
     private float speed = 6;
     private float width, height;
     public int coins;
     public int health = 5;
     private int ID;
     public int swordDamage;
+    
+    private boolean isAttacking = false;
     
     public String name;
     public ArrayList<String> items;
@@ -73,6 +77,7 @@ public class Player {
 		if(isCellBlocked((float)position.getX(), (float)position.getY())) {
 			initialPosition();
 		}
+		player = player_up;
     }
      
     public void update (float delta){
@@ -127,8 +132,6 @@ public class Player {
         	player = player_left;
         } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
         	player = player_right;
-        }else {
-        	player = player_down;
         }
     }
 
@@ -146,19 +149,22 @@ public class Player {
      
     public void loadPlayerTextures(){
     	 
-        player_up = new Texture("playerRedBackCrop.png");
-        player_right = new Texture("playerRedRightCrop.png");
-        player_left = new Texture("playerRedLeftCrop.png");
-        player_down = new Texture("playerRedFrontCrop.png");
-        sword = new Texture("sword2.png");
-        shield = new Texture("shield.png");
+        player_up = new Texture("Player\\playerRedBackCrop.png");
+        player_right = new Texture("Player\\playerRedRightCrop.png");
+        player_left = new Texture("Player\\playerRedLeftCrop.png");
+        player_down = new Texture("Player\\playerRedFrontCrop.png");
+        
+        swordAttack = new Texture("Collectibles\\swordAttack.png");
+        swordNotAttack = new Texture("Collectibles\\sword2.png");
+        shield = new Texture("Collectibles\\shield.png");
+        sword = swordNotAttack;
     }
     public void playerPosioned() {
     	
-        player_up = new Texture("playerRedBackIll.png");
-        player_right = new Texture("playerRedRightIll.png");
-        player_left = new Texture("playerRedLeftIll.png");
-        player_down = new Texture("playerRedFrontIll.png");
+        player_up = new Texture("Player\\playerRedBackIll.png");
+        player_right = new Texture("Player\\playerRedRightIll.png");
+        player_left = new Texture("Player\\playerRedLeftIll.png");
+        player_down = new Texture("Player\\playerRedFrontIll.png");
     }
     
     
@@ -204,6 +210,19 @@ public class Player {
       if(this.health != 9) {
         this.health++;
       }
+    }
+    
+    public void attack() {
+    	if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+    		if(this.items.contains("sword")) {
+    	  
+              System.out.println("hit");
+              isAttacking = true;
+              sword = swordAttack;
+              
+    		} 
+    	}
+    	else sword = swordNotAttack;
     }
     
 

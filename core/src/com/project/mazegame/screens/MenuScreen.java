@@ -65,20 +65,20 @@ public class MenuScreen implements Screen {
         playButtonActive = new Texture("UI\\MenuButtons\\playSoloButton.png");
         playButtonInactive = new Texture ("UI\\MenuButtons\\playSoloButtonPressed.png");
 
-        exitButtonActive = new Texture("exit_button_active.png");
-        exitButtonInactive = new Texture("exit_button_inactive.png");
+        exitButtonActive = new Texture("UI\\MenuButtons\\exit_button_active.png");
+        exitButtonInactive = new Texture("UI\\MenuButtons\\exit_button_inactive.png");
 
         joinMazeButtonActive = new Texture("UI\\MenuButtons\\FindMazeButton.png");
         joinMazeButtonInactive = new Texture("UI\\MenuButtons\\FindMazeButtonPressed.png");
 
         createMazeActive = new Texture("UI\\MenuButtons\\StartNewMazeButton.png");
         createMazeInactive = new Texture("UI\\MenuButtons\\StartNewMazeButtonPressed.png");
-        mazeGame = new Texture("UI\\MazeHunt.png");
+        mazeGame = new Texture("UI\\Titles\\MazeHunt.png");
 
-        audioOn = new Texture("UI\\audioOn.png");
-        audioOff = new Texture("UI\\audioOff.png");
+        audioOn = new Texture("UI\\MenuButtons\\audioOn.png");
+        audioOff = new Texture("UI\\MenuButtons\\audioOff.png");
 
-        backGround = new Texture("UI\\menuBackground.png");
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
 
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);

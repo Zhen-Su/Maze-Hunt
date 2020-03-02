@@ -36,7 +36,7 @@ public class JoinMazeScreen implements Screen {
 //    private boolean imClient = false;
 
     public JoinMazeScreen(MazeGame game) {
-        backGround = new Texture("UI\\MenuButtons\\MenuBackground.png");
+        backGround = new Texture("UI\\Backgrounds\\MenuBackground.png");
         this.game = game;
         this.playerEnterIp();
     }
