@@ -16,15 +16,17 @@ public class MazeGame extends Game {
 
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = 1000;
-	
-	
+
+
 	@Override
 	public void create () {
 		assets = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
-		this.setScreen(new SplashScreen(this));
+		//this.setScreen(new SplashScreen(this));
 
+		//Only for test
+		this.setScreen(new MenuScreen(this));
 		batch = new SpriteBatch();
 	}
 

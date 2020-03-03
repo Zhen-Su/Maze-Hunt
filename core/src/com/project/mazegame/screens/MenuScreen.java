@@ -212,10 +212,10 @@ public class MenuScreen implements Screen {
     public void dispose() {
         playButtonActive.dispose();
         playButtonInactive.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
         audioOn.dispose();
         audioOff.dispose();
+        exitButtonActive.dispose();
+        exitButtonInactive.dispose();
         joinMazeButtonActive.dispose();
         joinMazeButtonInactive.dispose();
 

@@ -138,23 +138,23 @@ public class MultiPlayer extends Player {
 //                    break;
 //            }
 //        }else {
-            switch (dir) {
-                case U:
-                    sb.draw(gameClient.player_up, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
-                    break;
-                case D:
-                    sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
-                    break;
-                case L:
-                    sb.draw(gameClient.player_left, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
-                    break;
-                case R:
-                    sb.draw(gameClient.player_right, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
-                    break;
-                case STOP:
-                    sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
-                    break;
-            }
+        switch (dir) {
+            case U:
+                sb.draw(gameClient.player_up, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                break;
+            case D:
+                sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                break;
+            case L:
+                sb.draw(gameClient.player_left, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                break;
+            case R:
+                sb.draw(gameClient.player_right, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                break;
+            case STOP:
+                sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+                break;
+        }
         //}
 
         updateMotion();

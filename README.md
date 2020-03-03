@@ -1,6 +1,6 @@
 # Game Networking
 
-Through Server-Client Construction/Mode to implement multiplay game.
+Basic idea: Use Server-Client Mode to implement multiplay game.
 
 I've implemented multiplayer join the game, and everyone can see each other's movements with java Swing ,which is in `yueyi` branch.
 
@@ -51,23 +51,18 @@ The package directory `com.project.mazegame.networking` contains all of the clas
   ##  Update Logs
 
   * 1.1 When client connect to server (Through TCP socket) , client can send their own information to server,and server can save this client object and its info into a list. 
-  
   * 1.2 After client connect to server, server can give this player an ID and server's UDP port through TCP socket.
-  
   * 1.3 Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
-  
   * 1.4 Server can broadcast the messages which receive from someone to all Clients (players).
-  
   * 1.5  Player can see each other movements,but still some bugs.
-  
   * 1.6 fixed bugs, player can see each other's movements with no bugs!
-  
   * 1.7 CREATEMAZE mode: When Player1 click CREATEMAZE then he/she create a room, player1 will be a server. Other player2 click JOINMAZE then enter Player1 ip ,this player2 can join the room which created by Player1.
   
     * 1.7.2 fix camera and integrate with collectable ……
   * 1.7.3 pleayer can genearte in random position in multiplayer mode
     * 1.7.4 fix motion bugs in multiplayer mode
   * 1.8 Players can see what items the opponent picks up.
+  * 1.9 Create Host Lobby for the host player and Other Lobby for the other player, Other player Join the maze to enter the lobby, then press enter to confirm ready to game, then the ready player name will be showed on the Host Lobby Screen.
   
   
   

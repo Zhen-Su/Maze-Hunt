@@ -18,14 +18,18 @@ public class GameServer implements Runnable {
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
     public static final int SERVER_UDP_PORT=7777;
-    static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
+    private static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
     private boolean isRunning = false;
     private ServerSocket serverSocket;
     private Socket s;
 
+    public static List<Client> getClients() { return clients; }
+
+    public static void setClients(List<Client> clients) { GameServer.clients = clients; }
+
 
     /**
-     * Main method
+     * option
      * @param args
      */
     public static void main(String[] args) {
@@ -145,7 +149,7 @@ public class GameServer implements Runnable {
 
         clients.clear();
         clients=null;
-        //Close Server
+        //Close TCP Server
         if(serverSocket!=null) {
             try {
                 serverSocket.close();
@@ -153,6 +157,7 @@ public class GameServer implements Runnable {
                 e.printStackTrace();
             }
         }
+        System.out.println("Dispose server and clients...");
     }
 
     /**

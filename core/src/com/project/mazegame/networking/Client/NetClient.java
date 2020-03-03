@@ -161,11 +161,11 @@ public class NetClient {
     }
 
     /**
-         * Only for debug (print message)
-         * @param msg
-         */
-        public void printMsg(String msg){
-            System.out.println(msg);
-        }
+     * Only for debug (print message)
+     * @param msg
+     */
+    public void printMsg(String msg){
+        System.out.println(msg);
+    }
 
 }

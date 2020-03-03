@@ -49,15 +49,16 @@ public class CreateMazeScreen implements Screen {
     public void render(float delta) {
         if(hasEnterUsername){
             try {
-                Gdx.app.log("Server","I'm a server!");
+                Gdx.app.log(username+":","I'm the server!");
                 Gdx.app.log("Server IP:", InetAddress.getLocalHost().getHostAddress());
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             }
 
-            new Thread(new GameServer()).start();
+//            new Thread(new GameServer()).start();
 
-            game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
+            //game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
+            game.setScreen(new HostLobbyScreen(game,username));
 
         }
     }
@@ -85,6 +86,7 @@ public class CreateMazeScreen implements Screen {
 
     @Override
     public void dispose() {
+
 
     }
 }

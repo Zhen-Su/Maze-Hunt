@@ -44,7 +44,7 @@ public class Collect {
 //		Item nearestItem = new Item(" ", position);
 		Item nearestItem = mapItems.get(0);
 		//System.out.println("items: " + mapItems.size());
-		for (int i = 0; i < mapItems.size(); i++) {
+		for (int i = 0; i< mapItems.size(); i++) {
 
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
@@ -141,10 +141,6 @@ public class Collect {
 
 
 	}
-
-
-
-
 }
 
 
