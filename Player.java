@@ -24,15 +24,15 @@ public class Player {
     public int health = 5;
     private int ID;
     public int swordDamage;
-    
+    public Collect co;
     public String name;
     public ArrayList<String> items;
     public Coordinate position;
     
     private TiledMapTileLayer collisionLayer;
 
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID) {
-    	
+    public Player(TiledMapTileLayer collisionLayer,String name, int ID, Collect co) {
+    	this.co = co;
     	this.health = 5;
         this.coins = 0;
         this.name = name;
@@ -52,7 +52,7 @@ public class Player {
         ArrayList<Item> items = new ArrayList<Item>();
         
     }
-     
+    public int getID() {return this.ID;}
     public void update (float delta, int mode, Collect lets){
     	// update player movement
 

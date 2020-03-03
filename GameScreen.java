@@ -78,8 +78,8 @@ public class GameScreen implements Screen {
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        player = new AIPlayer(this.collisionLayer,"james",123);
-		player2 = new Player(this.collisionLayer, "Albert", 124);
+        player = new AIPlayer(this.collisionLayer,"james",123, co);
+		player2 = new Player(this.collisionLayer, "Albert", 124, co);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, VIEWPORT_WIDTH/2,VIEWPORT_HEIGHT/2);
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
@@ -125,8 +125,8 @@ public class GameScreen implements Screen {
     
         //updates - player position
         inputHandler.update();
-        player.update(delta, 2);
-        player2.update(delta, 1);
+        player.update(delta, 2, co);
+        player2.update(delta, 1, co1);
         
         //comment out ai player line to run correctly
 //       aiPlayer.update(delta);
