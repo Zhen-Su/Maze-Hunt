@@ -28,7 +28,7 @@ public class HostLobbyScreen implements Screen {
     private MazeGame game;
     private GameServer gameServer;
     private String hostUsername;
-    MultiPlayerGameScreen gameClient;
+    private MultiPlayerGameScreen gameClient;
     private Label.LabelStyle style;
 
     public HostLobbyScreen(MazeGame game,String username) {

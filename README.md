@@ -63,6 +63,8 @@ The package directory `com.project.mazegame.networking` contains all of the clas
     * 1.7.4 fix motion bugs in multiplayer mode
   * 1.8 Players can see what items the opponent picks up.
   * 1.9 Create Host Lobby for the host player and Other Lobby for the other player, Other player Join the maze to enter the lobby, then press enter to confirm ready to game, then the ready player name will be showed on the Host Lobby Screen.
+    * 1.9.1 other play can see each ready players in Other Lobby.
+    * 1.9.2 handle player exit lobby, then delete name from Lobby Screen(both)
   
   
   
