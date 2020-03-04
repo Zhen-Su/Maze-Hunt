@@ -66,6 +66,7 @@ The package directory `com.project.mazegame.networking` contains all of the clas
     * 1.9.1 other play can see each ready players in Other Lobby.
     * 1.9.2 handle player exit lobby, then delete name from Host Lobby&Other Lobby
     * 1.9.3 update Host Lobby&Other Lobby (Host player exit game)
+    * 1.9.4 add new feather, check the ip whether correct when the player enter ip in `JoinMazeScreen` class
   
   
   

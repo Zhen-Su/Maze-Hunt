@@ -55,7 +55,6 @@ public class HostLobbyScreen implements Screen {
     public void show() {
         backGround = new Texture("UI\\menuBackground.png");
         bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
-
         font = new BitmapFont();
         font.setColor(Color.RED);
         font.getData().setScale(1.5f);
@@ -96,9 +95,8 @@ public class HostLobbyScreen implements Screen {
     }
 
     private void backToMenuScreen(){
-        System.out.println("back to");
+        System.out.println("back to menu screen");
         game.setScreen(new MenuScreen(this.game));
-        System.out.println("shouldn't see");
     }
 
     //TODO handle player exit lobby event here
@@ -108,22 +106,19 @@ public class HostLobbyScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
     public void hide() {
-
+        this.dispose();
     }
 
     @Override

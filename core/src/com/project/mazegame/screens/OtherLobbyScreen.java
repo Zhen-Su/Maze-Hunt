@@ -42,11 +42,9 @@ public class OtherLobbyScreen implements Screen {
 
 
     private OrthographicCamera cam;
-    private Label label;
     private BitmapFont bitmapFont;
     private BitmapFont font;
     private MultiPlayerGameScreen gameClient;
-    private Label.LabelStyle style;
     private Texture backGround;
     private String hostPlayerName;
     private List<MultiPlayer> players;
@@ -80,7 +78,6 @@ public class OtherLobbyScreen implements Screen {
     public void show() {
         backGround = new Texture("UI\\menuBackground.png");
         bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
-
         font = new BitmapFont();
         font.setColor(Color.RED);
         font.getData().setScale(1.5f);
@@ -110,18 +107,21 @@ public class OtherLobbyScreen implements Screen {
                     font.draw(game.batch, multiPlayer.getName(), 230, currY);
                     currY -= 50;
                 }
-
                 //check the host player if quit the game.
-                if(players.isEmpty()) {
-                    font.setColor(Color.YELLOW);
-                    font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
-                }
-                if (!players.isEmpty() && players.get(0).getName() != hostPlayerName) {
-                    font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
-                }
+                checkHostLeave();
             }
         }
         game.batch.end();
+    }
+
+    private void checkHostLeave(){
+        if(players.isEmpty()) {
+            font.setColor(Color.YELLOW);
+            font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
+        }
+        if (!players.isEmpty() && players.get(0).getName() != hostPlayerName) {
+            font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
+        }
     }
 
     private void handleInput() {
