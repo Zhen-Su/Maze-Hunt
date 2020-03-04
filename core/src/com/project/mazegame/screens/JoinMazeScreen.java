@@ -67,6 +67,7 @@ public class JoinMazeScreen implements Screen {
 
         bitmapFont.getData().setScale(2.0F);
 
+        backGround = new Texture("UI\\menuBackground.png");
 
         TextField.TextFieldStyle style = new TextField.TextFieldStyle();
 
@@ -117,6 +118,8 @@ public class JoinMazeScreen implements Screen {
     @Override
     public void render(float delta) {
 
+        game.batch.begin();
+        game.batch.draw(backGround,0,0,1000,1000);
 
         if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
             Gdx.app.log(TAG, "username = " + usernameTextField.getText());
@@ -133,6 +136,7 @@ public class JoinMazeScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         stage.act();
+        game.batch.end();
         stage.draw();
     }
 

@@ -97,6 +97,7 @@ public class PlayerNewMessage implements Message {
 
                 newPlayer.setId(id);
                 gameClient.getPlayers().add(newPlayer);
+                gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
 
                 System.out.println("I've added this player to list!!");
                 System.out.println("--------------------------------------");

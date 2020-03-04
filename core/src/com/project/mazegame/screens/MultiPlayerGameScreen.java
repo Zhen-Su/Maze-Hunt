@@ -24,6 +24,7 @@ import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -39,8 +40,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private OrthoCam cam;
 
     private MultiPlayer myMultiPlayer;
-    private  NetClient netClient = new NetClient(this);
+    private NetClient netClient = new NetClient(this);
     private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
+    public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
@@ -123,25 +125,17 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     public MultiPlayer getMultiPlayer() { return myMultiPlayer; }
 
-    public void setMultiPlayer(MultiPlayer multiPlayer) {
-        this.myMultiPlayer = multiPlayer;
-    }
+    public void setMultiPlayer(MultiPlayer multiPlayer) { this.myMultiPlayer = multiPlayer; }
 
     public List<MultiPlayer> getPlayers() { return players; }
 
-    public void setPlayers(List<MultiPlayer> players) {
-        this.players = players;
-    }
+    public void setPlayers(List<MultiPlayer> players) { this.players = players; }
 
     public NetClient getNc() { return netClient; }
 
-    public void setNc(NetClient netClient) {
-        this.netClient = netClient;
-    }
+    public void setNc(NetClient netClient) { this.netClient = netClient; }
 
-    public TiledMapTileLayer getCollisionLayer() {
-        return collisionLayer;
-    }
+    public TiledMapTileLayer getCollisionLayer() { return collisionLayer; }
 
     //==============================================================================================
 

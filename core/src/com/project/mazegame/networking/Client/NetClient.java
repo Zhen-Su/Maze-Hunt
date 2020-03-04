@@ -3,6 +3,7 @@ package com.project.mazegame.networking.Client;
 import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
@@ -146,6 +147,11 @@ public class NetClient {
                 case Message.PLAYER_COLLECT_MSG:
                     msg = new CollectMessage(gameClient);
                     msg.process(dis);
+                    break;
+                    case Message.PLAYER_EXIT_MSG:
+                        msg = new PlayerExitMessage(gameClient);
+                        msg.process(dis);
+                        break;
             }
         }
     }

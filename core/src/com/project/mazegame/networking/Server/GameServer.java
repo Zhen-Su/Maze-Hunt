@@ -1,4 +1,7 @@
 package com.project.mazegame.networking.Server;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -26,6 +29,10 @@ public class GameServer implements Runnable {
     public static List<Client> getClients() { return clients; }
 
     public static void setClients(List<Client> clients) { GameServer.clients = clients; }
+
+    public boolean isRunning() { return isRunning; }
+
+    public void setRunning(boolean running) { isRunning = running; }
 
 
     /**
@@ -107,12 +114,13 @@ public class GameServer implements Runnable {
      */
     private class UDPThread implements Runnable{
 
+        public DatagramSocket ds =null;
         byte[] receiveBuffer = new byte[1024];
 
         @Override
         public void run() {
             Thread.currentThread().setName("Server UDP Thread");
-            DatagramSocket ds =null;
+            //DatagramSocket ds =null;
             try {
                 ds = new DatagramSocket(SERVER_UDP_PORT);
             } catch (SocketException e) {
@@ -143,10 +151,18 @@ public class GameServer implements Runnable {
     /**
      * Stop all threads
      */
-    public void dispose() {
+    public void dispose(MultiPlayerGameScreen gameClient) {
         isRunning = false;
-        //Close all Clients
 
+        //Send message to all client the server will close.
+        PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
+        gameClient.getNc().send(message);
+        try {
+            Thread.currentThread().sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //Close all Clients
         clients.clear();
         clients=null;
         //Close TCP Server

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -32,110 +33,117 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This looby used by other player who click “join maze"
+ * This lobby used by other player who click “join maze"
  */
 public class OtherLobbyScreen implements Screen {
     private MazeGame game;
-    public static final float WORLD_WIDTH = 480;
-    public static final float WORLD_HEIGHT = 800;
-    Stage stage;
+    public static final int WIDTH = 1000;
+    public static final int HEIGHT = 1000;
 
+
+    private OrthographicCamera cam;
     private Label label;
     private BitmapFont bitmapFont;
+    private BitmapFont font;
     private MultiPlayerGameScreen gameClient;
-    private  Label.LabelStyle style;
+    private Label.LabelStyle style;
+    private Texture backGround;
+    private String hostPlayerName;
+    private List<MultiPlayer> players;
+    private boolean hasReady = true;
 
     String username;
     String ip;
+
 
     public OtherLobbyScreen(MazeGame game,String username, String ip) {
         this.game = game;
         this.username = username;
         this.ip = ip;
+        cam = new OrthographicCamera(WIDTH, HEIGHT);
+        cam.setToOrtho(false, WIDTH, HEIGHT);
     }
 
     public MultiPlayerGameScreen getGameClient() { return gameClient; }
 
     public void setGameClient(MultiPlayerGameScreen gameClient) { this.gameClient = gameClient; }
 
+    public String getHostPlayerName() { return hostPlayerName; }
+
+    public void setHostPlayerName(String hostPlayerName) { this.hostPlayerName = hostPlayerName; }
+
+    public List<MultiPlayer> getPlayers() { return players; }
+
+    public void setPlayers(List<MultiPlayer> players) { this.players = players; }
+
     @Override
     public void show() {
-        stage = new Stage(new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT));
-
+        backGround = new Texture("UI\\menuBackground.png");
         bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
 
-        style = new Label.LabelStyle();
-
-        style.font = bitmapFont;
-
-        style.fontColor = new Color(1, 0, 0, 1);
-
-        label = new Label("Waiting in Lobby...", style);
-
-        label.setPosition(100, 700);
-
-        label.setFontScale(1.5f);
-
-        stage.addActor(label);
-
-        Label label1 = new Label("Press Enter to ready ...", style);
-
-        label1.setPosition(120, 650);
-
-        label1.setFontScale(1f);
-
-        stage.addActor(label1);
-
-
+        font = new BitmapFont();
+        font.setColor(Color.RED);
+        font.getData().setScale(1.5f);
     }
 
     @Override
     public void render(float delta) {
+        cam.update();
+        game.batch.setProjectionMatrix(cam.combined);
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        game.batch.begin();
+        {
+            game.batch.draw(backGround, 0, 0, 1000, 1000);
+            font.draw(game.batch, "Here is Lobby...", 400, 950);
+            font.draw(game.batch, "Ready Player:   ", 70, 850);
+
+            handleInput();
+
+            if (gameClient != null) {
+                //draw the ready players on the screen
+                int currY = 800;
+                font.draw(game.batch, username, 230, 850);
+                for (MultiPlayer multiPlayer : players) {
+                    font.draw(game.batch, multiPlayer.getName(), 230, currY);
+                    currY -= 50;
+                }
+
+                //check the host player if quit the game.
+                if(players.isEmpty()) {
+                    font.setColor(Color.YELLOW);
+                    font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
+                }
+                if (!players.isEmpty() && players.get(0).getName() != hostPlayerName) {
+                    font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
+                }
+            }
+        }
+        game.batch.end();
+    }
+
+    private void handleInput() {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
-            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,username,ip);
-            setGameClient(gameClient);
-            showOtherPlayer(gameClient);
+            if(hasReady) {
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip);
+                setGameClient(gameClient);
+                setHostPlayerName(gameClient.getPlayers().get(0).getName());
+                setPlayers(gameClient.getPlayers());
+                hasReady = false;
+            }
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();
             PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
             gameClient.getNc().send(message);
         }
-
-        stage.act();
-        stage.draw();
-    }
-
-    private void showOtherPlayer(MultiPlayerGameScreen gameClient){
-
-        if(gameClient.getPlayers().size()==1){
-            MultiPlayer multiPlayer = gameClient.getPlayers().get(0);
-            Label label2 = new Label(multiPlayer.getName(), style);
-            label2.setPosition(20, 550);
-            stage.addActor(label2);
-        }
-
-        Label label3 = new Label(username, style);
-        label3.setPosition(20, 450);
-        stage.addActor(label3);
-        
-        if(gameClient.getPlayers().size()==2){
-            MultiPlayer multiPlayer = gameClient.getPlayers().get(1);
-            Label label4 = new Label(multiPlayer.getName(), style);
-            label4.setPosition(20, 350);
-            label4.setFontScale(1f);
-            stage.addActor(label4);
-        }
     }
 
     private void backToMenuScreen(){
         System.out.println("back to");
-        // cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-        //this.dispose();
         game.setScreen(new MenuScreen(this.game));
         System.out.println("shouldn't see");
     }
@@ -164,9 +172,6 @@ public class OtherLobbyScreen implements Screen {
     public void dispose() {
         if (bitmapFont != null) {
             bitmapFont.dispose();
-        }
-        if (stage != null) {
-            stage.dispose();
         }
     }
 }
