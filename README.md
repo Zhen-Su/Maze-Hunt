@@ -59,7 +59,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
 
 * Version1.1:  When client connect to server (Through TCP socket) , client can send their own information to server,and server can save this client object and its info into a list. 
   
-  * 1.2 After client connect to server, server can give this player an ID and server's UDP port through TCP socket.
+* Version1.2: After client connect to server, server can give this player an ID and server's UDP port through TCP socket.
   
 * Version1.3: Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
   
