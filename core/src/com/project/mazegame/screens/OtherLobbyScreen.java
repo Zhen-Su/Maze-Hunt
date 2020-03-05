@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.objects.MultiPlayer;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -39,6 +40,8 @@ public class OtherLobbyScreen implements Screen {
     private MazeGame game;
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
+
+    public boolean waitingStatus=false ;
 
 
     private OrthographicCamera cam;
@@ -110,6 +113,12 @@ public class OtherLobbyScreen implements Screen {
                 //check the host player if quit the game.
                 checkHostLeave();
             }
+
+            //check whether stare game...
+            if(waitingStatus && gameClient.isHostStartGame())
+            {
+                game.setScreen(gameClient);
+            }
         }
         game.batch.end();
     }
@@ -133,6 +142,7 @@ public class OtherLobbyScreen implements Screen {
                 setHostPlayerName(gameClient.getPlayers().get(0).getName());
                 setPlayers(gameClient.getPlayers());
                 hasReady = false;
+                waitingStatus = true;
             }
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {

@@ -14,7 +14,6 @@ import java.net.InetSocketAddress;
 public class PlayerExitMessage implements Message {
     private int msgType = Message.PLAYER_EXIT_MSG;
     private int id;
-//    private boolean isServerRunning;
     private MultiPlayerGameScreen gameClient;
 
     public PlayerExitMessage(MultiPlayerGameScreen gameClient)
@@ -25,7 +24,6 @@ public class PlayerExitMessage implements Message {
     public PlayerExitMessage(MultiPlayerGameScreen gameClient,int id){
         this(gameClient);
         this.id = id;
-//        this.isServerRunning = isServerRunning;
     }
 
 
@@ -36,7 +34,6 @@ public class PlayerExitMessage implements Message {
         try {
             dos.writeInt(msgType);
             dos.writeInt(id);
-//            dos.writeBoolean(isServerRunning);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -56,14 +53,14 @@ public class PlayerExitMessage implements Message {
     public void process(DataInputStream dis) {
         try{
             int id = dis.readInt();
-//            boolean isServerRunning = dis.readBoolean();
             if(id == this.gameClient.getMultiPlayer().getId()){
                 return;
             }
-            //delete this player from player list according to player's id.
+
+            //delete this player from my player list according to player's id.
             int indexOfExitPlayer = gameClient.playersIdIndexList.get(id);
             gameClient.getPlayers().remove(indexOfExitPlayer);
-//            gameClient.setServerRunning(isServerRunning);
+
 
             System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
             System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());

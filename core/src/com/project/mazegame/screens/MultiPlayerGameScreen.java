@@ -14,6 +14,8 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.CollectMessage;
+import com.project.mazegame.networking.Messagess.CreateMazeMessage;
+import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
@@ -28,13 +30,21 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import static com.project.mazegame.screens.GameScreen.mapItems;
+//import static com.project.mazegame.screens.GameScreen.mapItems;
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 
 public class MultiPlayerGameScreen implements Screen,InputProcessor {
+
+    private boolean HostStartGame = false;
+
+    //Item List List
+    public static ArrayList<Item> mapItems = new ArrayList<Item>();
+
+    //Items position Set
+    public static HashSet<String> positions = new HashSet<String>();
 
     private MazeGame game;
     private OrthoCam cam;
@@ -121,6 +131,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         overlayHeight = overlay.getHeight();
     }
 
+
     //===================================Getter&Setter==============================================
 
     public MultiPlayer getMultiPlayer() { return myMultiPlayer; }
@@ -137,6 +148,10 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     public TiledMapTileLayer getCollisionLayer() { return collisionLayer; }
 
+    public boolean isHostStartGame() { return HostStartGame; }
+
+    public void setHostStartGame(boolean hostStartGame) { HostStartGame = hostStartGame; }
+
     //==============================================================================================
 
     public void loadAsset(){
@@ -146,6 +161,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         manager.load("playerRedFrontCrop.png", Texture.class);
         manager.load("sword2.png", Texture.class);
         manager.load("shield.png", Texture.class);
+        manager.load("heart.png",Texture.class);
+        manager.load("coin.png",Texture.class);
+        manager.load("sword2.png",Texture.class);
+        manager.load("shield.png",Texture.class);
+        manager.load("Potion2.png",Texture.class);
+        manager.load("RolledMap.png",Texture.class);
+        manager.load("Potion3.png",Texture.class);
 //        manager.load("playerRedBackIll.png", Texture.class);
 //        manager.load("playerRedRightIll", Texture.class);
 //        manager.load("playerRedLeftIll.png", Texture.class);
@@ -159,6 +181,15 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         player_down = manager.get("playerRedFrontCrop.png", Texture.class);
         sword = manager.get("sword2.png", Texture.class);
         shield = manager.get("shield.png", Texture.class);
+
+//        heartTexture = manager.get("heart.png", Texture.class);
+//        coinTexture = manager.get("coin.png", Texture.class);
+//        swordTexture = manager.get("sword2.png", Texture.class);
+//        shieldTexture = manager.get("shield.png", Texture.class);
+//        healingPotionTexture = manager.get("Potion2.png", Texture.class);
+//        compassTexture = manager.get("RolledMap.png", Texture.class);
+//        damagingPotionTexture = manager.get("Potion3.png", Texture.class);
+
 //        player_up1 = manager.get("playerRedBackIll.png", Texture.class);
 //        player_right1 = manager.get("playerRedRightIll.png", Texture.class);
 //        player_left1 = manager.get("playerRedLeftIll.png", Texture.class);
@@ -181,7 +212,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     @Override
     public void show() {
         //assuming it's a square map -> only need width of map and width of tile
-        generateMapItems(collisionLayer.getWidth(),100 );
+        if(myMultiPlayer.getId() == 1) {
+            generateMapItems(collisionLayer.getWidth(), 100);
+        }
         co = new MultiCollect(game, myMultiPlayer);
         tempMapItemssize = mapItems.size();
         //start timer
@@ -310,26 +343,27 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private void drawCollectibles() {
         for(int i = 0; i < mapItems.size(); i ++) {
             Texture texture = heartTexture;
-            if (mapItems.get(i).getType() == "shield") {
+
+            if (mapItems.get(i).getType().equals("shield")) {
                 texture = shieldTexture;
             }
-            if (mapItems.get(i).getType() == "coin") {
+            if (mapItems.get(i).getType().equals("coin")) {
                 texture = coinTexture;
             }
-            if (mapItems.get(i).getType() == "sword") {
+            if (mapItems.get(i).getType().equals("sword")) {
                 texture = swordTexture;
             }
-            if (mapItems.get(i).getType() == "healingPotion") {
+            if (mapItems.get(i).getType().equals("healingPotion")) {
                 texture = healingPotionTexture;
             }
 
-            if (mapItems.get(i).getType() == "damagingPotion") {
+            if (mapItems.get(i).getType().equals("damagingPotion")) {
                 texture = damagingPotionTexture;
             }
-            if (mapItems.get(i).getType() == "gearEnchantment") {
+            if (mapItems.get(i).getType().equals("gearEnchantment")) {
                 texture = healingPotionTexture;
             }
-            if (mapItems.get(i).getType() == "compass") {
+            if (mapItems.get(i).getType().equals("compass")) {
                 texture = compassTexture;
             }
 
@@ -448,7 +482,6 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     }
 
     public void generateMapItems( int widthInTiles, int tileWidth ) {
-        HashSet<String> positions = new HashSet<String>();
         System.out.println("generating");
         int maxShields = 3;
         int maxCoins = 10;
@@ -459,85 +492,117 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         int maxY = widthInTiles;
 
 
-
+        //Shield
         for (int i = 0; i <= maxShields; i++) {
-            Coordinate position = new Coordinate(0,0);
+            Coordinate position = new Coordinate(0, 0);
 
-
-            position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
-            position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+            position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
+            position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
 
             Item item = new Item("shield", position);
             System.out.println(position);
-            if(!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+            if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 System.out.println("adding to positions");
                 positions.add(position.toString());
+
+                //Send Item message to server
+                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "shield", position.getX(), position.getY());
+                netClient.send(message);
             }
         }
 
+        //Coin
         for (int i = 0; i < maxCoins; i++) {
-            Coordinate position = new Coordinate(0,0);
-            position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
-            position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+            Coordinate position = new Coordinate(0, 0);
+            position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
+            position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
             Item item = new Item("coin", position);
-            if(!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+            if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
+
+                //Send Item message to server
+                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "coin", position.getX(), position.getY());
+                netClient.send(message);
             }
 
         }
 
+        //Sword
         for (int i = 0; i < maxSwords; i++) {
-            Coordinate position = new Coordinate(0,0);
-            position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
-            position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+            Coordinate position = new Coordinate(0, 0);
+            position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
+            position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
             Item item = new Item("sword", position);
-            if(!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+            if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
+
+                //Send Item message to server
+                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "sword", position.getX(), position.getY());
+                netClient.send(message);
             }
 
         }
 
+        //Compass
         for (int i = 0; i < maxCompasses; i++) {
-            Coordinate position = new Coordinate(0,0);
-            position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
-            position.changeY((int)((Math.random() * (maxY )))* tileWidth);
+            Coordinate position = new Coordinate(0, 0);
+            position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
+            position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
             Item item = new Item("compass", position);
-            if(!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+            if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
+
+                //Send Item message to server
+                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "compass", position.getX(), position.getY());
+                netClient.send(message);
             }
 
         }
 
+        //Potions
         for (int i = 0; i < maxPotions; i++) {
-            Coordinate position = new Coordinate(0,0);
-            position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
-            position.changeY((int)((Math.random() * (maxY )))* tileWidth);
-            int whatPotion = (int)(Math.random() * 4);
+            Coordinate position = new Coordinate(0, 0);
+            position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
+            position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
+            int whatPotion = (int) (Math.random() * 4);
 
             if (whatPotion == 1) {
                 Item item = new Item("healingPotion", position);
-                if(!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+                if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                     mapItems.add(item);
                     positions.add(position.toString());
+
+                    //Send Item message to server
+                    ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "healingPotion", position.getX(), position.getY());
+                    netClient.send(message);
                 }
             } else if (whatPotion == 2) {
                 Item item = new Item("damagingPotion", position);
-                if(!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+                if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                     mapItems.add(item);
                     positions.add(position.toString());
+
+                    //Send Item message to server
+                    ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "damagingPotion", position.getX(), position.getY());
+                    netClient.send(message);
                 }
             } else {
                 Item item = new Item("gearEnchantment", position);
-                if(!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float)position.getX(), (float)position.getY()))) {
+                if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                     mapItems.add(item);
                     positions.add(position.toString());
+
+                    //Send Item message to server
+                    ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "gearEnchantment", position.getX(), position.getY());
+                    netClient.send(message);
                 }
             }
         }
+
         System.out.println(positions);
     }
 

@@ -1,6 +1,7 @@
 package com.project.mazegame.tools;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Variables.*;
 
 import com.project.mazegame.screens.GameScreen;
@@ -22,18 +23,15 @@ public class MultiCollect {
     public Coordinate position = new Coordinate();
     public Item item = new Item(" ", position);
 
-    GameScreen test;
     ArrayList<Item> mapItems;
     ArrayList<String> items;
     Player player;
     public ArrayList<Coordinate> positions;
+
     public MultiCollect (MazeGame game ,MultiPlayer player) {
-        test = new GameScreen(game);
         this.player=player;
-        mapItems = GameScreen.mapItems;
+        mapItems = MultiPlayerGameScreen.mapItems;
         items = player.items;
-        //System.out.println("myMultiplayer x:"+player.position.getX());
-        //System.out.println("myMultiplayer y:"+player.position.getY());
     }
 
 

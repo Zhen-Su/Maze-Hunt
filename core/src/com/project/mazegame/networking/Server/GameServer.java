@@ -22,7 +22,7 @@ public class GameServer implements Runnable {
     public static final int SERVER_TCP_PORT=9999;
     public static final int SERVER_UDP_PORT=7777;
     private static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
-    private boolean isRunning = false;
+    private boolean isRunning;
     private ServerSocket serverSocket;
     private Socket s;
 
@@ -51,18 +51,16 @@ public class GameServer implements Runnable {
 
         new Thread(new UDPThread()).start();
 
-        ServerSocket serverSocket =null;
         try {
             serverSocket = new ServerSocket(SERVER_TCP_PORT);
         }catch(IOException e) {
             e.printStackTrace();
         }
         while(isRunning) {
-            Socket s =null;
             try {
                 printMsg("Waiting for a client");
                 Thread.currentThread().setName("Server TCP Thread");
-                s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
+                s= serverSocket.accept(); //Listens for a connection to be made to this socket and accepts it.
 
                 //Receive client's UDP Port from GameClient
                 InputStream in = s.getInputStream();
@@ -131,12 +129,11 @@ public class GameServer implements Runnable {
                 DatagramPacket dp = new DatagramPacket(receiveBuffer,receiveBuffer.length);
                 try {
                     ds.receive(dp);
-                    printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
+                    printMsg("I received a packet from a client, i will broadcast to all clients!!!");
                     for (Client c : clients){
                         if(c!=null) {
                             dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
                             ds.send(dp);
-                            //printMsg("I've broadcasted to client");
                         }
                     }
                 } catch (IOException e) {
@@ -173,7 +170,7 @@ public class GameServer implements Runnable {
                 e.printStackTrace();
             }
         }
-        System.out.println("Dispose server and clients...");
+        System.out.println("Dispose server ...");
     }
 
     /**

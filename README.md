@@ -6,6 +6,10 @@ I've implemented multiplayer join the game, and everyone can see each other's mo
 
 In this new `yueyi1` branch, i will merge my networking part into core, namly using LibGDX to implement multiplaye game.
 
+
+
+Here are some classes relates to multiplayer mode :
+
 ## Objects Package
 
 The package directory `package com.project.mazegame.objects` contains some of the classes that coordinate with the game network.
@@ -18,8 +22,15 @@ The package directory `package com.project.mazegame.objects` contains some of th
 The package directory `package com.project.mazegame.screens` contains some of the classes that coordinate with the game network.
 
 * MultiPlayerScreen
-
 * MultiPlayerGameScreen
+* JoinMazeScreen
+* CreatMazeScreen
+* HostLobbyScreen
+* OtherLobbyScreen
+
+## Tools Package
+
+* MultiCollect
 
 ## Networking Package
 
@@ -27,32 +38,29 @@ The package directory `com.project.mazegame.networking` contains all of the clas
 
 * Server
   * GameServer
-  * ServerThread
-
+  
 * Messages
   * Message
   * PlayerNewMessage
   * MoveMessage
-  * AttackMessage
+  * PlayerExitMessage
   * and more other messages need to add in further……
 
 * Client
 
   * ClientInfo
-  * ClientThread
   * NetClient
-
   
+##  Description 
 
-  ##  Description 
+In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. For JOIN MAZE mode, we need to open the server separately, which means we have to run GameServer.java (`GameServer.java` is in `yueyi` repo under `package gameNetworks` package) in terminal , eclipse … Then run DesktopLauncher class under `package com.project.mazegame.desktop` package. we request that user enter server's ip and username to start multiplayer game.
 
-  In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. For JOIN MAZE mode, we need to open the server separately, which means we have to run GameServer.java (`GameServer.java` is in `yueyi` repo under `package gameNetworks` package) in terminal , eclipse … Then run DesktopLauncher class under `package com.project.mazegame.desktop` package. we request that user enter server's ip and username to start multiplayer game.
+##  Update Logs
 
-  ##  Update Logs
-
-  * 1.1 When client connect to server (Through TCP socket) , client can send their own information to server,and server can save this client object and its info into a list. 
+* 1.1 When client connect to server (Through TCP socket) , client can send their own information to server,and server can save this client object and its info into a list. 
+  
   * 1.2 After client connect to server, server can give this player an ID and server's UDP port through TCP socket.
-  * 1.3 Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
+* 1.3 Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
   * 1.4 Server can broadcast the messages which receive from someone to all Clients (players).
   * 1.5  Player can see each other movements,but still some bugs.
   * 1.6 fixed bugs, player can see each other's movements with no bugs!
@@ -67,6 +75,7 @@ The package directory `com.project.mazegame.networking` contains all of the clas
     * 1.9.2 handle player exit lobby, then delete name from Host Lobby&Other Lobby
     * 1.9.3 update Host Lobby&Other Lobby (Host player exit game)
     * 1.9.4 add new feather, check the ip whether correct when the player enter ip in `JoinMazeScreen` class
+  * 2.0 The items can generate in the same location on the map.
   
   
   

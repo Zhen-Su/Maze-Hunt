@@ -103,6 +103,10 @@ public class MultiPlayer extends Player {
 
     public void setCoins(int coins) { this.coins = coins; }
 
+    public MultiPlayerGameScreen getGameClient() { return gameClient; }
+
+    public void setGameClient(MultiPlayerGameScreen gameClient) { this.gameClient = gameClient; }
+
 //    public void setPlayerTexture(Texture player) { this.player = player; }
 //
 //    public Texture getPlayer_up() { return player_up; }

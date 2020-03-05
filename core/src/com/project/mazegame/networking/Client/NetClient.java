@@ -1,10 +1,13 @@
 package com.project.mazegame.networking.Client;
 
 import com.project.mazegame.networking.Messagess.CollectMessage;
+import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
+import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
+import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayInputStream;
@@ -148,13 +151,24 @@ public class NetClient {
                     msg = new CollectMessage(gameClient);
                     msg.process(dis);
                     break;
-                    case Message.PLAYER_EXIT_MSG:
-                        msg = new PlayerExitMessage(gameClient);
-                        msg.process(dis);
-                        break;
+                case Message.PLAYER_EXIT_MSG:
+                    msg = new PlayerExitMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.ITEMS_CREATE:
+                    msg = new ItemCreateMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.HOST_START:
+                    msg = new StartGameMessage(gameClient);
+                    msg.process(dis);
+                case Message.ITEM_COLLECTED:
+                    msg = new ItemCollectedMessage(gameClient);
+                    msg.process(dis);
             }
         }
     }
+
 
     /**
      ** Randomly generate UDP port from 1024 to 5000
