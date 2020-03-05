@@ -8,7 +8,7 @@ In this new `yueyi1` branch, i will merge my networking part into core, namly us
 
 
 
-Here are some classes relates to multiplayer mode :
+**Here are some classes relates to multiplayer mode :**
 
 ## Objects Package
 
@@ -57,25 +57,36 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
 
 ##  Update Logs
 
-* 1.1 When client connect to server (Through TCP socket) , client can send their own information to server,and server can save this client object and its info into a list. 
+* Version1.1:  When client connect to server (Through TCP socket) , client can send their own information to server,and server can save this client object and its info into a list. 
   
   * 1.2 After client connect to server, server can give this player an ID and server's UDP port through TCP socket.
-* 1.3 Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
-  * 1.4 Server can broadcast the messages which receive from someone to all Clients (players).
-  * 1.5  Player can see each other movements,but still some bugs.
-  * 1.6 fixed bugs, player can see each other's movements with no bugs!
-  * 1.7 CREATEMAZE mode: When Player1 click CREATEMAZE then he/she create a room, player1 will be a server. Other player2 click JOINMAZE then enter Player1 ip ,this player2 can join the room which created by Player1.
   
-    * 1.7.2 fix camera and integrate with collectable ……
+* Version1.3: Player can send their own info(postion,ID,direction……)  to server after successfully connect to Server.
+  
+* Version1.4: Server can broadcast the messages which receive from someone to all Clients (players).
+  
+* Version1.5:  Player can see each other movements,but still some bugs.
+  
+* Version1.6: fixed bugs, player can see each other's movements with no bugs!
+  
+* version1.7: CREATEMAZE mode: When Player1 click CREATEMAZE then he/she create a room, player1 will be a server. Other player2 click JOINMAZE then enter Player1 ip ,this player2 can join the room which created by Player1.
+  
+  * 1.7.2 fix camera and integrate with collectable ……
+  
   * 1.7.3 pleayer can genearte in random position in multiplayer mode
-    * 1.7.4 fix motion bugs in multiplayer mode
+  * 1.7.4 fix motion bugs in multiplayer mode
+  
   * 1.8 Players can see what items the opponent picks up.
-  * 1.9 Create Host Lobby for the host player and Other Lobby for the other player, Other player Join the maze to enter the lobby, then press enter to confirm ready to game, then the ready player name will be showed on the Host Lobby Screen.
-    * 1.9.1 other play can see each ready players in Other Lobby.
-    * 1.9.2 handle player exit lobby, then delete name from Host Lobby&Other Lobby
-    * 1.9.3 update Host Lobby&Other Lobby (Host player exit game)
-    * 1.9.4 add new feather, check the ip whether correct when the player enter ip in `JoinMazeScreen` class
-  * 2.0 The items can generate in the same location on the map.
+* Version1.8: Players can see what items the opponent picks up.
+  
+* Version1.9: Create Host Lobby for the host player and Other Lobby for the other player, Other player Join the maze to enter the lobby, then press enter to confirm ready to game, then the ready player name will be showed on the Host Lobby Screen.
+  
+  * 1.9.1 other play can see each ready players in Other Lobby.
+  * 1.9.2 handle player exit lobby, then delete name from Host Lobby&Other Lobby
+  * 1.9.3 update Host Lobby&Other Lobby (Host player exit game)
+  * 1.9.4 add new feather, check the ip whether correct when the player enter ip in `JoinMazeScreen` class
+  
+* Version2.0: The items can generate in the same location on the map.
   
   
   
