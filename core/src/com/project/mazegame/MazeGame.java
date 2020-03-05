@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MenuScreen;
+import com.project.mazegame.tools.AudioHandler;
 
 public class MazeGame extends Game {
 	public SpriteBatch batch;
@@ -12,13 +13,15 @@ public class MazeGame extends Game {
 	public static final int HEIGHT = 1000;
 
 	public Player player;
+
+	public AudioHandler audioHandler;
 	
 	
 	@Override
 	public void create () {
+		audioHandler = new AudioHandler();
 		this.setScreen(new MenuScreen(this));
 		batch = new SpriteBatch();
-
 	}
 
 	@Override
