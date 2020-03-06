@@ -501,7 +501,6 @@ public class GameScreen implements Screen {
 				}
 			}
 		}
-		System.out.println(positions);
 	}
 
 	private float timePassed(float theTime) {

@@ -24,9 +24,8 @@ public class ItemCreateMessage implements Message {
     private String itemType;
     private int x;
     private int y;
-    private boolean debug=true;
-
     private MultiPlayerGameScreen gameClient;
+    private boolean debug=true;
 
 
     public ItemCreateMessage(int id, String itemType, int x, int y) {
@@ -58,7 +57,7 @@ public class ItemCreateMessage implements Message {
         byte[] buf = baos.toByteArray();
         try {
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, new InetSocketAddress(serverIP, serverUDPPort));
-            System.out.println("I'm id" + id + ", I'll send an Item generation message.");
+            if(debug) System.out.println("I'm id" + id + ", I'll send a Item generate message.");
             ds.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,19 +82,19 @@ public class ItemCreateMessage implements Message {
             Item item = new Item(itemType, co);
             gameClient.mapItems.add(item);
 
-            if (debug) {
+            if(debug) {
                 System.out.println("-------------------------------");
                 System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
-                System.out.println("This items generation message is from: id" + id);
+                System.out.println("This collection message is from: id" + id);
                 System.out.println("This (id" + id + ") player collect: " + itemType);
                 System.out.println("Items position x: " + itemsX + " y: " + itemsY);
-                System.out.println("My mapItems: ");
-                for (int i = 0; i < this.gameClient.mapItems.size(); i++)
-                    System.out.print("(" + this.gameClient.mapItems.get(i).getPosition().getX() + "," + this.gameClient.mapItems.get(i).getPosition().getY() + ")");
+                System.out.println("mapItems: ");
+                for (int i = 0; i < gameClient.mapItems.size(); i++) {
+                    System.out.print("(" + gameClient.mapItems.get(i).getPosition().getX() + "," + gameClient.mapItems.get(i).getPosition().getY() + ")");
+                }
                 System.out.println();
                 System.out.println("-------------------------------");
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();

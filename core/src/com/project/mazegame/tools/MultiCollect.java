@@ -23,7 +23,7 @@ public class MultiCollect {
     public Coordinate position = new Coordinate();
     public Item item = new Item(" ", position);
 
-//    MultiPlayerGameScreen test;
+    //    MultiPlayerGameScreen test;
     ArrayList<Item> mapItems;
     ArrayList<String> items;
     MultiPlayer multiplayer;
@@ -78,7 +78,7 @@ public class MultiCollect {
                 indexOfItem=i;
             }
         }
-       // System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
+        // System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
         return nearestItem;
     }
 

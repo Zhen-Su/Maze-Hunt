@@ -25,7 +25,7 @@ public class GameServer implements Runnable {
     private boolean isRunning = false;
     private ServerSocket serverSocket;
     private Socket s;
-    private boolean debug;
+    private boolean debug =false;
 
     public static List<Client> getClients() { return clients; }
 
@@ -61,7 +61,7 @@ public class GameServer implements Runnable {
         while(isRunning) {
             Socket s =null;
             try {
-               if(debug) printMsg("Waiting for a client");
+                printMsg("Waiting for a client");
                 Thread.currentThread().setName("Server TCP Thread");
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
 
@@ -73,7 +73,7 @@ public class GameServer implements Runnable {
                 String clientIP = s.getInetAddress().getHostAddress();
                 Client c = new Client(clientIP,clientUDPPort);//create a client object
                 clients.add(c);                   //add this client object to list
-                if(debug) printMsg("A Client Connected! Address--" + s.getInetAddress()+":"+s.getPort()+" Client's UDP Port:"+clientUDPPort);
+                printMsg("A Client Connected! Address--" + s.getInetAddress()+":"+s.getPort()+" Client's UDP Port:"+clientUDPPort);
 
                 //Send ID and Server UDP_PORT to client.
                 OutputStream os = s.getOutputStream();
@@ -127,16 +127,17 @@ public class GameServer implements Runnable {
             } catch (SocketException e) {
                 e.printStackTrace();
             }
-            if(debug) printMsg("UDP thread started at port: "+SERVER_UDP_PORT);
+            printMsg("UDP thread started at port: "+SERVER_UDP_PORT);
             while(ds!=null) {
                 DatagramPacket dp = new DatagramPacket(receiveBuffer,receiveBuffer.length);
                 try {
                     ds.receive(dp);
-                    if(debug)  printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
+                   // printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
                     for (Client c : clients){
                         if(c!=null) {
                             dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
                             ds.send(dp);
+                            //printMsg("I've broadcasted to client");
                         }
                     }
                 } catch (IOException e) {
@@ -173,7 +174,7 @@ public class GameServer implements Runnable {
                 e.printStackTrace();
             }
         }
-        if(debug)   System.out.println("Dispose server and clients...");
+        System.out.println("Dispose server and clients...");
     }
 
     /**
