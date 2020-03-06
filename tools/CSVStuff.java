@@ -1,4 +1,4 @@
-package com.project.mazegame.tools;
+// package com.project.mazegame.tools;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class CSVStuff {
 
     public static ArrayList<String> readCSVFile() {
-        String fileRead = "Will be there soon";
+        String fileRead = "/home/james/CSVTest/james.csv";
         BufferedReader buff = null;
         String line = "";
         ArrayList<String> output = new ArrayList<>();
@@ -32,8 +32,9 @@ public class CSVStuff {
         return null;
     }
 
-    public static void writeCSV(ArrayList<String> list) throws IOException {
-        String outPutCSV = "Will be there soon";
+    public static void writeCSV(ArrayList<String> list) {
+        try {
+        String outPutCSV = "/home/james/CSVTest/james.csv";
         FileWriter writer = new FileWriter(outPutCSV);
         for (int i = 0; i < list.size(); i++) {
             writer.append(list.get(i));
@@ -44,5 +45,8 @@ public class CSVStuff {
         System.out.print("Written successfully");
         writer.flush();
         writer.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
     }
 }
