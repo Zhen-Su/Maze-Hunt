@@ -168,6 +168,7 @@ public class NetClient {
                 case Message.HOST_START:
                     msg = new StartGameMessage(gameClient);
                     msg.process(dis);
+                    break;
                 case Message.ITEM_COLLECTED:
                     msg = new ItemCollectedMessage(gameClient);
                     msg.process(dis);

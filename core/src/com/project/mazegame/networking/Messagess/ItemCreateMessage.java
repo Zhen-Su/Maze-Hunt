@@ -85,7 +85,7 @@ public class ItemCreateMessage implements Message {
             if(debug) {
                 System.out.println("-------------------------------");
                 System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
-                System.out.println("This collection message is from: id" + id);
+                System.out.println("This item generation message is from: id" + id);
                 System.out.println("This (id" + id + ") player collect: " + itemType);
                 System.out.println("Items position x: " + itemsX + " y: " + itemsY);
                 System.out.println("mapItems: ");

@@ -11,7 +11,7 @@ public interface Message {
     public static final int PLAYER_EXIT_MSG=4;
     public static final int HOST_START = 5;
     public static final int ITEMS_CREATE = 6;
-    public static final int ITEM_COLLECTED = 8;
+    public static final int ITEM_COLLECTED = 7;
 
     void send(DatagramSocket ds, String serverIP, int serverUDPPort);
     void process(DataInputStream dis);

@@ -31,8 +31,8 @@ public class ItemCollectedMessage implements Message {
 
 
     public ItemCollectedMessage(int id, MultiPlayerGameScreen gameClient, String itemType, int x, int y, int indexOfItem) {
+        this(gameClient);
         this.id = id;
-        this.gameClient = gameClient;
         this.itemType = itemType;
         this.x = x;
         this.y = y;
