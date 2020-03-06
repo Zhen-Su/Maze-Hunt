@@ -24,20 +24,19 @@ public class ItemCreateMessage implements Message {
     private String itemType;
     private int x;
     private int y;
+    private boolean debug=true;
 
     private MultiPlayerGameScreen gameClient;
 
 
-    public ItemCreateMessage(int id,String itemType, int x, int y)
-    {
+    public ItemCreateMessage(int id, String itemType, int x, int y) {
         this.id = id;
         this.itemType = itemType;
         this.x = x;
         this.y = y;
     }
 
-    public ItemCreateMessage(MultiPlayerGameScreen gameClient)
-    {
+    public ItemCreateMessage(MultiPlayerGameScreen gameClient) {
         this.gameClient = gameClient;
     }
 
@@ -45,20 +44,21 @@ public class ItemCreateMessage implements Message {
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(baos);
-        try{
+        try {
             dos.writeInt(msgType);
             dos.writeInt(id);
-            dos.writeUTF(itemType);
-            dos.writeInt(x);
-            dos.writeInt(y);
-
+            if (id == 1) {
+                dos.writeUTF(itemType);
+                dos.writeInt(x);
+                dos.writeInt(y);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
         byte[] buf = baos.toByteArray();
         try {
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, new InetSocketAddress(serverIP, serverUDPPort));
-            System.out.println("I'm id"+id+", I'll send a Item generate message.");
+            System.out.println("I'm id" + id + ", I'll send an Item generation message.");
             ds.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
@@ -68,9 +68,9 @@ public class ItemCreateMessage implements Message {
 
     @Override
     public void process(DataInputStream dis) {
-        try{
+        try {
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getId()){
+            if (id == this.gameClient.getMultiPlayer().getId()) {
                 return;
             }
 
@@ -79,22 +79,25 @@ public class ItemCreateMessage implements Message {
             int itemsX = dis.readInt();
             int itemsY = dis.readInt();
 
-            for (MultiPlayer t : gameClient.getPlayers()){
-                if(t.getId() == id) {
-                    Coordinate co = new Coordinate(itemsX, itemsY);
-                    Item item = new Item(itemType, co);
-                    gameClient.mapItems.add(item);
+            Coordinate co = new Coordinate(itemsX, itemsY);
+            Item item = new Item(itemType, co);
+            gameClient.mapItems.add(item);
 
-                    System.out.println("££££££££££££££££££££££££££££££££");
-                    System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
-                    System.out.println("This item generation message is from: id" + id);
-                    System.out.println("This (id" + id + ") player collect: " + itemType);
-                    System.out.println("Items position x: " + itemsX + " y: " + itemsY);
-                    System.out.println("££££££££££££££££££££££££££££££££");
-                }
+            if (debug) {
+                System.out.println("-------------------------------");
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+                System.out.println("This items generation message is from: id" + id);
+                System.out.println("This (id" + id + ") player collect: " + itemType);
+                System.out.println("Items position x: " + itemsX + " y: " + itemsY);
+                System.out.println("My mapItems: ");
+                for (int i = 0; i < this.gameClient.mapItems.size(); i++)
+                    System.out.print("(" + this.gameClient.mapItems.get(i).getPosition().getX() + "," + this.gameClient.mapItems.get(i).getPosition().getY() + ")");
+                System.out.println();
+                System.out.println("-------------------------------");
             }
 
-        }catch (IOException e){
+
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

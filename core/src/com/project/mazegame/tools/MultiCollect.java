@@ -23,15 +23,19 @@ public class MultiCollect {
     public Coordinate position = new Coordinate();
     public Item item = new Item(" ", position);
 
+//    MultiPlayerGameScreen test;
     ArrayList<Item> mapItems;
     ArrayList<String> items;
-    Player player;
+    MultiPlayer multiplayer;
+    public int indexOfItem;
     public ArrayList<Coordinate> positions;
-
-    public MultiCollect (MazeGame game ,MultiPlayer player) {
-        this.player=player;
-        mapItems = MultiPlayerGameScreen.mapItems;
+    public MultiCollect (MazeGame game ,MultiPlayer player,MultiPlayerGameScreen gameClient) {
+//        test = new MultiPlayerGameScreen(game,multiplayer.getName(),test.getNc().getServerIP());
+        this.multiplayer=player;
+        mapItems = gameClient.mapItems;
         items = player.items;
+        //System.out.println("myMultiplayer x:"+player.position.getX());
+        //System.out.println("myMultiplayer y:"+player.position.getY());
     }
 
 
@@ -42,6 +46,11 @@ public class MultiCollect {
         mapItems.remove(item);
         items.add(item.getType());
         return item;
+    }
+
+    public int getIndexOfItem(){
+
+        return indexOfItem;
     }
 
     public Item nearestItem(MultiPlayer player) {
@@ -66,7 +75,7 @@ public class MultiCollect {
 
             if (tempDist < shortDist) {
                 nearestItem = mapItems.get(i);
-                //System.out.println("found shorter!");
+                indexOfItem=i;
             }
         }
        // System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());

@@ -8,12 +8,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.networking.Messagess.CreateMazeMessage;
-import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.MultiPlayer;
@@ -92,7 +87,7 @@ public class HostLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getId());
             gameClient.getNc().send(start);
-            gameClient.generateMapItems(gameClient.getCollisionLayer().getWidth(),100 );
+            //gameClient.generateMapItems(gameClient.getCollisionLayer().getWidth(),100 );
             game.setScreen(gameClient);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             backToMenuScreen();

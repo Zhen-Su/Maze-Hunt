@@ -14,13 +14,12 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.CollectMessage;
-import com.project.mazegame.networking.Messagess.CreateMazeMessage;
+import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
-import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
@@ -41,7 +40,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private boolean HostStartGame = false;
 
     //Item List List
-    public static ArrayList<Item> mapItems = new ArrayList<Item>();
+    public ArrayList<Item> mapItems = new ArrayList<Item>();
 
     //Items position Set
     public static HashSet<String> positions = new HashSet<String>();
@@ -212,13 +211,20 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     @Override
     public void show() {
         //assuming it's a square map -> only need width of map and width of tile
+        //TODO need to make it more general
         if(myMultiPlayer.getId() == 1) {
             generateMapItems(collisionLayer.getWidth(), 100);
         }
-        co = new MultiCollect(game, myMultiPlayer);
+        co = new MultiCollect(game, myMultiPlayer,this);
         tempMapItemssize = mapItems.size();
         //start timer
         myMultiPlayer.initialPosition();
+
+        System.out.println("mapItems: ");
+        for(int i=0; i<mapItems.size();i++){
+            System.out.print("("+mapItems.get(i).getPosition().getX()+","+mapItems.get(i).getPosition().getY()+")");
+        }
+
     }
 
     int iconSize = 30;
@@ -259,7 +265,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
                     (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100))
             {
-                System.out.println("Over items");
+                //System.out.println("Over items");
                 pickUpItem();
             }
         }
@@ -374,38 +380,43 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     }
 
-    private void pickUpItem() {
+    public void pickUpItem() {
         Item item =  co.nearestItem(myMultiPlayer);
 
-        if (!(myMultiPlayer.items.contains(item.getType())) && !(item.getType() == "coin")) {
+        if (!(myMultiPlayer.items.contains(item.getType())) && !(item.getType().equals("coin"))) {
 
             item = co.pickedUp(co.nearestItem(myMultiPlayer));
+
+            int indexOfItem = co.getIndexOfItem();
 
             CollectMessage collectMessage = new CollectMessage(this.getMultiPlayer().getId(),this,item.getType());
             this.getNc().send(collectMessage);
 
-            if (item.getType() == "shield") {
+            ItemCollectedMessage itemCollected = new ItemCollectedMessage(this.getMultiPlayer().getId(),this,item.getType(),item.getPosition().getX(),item.getPosition().getY(),indexOfItem);
+            this.getNc().send(itemCollected);
+
+
+            if (item.getType().equals("shield")) {
                 item.setInitialisedTime(worldTimer);
                 initialisedShieldTime = worldTimer;
-                //TODO here is a bug need to fix
                 co.shield(item, myMultiPlayer);
             }
-            if (item.getType() == "sword") {
+            if (item.getType().equals("sword")) {
                 co.sword(item, myMultiPlayer, player2);
             }
-            if (item.getType() == "healingPotion") {
+            if (item.getType().equals("healingPotion")) {
                 myMultiPlayer.loadPlayerTextures();
                 co.healingPotion (myMultiPlayer);
             }
-            if (item.getType() == "damagingPotion") {
+            if (item.getType().equals("damagingPotion")) {
                 item.setInitialisedTime(worldTimer);
                 initialisedPotionTime = worldTimer;
                 co.damagingPotion(item, myMultiPlayer);
             }
-            if (item.getType() == "gearEnchantment") {
+            if (item.getType().equals("gearEnchantment")) {
                 co.gearEnchantment(item , myMultiPlayer);
             }
-        } else if (item.getType() == "coin") {
+        } else if (item.getType().equals("coin")) {
             mapItems.remove(item);
             myMultiPlayer.coins++;
             coinSize = 100;
@@ -482,7 +493,6 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     }
 
     public void generateMapItems( int widthInTiles, int tileWidth ) {
-        System.out.println("generating");
         int maxShields = 3;
         int maxCoins = 10;
         int maxSwords = 5;
@@ -495,19 +505,19 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         //Shield
         for (int i = 0; i <= maxShields; i++) {
             Coordinate position = new Coordinate(0, 0);
-
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
             position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
-
             Item item = new Item("shield", position);
-            System.out.println(position);
+//            System.out.println("Shield positions: ");
+//            System.out.println(position);
             if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
-                System.out.println("adding to positions");
+//                System.out.println("adding to positions");
                 positions.add(position.toString());
 
                 //Send Item message to server
                 ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "shield", position.getX(), position.getY());
+                System.out.println(position.toString());
                 netClient.send(message);
             }
         }
@@ -518,12 +528,15 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
             position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
             Item item = new Item("coin", position);
+//            System.out.println("Coin positions: ");
+//            System.out.println(position);
             if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
 
                 //Send Item message to server
                 ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "coin", position.getX(), position.getY());
+                System.out.println(position.toString());
                 netClient.send(message);
             }
 
@@ -541,6 +554,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
                 //Send Item message to server
                 ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "sword", position.getX(), position.getY());
+                System.out.println(position.toString());
                 netClient.send(message);
             }
 
@@ -558,6 +572,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
                 //Send Item message to server
                 ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "compass", position.getX(), position.getY());
+                System.out.println(position.toString());
                 netClient.send(message);
             }
 
@@ -578,6 +593,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
                     //Send Item message to server
                     ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "healingPotion", position.getX(), position.getY());
+                    System.out.println(position.toString());
                     netClient.send(message);
                 }
             } else if (whatPotion == 2) {
@@ -588,6 +604,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
                     //Send Item message to server
                     ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "damagingPotion", position.getX(), position.getY());
+                    System.out.println(position.toString());
                     netClient.send(message);
                 }
             } else {
@@ -598,12 +615,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
                     //Send Item message to server
                     ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "gearEnchantment", position.getX(), position.getY());
+                    System.out.println(position.toString());
                     netClient.send(message);
                 }
             }
         }
 
-        System.out.println(positions);
+        //System.out.println(positions);
     }
 
     private void playerDamaging() {

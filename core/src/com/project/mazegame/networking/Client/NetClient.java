@@ -9,6 +9,7 @@ import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
+import com.project.mazegame.screens.OtherLobbyScreen;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -28,6 +29,11 @@ public class NetClient {
     private MultiPlayerGameScreen gameClient;
     private int clientUDPPort;
     private int serverUDPPort;
+
+    public String getServerIP() {
+        return serverIP;
+    }
+
     private String serverIP;
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
@@ -162,13 +168,14 @@ public class NetClient {
                 case Message.HOST_START:
                     msg = new StartGameMessage(gameClient);
                     msg.process(dis);
+                    break;
                 case Message.ITEM_COLLECTED:
                     msg = new ItemCollectedMessage(gameClient);
                     msg.process(dis);
+                    break;
             }
         }
     }
-
 
     /**
      ** Randomly generate UDP port from 1024 to 5000

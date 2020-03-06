@@ -14,12 +14,12 @@ public class Collect {
 	public Coordinate position = new Coordinate();
 	public Item item = new Item(" ", position);
 
-	//GameScreen test;
+	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
 	public ArrayList<Coordinate> positions;
 	public Collect (MazeGame game ,Player player) {
-	//	test = new GameScreen(game);
+		test = new GameScreen(game);
 
 		mapItems = GameScreen.mapItems;
 		items = player.items;

@@ -15,6 +15,9 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
+/**
+ * When player pick up an item, then send this type of message.
+ */
 public class CollectMessage implements Message{
     private int msgType = Message.PLAYER_COLLECT_MSG;
     private int id;
@@ -73,11 +76,11 @@ public class CollectMessage implements Message{
                         System.out.println("itemType: "+itemType);
                     }
 
-                    System.out.println("-------------------------------");
+                    System.out.println("###############################");
                     System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
-                    System.out.println("This collection message is from: id"+id);
+                    System.out.println("This player pick up items message is from: id"+id);
                     System.out.println("This (id"+id+ ") player collect: "+itemType);
-                    System.out.println("-------------------------------");
+                    System.out.println("###############################");
                 }
             }
         } catch (IOException e) {

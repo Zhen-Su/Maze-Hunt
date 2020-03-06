@@ -143,6 +143,7 @@ public class OtherLobbyScreen implements Screen {
                 setPlayers(gameClient.getPlayers());
                 hasReady = false;
                 waitingStatus = true;
+//                game.setScreen(gameClient);
             }
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {

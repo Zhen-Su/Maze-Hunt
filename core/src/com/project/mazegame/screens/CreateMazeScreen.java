@@ -15,11 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.networking.Messagess.CreateMazeMessage;
-import com.project.mazegame.networking.Server.GameServer;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 
 public class CreateMazeScreen implements Screen {
