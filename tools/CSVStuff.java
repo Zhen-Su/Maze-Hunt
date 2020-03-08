@@ -1,4 +1,4 @@
-// package com.project.mazegame.tools;
+package com.project.mazegame.tools;// package com.project.mazegame.tools;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

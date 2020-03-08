@@ -30,8 +30,8 @@ public class Player {
     public Coordinate position;
     
     private TiledMapTileLayer collisionLayer;
-
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID, Collect co) {
+    public Player() {}
+    public Player(TiledMapTileLayer collisionLayer,String name, Collect co) {
     	this.co = co;
     	this.health = 5;
         this.coins = 0;

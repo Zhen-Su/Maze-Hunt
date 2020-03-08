@@ -1,5 +1,5 @@
 package com.project.mazegame.tools;
-public class  ItemCell {
+public class ItemCell {
 	private int x;
 	private int y;
 

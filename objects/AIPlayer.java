@@ -8,16 +8,22 @@ import com.project.mazegame.tools.Coordinate;
 
 import java.util.ArrayList;
 
+// each time ai moves needs to send message
 
 // In constructor can litterally just call AITakingOver and will genearate however many AIs wanted
 public class AIPlayer extends Player {
     public ArrayList<AIPlayer> ais;
     private final int spawnNumber = 0;
     private Collect co;
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, Collect co, int numberOfThem) {
-        super(collisionLayer, name = "Super AI", ID, co);
-        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
+    protected Direction dir;
 
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, Collect co) {
+        super(collisionLayer, name = "Super AI", co);
+//        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
+
+    }
+    public Direction getDir() {
+        return this.dir;
     }
     public ArrayList<AIPlayer> AITakingOver(int number, TiledMapTileLayer coll, Collect co) {
         ArrayList<AIPlayer> players = new ArrayList<>();
@@ -97,12 +103,17 @@ public class AIPlayer extends Player {
     }
     private Texture change(Coordinate old, Coordinate update) {
         if (old.getX() < update.getX() && old.getY() == update.getY()) {
+            this.dir = Direction.R;
             return player_right;
         } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
+            this.dir = Direction.L;
             return player_left;
+
         } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
+            this.dir = Direction.U;
             return player_up;
         } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
+            this.dir = Direction.D;
             return player_down;
         } else {
             return player;
@@ -148,5 +159,8 @@ public class AIPlayer extends Player {
         return Math.abs(target.getX() - other.getX()) < Math.abs(target.getX() - compare.getX()) || Math.abs(target.getY() - other.getY()) < Math.abs(target.getY() - compare.getY());
 
 
+    }
+    public void setDir(Direction d) {
+        this.dir = d;
     }
 }
