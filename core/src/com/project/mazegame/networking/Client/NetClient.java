@@ -1,7 +1,6 @@
 package com.project.mazegame.networking.Client;
 
 import com.project.mazegame.networking.Messagess.CollectMessage;
-import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
@@ -9,7 +8,6 @@ import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
-import com.project.mazegame.screens.OtherLobbyScreen;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -167,10 +165,6 @@ public class NetClient {
                     break;
                 case Message.HOST_START:
                     msg = new StartGameMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.ITEM_COLLECTED:
-                    msg = new ItemCollectedMessage(gameClient);
                     msg.process(dis);
                     break;
             }

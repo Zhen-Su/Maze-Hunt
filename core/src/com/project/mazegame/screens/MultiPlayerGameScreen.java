@@ -14,7 +14,6 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.CollectMessage;
-import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
@@ -416,12 +415,10 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             myMultiPlayer.coins++;
             coinSize = 100;
         }
+
         //send message when player pick up coin or other items
         if(!containItems||isCoin) {
-            CollectMessage collectMessage = new CollectMessage(this.getMultiPlayer().getId(), this, item.getType());
-            this.getNc().send(collectMessage);
-
-            ItemCollectedMessage itemCollected = new ItemCollectedMessage(this.getMultiPlayer().getId(), this, item.getType(), item.getPosition().getX(), item.getPosition().getY(), indexOfItem);
+            CollectMessage itemCollected = new CollectMessage(this.getMultiPlayer().getId(), this, item.getType(), item.getPosition().getX(), item.getPosition().getY(), indexOfItem);
             this.getNc().send(itemCollected);
         }
 

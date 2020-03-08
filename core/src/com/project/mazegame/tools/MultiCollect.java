@@ -49,7 +49,6 @@ public class MultiCollect {
     }
 
     public int getIndexOfItem(){
-
         return indexOfItem;
     }
 
