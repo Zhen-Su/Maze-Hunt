@@ -77,6 +77,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 1.7.4 fix motion bugs in multiplayer mode
   
   * 1.8 Players can see what items the opponent picks up.
+  
 * Version1.8: Players can see what items the opponent picks up.
   
 * Version1.9: Create Host Lobby for the host player and Other Lobby for the other player, Other player Join the maze to enter the lobby, then press enter to confirm ready to game, then the ready player name will be showed on the Host Lobby Screen.
@@ -87,6 +88,8 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 1.9.4 add new feather, check the ip whether correct when the player enter ip in `JoinMazeScreen` class
   
 * Version2.0: The items can generate in the same location on the map.
+  
+  * 2.0.1 fix bugs on pick up items (include coin)
   
   
   

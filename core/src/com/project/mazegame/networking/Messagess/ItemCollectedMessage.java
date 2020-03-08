@@ -62,6 +62,12 @@ public class ItemCollectedMessage implements Message {
         try {
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, new InetSocketAddress(serverIP, serverUDPPort));
            if(debug) System.out.println("I'm id" + id + ", I'll send a 'Item remove from mapItem' message.");
+//            System.out.println("Index of item:"+indexOfItem);
+//            System.out.println("Items position x: " + x + " y: " + y);
+//            for (int i = 0; i < gameClient.mapItems.size(); i++) {
+//                System.out.print("(" + gameClient.mapItems.get(i).getPosition().getX() + "," + gameClient.mapItems.get(i).getPosition().getY() + ")");
+//            }
+//            System.out.println();
             ds.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
@@ -83,6 +89,19 @@ public class ItemCollectedMessage implements Message {
             int itemsY = dis.readInt();
             int indexOfItem = dis.readInt();
 
+//            System.out.println("-------------------------------");
+//            System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+//            System.out.println("This 'Item remove from mapItem' message is from: id" + id);
+//            System.out.println("This (id" + id + ") player collect: " + itemType);
+//            System.out.println("Items position x: " + itemsX + " y: " + itemsY);
+//            System.out.println("index of item:"+indexOfItem);
+//            System.out.println("size of itemMaps:"+gameClient.mapItems.size());
+//            System.out.println("Before remove item, mapItems: ");
+//            for (int i = 0; i < gameClient.mapItems.size(); i++) {
+//                System.out.print("(" + gameClient.mapItems.get(i).getPosition().getX() + "," + gameClient.mapItems.get(i).getPosition().getY() + ")");
+//            }
+//            System.out.println();
+
             gameClient.mapItems.remove(indexOfItem);
 
             if(debug) {
@@ -91,7 +110,7 @@ public class ItemCollectedMessage implements Message {
                 System.out.println("This 'Item remove from mapItem' message is from: id" + id);
                 System.out.println("This (id" + id + ") player collect: " + itemType);
                 System.out.println("Items position x: " + itemsX + " y: " + itemsY);
-                System.out.println("mapItems: ");
+                System.out.println("After remove item, mapItems: ");
                 for (int i = 0; i < gameClient.mapItems.size(); i++) {
                     System.out.print("(" + gameClient.mapItems.get(i).getPosition().getX() + "," + gameClient.mapItems.get(i).getPosition().getY() + ")");
                 }

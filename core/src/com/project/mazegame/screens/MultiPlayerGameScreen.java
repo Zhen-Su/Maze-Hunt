@@ -224,7 +224,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         for(int i=0; i<mapItems.size();i++){
             System.out.print("("+mapItems.get(i).getPosition().getX()+","+mapItems.get(i).getPosition().getY()+")");
         }
-
+        System.out.println();
     }
 
     int iconSize = 30;
@@ -381,20 +381,15 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     }
 
     public void pickUpItem() {
-        Item item =  co.nearestItem(myMultiPlayer);
 
-        if (!(myMultiPlayer.items.contains(item.getType())) && !(item.getType().equals("coin"))) {
+        Item item =  co.nearestItem(myMultiPlayer);
+        boolean containItems = myMultiPlayer.items.contains(item.getType());
+        boolean isCoin = item.getType().equals("coin");
+        int indexOfItem = co.getIndexOfItem();
+
+        if (!containItems && !isCoin) {
 
             item = co.pickedUp(co.nearestItem(myMultiPlayer));
-
-            int indexOfItem = co.getIndexOfItem();
-
-            CollectMessage collectMessage = new CollectMessage(this.getMultiPlayer().getId(),this,item.getType());
-            this.getNc().send(collectMessage);
-
-            ItemCollectedMessage itemCollected = new ItemCollectedMessage(this.getMultiPlayer().getId(),this,item.getType(),item.getPosition().getX(),item.getPosition().getY(),indexOfItem);
-            this.getNc().send(itemCollected);
-
 
             if (item.getType().equals("shield")) {
                 item.setInitialisedTime(worldTimer);
@@ -416,11 +411,20 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             if (item.getType().equals("gearEnchantment")) {
                 co.gearEnchantment(item , myMultiPlayer);
             }
-        } else if (item.getType().equals("coin")) {
+        } else if (isCoin) {
             mapItems.remove(item);
             myMultiPlayer.coins++;
             coinSize = 100;
         }
+        //send message when player pick up coin or other items
+        if(!containItems||isCoin) {
+            CollectMessage collectMessage = new CollectMessage(this.getMultiPlayer().getId(), this, item.getType());
+            this.getNc().send(collectMessage);
+
+            ItemCollectedMessage itemCollected = new ItemCollectedMessage(this.getMultiPlayer().getId(), this, item.getType(), item.getPosition().getX(), item.getPosition().getY(), indexOfItem);
+            this.getNc().send(itemCollected);
+        }
+
     }
 
     private void drawExitButton(Coordinate position) {
