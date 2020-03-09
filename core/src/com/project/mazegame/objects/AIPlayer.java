@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.project.mazegame.tools.Pair;
-import static com.project.mazegame.tools.Variables.SCROLLTRACKER_Y;
-import static com.project.mazegame.tools.Variables.SCROLLTRACKER_X;
 import java.util.ArrayList;
 // will need to separate x and y from ai player
 public class AIPlayer extends Player{
@@ -62,7 +60,7 @@ public class AIPlayer extends Player{
             try {
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 Pair moveToTake = direction(avaibleMoves(x, y));
-                System.out.println(moveToTake.toString());
+             //   System.out.println(moveToTake.toString());
                 /*
                 if (x == moveToTake.getX() && y < moveToTake.getY()) {
                     SCROLLTRACKER_Y += super.speed;
@@ -78,7 +76,7 @@ public class AIPlayer extends Player{
                 this.y = moveToTake.getY();
                 Thread.sleep(500);
             } catch (Exception e) {
-                System.out.println("Something gone wrong");
+         //       System.out.println("Something gone wrong");
             }
         }
     }

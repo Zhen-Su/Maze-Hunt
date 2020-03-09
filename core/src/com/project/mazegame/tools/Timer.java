@@ -3,7 +3,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class Timer {
-public Timer timer;
+	public Timer timer;
 
 	public Timer() {
 		timer = new Timer();
@@ -13,5 +13,11 @@ public Timer timer;
 
 class DisplayCountdown extends TimerTask {
 	int seconds;
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
