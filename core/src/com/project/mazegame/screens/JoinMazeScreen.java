@@ -88,8 +88,8 @@ public class JoinMazeScreen implements Screen {
         font.setColor(Color.RED);
         font.getData().setScale(2f);
 
-        usernameTextField = new TextField("", style);
-        ipAddressTextField = new TextField("", style);
+        usernameTextField = new TextField("Username", style);
+        ipAddressTextField = new TextField("Host IP", style);
 
         usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
         ipAddressTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);

@@ -41,7 +41,11 @@ public class CreateMazeScreen implements Screen {
 
     private BitmapFont bitmapFont;
 
+    private BitmapFont font;
+
     private TextField usernameTextField;
+
+    private TextField numField;
 
 
     Texture backGround = new Texture("UI\\menuBackground.png");;
@@ -61,44 +65,49 @@ public class CreateMazeScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-
         bgTexture = createBackgroundTexture();
         cursorTexture = createCursorTexture();
 
         bitmapFont = new BitmapFont();
-
         bitmapFont.getData().setScale(2.0F);
 
+        //set font
+        bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
+        font = new BitmapFont();
+        font.setColor(Color.RED);
+        font.getData().setScale(1.5f);
 
+        //set username frame
         TextField.TextFieldStyle style = new TextField.TextFieldStyle();
-
         style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
-
         style.cursor = new TextureRegionDrawable(new TextureRegion(cursorTexture));
-
         style.font = bitmapFont;
-
         style.fontColor = new Color(1, 1, 1, 1);
-
-        usernameTextField = new TextField("", style);
-
+        usernameTextField = new TextField("Username",style);
         usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
-
         usernameTextField.setPosition(90, 500);
-
         usernameTextField.setAlignment(Align.center);
 
+        //set number frame
+        numField = new TextField("Num of AI Players",style);
+        numField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
+        numField.setPosition(90, 430);
+        numField.setAlignment(Align.center);
 
         stage.addActor(usernameTextField);
+        stage.addActor(numField);
     }
 
     @Override
     public void render(float delta) {
         game.batch.begin();
         game.batch.draw(backGround,0,0,1000,1000);
+
+        font.draw(game.batch, "Press enter to enter Host lobby ", 350, 480);
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             Gdx.app.log(TAG, "username = " + usernameTextField.getText());
-            //game.setScreen(new MultiPlayerGameScreen(game,usernameTextField.getText(),ipAddressTextField.getText()));
+            Gdx.app.log(TAG, "number of AI players = " + numField.getText());
             game.setScreen(new HostLobbyScreen(game,usernameTextField.getText()));
         }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))

@@ -87,7 +87,7 @@ public class HostLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getId());
             gameClient.getNc().send(start);
-            gameClient.generateMapItems(gameClient.getCollisionLayer().getWidth(),100 );
+            gameClient.setImHost(true);
             game.setScreen(gameClient);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             backToMenuScreen();

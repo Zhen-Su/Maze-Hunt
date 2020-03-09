@@ -93,7 +93,7 @@ public class GameScreen implements Screen {
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-		player = new Player(this.collisionLayer,"james",123);
+		player = new Player(this.collisionLayer,"james",123,co);
 		// player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
 		cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());

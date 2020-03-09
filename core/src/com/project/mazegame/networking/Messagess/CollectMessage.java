@@ -88,7 +88,6 @@ public class CollectMessage implements Message {
                     }
                 }
             }
-
             //remove this items from itemMap
             gameClient.mapItems.remove(indexOfItem);
 

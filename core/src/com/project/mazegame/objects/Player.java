@@ -16,13 +16,16 @@ import com.project.mazegame.tools.*;
 
 public class Player {
     public int x, y;
-    private Texture player, player_up, player_right, player_left, player_down, sword,shield;
+    protected Texture player, player_up, player_right, player_left, player_down, sword,shield;
     private float speed = 6;
     private float width, height;
     public int coins;
     public int health = 5;
     private int ID;
     public int swordDamage;
+    public Collect co;
+
+
 
     public String name;
     public ArrayList<String> items;
@@ -31,8 +34,8 @@ public class Player {
     private TiledMapTileLayer collisionLayer;
 
     public Player(){}
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID) {
-
+    public Player(TiledMapTileLayer collisionLayer,String name, int ID,Collect co) {
+        this.co=co;
         this.health = 5;
         this.coins = 0;
         this.name = name;
@@ -75,6 +78,7 @@ public class Player {
         }
     }
 
+    public int getID() {return this.ID;}
     public void update (float delta){
         // update player movement
         this.position.setX(x);

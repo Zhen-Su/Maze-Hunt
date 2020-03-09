@@ -51,6 +51,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private NetClient netClient = new NetClient(this);
     private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
+    private boolean imHost;
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
@@ -150,6 +151,14 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     public void setHostStartGame(boolean hostStartGame) { HostStartGame = hostStartGame; }
 
+    public boolean isImHost() {
+        return imHost;
+    }
+
+    public void setImHost(boolean imHost) {
+        this.imHost = imHost;
+    }
+
     //==============================================================================================
 
     public void loadAsset(){
@@ -210,8 +219,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     @Override
     public void show() {
         //assuming it's a square map -> only need width of map and width of tile
-        //TODO need to make it more general
-        if(myMultiPlayer.getId() == 1) {
+        if(isImHost()) {
             generateMapItems(collisionLayer.getWidth(), 100);
         }
         co = new MultiCollect(game, myMultiPlayer,this);
@@ -264,7 +272,6 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
                     (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100))
             {
-                //System.out.println("Over items");
                 pickUpItem();
             }
         }

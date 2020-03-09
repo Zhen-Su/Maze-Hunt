@@ -1,48 +1,132 @@
 package com.project.mazegame.objects;
 
 import com.badlogic.gdx.graphics.Texture;
-
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
-import com.project.mazegame.tools.Pair;
+import com.project.mazegame.objects.Player;
+import com.project.mazegame.tools.Collect;
+import com.project.mazegame.tools.Coordinate;
 
 import java.util.ArrayList;
-// will need to separate x and y from ai player
-public class AIPlayer extends Player{
-    protected Texture aiPlayer, player_up, player_middle, player_down, sword, shield;
-    // constructor for ai player takes in same things as player so that it can use all attribues from parent
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
-        super(collisionLayer, name,  ID);
-        /*
-        this.loadPlayerTextures();
-        this.width = player_middle.getWidth();
-        this.height = player_middle.getHeight();
-        */
-//        loadPlayerTextures();
+
+
+
+public class AIPlayer extends Player {
+    public ArrayList<AIPlayer> ais;
+    private final int spawnNumber = 0;
+    private Collect co;
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, Collect co, int numberOfThem) {
+        super(collisionLayer, name, ID, co);
+        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
+    }
+    private ArrayList<AIPlayer> AITakingOver(int number, TiledMapTileLayer coll, Collect co) {
+        ArrayList<AIPlayer> players = new ArrayList<>();
+
+
+        for (int i = 0; i < number; i++) {
+            if (i == 0) {
+                players.add(new AIPlayer(coll, "AI0", 0, co, spawnNumber));
+            } else {
+                AIPlayer prev = players.get(i-1);
+                String newName = incrementString(prev.name);
+                int newID1 = prev.getID();
+                int newID2 = newID1++;
+                players.add(new AIPlayer(coll, newName, newID2, co, spawnNumber));
+
+            }
+        }
+        return players;
+    }
+    private String incrementString(String currentString) {
+        String extractAI = currentString.substring(0, 2);
+        if (!extractAI.equals("AI")) {
+            try {
+                throw new Exception("Not valid name start");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            String extractNumber = currentString.substring(2);
+            int extracted = Integer.parseInt(extractNumber);
+            extracted++;
+            return "AI" + String.valueOf(extracted);
+        }
+        return null;
     }
 
-    // method which checks all valid moves may need to be fixed
-    public ArrayList<Pair> avaibleMoves(float x, float y) {
-        float move = 5;
-        ArrayList<Pair> moves = new ArrayList<>();
+    public void update (float delta , int mode, Collect lets) {
+        int sleep = 100;
+        if (mode == 1) {
+            Coordinate old = super.position;
+            this.position.setX((int) x);
+            this.position.setY((int) y);
+            // contantsnatly throwing exception possibly becasue not linked to player
+            // will need to do something with the speed
+            Coordinate moveToTake = direction(avaibleMoves(x, y));
+            System.out.println(moveToTake.toString());
+            super.x = (int) moveToTake.getX();
+            super.y = (int) moveToTake.getY();
+            super.player = change(old, moveToTake);
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else if (mode == 2) {
+            Item nearest = lets.nearestItem(this);
+            Coordinate near = new Coordinate(nearest.getPosition().getX(), nearest.getPosition().getY());
+            ArrayList<Coordinate> moves = avaibleMoves(super.x, super.y);
+            Coordinate bested = bestMove(near, moves);
+            super.x = bested.getX();
+            super.y = bested.getY();
+            super.player = change(near, bested);
+
+            try {
+                Thread.sleep(sleep);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            // ultimate goal is coins
+        } else {
+            try {
+                throw new Exception();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    private Texture change(Coordinate old, Coordinate update) {
+        if (old.getX() < update.getX() && old.getY() == update.getY()) {
+            return player_right;
+        } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
+            return player_left;
+        } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
+            return player_up;
+        } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
+            return player_down;
+        } else {
+            return player;
+        }
+    }
+
+    private ArrayList<Coordinate> avaibleMoves(int x, int y) {
+        int move = 40;
+        ArrayList<Coordinate> moves = new ArrayList<>();
         if (checkCollisionMap((x + move), y) ){
-            moves.add(new Pair((x + move), y));
+            moves.add(new Coordinate((x + move), y));
         }
         if (checkCollisionMap((x -move), y)) {
-            moves.add(new Pair((x - move), y));
+            moves.add(new Coordinate((x - move), y));
         }
         if (checkCollisionMap(x, (y + move))) {
-            moves.add(new Pair(x, (y + move)));
+            moves.add(new Coordinate(x, (y + move)));
         }
         if (checkCollisionMap(x, (y - move))) {
-            moves.add(new Pair(x, (y - move)));
+            moves.add(new Coordinate(x, (y - move)));
         }
         return moves;
     }
 
-    // takes in random number and applies it. if no open doors just stays in current position
-    public Pair direction(ArrayList<Pair> openDoor) {
+    private Coordinate direction(ArrayList<Coordinate> openDoor) {
         if (openDoor.size() <= 0) {
             return null;
         }
@@ -50,76 +134,18 @@ public class AIPlayer extends Player{
         int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
         return openDoor.get(randomTake);
     }
-    // constantly updateing and taking new x and y
-    // possibly need to add some stuff to the update method
-    // could write code for layr up and donwn
-    // could need to increase and modify speed
-    // haven't handled scroll tracker
-    @Override
-    public void update(float delta) {
-        while(true) {
-            try {
-                // contantsnatly throwing exeption possibly becasue not linked to player
-                Pair moveToTake = direction(avaibleMoves(x, y));
-                //   System.out.println(moveToTake.toString());
-                /*
-                if (x == moveToTake.getX() && y < moveToTake.getY()) {
-                    SCROLLTRACKER_Y += super.speed;
-                } else if (x == moveToTake.getX() && y > moveToTake.getY()) {
-                    SCROLLTRACKER_Y -= super.speed;
-                } else if (y == moveToTake.getY() && x < moveToTake.getX()) {
-                    SCROLLTRACKER_X += super.speed;
-                } else if (y == moveToTake.getY() && x > moveToTake.getX()) {
-                    SCROLLTRACKER_X -= super.speed;
-                }
-                */
-                this.x = (int)moveToTake.getX();
-                this.y = (int)moveToTake.getY();
-                Thread.sleep(500);
-            } catch (Exception e) {
-                //       System.out.println("Something gone wrong");
+    private Coordinate bestMove(Coordinate target, ArrayList<Coordinate> onesToUse) {
+        Coordinate best = onesToUse.get(0);
+        for (int i = 0; i < onesToUse.size(); i++) {
+            if (targets(target, onesToUse.get(i), best)) {
+                best = onesToUse.get(i);
             }
         }
+        return best;
     }
-    // overrides methos to make sure they are in the ai class
-    @Override
-    public void render (SpriteBatch sb) {super.render(sb); }
-    /*
-    public void render (SpriteBatch sb){
-        sb.draw(aiPlayer,super.x- (width/2),super.y - (height/2));
-
-        if(hasSword) {
+    private Boolean targets(Coordinate target, Coordinate other, Coordinate compare) {
+        return Math.abs(target.getX() - other.getX()) < Math.abs(target.getX() - compare.getX()) || Math.abs(target.getY() - other.getY()) < Math.abs(target.getY() - compare.getY());
 
 
-            sb.draw(sword,(float)(super.x),super.y - (height/4),50,50);
-
-
-        }
-        if(hasShield) {
-
-
-            sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
-
-
-
-        }
-        */
-
-
-
-    @Override
-    public void loadPlayerTextures() {super.loadPlayerTextures();
-
-        player_up = new Texture("playerBlueBack.png");
-        player_middle = new Texture("playerBlueFront.png");
-        player_down = new Texture("playerBlueFront.png");
-        sword = new Texture("sword.png");
-        shield = new Texture("shield.png");
     }
-
-    @Override
-    public boolean checkCollisionMap(float possibleX, float possibleY) {return super.checkCollisionMap(possibleX, possibleY);}
-
-    @Override
-    public boolean isCellBlocked(float x, float y) {return super.isCellBlocked(x, y);}
 }
