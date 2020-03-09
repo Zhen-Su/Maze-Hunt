@@ -6,7 +6,8 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
@@ -18,6 +19,7 @@ import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.*;
 
+import java.awt.Font;
 import java.awt.ItemSelectable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,9 +28,6 @@ import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
-
-import com.project.mazegame.tools.InputHandler;
-import com.project.mazegame.tools.OrthoCam;
 
 
 
@@ -59,6 +58,11 @@ public class GameScreen implements Screen {
     private Texture audioButtonActive; //-------need to  implemented
     private Texture audioButtonInactive;
     private Texture overlay;
+    private Texture coinPick;
+    private BitmapFont font;
+    
+    
+    AnimationTool coinAnimation;
     
     private float timer;
     public float worldTimer;
@@ -81,13 +85,20 @@ public class GameScreen implements Screen {
     
     int overlayWidth;
     int overlayHeight;
+    int keyFrame;
+   
+    
     
     public GameScreen(MazeGame game) {
         this.game = game;
+        
+        
+        
+      
         inputHandler = new InputHandler();
         
         timer = 0;
-        worldTimer = 60;
+        worldTimer = 10;
 
         tileMap = new TmxMapLoader().load("Map1.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -116,9 +127,13 @@ public class GameScreen implements Screen {
         compassTexture = new Texture("Collectibles\\\\RolledMap.png");
         damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
         overlay = new Texture("UI\\circularOverlay.png");
+        coinPick = new Texture("Collectibles\\coinAnimation.png");
         
-        overlayWidth = overlay.getWidth();
-        overlayHeight = overlay.getHeight();
+        overlayWidth = overlay.getWidth() +300;
+        overlayHeight = overlay.getHeight() +300;
+        
+        //coinAnimation = new AnimationTool(50,50,player,coinPick,true);
+        //coinAnimation.create();
     }
     
     @Override
@@ -134,17 +149,10 @@ public class GameScreen implements Screen {
     int iconSize = 30;
     @Override
     public void render(float delta) { //method repeats a lot
+    	
     	updateTime(delta);
     	removeShield();
     	playerDamaging();
-    	
-    	
-    
-    	
-    	//only draw mapItems if one gets picked up
-    	if (!(mapItems.size() == tempMapItemssize)) {
-    		tempMapItemssize = mapItems.size();
-    	}
     	
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -164,10 +172,8 @@ public class GameScreen implements Screen {
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
       
-        
-        
         game.batch.begin();
-      
+        
         //draw collectibles
         drawCollectibles();
       
@@ -190,45 +196,31 @@ public class GameScreen implements Screen {
         
         
         player.attack();
-        
         player.render(game.batch);
+        
+        
+        String message = "Time = " + worldTimer ;
+        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+        font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
         
         game.batch.end();
         
     	//if timer runs out 
-    	if(worldTimer < 0) {
+    	if(worldTimer < 3) {
     		overlayWidth -= 15;
     		overlayHeight -= 15;
     	  
-    	   if(worldTimer < -3) {
+    	   if(worldTimer < 0) {
     		   this.dispose();
-    		   //System.out.println("cam " + cam.cam.position.x + " , " + cam.cam.position.y);
     		   game.setScreen(new EndScreen(this.game));
-    		   //System.out.println("get here");
+    		  
     	   }
     	}
-        
-  
- 
         
     }
     
     
-    
-    
-    
-    
-    
-    
     int coinSize = iconSize*2;
-    
-    
-
-    
-    
-    
-    
-    
     
     
     private void drawIcons(int iconSize, int buffer, Coordinate position) {
@@ -250,6 +242,10 @@ public class GameScreen implements Screen {
 	        float xShield = VIEWPORT_WIDTH - shieldSize -buffer + playerX;
 	        float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY;
 	        game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
+	        
+	        String message = "XP :" + player.getShieldXP() ;
+	        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+	        font.draw(game.batch,message, xShield ,yShield -50);
         }
         //sword icon
         if ( player.items.contains("sword")) {
@@ -257,7 +253,15 @@ public class GameScreen implements Screen {
 	        float xSword = VIEWPORT_WIDTH  - swordSize - buffer + playerX;
 	        float ySword = VIEWPORT_HEIGHT - (swordSize *2) + playerY;
 	        game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
+	        
+	        
+	        String message = "XP :" + player.getswordXP(); ;
+	        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+	        font.draw(game.batch,message, xSword ,ySword -50);
         }
+        
+       
+        
         //draws coin icon
         for ( int i = 0; i < player.coins; i ++ ) {
 	        float xCoin = buffer + playerX;
@@ -362,8 +366,23 @@ public class GameScreen implements Screen {
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
-			coinSize = 100;
+			//coinAnimation.render();
+			
+			//animateCoin();
+			//coinSize = 100;
+	
+		
 		}
+    }
+    
+    private void animateCoin() {
+    	
+    	TextureRegion[] region = coinAnimation.getFrames();
+    	for(int i = 0 ; i < 4 ; i = keyFrame ) {
+    		game.batch.draw(region[keyFrame],player.position.getX() - 50/2,player.position.getY() - 50/2);
+    		
+    	}
+    	
     }
     
     private void removeShield() {

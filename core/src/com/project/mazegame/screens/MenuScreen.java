@@ -17,7 +17,7 @@ import com.project.mazegame.tools.OrthoCam;
 public class MenuScreen implements Screen {
 
     private MazeGame game;
- //   private OrthoCam cam;
+
     private Music bgm;
 
     /*
@@ -83,6 +83,7 @@ public class MenuScreen implements Screen {
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
+
     }
 
     @Override
@@ -211,11 +212,12 @@ public class MenuScreen implements Screen {
     public void dispose() {
         playButtonActive.dispose();
         playButtonInactive.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
         audioOn.dispose();
         audioOff.dispose();
+        exitButtonActive.dispose();
+        exitButtonInactive.dispose();
         joinMazeButtonActive.dispose();
         joinMazeButtonInactive.dispose();
+
     }
 }

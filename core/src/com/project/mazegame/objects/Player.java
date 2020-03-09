@@ -9,7 +9,9 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 //import com.project.mazegame.Pair;
@@ -18,21 +20,42 @@ import com.project.mazegame.tools.*;
 
 public class Player {
 	public int x, y;
-    private Texture player, player_up, player_right, player_left, player_down, sword,swordAttack,swordNotAttack,shield;
+    private Texture player, sword,swordAttack,swordNotAttack,shield;
     private float speed = 6;
-    private float width, height;
+    private int width, height ,coinSize;
     public int coins;
     public int health = 5;
     private int ID;
     public int swordDamage;
+    private int swordXP;
+    private int shieldXP;
+    
+    Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick;
     
     private boolean isAttacking = false;
     
     public String name;
     public ArrayList<String> items;
     public Coordinate position;
-    
+   
     private TiledMapTileLayer collisionLayer;
+    
+    AnimationTool RightAnim;
+    AnimationTool LeftAnim;
+    AnimationTool UpAnim;
+    AnimationTool DownAnim;
+    AnimationTool animation;
+    AnimationTool coinAnimation;
+    SpriteBatch batch;
+    
+    String colour;
+    
+    String initialFrames;
+
+    boolean left = false;
+    boolean right = false;
+    boolean up = false;
+    boolean down = false;
 
     public Player(TiledMapTileLayer collisionLayer,String name, int ID) {
     	
@@ -48,126 +71,239 @@ public class Player {
     	initialPosition();
         x = this.position.getX();
         y = this.position.getY();
-//        System.out.println("play cons "+ x + " , " + y);
+
+        colour = "orange"; //----------default
        
         loadPlayerTextures();
         
-        width = player_up.getWidth(); 
-        height = player_up.getHeight(); 
+        width = (int) walkUp.getWidth()/2; 
+        height = walkUp.getHeight()/2; 
+        coinSize = coinPick.getHeight()/2;
         ArrayList<Item> items = new ArrayList<Item>();
+        
+        frames = walkDown;
+        System.out.println("new animations");
+        RightAnim = new AnimationTool(width,height,this,walkRight,true);
+        RightAnim.create();
+        System.out.println("new animations");
+        LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
+        LeftAnim.create();
+        System.out.println("new animations");
+        UpAnim = new AnimationTool(width,height,this,walkUp,true);
+        UpAnim.create();
+        System.out.println("new animations");
+        DownAnim = new AnimationTool(width,height,this,walkDown,true);
+        DownAnim.create();
+        System.out.println("new animations");
+        coinAnimation = new AnimationTool(width,height,this,coinPick,true);
+        coinAnimation.create();
+        animation = new AnimationTool(width,height,this,walkDown,true);
+        animation.create();
+        
+        
+        swordXP = 0;
+        shieldXP = 0;
         
     }
     
+    public int getswordXP() {
+    	return this.swordXP;
+    }
+    public int getShieldXP() {
+    	return this.shieldXP;
+    }
+    
+    
     public void initialPosition () {
-    	//Coordinate position = new Coordinate();
-		
     	int maxX = collisionLayer.getWidth() ;	
     	int maxY= collisionLayer.getHeight();	
-//    	System.out.println("maxX" + maxX + " , " + maxY);
-    	
+
     	int ranx = (int)  (( Math.random() * (maxX) ));
     	int rany = (int)  (( Math.random() * (maxY) ));
-//    	System.out.println("ran" + ranx + " , " + rany);
-    	
-    	
+
 		this.position.setX( ranx * (int) collisionLayer.getTileWidth() + 50);			
 		this.position.setY( rany * (int) collisionLayer.getTileHeight() + 50);
 		
-	
 		if(isCellBlocked((float)position.getX(), (float)position.getY())) {
 			initialPosition();
 		}
-		player = player_up;
     }
-     
+    
     public void update (float delta){
         // update player movement
+    	
         this.position.setX(x);
         this.position.setY(y);
-//        System.out.println(collisionLayer.getWidth());
+        
+        
+        
         if (RIGHT_TOUCHED) {
+        	
+        	right = true;
+        	
+        	
             if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
                 //try move player right
                 x += speed;
                 //check player isn't in a wall
                 if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
                     x -= speed;
+                   
                 }else
                     this.position.setX( x );
             }
         }
         if (LEFT_TOUCHED) {
+        	left = true;
+        	
             if (x > 0) {
                 x -= speed;
                 if(!checkCollisionMap(x,y)) {
                     x += speed;
+                    
                 }else
-                    this.position.setX( x );
+                    this.position.setX( x );    
             }
         }
         if (UP_TOUCHED) {
+        	up = true;
+        	
             if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
             	y += speed;
                 if(!checkCollisionMap(x, y)) {
                 	y -= speed;
+                	
                 }else 
 	            	this.position.setY( y ); 
             }
         }
         if (DOWN_TOUCHED) {
+        	down = true;
+        	
             if (y > 0) {
             	y -= speed;
                 if(!checkCollisionMap(x, y  )) { 
                 	y += speed;
+                	
                 } else 
 	            	this.position.setY( y ); 
+                
             }
         }
+        
+        
+        
         //change player texture
         if (UP_TOUCHED == true && DOWN_TOUCHED == false) {
-            player = player_up;
+           // player = player_up;
+            frames = walkUp;
+            animation.setFrames(UpAnim.getFrames());
+            System.out.println(animation.getImgName());
+            
+            
         } else if (DOWN_TOUCHED == true && UP_TOUCHED == false) {
-        	player = player_down;
+        	//player = player_down;
+        	frames = walkDown;
+        	animation.setFrames(DownAnim.getFrames());
+        	
         }  else if (LEFT_TOUCHED == true && RIGHT_TOUCHED == false) {
-        	player = player_left;
+        	//player = player_left;
+        	frames = walkLeft;
+        	animation.setFrames(LeftAnim.getFrames());
+        	
+        	
         } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
-        	player = player_right;
+        	//player = player_right;
+        	frames = walkRight;
+        	animation.setFrames(RightAnim.getFrames());
+        
         }
     }
+   
 
     public void render (SpriteBatch sb){
-    	sb.draw(player,x- (width/2),y - (height/2));
-    
+    	
+    	
+    	setBatch(sb);
+        System.out.println(animation.getImgName());
+    	animation.render();
+    	
         if(this.items.contains("sword")) {	  // possible errors may occur
             sb.draw(sword,(float)(x),y - (height/4),50,50);
         }
          if(this.items.contains("shield")) {
             sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
         }
+         
+        
 
+    }
+    
+    public void setBatch(SpriteBatch sb) {
+    	this.batch = sb;
+    	
+    }
+    public SpriteBatch getSpriteBatch () {
+    	return this.batch;
     }
      
     public void loadPlayerTextures(){
     	 
-        player_up = new Texture("Player\\playerRedBackCrop.png");
-        player_right = new Texture("Player\\playerRedRightCrop.png");
-        player_left = new Texture("Player\\playerRedLeftCrop.png");
-        player_down = new Texture("Player\\playerRedFrontCrop.png");
+    	switch (colour) {
+    	case "blue":
+    		walkRight = new Texture("Player\\walkRightBlue.png");
+            walkLeft = new Texture("Player\\walkLeftBlue.png");
+            walkUp = new Texture("Player\\walkUpBlue.png");
+            walkDown = new Texture("Player\\walkDownBlue.png");
+            break;
+    	case "green":
+    		walkRight = new Texture("Player\\walkRightGreen.png");
+            walkLeft = new Texture("Player\\walkLeftGreen.png");
+            walkUp = new Texture("Player\\walkUpGreen.png");
+            walkDown = new Texture("Player\\walkDownGreen.png");
+            break;
+    	case "pink":
+    		walkRight = new Texture("Player\\walkRightPink.png");
+            walkLeft = new Texture("Player\\walkLeftPink.png");
+            walkUp = new Texture("Player\\walkUpPink.png");
+            walkDown = new Texture("Player\\walkDownPink.png");
+            break;
+    	case "orange":
+    		walkRight = new Texture("Player\\walkRightOrange.png");
+            walkLeft = new Texture("Player\\walkLeftOrange.png");
+            walkUp = new Texture("Player\\walkUpOrange.png");
+            walkDown = new Texture("Player\\walkDownOrange.png");
+            break;
+    	case "lilac":
+    		walkRight = new Texture("Player\\walkRightLilac.png");
+            walkLeft = new Texture("Player\\walkLeftLilac.png");
+            walkUp = new Texture("Player\\walkUpLilac.png");
+            walkDown = new Texture("Player\\walkDownLilac.png");
+            break;
+    	case "yellow":
+    		walkRight = new Texture("Player\\walkRightYellow.png");
+            walkLeft = new Texture("Player\\walkLeftYellow.png");
+            walkUp = new Texture("Player\\walkUpYellow.png");
+            walkDown = new Texture("Player\\walkDownYellow.png");
+            break;
+    	default:
+    		walkRight = new Texture("Player\\walkRight.png");
+            walkLeft = new Texture("Player\\walkLeft.png");
+            walkUp = new Texture("Player\\walkUp.png");
+            walkDown = new Texture("Player\\walkDown.png");
+            
+    	}
+        
+        coinPick = new Texture("Collectibles\\coinAnimation.png");
         
         swordAttack = new Texture("Collectibles\\swordAttack.png");
         swordNotAttack = new Texture("Collectibles\\sword2.png");
         shield = new Texture("Collectibles\\shield.png");
+        
+        
         sword = swordNotAttack;
     }
-    public void playerPosioned() {
-    	
-        player_up = new Texture("Player\\playerRedBackIll.png");
-        player_right = new Texture("Player\\playerRedRightIll.png");
-        player_left = new Texture("Player\\playerRedLeftIll.png");
-        player_down = new Texture("Player\\playerRedFrontIll.png");
-    }
-    
-    
+
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
     	//Overall x and y of player
         float xWorld = possibleX ;
@@ -223,6 +359,10 @@ public class Player {
     		} 
     	}
     	else sword = swordNotAttack;
+    }
+    
+    public Texture getFrames() {
+    	return frames;
     }
     
 
@@ -299,11 +439,11 @@ public class Player {
     }
     public void dispose()
     {
-        player_up.dispose();
-        player_down.dispose();
-        player_right.dispose();
-        player_left.dispose();
-        player.dispose();
+        walkDown.dispose();
+        walkLeft.dispose();
+        walkRight.dispose();
+        walkUp.dispose();
+       // player.dispose();
 
     }
    
@@ -365,16 +505,5 @@ public class Player {
     
    
     
-  
-    
-    public int getID() {
-        return this.ID;
-    }
-    public int getX () {
-    	return (int) x;
-    } 
-    public int getY () {
-    	return (int) y;
-    } 
-    */
+*/
 }

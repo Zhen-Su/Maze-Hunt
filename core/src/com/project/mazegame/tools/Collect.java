@@ -133,7 +133,7 @@ public class Collect {
 		player1.decreaseHealth(1);
 		player1.decreaseHealth(1);
 		
-		player1.playerPosioned();
+//		player1.playerPosioned();
 		
 		//items.remove("damagingPotion");
 		//player1.loadPlayerTextures();

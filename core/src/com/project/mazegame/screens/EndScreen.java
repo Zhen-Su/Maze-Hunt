@@ -33,11 +33,11 @@ public class EndScreen implements Screen {
     public EndScreen(MazeGame game) {
         this.game = game;
         
-        backGround = new Texture("UI\\menuBackground.png");
-        title = new Texture("UI//GAMEOVER!.png");
-        playButtonActive = new Texture("UI\\BackToMenuButton.png");
-        playButtonInactive = new Texture ("UI\\backToMenuButtonPressed.png");
-        leaderboard = new Texture("UI\\Leaderboard.png");
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
+        title = new Texture("UI\\Titles\\GAMEOVER!.png");
+        playButtonActive = new Texture("UI\\MenuButtons\\BackToMenuButton.png");
+        playButtonInactive = new Texture ("UI\\MenuButtons\\backToMenuButtonPressed.png");
+        leaderboard = new Texture("UI\\Backgrounds\\Leaderboard.png");
         
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
