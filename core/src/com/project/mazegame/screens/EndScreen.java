@@ -7,7 +7,9 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.Variables;
 
+//import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class EndScreen implements Screen {
 
     private static final int LB_WIDTH = 350;
@@ -31,12 +33,12 @@ public class EndScreen implements Screen {
     public EndScreen(MazeGame game) {
         this.game = game;
 
-        backGround = new Texture("UI\\menuBackground.png");
-        title = new Texture("UI//GAMEOVER!.png");
-        playButtonActive = new Texture("UI\\BackToMenuButton.png");
-        System.out.println("overwhwlemed");
-        playButtonInactive = new Texture ("UI\\backToMenuButtonPressed.png");
-        leaderboard = new Texture("UI\\Leaderboard.png");
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
+        title = new Texture("UI\\Titles\\GAMEOVER!.png");
+        playButtonActive = new Texture("UI\\MenuButtons\\BackToMenuButton.png");
+        playButtonInactive = new Texture ("UI\\MenuButtons\\backToMenuButtonPressed.png");
+        leaderboard = new Texture("UI\\Backgrounds\\Leaderboard.png");
+
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();

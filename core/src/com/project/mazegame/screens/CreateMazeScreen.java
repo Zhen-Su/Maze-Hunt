@@ -48,7 +48,7 @@ public class CreateMazeScreen implements Screen {
     private TextField numField;
 
 
-    Texture backGround = new Texture("UI\\menuBackground.png");;
+    Texture backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
 
     public CreateMazeScreen(MazeGame game) {
         this.game = game;
@@ -71,27 +71,27 @@ public class CreateMazeScreen implements Screen {
         bitmapFont = new BitmapFont();
         bitmapFont.getData().setScale(2.0F);
 
-        //set font
-        bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
-        font = new BitmapFont();
-        font.setColor(Color.RED);
-        font.getData().setScale(1.5f);
-
-        //set username frame
         TextField.TextFieldStyle style = new TextField.TextFieldStyle();
         style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
         style.cursor = new TextureRegionDrawable(new TextureRegion(cursorTexture));
         style.font = bitmapFont;
         style.fontColor = new Color(1, 1, 1, 1);
-        usernameTextField = new TextField("Username",style);
-        usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
-        usernameTextField.setPosition(90, 500);
-        usernameTextField.setAlignment(Align.center);
 
-        //set number frame
-        numField = new TextField("Num of AI Players",style);
+        BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
+        font = new BitmapFont();
+        font.setColor(Color.RED);
+        font.getData().setScale(2f);
+
+        usernameTextField = new TextField("Player1", style);
+        numField = new TextField("Num of AI Players", style);
+
+        usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
         numField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
+
+        usernameTextField.setPosition(90, 500);
         numField.setPosition(90, 430);
+
+        usernameTextField.setAlignment(Align.center);
         numField.setAlignment(Align.center);
 
         stage.addActor(usernameTextField);

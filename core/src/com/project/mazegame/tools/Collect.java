@@ -1,14 +1,19 @@
 package com.project.mazegame.tools;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
+import com.project.mazegame.tools.Variables.*;
 
 import com.project.mazegame.screens.GameScreen;
-
+import java.lang.Math;
+import java.lang.Integer;
 import java.util.ArrayList;
+import java.util.TimerTask;
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.project.mazegame.tools.Coordinate;
 //import com.project.mazegame.tools.Cell;
 //import com.project.mazegame.Pair;
-
+import com.project.mazegame.tools.Variables;
 
 public class Collect {
 	public Coordinate position = new Coordinate();
@@ -44,7 +49,7 @@ public class Collect {
 //		Item nearestItem = new Item(" ", position);
 		Item nearestItem = mapItems.get(0);
 		//System.out.println("items: " + mapItems.size());
-		for (int i = 0; i< mapItems.size(); i++) {
+		for (int i = 0; i < mapItems.size(); i++) {
 
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
@@ -127,7 +132,7 @@ public class Collect {
 		player1.decreaseHealth(1);
 		player1.decreaseHealth(1);
 
-		player1.playerPosioned();
+//		player1.playerPosioned();
 
 		//items.remove("damagingPotion");
 		//player1.loadPlayerTextures();
@@ -141,6 +146,10 @@ public class Collect {
 
 
 	}
+
+
+
+
 }
 
 

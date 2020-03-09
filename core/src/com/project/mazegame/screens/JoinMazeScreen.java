@@ -64,23 +64,18 @@ public class JoinMazeScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
+
         bgTexture = createBackgroundTexture();
         cursorTexture = createCursorTexture();
 
         bitmapFont = new BitmapFont();
-
         bitmapFont.getData().setScale(2.0F);
 
-        backGround = new Texture("UI\\menuBackground.png");
-
         TextField.TextFieldStyle style = new TextField.TextFieldStyle();
-
         style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
-
         style.cursor = new TextureRegionDrawable(new TextureRegion(cursorTexture));
-
         style.font = bitmapFont;
-
         style.fontColor = new Color(1, 1, 1, 1);
 
         BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
@@ -88,8 +83,8 @@ public class JoinMazeScreen implements Screen {
         font.setColor(Color.RED);
         font.getData().setScale(2f);
 
-        usernameTextField = new TextField("Username", style);
-        ipAddressTextField = new TextField("Host IP", style);
+        usernameTextField = new TextField("Player2", style);
+        ipAddressTextField = new TextField("127.0.0.1", style);
 
         usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
         ipAddressTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
@@ -99,7 +94,6 @@ public class JoinMazeScreen implements Screen {
 
         usernameTextField.setAlignment(Align.center);
         ipAddressTextField.setAlignment(Align.center);
-
 
         stage.addActor(usernameTextField);
         stage.addActor(ipAddressTextField);

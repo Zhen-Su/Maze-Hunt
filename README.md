@@ -90,7 +90,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
 * Version2.0: The items can generate in the same location on the map.
   
   * 2.0.1 fix bugs on pick up items (include coin)
-  * 2.0.2 merge two type of message(CollectMessage & ItemCollectedMessage), make code more readable.
+  * 2.0.2 integrate with timer and animations
   * 
   
   

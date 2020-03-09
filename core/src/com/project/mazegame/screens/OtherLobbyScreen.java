@@ -79,7 +79,7 @@ public class OtherLobbyScreen implements Screen {
 
     @Override
     public void show() {
-        backGround = new Texture("UI\\menuBackground.png");
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
         bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont();
         font.setColor(Color.RED);
