@@ -31,13 +31,13 @@ public class AIPlayer extends Player {
 
         for (int i = 0; i < number; i++) {
             if (i == 0) {
-                players.add(new AIPlayer(coll, "AI0", 0, co, spawnNumber));
+                players.add(new AIPlayer(coll, "AI0", co));
             } else {
                 AIPlayer prev = players.get(i-1);
                 String newName = incrementString(prev.name);
                 int newID1 = prev.getID();
                 int newID2 = newID1++;
-                players.add(new AIPlayer(coll, newName, newID2, co, spawnNumber));
+                players.add(new AIPlayer(coll, newName, co));
 
             }
         }

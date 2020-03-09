@@ -2,7 +2,7 @@ package com.project.mazegame.objects;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.project.mazegame.networking.Messages.MoveMessage;
+import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
@@ -27,14 +27,16 @@ public class MultiPlayerAI extends AIPlayer {
     public Direction dir;
     private TiledMapTileLayer collisionLayer;
     public static boolean debug = false;
+    private Collect co;
 
-    public MultiPlayerAI(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Collect co) {
+    public MultiPlayerAI(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Collect co, Direction dir) {
         super(collisionLayer, username, co);
         initialPosition();
+        this.co = co;
         x = this.position.getX();
         y = this.position.getY();
         this.gameClient = gameClient;
-        this.dir = super.getDir();
+        this.dir = dir;
         ArrayList<Item> items = new ArrayList<>();
         width = gameClient.player_up.getWidth();
         height = gameClient.player_up.getHeight();
@@ -55,8 +57,14 @@ public class MultiPlayerAI extends AIPlayer {
     }
 
     public int getId() {return this.id;}
+    public int getX() {return this.x;}
+    public void setX(int x) {this.x = x;}
+    public int getY() {return this.y;}
+    public void setY(int y) { this.y = y; }
+    public String getName() { return this.name; }
 
     public void setId(int id) {this.id = id;}
+    public Collect getCo() {return this.co;}
 
     @Override
     public void render (SpriteBatch sb) {
@@ -178,7 +186,4 @@ public class MultiPlayerAI extends AIPlayer {
         }
     }
 
-    public void updateMotion() {
-
-    }
 }

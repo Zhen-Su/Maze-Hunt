@@ -16,10 +16,16 @@ import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
+import com.project.mazegame.networking.Messagess.PlayerNewMessage;
+import com.project.mazegame.networking.Messagess.CollectMessage;
+import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
+import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.MultiPlayerAI;
+import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
@@ -47,10 +53,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     private MazeGame game;
     private OrthoCam cam;
+    private Collect coed;
 
     private MultiPlayer myMultiPlayer;
+    private MultiPlayerAI myAIPlayer;
     private NetClient netClient = new NetClient(this);
     private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
+    private List<MultiPlayerAI> aiPlayers = new ArrayList<>();
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
 
     private TiledMap tileMap;//
@@ -105,6 +114,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         loadAsset();
 
         myMultiPlayer=new MultiPlayer(this.collisionLayer,username,this, Direction.STOP);
+        myAIPlayer = new MultiPlayerAI(this.collisionLayer, username, this, coed, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
 
         Gdx.input.setInputProcessor(this);
@@ -135,9 +145,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     public MultiPlayer getMultiPlayer() { return myMultiPlayer; }
 
+
     public void setMultiPlayer(MultiPlayer multiPlayer) { this.myMultiPlayer = multiPlayer; }
 
+    public MultiPlayerAI getMultiPlayerAI() {return myAIPlayer;}
     public List<MultiPlayer> getPlayers() { return players; }
+    public List<MultiPlayerAI> getAiPlayers() { return aiPlayers;}
+
 
     public void setPlayers(List<MultiPlayer> players) { this.players = players; }
 
