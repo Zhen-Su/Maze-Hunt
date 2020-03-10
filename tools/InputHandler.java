@@ -14,6 +14,7 @@ public class InputHandler {
 		DOWN_TOUCHED = false;
 		LEFT_TOUCHED = false;
 		RIGHT_TOUCHED = false;
+		SPACE_TOUCHED = false;
 
 		// set boolean to true if key is touched
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
@@ -27,6 +28,9 @@ public class InputHandler {
 		}
 		if (Gdx.input.isKeyPressed(Keys.UP)) {
 			UP_TOUCHED = true;
+		}
+		if (Gdx.input.isKeyPressed(Keys.SPACE)) {
+			SPACE_TOUCHED = true;
 		}
 //		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
 //			game.setScreen(new MenuScreen(this.game));
