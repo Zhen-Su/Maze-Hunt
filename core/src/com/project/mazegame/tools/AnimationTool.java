@@ -57,19 +57,6 @@ public class AnimationTool extends ApplicationAdapter {
       
    }
    
-  public TextureRegion[] getFrames() {
-	   return animationFrames;
-   }
-  
-  public void setFrames(TextureRegion[] frames) {
-	   this.animationFrames = frames;
-  }
-   
-   public String getImgName() {
-	   System.out.println(this.img.toString());
-	   return this.img.toString();
-   }
-
    @Override
    public void render () {
 	  

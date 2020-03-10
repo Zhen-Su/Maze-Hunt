@@ -60,6 +60,7 @@ public class GameScreen implements Screen {
     private Texture overlay;
     private Texture coinPick;
     private BitmapFont font;
+    private Texture mapTexture, minimapOutline;
     
     
     AnimationTool coinAnimation;
@@ -87,7 +88,7 @@ public class GameScreen implements Screen {
     int overlayHeight;
     int keyFrame;
    
-    
+    Coordinate playerPos;
     
     public GameScreen(MazeGame game) {
         this.game = game;
@@ -128,9 +129,12 @@ public class GameScreen implements Screen {
         damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
         overlay = new Texture("UI\\circularOverlay.png");
         coinPick = new Texture("Collectibles\\coinAnimation.png");
-        
+        mapTexture = new Texture("Maps\\Map2Icon.png");
+        minimapOutline = new Texture("Maps\\minimapOutline.png");
         overlayWidth = overlay.getWidth() +300;
         overlayHeight = overlay.getHeight() +300;
+        
+       
         
         //coinAnimation = new AnimationTool(50,50,player,coinPick,true);
         //coinAnimation.create();
@@ -144,7 +148,9 @@ public class GameScreen implements Screen {
         tempMapItemssize = mapItems.size();
         //start timer
         player.initialPosition();
+        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         
+        playerPos = new Coordinate(player.position.getX(), player.position.getY());
     }
     int iconSize = 30;
     @Override
@@ -190,7 +196,8 @@ public class GameScreen implements Screen {
         
         
         int buffer = 10;
-        Coordinate playerPos = new Coordinate(player.position.getX(), player.position.getY());
+        playerPos.setX(player.position.getX());
+        playerPos.setY(player.position.getY());
         drawIcons(iconSize,buffer,playerPos);
         drawExitButton(playerPos);
         
@@ -199,11 +206,9 @@ public class GameScreen implements Screen {
         player.render(game.batch);
         
         
-        String message = "Time = " + worldTimer ;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-        font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
+        String message = "Time = " + (int) worldTimer ;
         
-        game.batch.end();
+        font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
         
     	//if timer runs out 
     	if(worldTimer < 3) {
@@ -216,7 +221,7 @@ public class GameScreen implements Screen {
     		  
     	   }
     	}
-        
+         game.batch.end();
     }
     
     
@@ -240,12 +245,12 @@ public class GameScreen implements Screen {
         //draw shield icon
 	        float shieldSize = 50;
 	        float xShield = VIEWPORT_WIDTH - shieldSize -buffer + playerX;
-	        float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY;
+	        float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY -50;
 	        game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
 	        
 	        String message = "XP :" + player.getShieldXP() ;
-	        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-	        font.draw(game.batch,message, xShield ,yShield -50);
+	        font.getData().setScale(0.5f,0.5f);
+	        font.draw(game.batch,message, xShield  ,yShield );
         }
         //sword icon
         if ( player.items.contains("sword")) {
@@ -255,9 +260,9 @@ public class GameScreen implements Screen {
 	        game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
 	        
 	        
-	        String message = "XP :" + player.getswordXP(); ;
-	        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-	        font.draw(game.batch,message, xSword ,ySword -50);
+	        String message = "XP :" + player.getswordXP(); 
+	        font.getData().setScale(0.5f,0.5f);
+	        font.draw(game.batch,message, xSword ,ySword  );
         }
         
        
@@ -269,6 +274,14 @@ public class GameScreen implements Screen {
 	        if ( coinSize != iconSize*2) coinSize -=5;
 	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
         }
+        float mapSize = 100;
+        float xMap = player.x + VIEWPORT_WIDTH /2 - mapSize - 50;
+        float yMap =  player.y - VIEWPORT_HEIGHT/2 + 50;
+        
+        game.batch.draw(minimapOutline, xMap -8 ,yMap -9,mapSize + 17 , mapSize +17);
+        game.batch.draw(mapTexture, xMap,yMap,mapSize , mapSize);
+       
+        
     }
     
     private void drawExitButton(Coordinate position) {
@@ -377,12 +390,12 @@ public class GameScreen implements Screen {
     
     private void animateCoin() {
     	
-    	TextureRegion[] region = coinAnimation.getFrames();
-    	for(int i = 0 ; i < 4 ; i = keyFrame ) {
-    		game.batch.draw(region[keyFrame],player.position.getX() - 50/2,player.position.getY() - 50/2);
-    		
-    	}
-    	
+//    	TextureRegion[] region = coinAnimation.getFrames();
+//    	for(int i = 0 ; i < 4 ; i = keyFrame ) {
+//    		game.batch.draw(region[keyFrame],player.position.getX() - 50/2,player.position.getY() - 50/2);
+//    		
+//    	}
+//    	
     }
     
     private void removeShield() {

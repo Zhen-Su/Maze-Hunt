@@ -81,25 +81,32 @@ public class Player {
         coinSize = coinPick.getHeight()/2;
         ArrayList<Item> items = new ArrayList<Item>();
         
-        frames = walkDown;
+        frames = walkRight;
         System.out.println("new animations");
         RightAnim = new AnimationTool(width,height,this,walkRight,true);
         RightAnim.create();
+        
         System.out.println("new animations");
+        frames = walkLeft;
         LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
         LeftAnim.create();
+        
         System.out.println("new animations");
+        frames = walkUp;
         UpAnim = new AnimationTool(width,height,this,walkUp,true);
         UpAnim.create();
+        
+        frames = walkDown;
         System.out.println("new animations");
         DownAnim = new AnimationTool(width,height,this,walkDown,true);
         DownAnim.create();
+       
         System.out.println("new animations");
         coinAnimation = new AnimationTool(width,height,this,coinPick,true);
         coinAnimation.create();
-        animation = new AnimationTool(width,height,this,walkDown,true);
-        animation.create();
         
+        setAnimation( DownAnim);
+        animation.create();
         
         swordXP = 0;
         shieldXP = 0;
@@ -135,13 +142,8 @@ public class Player {
         this.position.setX(x);
         this.position.setY(y);
         
-        
-        
         if (RIGHT_TOUCHED) {
-        	
         	right = true;
-        	
-        	
             if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
                 //try move player right
                 x += speed;
@@ -191,33 +193,20 @@ public class Player {
             }
         }
         
-        
-        
         //change player texture
         if (UP_TOUCHED == true && DOWN_TOUCHED == false) {
-           // player = player_up;
-            frames = walkUp;
-            animation.setFrames(UpAnim.getFrames());
-            System.out.println(animation.getImgName());
-            
-            
+            setAnimation( UpAnim);
         } else if (DOWN_TOUCHED == true && UP_TOUCHED == false) {
-        	//player = player_down;
-        	frames = walkDown;
-        	animation.setFrames(DownAnim.getFrames());
-        	
+        	setAnimation(DownAnim);
         }  else if (LEFT_TOUCHED == true && RIGHT_TOUCHED == false) {
-        	//player = player_left;
-        	frames = walkLeft;
-        	animation.setFrames(LeftAnim.getFrames());
-        	
-        	
+        	setAnimation( LeftAnim);
         } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
-        	//player = player_right;
-        	frames = walkRight;
-        	animation.setFrames(RightAnim.getFrames());
-        
+        	setAnimation( RightAnim);
         }
+    }
+    
+    public void setAnimation(AnimationTool direction) {
+    	animation = direction;
     }
    
 
@@ -225,7 +214,7 @@ public class Player {
     	
     	
     	setBatch(sb);
-        System.out.println(animation.getImgName());
+    
     	animation.render();
     	
         if(this.items.contains("sword")) {	  // possible errors may occur
