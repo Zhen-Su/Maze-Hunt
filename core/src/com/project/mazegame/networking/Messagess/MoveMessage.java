@@ -20,9 +20,9 @@ public class MoveMessage implements Message {
     private int pX, pY;
     private Direction dir;
     private MultiPlayerGameScreen gameClient;
+    private boolean debug =false;
 
     public MoveMessage(int id, int pX, int pY, Direction dir) {
-        // TODO Auto-generated constructor stub
         this.id=id;
         this.pX=pX;
         this.pY=pY;
@@ -30,14 +30,12 @@ public class MoveMessage implements Message {
     }
 
     public MoveMessage(MultiPlayerGameScreen gameClient) {
-        // TODO Auto-generated constructor stub
         this.gameClient=gameClient;
     }
 
 
     @Override
     public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
-        // TODO Auto-generated method stub
         ByteArrayOutputStream baos = new ByteArrayOutputStream(30);
         DataOutputStream dos = new DataOutputStream(baos);
         try {
@@ -52,6 +50,7 @@ public class MoveMessage implements Message {
         byte[] buf = baos.toByteArray();
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
+            if(debug) System.out.println("I'm id"+id+", I'll send a move message.");
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();
@@ -61,38 +60,44 @@ public class MoveMessage implements Message {
 
     @Override
     public void process(DataInputStream dis) {
-        // TODO Auto-generated method stub
         try{
             int id = dis.readInt();
             if(id == this.gameClient.getMultiPlayer().getId()){
                 return;
             }
             Direction dir = Direction.values()[dis.readInt()];
-            int newx = dis.readInt();
-            int newy = dis.readInt();
+            int newX = dis.readInt();
+            int newY = dis.readInt();
             for(MultiPlayer t : gameClient.getPlayers()){
                 if(t.getId() == id){
 
                     //change coordinate and direction
                     t.setDir(dir);
-                    t.getPosition().setX(newx);
-                    t.getPosition().setY(newy);
-//                    System.out.println("zhen x: "+x);
-//                    System.out.println("zhen y:" +y);
+                    t.setX(newX);
+                    t.setY(newY);
+
+                    if(debug) {
+                        System.out.println("****************************");
+                        System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+                        System.out.println("This move message is from: id" + id);
+                        System.out.println("This (id" + id + ") player's position x: " + newX);
+                        System.out.println("This (id" + id + ") player's position y: " + newY);
+                        System.out.println("****************************");
+                    }
 
                     //change player texture
-                    if(t.bU ==true && t.bD == false){
-                        t.setPlayerTexture(t.getPlayer_up());
-                    }else if(t.bD==true&&t.bU==false){
-                        t.setPlayerTexture(t.getPlayer_down());
-                    }else if(t.bL==true&&t.bR==false){
-                        t.setPlayerTexture(t.getPlayer_left());
-                    }else if(t.bR==true&&t.bL==false){
-                        t.setPlayerTexture(t.getPlayer_right());
-                    }else {
-                        t.setPlayerTexture(t.getPlayer_down());
-                    }
-                    break;
+//                    if(t.bU ==true && t.bD == false){
+//                        t.setPlayerTexture(t.getPlayer_up());
+//                    }else if(t.bD==true&&t.bU==false){
+//                        t.setPlayerTexture(t.getPlayer_down());
+//                    }else if(t.bL==true&&t.bR==false){
+//                        t.setPlayerTexture(t.getPlayer_left());
+//                    }else if(t.bR==true&&t.bL==false){
+//                        t.setPlayerTexture(t.getPlayer_right());
+//                    }else {
+//                        t.setPlayerTexture(t.getPlayer_down());
+//                    }
+//                    break;
                 }
             }
         } catch (IOException e) {

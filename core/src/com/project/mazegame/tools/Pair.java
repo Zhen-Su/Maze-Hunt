@@ -16,9 +16,7 @@ public class Pair {
     public void changeY (int y) {
         this.y += y;
     }
-    public float getX() {
-        return this.x;
-    }
+    public float getX() { return this.x; }
     public float getY() {
         return this.y;
     }

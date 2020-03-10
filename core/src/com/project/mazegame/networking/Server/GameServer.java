@@ -1,4 +1,7 @@
 package com.project.mazegame.networking.Server;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,31 +16,37 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameServer {
+public class GameServer implements Runnable {
 
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
     public static final int SERVER_UDP_PORT=7777;
-    static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
+    private static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
     private boolean isRunning = false;
     private ServerSocket serverSocket;
     private Socket s;
+    private boolean debug =false;
+
+    public static List<Client> getClients() { return clients; }
+
+    public static void setClients(List<Client> clients) { GameServer.clients = clients; }
+
+    public boolean isRunning() { return isRunning; }
+
+    public void setRunning(boolean running) { isRunning = running; }
 
 
     /**
-     * Main method
+     * option
      * @param args
      */
     public static void main(String[] args) {
-        new GameServer().start();
+        new Thread(new GameServer()).start();
     }
 
-    /**
-     * Start game! (NOT A THREAD)
-     * For the final integration, remove main() method in this class, and put this start() method into constructor
-     */
-    @SuppressWarnings("resource")
-    public void start(){
+
+    @Override
+    public void run() {
 
         isRunning = true;
 
@@ -53,6 +62,7 @@ public class GameServer {
             Socket s =null;
             try {
                 printMsg("Waiting for a client");
+                Thread.currentThread().setName("Server TCP Thread");
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
 
                 //Receive client's UDP Port from GameClient
@@ -82,8 +92,6 @@ public class GameServer {
         }
     }
 
-
-
     /**
      * Client inner class
      * @author kevin
@@ -107,11 +115,13 @@ public class GameServer {
      */
     private class UDPThread implements Runnable{
 
+        public DatagramSocket ds =null;
         byte[] receiveBuffer = new byte[1024];
 
         @Override
         public void run() {
-            DatagramSocket ds =null;
+            Thread.currentThread().setName("Server UDP Thread");
+            //DatagramSocket ds =null;
             try {
                 ds = new DatagramSocket(SERVER_UDP_PORT);
             } catch (SocketException e) {
@@ -122,12 +132,12 @@ public class GameServer {
                 DatagramPacket dp = new DatagramPacket(receiveBuffer,receiveBuffer.length);
                 try {
                     ds.receive(dp);
-                    printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
+                   // printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
                     for (Client c : clients){
                         if(c!=null) {
                             dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
                             ds.send(dp);
-                            printMsg("I've broadcasted to client");
+                            //printMsg("I've broadcasted to client");
                         }
                     }
                 } catch (IOException e) {
@@ -142,13 +152,21 @@ public class GameServer {
     /**
      * Stop all threads
      */
-    public void dispose() {
+    public void dispose(MultiPlayerGameScreen gameClient) {
         isRunning = false;
-        //Close all Clients
 
+        //Send message to all client the server will close.
+        PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
+        gameClient.getNc().send(message);
+        try {
+            Thread.currentThread().sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //Close all Clients
         clients.clear();
         clients=null;
-        //Close Server
+        //Close TCP Server
         if(serverSocket!=null) {
             try {
                 serverSocket.close();
@@ -156,6 +174,7 @@ public class GameServer {
                 e.printStackTrace();
             }
         }
+        System.out.println("Dispose server and clients...");
     }
 
     /**

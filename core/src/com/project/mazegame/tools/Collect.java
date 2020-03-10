@@ -7,6 +7,7 @@ import com.project.mazegame.screens.GameScreen;
 import java.lang.Math;
 import java.lang.Integer;
 import java.util.ArrayList;
+import java.util.TimerTask;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.tools.Coordinate;
@@ -17,21 +18,21 @@ import com.project.mazegame.tools.Variables;
 public class Collect {
 	public Coordinate position = new Coordinate();
 	public Item item = new Item(" ", position);
-	
+
 	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
 	public ArrayList<Coordinate> positions;
 	public Collect (MazeGame game ,Player player) {
 		test = new GameScreen(game);
-		
+
 		mapItems = GameScreen.mapItems;
 		items = player.items;
-		
-		
+
+
 	}
-	
-	
+
+
 	//ArrayList<Item> items = test.items;
 	//if the player picks up an item, remove it from the map and return the item collected
 	public Item pickedUp(Item item) {
@@ -44,17 +45,16 @@ public class Collect {
 	public Item nearestItem(Player player) {
 		Coordinate position = new Coordinate();
 		position = mapItems.get(0).getPosition();
-		
+
 //		Item nearestItem = new Item(" ", position);
 		Item nearestItem = mapItems.get(0);
 		//System.out.println("items: " + mapItems.size());
 		for (int i = 0; i < mapItems.size(); i++) {
-			
+
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
 
 //			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
-			System.out.println("player.position x:"+player.position.getX());
 			int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
 			//System.out.println("temp Dist: " + tempDist);
 //			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
@@ -66,80 +66,29 @@ public class Collect {
 				//System.out.println("found shorter!");
 			}
 		}
-		System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
+		//System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
 		return nearestItem;
 	}
-	
+
 	private int andinsEuclidian(int x1, int x2, int y1, int y2) {
 		int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
 //		System.out.println()
 		return sqrEucl;
 	}
 
-	//if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
-	/*public void main() {
 
-		Player player = new Player(collisionLayer"James", 123);
-		if (player.position == player.nearestItem().position) {
-
-			Item item = pickedUp(player);
-			Player player1 = new Player("James", 123);
-			Player player2 = new Player("James", 123);
-			if (!items.contains(item)) {
-				if (item.getType() == "shield") {
-					shield(item, player1);
-				}
-				if (item.getType() == "sword") {
-					sword(item, player1, player2);
-				}
-				if (item.getType() == "compass") {
-					compass(item);
-				}
-				if (item.getType() == "healingPotion") {
-					healingPotion(item, player1);
-				}
-				if (item.getType() == "damagingPotion") {
-					damagingPotion(item, player1);
-				}
-				if (item.getType() == "gearEnchantment") {
-					gearEnchantment(item);
-				}
-			} else {
-				items.remove(item);
-			}
-		}
-	}
-*/
 
 	public void shield(Item item, Player player1) {
-		
-		ArrayList<String> items = player1.items;
-		// this.timer = timer;
-		// this.seconds = 60;
-		// temp solutions
-		int timer = 20;
+
+
+		final ArrayList<String> items = player1.items;
 		int seconds = 60;
-		System.out.println("player health " +player1.health);
 		int startHealth = player1.health;
-		/*if (gearEnchantment(item)) {
-			seconds += 30;
-		}*/
 
-
-//		while (timer != 0) {
-//			System.out.println("timer");
-//			if (player1.health != startHealth) {
-//				player1.health = startHealth;
-//			}
-//
-//				//change that in the decreaseHealth class in Player
-//
-//
-//			//display shield icon on screen
-//
-//		}
-
-		//items.remove(item);
+		int time = 60000;
+		if (items.contains("gearEnchantment")) {
+			time += 30000;
+		}
 
 	}
 
@@ -172,15 +121,21 @@ public class Collect {
 		//ArrayList<String> items = player1.items;
 		player1.generateHealth();
 		player1.generateHealth();
-		
+
 		items.remove("healingPotion");
 	}
 
 	public void damagingPotion(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
+
+
 		player1.decreaseHealth(1);
 		player1.decreaseHealth(1);
-		items.remove("damagingPotion");
+
+//		player1.playerPosioned();
+
+		//items.remove("damagingPotion");
+		//player1.loadPlayerTextures();
 	}
 
 	public boolean gearEnchantment(Item item, Player player1) {
@@ -191,6 +146,8 @@ public class Collect {
 
 
 	}
+
+
 
 
 }

@@ -1,8 +1,12 @@
 package com.project.mazegame.networking.Client;
 
+import com.project.mazegame.networking.Messagess.CollectMessage;
+import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
+import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayInputStream;
@@ -23,9 +27,15 @@ public class NetClient {
     private MultiPlayerGameScreen gameClient;
     private int clientUDPPort;
     private int serverUDPPort;
+
+    public String getServerIP() {
+        return serverIP;
+    }
+
     private String serverIP;
-    public DatagramSocket datagramSocket = null;
+    private DatagramSocket datagramSocket = null;
     private Socket socket = null;
+    public static boolean debug=true;
 
     public int getClientUDPPort() {
         return clientUDPPort;
@@ -45,20 +55,19 @@ public class NetClient {
         serverIP = ip;
         try {
             try {
-                System.out.println("Client UDP socket have be opened");
+                if(debug) System.out.println("Client UDP socket have be opened");
                 datagramSocket = new DatagramSocket(clientUDPPort);  // UDPSocket
             } catch (SocketException e) {
                 e.printStackTrace();
             }
-            //ds = new DatagramSocket(serverUDPPort);   //UDPSocket
             socket = new Socket(ip, serverTCPPort);   // TCPSocket
-            printMsg("Connected to server");
+            if(debug) printMsg("Connected to server!");
 
             //Send client udp port to GameServer.
             OutputStream os = socket.getOutputStream();
             DataOutputStream dos = new DataOutputStream(os);
             dos.writeInt(clientUDPPort);
-            printMsg("I've sent my udp port to Game Server!");
+            if(debug) printMsg("I've sent my udp port to Game Server!");
 
             //Receive an unique ID and Server udp port
             InputStream is = socket.getInputStream();
@@ -82,11 +91,11 @@ public class NetClient {
             }
         }
 
-        new Thread(new ClientThread()).start();
 
         PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
         send(msg);
 
+        new Thread(new ClientThread()).start();
     }
 
     public void send(Message msg) {
@@ -103,12 +112,12 @@ public class NetClient {
 
         @Override
         public void run() {
-            System.out.println("Client thread start...");
+            if(debug) System.out.println("Client UDP thread start...");
+            Thread.currentThread().setName("Client UDP Thread");
             while (null != datagramSocket) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try {
                     datagramSocket.receive(datagramPacket);
-                    System.out.println("I've received a packet from server");
                     process(datagramPacket);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -142,6 +151,22 @@ public class NetClient {
                     msg = new MoveMessage(gameClient);
                     msg.process(dis);
                     break;
+                case Message.PLAYER_COLLECT_MSG:
+                    msg = new CollectMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.PLAYER_EXIT_MSG:
+                    msg = new PlayerExitMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.ITEMS_CREATE:
+                    msg = new ItemCreateMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.HOST_START:
+                    msg = new StartGameMessage(gameClient);
+                    msg.process(dis);
+                    break;
             }
         }
     }
@@ -157,11 +182,11 @@ public class NetClient {
     }
 
     /**
-         * Only for debug (print message)
-         * @param msg
-         */
-        public void printMsg(String msg){
-            System.out.println(msg);
-        }
+     * Only for debug (print message)
+     * @param msg
+     */
+    public void printMsg(String msg){
+        System.out.println(msg);
+    }
 
 }

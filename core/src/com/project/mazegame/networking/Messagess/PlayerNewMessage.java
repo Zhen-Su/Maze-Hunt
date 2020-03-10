@@ -23,7 +23,6 @@ public class PlayerNewMessage implements Message {
 
     public PlayerNewMessage(MultiPlayer multiPlayer) {
         this.multiPlayer = multiPlayer;
-        this.gameClient = gameClient;
     }
 
     public PlayerNewMessage(MultiPlayerGameScreen gameClient) {
@@ -47,8 +46,8 @@ public class PlayerNewMessage implements Message {
         try {
             dos.writeInt(msgType);
             dos.writeInt(multiPlayer.getId());
-            dos.writeInt((int) multiPlayer.position.getX());
-            dos.writeInt((int) multiPlayer.position.getY());
+            dos.writeInt(multiPlayer.position.getX());
+            dos.writeInt(multiPlayer.position.getY());
             dos.writeInt(multiPlayer.getDir().ordinal());
             dos.writeUTF(multiPlayer.getName());
         } catch (IOException e) {
@@ -90,9 +89,17 @@ public class PlayerNewMessage implements Message {
                 PlayerNewMessage msg = new PlayerNewMessage(gameClient);
                 gameClient.getNc().send(msg);
                 MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir);
-                System.out.println("the new player has been construct!");
+
+                System.out.println("--------------------------------------");
+                System.out.println("my id: "+this.gameClient.getMultiPlayer().getId());
+                System.out.println("this player new message is from: id "+id);
+
                 newPlayer.setId(id);
                 gameClient.getPlayers().add(newPlayer);
+                gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
+
+                System.out.println("I've added this player to list!!");
+                System.out.println("--------------------------------------");
             }
 
         } catch (IOException e) {
