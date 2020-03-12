@@ -17,6 +17,11 @@ public class MazeGame extends Game {
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = 1000;
 	
+	public String[] pref = new String[3];
+	public String map = "map1";
+	public String playerSkin = "red";
+	public String aiDifficulty ;
+	
 	
 	@Override
 	public void create () {
@@ -26,6 +31,8 @@ public class MazeGame extends Game {
 		this.setScreen(new SplashScreen(this));
 
 		batch = new SpriteBatch();
+		
+		
 	}
 
 	@Override

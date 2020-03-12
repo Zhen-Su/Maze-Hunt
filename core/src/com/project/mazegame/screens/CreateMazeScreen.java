@@ -14,7 +14,7 @@ import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
+import static com.project.mazegame.tools.Variables.*;
 
 public class CreateMazeScreen implements Screen {
 
@@ -55,6 +55,7 @@ public class CreateMazeScreen implements Screen {
     
     Texture joinMazeButtonActive;
     Texture joinMazeButtonInactive;
+    Texture diffButton1,diffButton1Selected,diffButton2,diffButton2Selected,diffButton3,diffButton3Selected;
     Texture backGround;
     Texture Map1,Map2,Map3, Map1Selected,Map2Selected,Map3Selected ;
     
@@ -63,11 +64,18 @@ public class CreateMazeScreen implements Screen {
     TextureRegion txture;
     TextureRegion[][] playerRegion;
     Button player1Button,player2Button,player3Button,player4Button,player5Button,player6Button,player7Button;
+    Button[] playerButtons ;
+   
     Button AIButton,AIDifficulty1Button,AIDifficulty2Button,AIDifficulty3Button;
+    Button[] difficultyButtons;
+
     Button Map1Button,Map2Button,Map3Button;
+    Button[] mapButtons;
     Button CreateMaze;
     BitmapFont font;
-    
+    boolean playerChosen;
+    boolean mapChosen;
+    boolean difficultyChosen;
     
 
     public CreateMazeScreen(MazeGame game) {
@@ -85,6 +93,12 @@ public class CreateMazeScreen implements Screen {
         player5 = new Texture("Player\\playerOrange.png");
         player6 = new Texture("Player\\playerPink.png");
         player7 = new Texture("Player\\playerYellow.png");
+        diffButton1 = new Texture("UI\\MenuButtons\\diff1.png");
+        diffButton1Selected = new Texture("UI\\MenuButtons\\diff1Selected.png");
+        diffButton2 = new Texture("UI\\MenuButtons\\diff2.png");
+        diffButton2Selected = new Texture("UI\\MenuButtons\\diff2Selected.png");
+        diffButton3 = new Texture("UI\\MenuButtons\\diff3.png");
+        diffButton3Selected = new Texture("UI\\MenuButtons\\diff3Selected.png");
         //playerRegion = TextureRegion.split(new Texture("Player\\walkDownYellow.png"),playerSelected.getWidth()-2,playerSelected.getHeight()-2);
        // txture =  playerRegion[0][0];
        
@@ -97,8 +111,9 @@ public class CreateMazeScreen implements Screen {
         Map2Selected = new Texture("Maps\\Map2IconSelected.png");
         Map3Selected = new Texture("Maps\\Map3IconSelected.png");
         
-        boolean playerChosen = false;
-        boolean mapChosen = false;
+         playerChosen = false;
+        mapChosen = false;
+        difficultyChosen = false;
         
         
     }
@@ -118,6 +133,48 @@ public class CreateMazeScreen implements Screen {
             }
         },"ENTER USERNAME", "", "Your username Please");
     }
+    
+    public void setPreferences() {
+    	
+    	//String[] preferences = new String[3] ;
+    	
+    	
+    	String difficulty= new String();
+    	String player= new String();
+    	String map = new String();
+    	
+    	
+    	//loop though buttons to see which is chosen
+    	for( int i = 0; i < difficultyButtons.length ; i ++) {
+    		System.out.println(i);
+    		System.out.println(difficultyButtons.length);
+    		System.out.println(difficultyButtons[0]);
+    		System.out.println(difficultyButtons[1]);
+    		System.out.println(difficultyButtons[2]);
+    		System.out.println(difficultyButtons[i].isPressed);
+    		if(difficultyButtons[i].isPressed) {
+    			difficulty = difficultyButtons[i].name;
+    			System.out.println(difficulty);
+    		}
+    	}
+    	for( int i = 0; i < playerButtons.length -1; i ++) {
+    		if(playerButtons[i].isPressed) {
+    			player = playerButtons[i].name;
+    			System.out.println(player);
+    		}
+    	}
+    	for( int i = 0; i < mapButtons.length -1; i ++) {
+    		if(mapButtons[i].isPressed) {
+    			map= mapButtons[i].name;
+    			System.out.println(map);
+    		}
+    	}
+    	
+    	game.map = map;
+    	game.playerSkin = player;
+    	game.aiDifficulty = difficulty;
+    	
+	}
 
 
     //---------------------------------------Override-----------------------------------------------
@@ -128,38 +185,43 @@ public class CreateMazeScreen implements Screen {
     	int buf = 110;
 
     	int drawX = DRAW_X;
-    	AIButton = new Button(drawX - 100,AI_Y, size,size, joinMazeButtonActive, joinMazeButtonInactive );
+    	AIButton = new Button(drawX - 100,AI_Y, size,size, joinMazeButtonActive, joinMazeButtonInactive , "AI" , "numAI");
     	drawX += buf *2;
-    	AIDifficulty1Button = new Button(drawX  ,AI_Y, size,size, joinMazeButtonActive, joinMazeButtonInactive );
+    	AIDifficulty1Button = new Button(drawX  ,AI_Y, size,size, diffButton1Selected, diffButton1 , "difficulty" , "difficulty 1");
     	drawX += buf;
-    	AIDifficulty2Button = new Button(drawX  ,AI_Y, size,size, joinMazeButtonActive, joinMazeButtonInactive );
+    	AIDifficulty2Button = new Button(drawX  ,AI_Y, size,size, diffButton2Selected, diffButton2,"difficulty" , "difficulty 2");
     	drawX += buf;
-    	AIDifficulty3Button = new Button(drawX ,AI_Y, size,size, joinMazeButtonActive, joinMazeButtonInactive );
+    	AIDifficulty3Button = new Button(drawX ,AI_Y, size,size, diffButton3Selected, diffButton3,"difficulty" , "difficulty 3");
     	
     	drawX = DRAW_X;
-    	player1Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player1 );
+    	player1Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player1 ,"player" , "red");
     	drawX += buf;
-    	player2Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player2 );
+    	player2Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player2 ,"player", "blue");
     	drawX += buf;
-    	player3Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player3 );
+    	player3Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player3 ,"player", "green");
     	drawX = DRAW_X;
-    	player4Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player4 );
+    	player4Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player4 ,"player", "lilac");
     	drawX += buf;
-    	player5Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player5 );
+    	player5Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player5 ,"player", "orange");
     	drawX += buf;
-    	player6Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player6 );
+    	player6Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player6 ,"player", "pink");
     	drawX += buf;
-    	player7Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player7);
+    	player7Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player7,"player", "yellow");
     	
     	drawX = DRAW_X;
-    	Map1Button = new Button(drawX,MAP_Y, size,size, Map1Selected, Map1 );
+    	Map1Button = new Button(drawX,MAP_Y, size,size, Map1Selected, Map1 , "map" , "map1" );
     	drawX += buf;
-    	Map2Button = new Button(drawX,MAP_Y, size,size, Map2Selected, Map2 );
+    	Map2Button = new Button(drawX,MAP_Y, size,size, Map2Selected, Map2 , "map", "map2" );
     	drawX += buf;
-    	Map3Button = new Button(drawX,MAP_Y, size,size, Map3Selected, Map3 );
+    	Map3Button = new Button(drawX,MAP_Y, size,size, Map3Selected, Map3 , "map", "map3" );
     	
+    	playerButtons = new Button[] {player1Button,player2Button,player3Button,player4Button,player5Button,player6Button,player7Button};
+    	difficultyButtons = new Button[] {AIDifficulty1Button,AIDifficulty2Button,AIDifficulty3Button};
+    	mapButtons = new Button[] {Map1Button,Map2Button,Map3Button};
+    	 
+    	CreateMaze = new Button(DRAW_X ,MAP_Y - 110, size * 2,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
     	
-    	CreateMaze = new Button(DRAW_X ,MAP_Y - 110, size,size,joinMazeButtonActive,joinMazeButtonInactive);
+    	font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
     }
 
     @Override
@@ -175,6 +237,7 @@ public class CreateMazeScreen implements Screen {
     	player5Button.draw();
     	player6Button.draw();
     	player7Button.draw();
+    	
     	 
     	AIButton.draw();
     	AIDifficulty1Button.draw();
@@ -185,25 +248,27 @@ public class CreateMazeScreen implements Screen {
     	Map2Button.draw();
     	Map3Button.draw();
     	
+    	
+    	
     	String message = "Create New Maze" ;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+        
         font.draw(game.batch,message, DRAW_X  , MazeGame.HEIGHT -100);
           
         
         message = "Select AI" ;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+        
         font.draw(game.batch,message, DRAW_X - 300 ,AI_Y + 50);
         
         message = "Difficulty" ;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+       
         font.draw(game.batch,message, DRAW_X ,AI_Y + 50);
         
         message = "Select Player" ;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+        
         font.draw(game.batch,message, DRAW_X - 300 ,PLAYER_Y + 50);
         
         message = "Select Map" ;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+       
         font.draw(game.batch,message, DRAW_X - 300 ,MAP_Y + 50);
     	 
         CreateMaze.draw();
@@ -229,14 +294,18 @@ public class CreateMazeScreen implements Screen {
     	int x, y,width,height , activeWidth,activeHeight;
     	
     	Texture active,inactive,texture;
-    	boolean isPressed;
-    	private Button (int x,int y, int w, int h , Texture active, Texture inactive ) {
+    	boolean isPressed = false;
+    	String type;
+    	String name;
+    	private Button (int x,int y, int w, int h , Texture active, Texture inactive , String type,String name) {
     		this.x = x;
     		this.y = y;
     		this.width = w;
     		this.height = h;
     		this.active = active;
     		this.inactive = inactive;
+    		this.type = type;
+    		this.name = name;
     		
     		texture = this.inactive;
     		
@@ -244,6 +313,8 @@ public class CreateMazeScreen implements Screen {
     		activeHeight = this.height + 10;
     		
     	}
+    	
+    	
     	
     	public void draw() {
     		
@@ -253,9 +324,50 @@ public class CreateMazeScreen implements Screen {
     			
     			
     			if (Gdx.input.justTouched() && !isPressed) {
-    				this.isPressed = true;
+    				
+    				if(this.type == "create") {
+    					
+    					if(playerChosen && difficultyChosen && mapChosen) {
+    						setPreferences();
+    						game.setScreen(new GameScreen(game));
+    					}
+    				}
+    				
+    				if(this.type == "player") {
+    					if(!playerChosen) {
+        					this.isPressed = true;
+        					playerChosen = true;
+        				}
+    				}
+    				if(this.type == "map") {
+    					if(!mapChosen) {
+        					this.isPressed = true;
+        					mapChosen = true;
+        				}
+    				}
+    				if(this.type == "difficulty") {
+    					if(!difficultyChosen) {
+        					this.isPressed = true;
+        					difficultyChosen = true;
+        				}
+    				}
+    				
+ 
+    				
+    				
+    				
     			}else if (Gdx.input.justTouched() && isPressed) {
     				this.isPressed = false;
+    				
+    				if(this.type == "player") {
+    					playerChosen = false;
+    				}
+    				if(this.type == "map") {
+    					mapChosen = false;
+    				}
+    				if(this.type == "difficulty") {
+    					difficultyChosen = false;
+    				}
     			}
     		}
     		
