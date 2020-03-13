@@ -7,4 +7,4 @@ cp -r /home/james/TeamProject/core/src/com/project/mazegame/networking/ /home/ja
 
 git add *
 git commit -m "$1" -m "$2"
->
+
