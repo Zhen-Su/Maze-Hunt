@@ -22,6 +22,7 @@ public class AIPlayer extends Player {
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
     }
+    public AIPlayer() {super();}
     public Direction getDir() {
         return this.dir;
     }
@@ -61,11 +62,13 @@ public class AIPlayer extends Player {
     }
     @Override
     public void update (float delta , int mode, Collect lets) {
-        int sleep = 100;
+        int sleep = 500;
         if (mode == 1) {
-            Coordinate old = super.position;
-        this.position.setX((int) x);
-        this.position.setY((int) y);
+
+
+                Coordinate old = super.position;
+                this.position.setX((int) x);
+                this.position.setY((int) y);
         // contantsnatly throwing exeption possibly becasue not linked to player
         // will need to do something with the speed
         Coordinate moveToTake = direction(avaibleMoves(x, y));
@@ -73,11 +76,8 @@ public class AIPlayer extends Player {
         super.x = (int) moveToTake.getX();
         super.y = (int) moveToTake.getY();
         super.player = change(old, moveToTake);
-        try {
-            Thread.sleep(sleep);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+
     } else if (mode == 2) {
             Item nearest = lets.nearestItem(this);
             Coordinate near = new Coordinate(nearest.x, nearest.y);

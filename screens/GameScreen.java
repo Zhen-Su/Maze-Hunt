@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
 
 	private Player player;
 	private AIPlayer aiPlayer;// ---------need to be implemented
+	private ArrayList<AIPlayer> aiPlayers;
 	private InputHandler inputHandler;
 	private float delta;
 
@@ -94,6 +95,8 @@ public class GameScreen implements Screen {
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
 		player = new Player(this.collisionLayer,"james",123);
+		AIPlayer startSpawn = new AIPlayer();
+		this.aiPlayers = startSpawn.AITakingOver(10, this.collisionLayer, co);
 		// player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
 		cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
@@ -148,7 +151,32 @@ public class GameScreen implements Screen {
 
 		//updates - player position
 		inputHandler.update();
-		player.update(delta);
+		try {
+			Thread playerUpdate = new Thread(new PlayerThread());
+			Thread aiUpdate = new Thread(new PlayerThread());
+			playerUpdate.start();
+//			aiUpdate.start();
+			player.update(delta, 0, co);
+			playerUpdate.interrupt();
+			ArrayList<Thread> aiThreads = new ArrayList<>();
+			for (int i = 0; i < aiPlayers.size(); i++) {
+				aiThreads.add(new Thread(new PlayerThread()));
+			}
+			for (int i = 0; i < aiPlayers.size(); i++) {
+				aiThreads.get(i).start();
+				aiPlayers.get(i).update(delta, 1, co);
+				aiThreads.get(i).interrupt();
+
+			}
+			for (int i = 0; i < aiThreads.size(); i++) {
+				aiThreads.get(i).sleep(500);
+			}
+			playerUpdate.sleep(100);
+//			aiUpdate.sleep(500);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		//camera
 		cam.update(player.position.getX(),player.position.getY(),game);
 
