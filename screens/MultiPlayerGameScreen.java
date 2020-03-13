@@ -61,6 +61,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
     private List<MultiPlayerAI> aiPlayers = new ArrayList<>();
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
+    public HashMap<Integer, Integer> aiPlayersIdIndexList = new HashMap<>();
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
@@ -155,6 +156,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     public void setPlayers(List<MultiPlayer> players) { this.players = players; }
 
+    public void setAIPlayers(List<MultiPlayerAI> aiPlayers) {this.aiPlayers = aiPlayers;}
     public NetClient getNc() { return netClient; }
 
     public void setNc(NetClient netClient) { this.netClient = netClient; }
@@ -297,6 +299,12 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         for(int i=0;i<players.size();i++){
             MultiPlayer otherPlayer = players.get(i);
             otherPlayer.render(game.batch);
+        }
+
+        // draw ai on screen
+        for (int i = 0; i < aiPlayers.size(); i++) {
+            MultiPlayerAI nextPlayer = aiPlayers.get(i);
+            nextPlayer.render(game.batch);
         }
 
         //draw myself on my screen
@@ -493,6 +501,10 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         for(int i=0;i<players.size();i++){
             MultiPlayer otherMultiPlayer = players.get(i);
             otherMultiPlayer.dispose();
+        }
+
+        for (int i = 0; i < aiPlayers.size(); i++) {
+            aiPlayers.get(i).dispose();
         }
 
         //TODO handle client and server exit game events here
