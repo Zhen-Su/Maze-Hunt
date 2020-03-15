@@ -45,6 +45,7 @@ public class GameScreen implements Screen {
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
+    private TiledMapTileLayer collisionLayer1;
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
@@ -106,11 +107,11 @@ public class GameScreen implements Screen {
         tileMap = new TmxMapLoader().load("Map1.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
         
-        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-
+        this.collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
+		this.collisionLayer1 = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
         player = new Player(this.collisionLayer,"james",123);
-        aiPlayer = new AIPlayer(this.collisionLayer, "Albert", 124,co1);
-        aiPlayers = AIPlayer.AITakingOver(5, collisionLayer);
+        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124,co1);
+        aiPlayers = aiPlayer.AITakingOver(5);
         aicos = new ArrayList<Collect>();
 //       player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
@@ -153,12 +154,19 @@ public class GameScreen implements Screen {
         tempMapItemssize = mapItems.size();
         //start timer
         player.initialPosition();
+
         for (int i = 0; i < aiPlayers.size(); i++) {
         	System.out.println("Is doing this");
+        	System.out.println(aiPlayers.size());
         	AIPlayer currentPlayerSpawn = aiPlayers.get(i);
-        	Coordinate newCoords = aiPlayers.get(i).genSpace(0, collisionLayer.getWidth(), 0, collisionLayer.getHeight());
+        	System.out.println(currentPlayerSpawn.toString());
+			AIPlayer playrChange = aiPlayers.remove(i);
+			playrChange.initialPosition();
+			aiPlayers.add(i, playrChange);
+
+
 		}
-        
+
     }
     int iconSize = 30;
     @Override
@@ -176,9 +184,12 @@ public class GameScreen implements Screen {
         //updates - player position
         inputHandler.update();
         player.update(delta, 0, co);
+/*
         for (int i = 0; i < aiPlayers.size(); i++) {
         	aiPlayers.get(i).update(delta, 1, aicos.get(i));
 		}
+*/
+
         //camera
         cam.update(player.position.getX(),player.position.getY(),game);
         
@@ -203,7 +214,7 @@ public class GameScreen implements Screen {
 	        }
 		}
 	    // will need to add an ai there
-		aiMultiPickUp();
+//		aiMultiPickUp();
 
 	    game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
 //        game.batch.draw(overlay, aiPlayer.position.getX() - overlayWidth/2, aiPlayer.position.getY() - overlayHeight/2, overlayWidth, overlayHeight);

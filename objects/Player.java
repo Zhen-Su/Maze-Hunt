@@ -117,15 +117,17 @@ public class Player {
     protected String getName() {return this.name;};
     
     public void initialPosition () {
-    	int maxX = collisionLayer.getWidth() ;
+
+    	int maxX = this.collisionLayer.getWidth() ;
+    	System.out.println("Is here");
     	System.out.println(maxX);
-    	int maxY= collisionLayer.getHeight();	
+    	int maxY= this.collisionLayer.getHeight();
 
     	int ranx = (int)  (( Math.random() * (maxX) ));
     	int rany = (int)  (( Math.random() * (maxY) ));
 
-		this.position.setX( ranx * (int) collisionLayer.getTileWidth() + 50);			
-		this.position.setY( rany * (int) collisionLayer.getTileHeight() + 50);
+		this.position.setX( ranx * (int) this.collisionLayer.getTileWidth() + 50);
+		this.position.setY( rany * (int) this.collisionLayer.getTileHeight() + 50);
 		
 		if(isCellBlocked((float)position.getX(), (float)position.getY())) {
 			initialPosition();
@@ -331,9 +333,9 @@ public class Player {
  
     public boolean isCellBlocked(float x, float y) {
 
-    	Cell cell = collisionLayer.getCell(
-            (int) (x / collisionLayer.getTileWidth()),
-            (int) (y / collisionLayer.getTileHeight()));
+    	Cell cell = this.collisionLayer.getCell(
+            (int) (x / this.collisionLayer.getTileWidth()),
+            (int) (y / this.collisionLayer.getTileHeight()));
 
     	return cell != null && cell.getTile() != null
             & cell.getTile().getProperties().containsKey("isWall");

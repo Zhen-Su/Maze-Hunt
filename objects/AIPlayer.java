@@ -16,9 +16,12 @@ public class AIPlayer extends Player {
     private final int spawnNumber = 0;
     private Collect co;
     protected Direction dir;
+    private TiledMapTileLayer collisionLayer;
 
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, Collect co) {
         super(collisionLayer, name = "Super AI", ID);
+        this.collisionLayer = collisionLayer;
+        initialPosition();
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
     }
@@ -29,20 +32,20 @@ public class AIPlayer extends Player {
     public Direction getDir() {
         return this.dir;
     }
-    public static ArrayList<AIPlayer> AITakingOver(int number, TiledMapTileLayer coll) {
+    public ArrayList<AIPlayer> AITakingOver(int number) {
         ArrayList<AIPlayer> players = new ArrayList<>();
 
 
         for (int i = 0; i < number; i++) {
             if (i == 0) {
-                players.add(new AIPlayer(coll, "AI0", 000));
+                players.add(new AIPlayer(this.collisionLayer, "AI0", 000));
             } else {
                 AIPlayer prev = players.get(i-1);
 //                String newName = incrementString(prev.getName());
                 int newID1 = prev.getID();
                 int newID2 = newID1++;
                 System.out.println("A new ai is created");
-                players.add(new AIPlayer(coll, "albert", newID2));
+                players.add(new AIPlayer(this.collisionLayer, "albert", newID2));
 
             }
         }
@@ -170,5 +173,24 @@ public class AIPlayer extends Player {
     }
     public void setDir(Direction d) {
         this.dir = d;
+    }
+
+    public void initialPosition () {
+        System.out.println(this.collisionLayer);
+        int maxX = this.collisionLayer.getWidth() ;
+
+        System.out.println("Is here" + maxX);
+        System.out.println(maxX);
+        int maxY= this.collisionLayer.getHeight();
+
+        int ranx = (int)  (( Math.random() * (maxX) ));
+        int rany = (int)  (( Math.random() * (maxY) ));
+
+        super.x = ranx * (int) this.collisionLayer.getTileWidth() + 50;
+        super.y = rany * (int) this.collisionLayer.getTileHeight() + 50;
+
+        if(super.isCellBlocked((float)super.x, (float)super.y)) {
+            initialPosition();
+        }
     }
 }
