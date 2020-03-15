@@ -29,8 +29,8 @@ public class MultiPlayerAI extends AIPlayer {
     public static boolean debug = false;
     private Collect co;
 
-    public MultiPlayerAI(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Collect co, Direction dir) {
-        super(collisionLayer, username, co);
+    public MultiPlayerAI(TiledMapTileLayer collisionLayer, String username, int ID, MultiPlayerGameScreen gameClient, Collect co, Direction dir) {
+        super(collisionLayer, username, ID, co);
         initialPosition();
         this.co = co;
         x = this.position.getX();
@@ -43,8 +43,8 @@ public class MultiPlayerAI extends AIPlayer {
 
     }
 
-    public MultiPlayerAI(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, Collect co) {
-        super(collisionLayer, username, co);
+    public MultiPlayerAI(TiledMapTileLayer collisionLayer, String username, int ID, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, Collect co) {
+        super(collisionLayer, username, ID, co);
         this.x = x;
         this.y = y;
         this.position = new Coordinate(x,y);

@@ -23,16 +23,15 @@ public class MultiCollect {
     public Coordinate position = new Coordinate();
     public Item item = new Item(" ", position);
 
-    //    MultiPlayerGameScreen test;
-    ArrayList<Item> mapItems;
+    GameScreen test;
+    public ArrayList<Item> mapItems;
     ArrayList<String> items;
-    MultiPlayer multiplayer;
-    public int indexOfItem;
+    Player player;
     public ArrayList<Coordinate> positions;
-    public MultiCollect (MazeGame game ,MultiPlayer player,MultiPlayerGameScreen gameClient) {
-//        test = new MultiPlayerGameScreen(game,multiplayer.getName(),test.getNc().getServerIP());
-        this.multiplayer=player;
-        mapItems = gameClient.mapItems;
+    public MultiCollect(MazeGame game, MultiPlayer player, MultiPlayerGameScreen multiPlayerGameScreen) {
+        test = new GameScreen(game);
+        this.player=player;
+        mapItems = GameScreen.mapItems;
         items = player.items;
         //System.out.println("myMultiplayer x:"+player.position.getX());
         //System.out.println("myMultiplayer y:"+player.position.getY());
@@ -46,11 +45,6 @@ public class MultiCollect {
         mapItems.remove(item);
         items.add(item.getType());
         return item;
-    }
-
-    public int getIndexOfItem(){
-
-        return indexOfItem;
     }
 
     public Item nearestItem(MultiPlayer player) {
@@ -75,10 +69,10 @@ public class MultiCollect {
 
             if (tempDist < shortDist) {
                 nearestItem = mapItems.get(i);
-                indexOfItem=i;
+                //System.out.println("found shorter!");
             }
         }
-        // System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
+       // System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
         return nearestItem;
     }
 

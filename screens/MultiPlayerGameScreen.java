@@ -115,7 +115,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         loadAsset();
 
         myMultiPlayer=new MultiPlayer(this.collisionLayer,username,this, Direction.STOP);
-        myAIPlayer = new MultiPlayerAI(this.collisionLayer, username, this, coed, Direction.STOP);
+        myAIPlayer = new MultiPlayerAI(this.collisionLayer, username, 123,this, coed, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
 
         Gdx.input.setInputProcessor(this);
@@ -409,7 +409,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
             item = co.pickedUp(co.nearestItem(myMultiPlayer));
 
-            int indexOfItem = co.getIndexOfItem();
+            int indexOfItem = co.mapItems.indexOf(item);
 
             CollectMessage collectMessage = new CollectMessage(this.getMultiPlayer().getId(),this,item.getType());
             this.getNc().send(collectMessage);

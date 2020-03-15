@@ -7,9 +7,11 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.Variables;
 
+//import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class EndScreen implements Screen {
-
+	
     private static final int LB_WIDTH = 350;
     private static final int LB_HEIGHT = 200;
 
@@ -27,16 +29,16 @@ public class EndScreen implements Screen {
     Texture playButtonActive;
     Texture playButtonInactive;
     Texture leaderboard;
-
+    
     public EndScreen(MazeGame game) {
         this.game = game;
-
-        backGround = new Texture("UI\\menuBackground.png");
-        title = new Texture("UI//GAMEOVER!.png");
-        playButtonActive = new Texture("UI\\BackToMenuButton.png");
-        System.out.println("overwhwlemed");
-        playButtonInactive = new Texture ("UI\\backToMenuButtonPressed.png");
-        leaderboard = new Texture("UI\\Leaderboard.png");
+        
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
+        title = new Texture("UI\\Titles\\GAMEOVER!.png");
+        playButtonActive = new Texture("/home/james/TeamProject/android/assets/UI/MenuButtons/BacktoMenuButton.png ");
+        playButtonInactive = new Texture ("/home/james/TeamProject/android/assets/UI/MenuButtons/backToMenuButtonPressed.png");
+        leaderboard = new Texture("UI\\Backgrounds\\Leaderboard.png");
+        
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
@@ -44,35 +46,35 @@ public class EndScreen implements Screen {
 
     @Override
     public void show() {
-
+    	
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+    	 Gdx.gl.glClearColor(0, 0, 0, 1);
+         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+         
+         game.batch.begin();
 
-        game.batch.begin();
-
-        game.batch.draw(backGround,0,0,1000,1000);
-        game.batch.draw(title,0,700,1000 , 300);
-        game.batch.draw(leaderboard,250,200, 500 , 500);
-
-
-        int drawX = xMid("MB");
-        if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
-            game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
-            if (Gdx.input.isTouched()) {
-                bgm.stop();
-                game.setScreen(new MenuScreen(game));
-            }
-        } else {
-            game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
-        }
-
-        game.batch.end();
+         game.batch.draw(backGround,0,0,1000,1000);
+         game.batch.draw(title,0,700,1000 , 300);
+         game.batch.draw(leaderboard,250,200, 500 , 500);
+         
+         
+         int drawX = xMid("MB");
+         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
+               game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
+             if (Gdx.input.isTouched()) { 
+                 bgm.stop();
+                 game.setScreen(new MenuScreen(game));
+             }
+         } else {
+             game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
+         }
+         
+         game.batch.end();
     }
-
+    
     private boolean isHovering(int X, int  Y, int WIDTH, int HEIGHT) {
         if (Gdx.input.getX() < (X + WIDTH) && Gdx.input.getX() > X && MazeGame.HEIGHT - Gdx.input.getY() > Y && MazeGame.HEIGHT - Gdx.input.getY() < Y + HEIGHT)
             return true;
@@ -87,7 +89,7 @@ public class EndScreen implements Screen {
                 return MazeGame.WIDTH / 2 - MB_WIDTH / 2;
             case "SB":
                 return MazeGame.WIDTH / 2 - SB_WIDTH / 2;
-
+            
             default:
                 return -10;
         }

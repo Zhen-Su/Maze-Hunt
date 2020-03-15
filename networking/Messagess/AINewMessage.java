@@ -72,7 +72,7 @@ public class AINewMessage implements Message {
             if (!exist) {
                 AINewMessage msg = new AINewMessage(gameClient);
                 gameClient.getNc().send(msg);
-                MultiPlayerAI newAIPlayer = new MultiPlayerAI(gameClient.getCollisionLayer(), username, x, y, gameClient, dir, gameClient.getMultiPlayerAI().getCo());
+                MultiPlayerAI newAIPlayer = new MultiPlayerAI(gameClient.getCollisionLayer(), username, 133, x, y, gameClient, dir, gameClient.getMultiPlayerAI().getCo());
 
                 System.out.println("--------------------------------------");
                 System.out.println("my id: "+this.gameClient.getMultiPlayerAI().getId());

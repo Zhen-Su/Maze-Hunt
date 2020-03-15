@@ -17,8 +17,8 @@ public class AIPlayer extends Player {
     private Collect co;
     protected Direction dir;
 
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, Collect co) {
-        super(collisionLayer, name = "Super AI", co);
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, Collect co) {
+        super(collisionLayer, name = "Super AI", ID, co);
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
     }
@@ -32,13 +32,13 @@ public class AIPlayer extends Player {
 
         for (int i = 0; i < number; i++) {
             if (i == 0) {
-                players.add(new AIPlayer(coll, "AI0", co));
+                players.add(new AIPlayer(coll, "AI0", 000, co));
             } else {
                 AIPlayer prev = players.get(i-1);
                 String newName = incrementString(prev.name);
                 int newID1 = prev.getID();
                 int newID2 = newID1++;
-                players.add(new AIPlayer(coll, newName, co));
+                players.add(new AIPlayer(coll, newName, newID2, co));
 
             }
         }
@@ -72,20 +72,20 @@ public class AIPlayer extends Player {
         // contantsnatly throwing exeption possibly becasue not linked to player
         // will need to do something with the speed
         Coordinate moveToTake = direction(avaibleMoves(x, y));
-        System.out.println(moveToTake.toString());
+        System.out.println("The ai player is moving "+ moveToTake.toString());
         super.x = (int) moveToTake.getX();
         super.y = (int) moveToTake.getY();
-        super.player = change(old, moveToTake);
+        this.change(old, moveToTake);
 
 
     } else if (mode == 2) {
             Item nearest = lets.nearestItem(this);
-            Coordinate near = new Coordinate(nearest.x, nearest.y);
+            Coordinate near = new Coordinate(nearest.getX(), nearest.getY());
             ArrayList<Coordinate> moves = avaibleMoves(super.x, super.y);
             Coordinate bested = bestMove(near, moves);
             super.x = bested.getX();
             super.y = bested.getY();
-            super.player = change(near, bested);
+            this.change(near, bested);
 
             try {
                 Thread.sleep(sleep);
@@ -101,22 +101,24 @@ public class AIPlayer extends Player {
             }
         }
     }
-    private Texture change(Coordinate old, Coordinate update) {
+    private void change(Coordinate old, Coordinate update) {
         if (old.getX() < update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.R;
-            return player_right;
+            super.frames = walkRight;
+            super.animation.setFrames(RightAnim.getFrames());
         } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.L;
-            return player_left;
+            super.frames = walkLeft;
+            super.animation.setFrames(LeftAnim.getFrames());
 
         } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
             this.dir = Direction.U;
-            return player_up;
+            super.frames = walkDown;
+            super.animation.setFrames(DownAnim.getFrames());
         } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
             this.dir = Direction.D;
-            return player_down;
-        } else {
-            return player;
+            super.frames = walkUp;
+            super.animation.setFrames(UpAnim.getFrames());
         }
 
     }
