@@ -200,7 +200,7 @@ public class GameScreen implements Screen {
 		}
 
 	    game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
-        game.batch.draw(overlay, aiPlayer.position.getX() - overlayWidth/2, aiPlayer.position.getY() - overlayHeight/2, overlayWidth, overlayHeight);
+//        game.batch.draw(overlay, aiPlayer.position.getX() - overlayWidth/2, aiPlayer.position.getY() - overlayHeight/2, overlayWidth, overlayHeight);
         
         int buffer = 10;
         Coordinate playerPos = new Coordinate(player.position.getX(), player.position.getY());
