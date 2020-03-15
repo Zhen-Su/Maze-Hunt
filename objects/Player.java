@@ -29,7 +29,7 @@ public class Player {
     public int swordDamage;
     private int swordXP;
     private int shieldXP;
-    
+    private ArrayList<Player> otherPlayers;
     Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick;
     
     private boolean isAttacking = false;
@@ -59,7 +59,7 @@ public class Player {
 
     public Player() {}
 
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID, Collect co) {
+    public Player(TiledMapTileLayer collisionLayer,String name, int ID) {
     	
     	this.health = 5;
         this.coins = 0;
@@ -114,10 +114,11 @@ public class Player {
     public int getShieldXP() {
     	return this.shieldXP;
     }
-    
+    protected String getName() {return this.name;};
     
     public void initialPosition () {
-    	int maxX = collisionLayer.getWidth() ;	
+    	int maxX = collisionLayer.getWidth() ;
+    	System.out.println(maxX);
     	int maxY= collisionLayer.getHeight();	
 
     	int ranx = (int)  (( Math.random() * (maxX) ));
@@ -130,7 +131,8 @@ public class Player {
 			initialPosition();
 		}
     }
-    
+
+
     public void update (float delta, int mode, Collect let){
         // update player movement
     	
@@ -344,11 +346,7 @@ public class Player {
       }
     }
     
-    public void generateHealth() {
-      if(this.health != 9) {
-        this.health++;
-      }
-    }
+
     
     public void attack() {
     	if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
@@ -366,9 +364,153 @@ public class Player {
     public Texture getFrames() {
     	return frames;
     }
-    
 
-   // private MazeGame game;
+
+
+
+    public void generateHealth() {
+        if(this.health != 9) {
+            this.health++;
+        }
+    }
+
+    public Coordinate getPosition() {
+        return new Coordinate(this.x, this.y);
+    }
+    public Player nearestPlayer(ArrayList<Player> players) {
+        Coordinate position = new Coordinate();
+        position = players.get(0).getPosition();
+        Player nearestPlayer = players.get(0);
+//		Item nearestItem = new Item(" ", position);
+
+        //System.out.println("items: " + mapItems.size());
+        for (int i = 0; i < players.size(); i++) {
+
+            int tempX = players.get(i).getPosition().getX();
+            int tempY = players.get(i).getPosition().getY();
+
+//			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
+            int tempDist = andinsEuclidianForPlayers(this.position.getX(), tempX, this.position.getY(), tempY);
+            //System.out.println("temp Dist: " + tempDist);
+//			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
+            int shortDist = andinsEuclidianForPlayers(this.position.getX(), nearestPlayer.getPosition().getX(), this.position.getY(), nearestPlayer.getPosition().getY());
+            //System.out.println("shortDist: " + shortDist);
+
+            if (tempDist < shortDist) {
+                nearestPlayer = players.get(i);
+                //System.out.println("found shorter!");
+            }
+        }
+        //System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
+        return nearestPlayer;
+    }
+
+    private int andinsEuclidianForPlayers(int x1, int x2, int y1, int y2) {
+        int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
+//		System.out.println()
+        return sqrEucl;
+    }
+
+
+    public Coordinate genSpace(int minX, int maxX, int minY, int maxY) {
+        int firstX = (int) (Math.random() * maxX - minX + 1) + minX;
+        int firstY = (int) (Math.random() * maxY - minY + 1) + minY;
+        boolean canGo = checkCollisionMap(firstX, firstY);
+        while(!canGo) {
+            firstX = (int) (Math.random() * maxX - minX + 1) + minX;
+            firstY = (int) (Math.random() * maxY - minY + 1) + minY;
+        }
+        return new Coordinate(firstX, firstY);
+    }
+
+    public void death() {
+        System.out.println("Player has died respawning now");
+        this.health = 5;
+        this.coins = 0;
+        Coordinate newPlace = genSpace(0, collisionLayer.getWidth(), 0, collisionLayer.getHeight());
+        this.x = newPlace.getX();
+        this.y = newPlace.getY();
+        this.items.clear();
+
+        //this.items = new ArrayList<>();
+    }
+
+    public void playerHitPlayer(Player hit) {
+
+    }
+
+
+
+    public boolean isplayerSameSpace(ArrayList<Player> players) { return this.getPosition().getX() == nearestPlayer(players).getPosition().getX() && this.getPosition().getY() == nearestPlayer(players).getPosition().getY();}
+
+    public void playerOnSameSpace(Player player1) {
+        // first thing is in event of key press
+        if (isplayerSameSpace(otherPlayers)) {
+            if (SPACE_TOUCHED && this.hasSword() && !player1.hasShield()) {
+                player1.decreaseHealth(1);
+                if (player1.health == 0) {
+                    player1.death();
+                }
+            }
+        }
+    }
+
+    public boolean hasSword () {return this.items.contains("Sword"); }
+    public boolean hasShield () {return this.items.contains("Shield"); }
+
+    /*
+    public void playerKillAI(AIPlayer AI) {
+        if (AI.health == 0) {
+        this.pickUpCoins(5);
+      } else {
+        AI.decreaseHealth(1);
+      }
+    }
+
+    public void move(ItemCell coord) {
+        this.position = (ItemCell) coord;
+      }
+
+    public void changeXAndY(int x, int y) {
+
+        this.position.changeX(x);
+        this.position.changeY(y);
+     }
+
+    public boolean sameSpot(Player h) {
+       return this.position.same(h.position);
+    }
+    public boolean itemOnSquare(Item item) {
+       return this.position.same(item.getPosition());
+    }
+
+    public float getSpeed() {
+    	return speed;
+    }
+
+
+    public String toString() {
+        return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
+      }
+
+
+
+
+
+    public int getID() {
+        return this.ID;
+    }
+    public int getX () {
+    	return (int) x;
+    }
+    public int getY () {
+    	return (int) y;
+    }
+    */
+
+
+
+    // private MazeGame game;
     
 //    public void pickUpItem(Item itemPicked , Collect co) {
 //        
@@ -410,32 +552,9 @@ public class Player {
 //        }
 //      }
 //    
-    public void death() {
-        System.out.println("Player has died respawning now");
-        this.health = 5;
-        this.coins = 0;
 
-        this.items.clear();
-
-        //this.items = new ArrayList<>();
-      }
     
-    public void playerHitPlayer(Player hit) {
-        // write boolean to check sword
 
-        if (this.items.contains("sword") && !hit.items.contains("shield")) {
-          // will need to do if have item then that can be called
-          // then decrease the helath based on that
-          // could have a damage do attribute and various attributes which change throught the generateMapItems
-          hit.decreaseHealth(this.swordDamage);
-          if (hit.health == 0) {
-            this.swordDamage++;
-            this.coins += hit.coins;
-            hit.death();
-          }
-        }
-        //need to add shield stuffr
-      }
     public int getHealth() {
     	return health;
     }

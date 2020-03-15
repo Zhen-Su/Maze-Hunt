@@ -18,33 +18,39 @@ public class AIPlayer extends Player {
     protected Direction dir;
 
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, Collect co) {
-        super(collisionLayer, name = "Super AI", ID, co);
+        super(collisionLayer, name = "Super AI", ID);
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
+
+    }
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
 
     }
     public AIPlayer() {super();}
     public Direction getDir() {
         return this.dir;
     }
-    public ArrayList<AIPlayer> AITakingOver(int number, TiledMapTileLayer coll, Collect co) {
+    public static ArrayList<AIPlayer> AITakingOver(int number, TiledMapTileLayer coll) {
         ArrayList<AIPlayer> players = new ArrayList<>();
 
 
         for (int i = 0; i < number; i++) {
             if (i == 0) {
-                players.add(new AIPlayer(coll, "AI0", 000, co));
+                players.add(new AIPlayer(coll, "AI0", 000));
             } else {
                 AIPlayer prev = players.get(i-1);
-                String newName = incrementString(prev.name);
+//                String newName = incrementString(prev.getName());
                 int newID1 = prev.getID();
                 int newID2 = newID1++;
-                players.add(new AIPlayer(coll, newName, newID2, co));
+                System.out.println("A new ai is created");
+                players.add(new AIPlayer(coll, "albert", newID2));
 
             }
         }
         return players;
     }
-    private String incrementString(String currentString) {
+    private static String incrementString(String currentString) {
+        System.out.println("Still works");
+        System.out.println(currentString);
         String extractAI = currentString.substring(0, 2);
         if (!extractAI.equals("AI")) {
             try {

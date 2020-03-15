@@ -16,6 +16,7 @@ public class Variables {
 	public static boolean DOWN_TOUCHED;
 	public static boolean LEFT_TOUCHED;
 	public static boolean RIGHT_TOUCHED;
+	public static boolean SPACE_TOUCHED;
 
 	  
 	  

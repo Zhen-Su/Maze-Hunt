@@ -38,6 +38,7 @@ public class GameScreen implements Screen {
 
     private Player player;
     private AIPlayer aiPlayer;// ---------need to be implemented
+	private ArrayList<AIPlayer> aiPlayers;
     private InputHandler inputHandler;
     private float delta;
 
@@ -71,6 +72,7 @@ public class GameScreen implements Screen {
     
     private Collect co;
     private Collect co1;
+    private ArrayList<Collect> aicos;
  
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
@@ -106,8 +108,10 @@ public class GameScreen implements Screen {
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        player = new Player(this.collisionLayer,"james",123, co);
+        player = new Player(this.collisionLayer,"james",123);
         aiPlayer = new AIPlayer(this.collisionLayer, "Albert", 124,co1);
+        aiPlayers = AIPlayer.AITakingOver(5, collisionLayer);
+        aicos = new ArrayList<Collect>();
 //       player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
@@ -143,11 +147,17 @@ public class GameScreen implements Screen {
     	 //assuming it's a square map -> only need width of map and width of tile
         generateMapItems((int) collisionLayer.getWidth(), 100 );
         co = new Collect(game, player);
-        co1 = new Collect(game, aiPlayer);
+        for (int i = 0; i < aiPlayers.size(); i++) {
+        	aicos.add(new Collect(game, aiPlayers.get(i)));
+		}
         tempMapItemssize = mapItems.size();
         //start timer
         player.initialPosition();
-        aiPlayer.initialPosition();
+        for (int i = 0; i < aiPlayers.size(); i++) {
+        	System.out.println("Is doing this");
+        	AIPlayer currentPlayerSpawn = aiPlayers.get(i);
+        	Coordinate newCoords = aiPlayers.get(i).genSpace(0, collisionLayer.getWidth(), 0, collisionLayer.getHeight());
+		}
         
     }
     int iconSize = 30;
@@ -166,7 +176,9 @@ public class GameScreen implements Screen {
         //updates - player position
         inputHandler.update();
         player.update(delta, 0, co);
-        aiPlayer.update(delta, 1, co1);
+        for (int i = 0; i < aiPlayers.size(); i++) {
+        	aiPlayers.get(i).update(delta, 1, aicos.get(i));
+		}
         //camera
         cam.update(player.position.getX(),player.position.getY(),game);
         
@@ -191,13 +203,7 @@ public class GameScreen implements Screen {
 	        }
 		}
 	    // will need to add an ai there
-		if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-			if ((aiPlayer.position.getX() > co1.nearestItem(aiPlayer).getPosition().getX()) && (aiPlayer.position.getX() < co1.nearestItem(aiPlayer).getPosition().getX()+100) &&
-					(aiPlayer.position.getY() > co1.nearestItem(aiPlayer).getPosition().getY()) && (aiPlayer.position.getY() < co1.nearestItem(aiPlayer).getPosition().getY()+100)){
-				aiPickUp();
-
-			}
-		}
+		aiMultiPickUp();
 
 	    game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
 //        game.batch.draw(overlay, aiPlayer.position.getX() - overlayWidth/2, aiPlayer.position.getY() - overlayHeight/2, overlayWidth, overlayHeight);
@@ -232,6 +238,18 @@ public class GameScreen implements Screen {
     	}
         
     }
+
+    private void aiMultiPickUp() {
+    	for (int i  = 0; i < aiPlayers.size(); i++) {
+			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+				if ((aiPlayers.get(i).position.getX() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
+						(aiPlayers.get(i).position.getY() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
+					aiPickUp(aiPlayers.get(i), aicos.get(i));
+
+				}
+			}
+		}
+	}
     
     
     int coinSize = iconSize*2;
@@ -389,35 +407,35 @@ public class GameScreen implements Screen {
 		}
     }
 
-    private void aiPickUp() {
-    	Item item = co1.nearestItem(aiPlayer);
-    	if (!(aiPlayer.items.contains(item.getType())) && !(item.getType() == "coin")) {
-    		item = co1.pickedUp(co1.nearestItem(aiPlayer));
+    private void aiPickUp(AIPlayer player, Collect aico) {
+    	Item item = aico.nearestItem(player);
+    	if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")) {
+    		item = aico.pickedUp(aico.nearestItem(player));
 
     		if (item.getType() == "shield") {
     			item.setInitialisedTime(worldTimer);
     			initialisedShieldTime = worldTimer;
-    			co1.shield(item, aiPlayer);
+    			aico.shield(item, player);
 			}
     		if (item.getType() == "sword") {
-    			co.sword(item, aiPlayer, player2);
+    			aico.sword(item, player, player2);
 			}
     		if (item.getType() == "healingPotion") {
-    			aiPlayer.loadPlayerTextures();
-    			co1.healingPotion(aiPlayer);
+    			player.loadPlayerTextures();
+    			aico.healingPotion(player);
 			}
     		if (item.getType() == "damagingPotion") {
     			item.setInitialisedTime(worldTimer);
     			initialisedPotionTime = worldTimer;
-    			co1.damagingPotion(item, aiPlayer);
+    			aico.damagingPotion(item, player);
 			}
     		if (item.getType() == "gearEnchantment") {
-    			co.gearEnchantment(item, aiPlayer);
+    			aico.gearEnchantment(item, player);
 			}
 
 		} else if (item.getType() == "coin") {
     		mapItems.remove(item);
-    		aiPlayer.coins++;
+    		player.coins++;
 		}
 
 	}
