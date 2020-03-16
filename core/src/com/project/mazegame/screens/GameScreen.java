@@ -67,8 +67,10 @@ public class GameScreen implements Screen {
     
     AnimationTool coinAnimation;
     
-    private float timer;
-    public float worldTimer;
+//    private float timer;
+    public static float worldTimer;
+    
+    Timer time = new Timer();
     
     private Player player2;
     
@@ -87,6 +89,11 @@ public class GameScreen implements Screen {
     
     private int tempMapItemssize;
     
+    private int numOfAI;
+    private String map;
+    private String playerSkin;
+    private String AIDifficulty;
+    
     int overlayWidth;
     int overlayHeight;
     int keyFrame;
@@ -103,23 +110,38 @@ public class GameScreen implements Screen {
         
         inputHandler = new InputHandler();
         
-        timer = 0;
-        worldTimer = 30;
-
-        if(game.map == "map1") {
+        //timer = 0;
+        worldTimer = 60;
+        
+        
+        // read csv file
+        ArrayList<String> output = CSVStuff.readCSVFile();
+        System.out.println(output);
+        
+        this.map = output.get(0);
+        this.playerSkin = output.get(1);
+        this.AIDifficulty = output.get(2);
+        this.numOfAI = Integer.parseInt(output.get(3));
+        
+        System.out.println("map is " + this.map);
+        
+        if(this.map.equals( "map1")) {
         	tileMap = new TmxMapLoader().load("Map1.tmx");
         }
-        else if(game.map == "map2") {
+        else if(this.map.equals("map2")) {
         	tileMap = new TmxMapLoader().load("Map2.tmx");
         }
         else {
         	tileMap = new TmxMapLoader().load("Map3.tmx");
         }
+        
+        System.out.println("map defo is " + this.map);
+        
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        player = new Player(this.collisionLayer,"james",123 , game.playerSkin);
+        player = new Player(this.collisionLayer,"james",123 , this.playerSkin);
 //        System.out.println("playerskin is " + game.playerSkin);
        
 //       player.initialPosition();
@@ -223,16 +245,17 @@ public class GameScreen implements Screen {
         player.render(game.batch);
         
         
-        String message = "Time = " + (int) worldTimer ;
+        String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
+        
         
         font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
         
     	//if timer runs out 
-    	if(worldTimer < 3) {
+    	if((worldTimer - time.currentTime()) < 3) {
     		overlayWidth -= 15;
     		overlayHeight -= 15;
     	  
-    	   if(worldTimer < 0) {
+    	   if((worldTimer - time.currentTime()) < 0) {
     		   this.dispose();
     		   game.setScreen(new EndScreen(this.game));
     		  
@@ -372,8 +395,8 @@ public class GameScreen implements Screen {
     		
     		
 			if (item.getType() == "shield") {
-				item.setInitialisedTime(worldTimer);
-				initialisedShieldTime = worldTimer;
+				item.setInitialisedTime((worldTimer - time.currentTime()));
+				initialisedShieldTime = worldTimer - time.currentTime();
 				co.shield(item, player);
 				if(player.items.contains("gearEnchantment")) {
 					initialisedShieldTime += 3;
@@ -388,15 +411,15 @@ public class GameScreen implements Screen {
 				co.healingPotion (player);
 			}
 			if (item.getType() == "damagingPotion") {
-				item.setInitialisedTime(worldTimer);
-				initialisedPotionTime = worldTimer;
+				item.setInitialisedTime(worldTimer - time.currentTime());
+				initialisedPotionTime = worldTimer - time.currentTime();
 				co.damagingPotion(item, player);
 				
 				//System.out.println("posion");
 			}
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
-				initialisedEnchantmentTime = worldTimer;
+				initialisedEnchantmentTime = worldTimer - time.currentTime();
 			}
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
@@ -424,7 +447,7 @@ public class GameScreen implements Screen {
     	if(!player.items.contains("shield")) {
     		return;
     	}
-    	if (initialisedShieldTime - worldTimer == 10) {
+    	if ((worldTimer - time.currentTime()) - initialisedShieldTime  == 10) {
     		player.items.remove("shield");
     	}
     }
@@ -434,7 +457,7 @@ public class GameScreen implements Screen {
     		
     		return;
     	}
-    	if (initialisedEnchantmentTime - worldTimer == 10) {
+    	if ((worldTimer - time.currentTime()) - initialisedEnchantmentTime == 10) {
     		player.items.remove("gearEnchantment");
     		System.out.println("removed enchantment");
     	}
@@ -444,7 +467,7 @@ public class GameScreen implements Screen {
     	if(!player.items.contains("damagingPotion")) {
     		return;
     	}
-    	if (initialisedPotionTime - worldTimer == 2) {
+    	if ((worldTimer - time.currentTime()) - initialisedPotionTime == 2) {
     		player.loadPlayerTextures();
     		player.items.remove("damagingPotion");
     	}
@@ -585,11 +608,13 @@ public class GameScreen implements Screen {
     }
     
     private void updateTime(float dt) {
-    	timer += dt;
-    	if (timer >= 1) {
+    	float initial  = time.currentTime();
+    	time.updateTimer(dt);
+    	System.out.println(time.currentTime());
+    	if (!(time.currentTime() == initial)) {
     		worldTimer--;
 //    		System.out.println("World Timer: " + worldTimer);
-    		timer = 0;
+    		//timer = 0;
     	}
     }
 }

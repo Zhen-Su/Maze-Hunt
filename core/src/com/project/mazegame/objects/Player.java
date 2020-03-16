@@ -30,7 +30,7 @@ public class Player {
     private int swordXP;
     private int shieldXP;
     
-    Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown;
+    Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDead;
     
     private boolean isAttacking = false;
     
@@ -98,6 +98,8 @@ public class Player {
         this.position.setX(x);
         this.position.setY(y);
         
+        
+        
         if (RIGHT_TOUCHED) {
             if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
                 //try move player right
@@ -148,6 +150,8 @@ public class Player {
         } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
         	setAnimation( RightAnim);
         }
+        
+        
     }
     
     public void render (SpriteBatch sb){
@@ -248,9 +252,11 @@ public class Player {
     
     public void death() {
         System.out.println("Player has died respawning now");
-        this.health = 5;
+        
+        setAnimation(DownAnim);
+        
         this.coins = 0;
-
+        this.health = 5;
         this.items.clear();
 
         //this.items = new ArrayList<>();
@@ -421,6 +427,8 @@ public class Player {
         swipeLeft = new Texture ("Player\\swipeLeft.png");
         swipeUp = new Texture ("Player\\swipeUp.png");
         swipeDown = new Texture ("Player\\swipeDown.png");
+        
+        playerDead = new Texture ("Player\\player1Selected.png");
         
         
         sword = swordNotAttack;

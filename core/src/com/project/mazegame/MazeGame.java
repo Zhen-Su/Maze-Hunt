@@ -21,6 +21,7 @@ public class MazeGame extends Game {
 	public String map = "map1";
 	public String playerSkin = "red";
 	public String aiDifficulty ;
+	public String numOfAI;
 	
 	
 	@Override

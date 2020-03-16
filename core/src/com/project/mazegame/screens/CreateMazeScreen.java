@@ -9,11 +9,14 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Server.GameServer;
+import com.project.mazegame.tools.CSVStuff;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+
 import static com.project.mazegame.tools.Variables.*;
 
 public class CreateMazeScreen implements Screen {
@@ -142,37 +145,52 @@ public class CreateMazeScreen implements Screen {
     	String difficulty= new String();
     	String player= new String();
     	String map = new String();
+    	String numOfAI = new String();
     	
+    	difficulty = "3";
+    	player = "red";
+    	map = "map 1";
+    	numOfAI = "3";
     	
     	//loop though buttons to see which is chosen
+    	System.out.println("---diff");
     	for( int i = 0; i < difficultyButtons.length ; i ++) {
-    		System.out.println(i);
-    		System.out.println(difficultyButtons.length);
-    		System.out.println(difficultyButtons[0]);
-    		System.out.println(difficultyButtons[1]);
-    		System.out.println(difficultyButtons[2]);
-    		System.out.println(difficultyButtons[i].isPressed);
+//    		System.out.println(i);
+//    		System.out.println(difficultyButtons.length);
+//    		System.out.println(difficultyButtons[0]);
+//    		System.out.println(difficultyButtons[1]);
+//    		System.out.println(difficultyButtons[2]);
+//    		System.out.println(difficultyButtons[i].isPressed);
     		if(difficultyButtons[i].isPressed) {
     			difficulty = difficultyButtons[i].name;
     			System.out.println(difficulty);
     		}
-    	}
-    	for( int i = 0; i < playerButtons.length -1; i ++) {
+    	}System.out.println("----player");
+    	for( int i = 0; i < playerButtons.length ; i ++) {
     		if(playerButtons[i].isPressed) {
     			player = playerButtons[i].name;
     			System.out.println(player);
     		}
     	}
-    	for( int i = 0; i < mapButtons.length -1; i ++) {
+    	System.out.println("---map");
+    	for( int i = 0; i < mapButtons.length ; i ++) {
     		if(mapButtons[i].isPressed) {
     			map= mapButtons[i].name;
     			System.out.println(map);
     		}
     	}
+    
+//    	numOfAI = "6";
     	
-    	game.map = map;
-    	game.playerSkin = player;
-    	game.aiDifficulty = difficulty;
+    	ArrayList<String> input = new ArrayList<>();
+    	input.add(map);
+    	input.add(player);
+    	input.add(difficulty);
+    	input.add(numOfAI);
+    	
+    	CSVStuff.writeCSV(input);
+    	
+    	
     	
 	}
 
