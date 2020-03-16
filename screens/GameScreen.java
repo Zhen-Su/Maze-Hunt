@@ -37,9 +37,11 @@ public class GameScreen implements Screen {
     private OrthoCam cam;
 
     private Player player;
+    private Thread playerThread = new Thread(new PlayerThread());
     private AIPlayer aiPlayer;// ---------need to be implemented
 	private ArrayList<AIPlayer> aiPlayers;
     private InputHandler inputHandler;
+    private ArrayList<Thread> aiThreads = new ArrayList<>();
     private float delta;
 
     private TiledMap tileMap;//
@@ -62,6 +64,8 @@ public class GameScreen implements Screen {
     private Texture overlay;
     private Texture coinPick;
     private BitmapFont font;
+
+    private int updateCount;
     
     
     AnimationTool coinAnimation;
@@ -95,7 +99,7 @@ public class GameScreen implements Screen {
     
     public GameScreen(MazeGame game) {
         this.game = game;
-        
+        this.updateCount = 0;
         
         
       
@@ -113,8 +117,11 @@ public class GameScreen implements Screen {
         aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124);
         aiPlayers = aiPlayer.AITakingOver(5);
         aicos = new ArrayList<Collect>();
-//       player.initialPosition();
-//        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
+        for (int i = 0; i < aiPlayers.size(); i++) {
+        	Thread threadAdd = new Thread(new PlayerThread());
+        	aiThreads.add(threadAdd);
+		}
+
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
@@ -156,13 +163,12 @@ public class GameScreen implements Screen {
         player.initialPosition();
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-        	System.out.println("Is doing this");
-        	System.out.println(aiPlayers.size());
+
         	AIPlayer currentPlayerSpawn = aiPlayers.get(i);
-        	System.out.println(currentPlayerSpawn.toString());
-			AIPlayer playrChange = aiPlayers.remove(i);
-			playrChange.initialPosition();
-			aiPlayers.add(i, playrChange);
+
+			AIPlayer playerChange = aiPlayers.remove(i);
+			playerChange.initialPosition();
+			aiPlayers.add(i, playerChange);
 
 
 		}
@@ -182,19 +188,42 @@ public class GameScreen implements Screen {
         delta = Gdx.graphics.getDeltaTime();
     
         //updates - player position
-        inputHandler.update();
-        player.update(delta, 0, co);
+
+			inputHandler.update();
+
+				aiThreads.get(aiThreads.size() - 1).interrupt();
+				if (updateCount == 0) {
+					playerThread.start();
+				} else {
+					playerThread.run();
+				}
+				player.update(delta, 0, co);
+
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-        	aiPlayers.get(i).update(delta, 1, aicos.get(i));
+        	try {
+        		if (i != 0) {
+        			aiThreads.get(i - 1).interrupt();
+				}
+        		if (updateCount == 0) {
+					aiThreads.get(i).start();
+				} else {
+        			aiThreads.get(i).run();
+				}
+				AIPlayer removed = aiPlayers.remove(i);
+				removed.update(delta, 1, aicos.get(i));
+				aiPlayers.add(i, removed);
+				aiThreads.get(i).suspend();
+				aiThreads.get(i).sleep(50);
+			} catch (Exception e) {
+        		e.printStackTrace();
+			}
 		}
-
+		this.updateCount++;
 
         //camera
         cam.update(player.position.getX(),player.position.getY(),game);
-        
-        //comment out ai player line to run correctly
-//       aiPlayer.update(delta);
+
         
         //draws tilemap
         tileMapRenderer.setView(cam.cam);
@@ -214,6 +243,7 @@ public class GameScreen implements Screen {
 	        }
 		}
 	    // will need to add an ai there
+
 		aiMultiPickUp();
 
 	    game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
@@ -255,7 +285,9 @@ public class GameScreen implements Screen {
 			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
 				if ((aiPlayers.get(i).position.getX() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
 						(aiPlayers.get(i).position.getY() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
-					aiPickUp(aiPlayers.get(i), aicos.get(i));
+					AIPlayer removedPlayer = aiPlayers.remove(i);
+					aiPickUp(removedPlayer, aicos.get(i));
+					aiPlayers.add(i, removedPlayer);
 
 				}
 			}
