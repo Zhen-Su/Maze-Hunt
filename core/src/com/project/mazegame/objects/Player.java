@@ -30,7 +30,7 @@ public class Player {
     private int swordXP;
     private int shieldXP;
 
-    Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick;
+    Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDead;
 
     private boolean isAttacking = false;
 
@@ -40,25 +40,17 @@ public class Player {
 
     private TiledMapTileLayer collisionLayer;
 
-    AnimationTool RightAnim;
-    AnimationTool LeftAnim;
-    AnimationTool UpAnim;
-    AnimationTool DownAnim;
-    AnimationTool animation;
-    AnimationTool coinAnimation;
+    AnimationTool RightAnim, LeftAnim ,UpAnim ,DownAnim ,animation;
+    AnimationTool coinAnimation,swordSwipeRight,swordSwipeLeft,swordSwipeUp,swordSwipeDown , swipeAnim;
     SpriteBatch batch;
 
     String colour;
 
-    String initialFrames;
-
-    boolean left = false;
-    boolean right = false;
-    boolean up = false;
-    boolean down = false;
 
     public Player(){}
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID) {
+    public Player(TiledMapTileLayer collisionLayer,String name, int ID ,String colour) {
+
+        System.out.println("making player");
 
         this.health = 5;
         this.coins = 0;
@@ -68,50 +60,20 @@ public class Player {
         this.swordDamage = 0;
         this.ID = ID;
         this.collisionLayer = collisionLayer;
+        this.colour = colour;
+        swordXP = 0;
+        shieldXP = 0;
 
         initialPosition();
         x = this.position.getX();
         y = this.position.getY();
 
-        colour = "orange"; //----------default
-
         loadPlayerTextures();
 
-        width = (int) walkUp.getWidth()/2;
-        height = walkUp.getHeight()/2;
-        coinSize = coinPick.getHeight()/2;
         ArrayList<Item> items = new ArrayList<Item>();
 
-        frames = walkDown;
-        System.out.println("new animations");
-        RightAnim = new AnimationTool(width,height,this,walkRight,true);
-        RightAnim.create();
-        System.out.println("new animations");
-        LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
-        LeftAnim.create();
-        System.out.println("new animations");
-        UpAnim = new AnimationTool(width,height,this,walkUp,true);
-        UpAnim.create();
-        System.out.println("new animations");
-        DownAnim = new AnimationTool(width,height,this,walkDown,true);
-        DownAnim.create();
-        System.out.println("new animations");
-        coinAnimation = new AnimationTool(width,height,this,coinPick,true);
-        coinAnimation.create();
-        animation = new AnimationTool(width,height,this,walkDown,true);
-        animation.create();
+        createAnimations();
 
-
-        swordXP = 0;
-        shieldXP = 0;
-
-    }
-
-    public int getswordXP() {
-        return this.swordXP;
-    }
-    public int getShieldXP() {
-        return this.shieldXP;
     }
 
 
@@ -128,124 +90,285 @@ public class Player {
         if(isCellBlocked((float)position.getX(), (float)position.getY())) {
             initialPosition();
         }
+
+
     }
 
     public void update (float delta){
         // update player movement
-
         this.position.setX(x);
         this.position.setY(y);
 
 
 
         if (RIGHT_TOUCHED) {
-
-            right = true;
-
-
             if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
                 //try move player right
                 x += speed;
                 //check player isn't in a wall
-                if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
+                if(!checkCollisionMap(x, y))  //if it's in a wall, move player back
                     x -= speed;
-
-                }else
+                else
                     this.position.setX( x );
             }
         }
         if (LEFT_TOUCHED) {
-            left = true;
-
             if (x > 0) {
                 x -= speed;
-                if(!checkCollisionMap(x,y)) {
+                if(!checkCollisionMap(x,y))
                     x += speed;
-
-                }else
+                else
                     this.position.setX( x );
             }
         }
         if (UP_TOUCHED) {
-            up = true;
-
             if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
                 y += speed;
-                if(!checkCollisionMap(x, y)) {
+                if(!checkCollisionMap(x, y))
                     y -= speed;
-
-                }else
+                else
                     this.position.setY( y );
             }
         }
         if (DOWN_TOUCHED) {
-            down = true;
-
             if (y > 0) {
                 y -= speed;
-                if(!checkCollisionMap(x, y  )) {
+                if(!checkCollisionMap(x, y  ))
                     y += speed;
-
-                } else
+                else
                     this.position.setY( y );
 
             }
         }
 
-
-
         //change player texture
         if (UP_TOUCHED == true && DOWN_TOUCHED == false) {
-            // player = player_up;
-            frames = walkUp;
-            animation.setFrames(UpAnim.getFrames());
-            System.out.println(animation.getImgName());
-
-
+            setAnimation( UpAnim);
         } else if (DOWN_TOUCHED == true && UP_TOUCHED == false) {
-            //player = player_down;
-            frames = walkDown;
-            animation.setFrames(DownAnim.getFrames());
-
+            setAnimation(DownAnim);
         }  else if (LEFT_TOUCHED == true && RIGHT_TOUCHED == false) {
-            //player = player_left;
-            frames = walkLeft;
-            animation.setFrames(LeftAnim.getFrames());
-
-
+            setAnimation( LeftAnim);
         } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
-            //player = player_right;
-            frames = walkRight;
-            animation.setFrames(RightAnim.getFrames());
-
+            setAnimation( RightAnim);
         }
-    }
 
+
+    }
 
     public void render (SpriteBatch sb){
 
-
         setBatch(sb);
-        System.out.println(animation.getImgName());
         animation.render();
 
-        if(this.items.contains("sword")) {	  // possible errors may occur
+        //draw items held by player
+        if(this.items.contains("sword")) {
             sb.draw(sword,(float)(x),y - (height/4),50,50);
         }
         if(this.items.contains("shield")) {
             sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
         }
-
-
-
     }
 
+    //------------------------setters
+
+    public void setAnimation(AnimationTool direction) {
+        animation = direction;
+    }
+    public void setSwordAnimation(AnimationTool direction) {
+        swipeAnim = direction;
+    }
     public void setBatch(SpriteBatch sb) {
         this.batch = sb;
 
     }
+
+    //-----------------------getters
     public SpriteBatch getSpriteBatch () {
         return this.batch;
+    }
+
+    public Texture getFrames() {
+        return frames;
+    }
+
+    public int getSwordXP() {
+        return this.swordXP;
+    }
+    public int getShieldXP() {
+        return this.shieldXP;
+    }
+    public int getHealth() {
+        return health;
+    }
+    //-----------------functions
+    public void increaseSwordXP(int XP) {
+        this.swordXP += XP;
+    }
+    public void increaseShieldXP(int XP) {
+        this.shieldXP += XP;
+    }
+
+    public void decreaseHealth(int number) {
+        this.health -= number;
+        if(health <= 0) {
+            this.death();
+        }
+    }
+
+    public void generateHealth() {
+        if(this.health != 9) {
+            this.health++;
+        }
+    }
+
+    // ---------------------------player functionality
+
+    public void attack() {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if(this.items.contains("sword")) {
+                if (animation.toString().equals(RightAnim.toString()))
+                    setSwordAnimation(swordSwipeRight);
+                else if (animation.toString().equals(LeftAnim.toString()))
+                    setSwordAnimation(swordSwipeLeft);
+                else if (animation.toString().equals(UpAnim.toString()))
+                    setSwordAnimation(swordSwipeUp);
+                else if (animation.toString().equals(DownAnim.toString()))
+                    setSwordAnimation(swordSwipeDown);
+
+                //do animation
+                swipeAnim.render();
+                isAttacking = true;
+                sword = swordAttack;
+            }
+        }
+
+        else {
+            sword = swordNotAttack;
+            swordSwipeRight.elapsedTime = 0;
+            swordSwipeLeft.elapsedTime = 0;
+            swordSwipeUp.elapsedTime = 0;
+            swordSwipeDown.elapsedTime = 0;
+        }
+    }
+
+    public void death() {
+        System.out.println("Player has died respawning now");
+
+        setAnimation(DownAnim);
+
+        this.coins = 0;
+        this.health = 5;
+        this.items.clear();
+
+        //this.items = new ArrayList<>();
+    }
+
+    public void playerHitPlayer(Player hit) {
+        // write boolean to check sword
+
+        if (this.items.contains("sword") && !hit.items.contains("shield")) {
+            // will need to do if have item then that can be called
+            // then decrease the helath based on that
+            // could have a damage do attribute and various attributes which change throught the generateMapItems
+            hit.decreaseHealth(this.swordDamage);
+            if (hit.health == 0) {
+                this.swordDamage++;
+                this.coins += hit.coins;
+                hit.death();
+            }
+        }
+        //need to add shield stuffr
+    }
+
+    //-------------------------check collisions
+
+    public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
+        //Overall x and y of player
+        float xWorld = possibleX ;
+        float yWorld = possibleY ;
+
+        boolean collisionWithMap = false;
+
+        //Check corners of player to check for collision
+        //check corners T = top, B = bottom, R = right, L = left
+        boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2) );
+        boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2));
+        boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2));
+        boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2));
+
+        collisionWithMap = TLbool || TRbool || BLbool || BRbool;
+
+        //If there is a collision
+        if (collisionWithMap) return false;
+        else return true;
+    }
+
+    public boolean isCellBlocked(float x, float y) {
+
+        Cell cell = collisionLayer.getCell(
+                (int) (x / collisionLayer.getTileWidth()),
+                (int) (y / collisionLayer.getTileHeight()));
+
+        return cell != null && cell.getTile() != null
+                & cell.getTile().getProperties().containsKey("isWall");
+    }
+
+
+
+    //-------------------------loading textures and animations
+    public void createAnimations() {
+        width = (int) walkUp.getWidth()/2;
+        height = walkUp.getHeight()/2;
+        coinSize = coinPick.getHeight()/2;
+
+
+        frames = walkRight;
+        RightAnim = new AnimationTool(width,height,this,walkRight,true);
+        RightAnim.create();
+
+        frames = walkLeft;
+        LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
+        LeftAnim.create();
+
+        frames = walkUp;
+        UpAnim = new AnimationTool(width,height,this,walkUp,true);
+        UpAnim.create();
+
+        frames = walkDown;
+        DownAnim = new AnimationTool(width,height,this,walkDown,true);
+        DownAnim.create();
+
+//        frames = coinPick;
+//
+//        coinAnimation = new AnimationTool(width,height,this,coinPick,true);
+//        coinAnimation.create();
+
+
+        //Create animations - make the frames but don't render them
+        frames = swipeRight;
+        swordSwipeRight = new AnimationTool(100, 100, this ,swipeRight, false );
+        swordSwipeRight.create();
+
+        frames = swipeLeft;
+        swordSwipeLeft = new AnimationTool(100, 100, this ,swipeLeft, false );
+        swordSwipeLeft.create();
+
+        frames = swipeUp;
+        swordSwipeUp = new AnimationTool(100, 100, this ,swipeUp, false );
+        swordSwipeUp.create();
+
+        frames = swipeDown;
+        swordSwipeDown = new AnimationTool(100, 100, this ,swipeDown, false );
+        swordSwipeDown.create();
+
+        swipeAnim= new AnimationTool(100, 100, this ,swipeDown, false );
+        swipeAnim.create();
+
+        //setAnimation( UpAnim);
+        animation = new AnimationTool(width, height, this, walkUp,true);
+
+        animation.create();
+        setAnimation( UpAnim);
     }
 
     public void loadPlayerTextures(){
@@ -301,75 +424,30 @@ public class Player {
         swordNotAttack = new Texture("Collectibles\\sword2.png");
         shield = new Texture("Collectibles\\shield.png");
 
+        swipeRight = new Texture ("Player\\swipeRight.png");
+        swipeLeft = new Texture ("Player\\swipeLeft.png");
+        swipeUp = new Texture ("Player\\swipeUp.png");
+        swipeDown = new Texture ("Player\\swipeDown.png");
+
+        playerDead = new Texture ("Player\\player1Selected.png");
+
 
         sword = swordNotAttack;
     }
 
-    public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
-        //Overall x and y of player
-        float xWorld = possibleX ;
-        float yWorld = possibleY ;
+    public void dispose()
+    {
+        walkDown.dispose();
+        walkLeft.dispose();
+        walkRight.dispose();
+        walkUp.dispose();
+        // player.dispose();
 
-        boolean collisionWithMap = false;
-
-        //Check corners of player to check for collision
-        //check corners T = top, B = bottom, R = right, L = left
-        boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2) );
-        boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2));
-        boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2));
-        boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2));
-
-        collisionWithMap = TLbool || TRbool || BLbool || BRbool;
-
-        //If there is a collision
-        if (collisionWithMap) return false;
-        else return true;
     }
-
-    public boolean isCellBlocked(float x, float y) {
-
-        Cell cell = collisionLayer.getCell(
-                (int) (x / collisionLayer.getTileWidth()),
-                (int) (y / collisionLayer.getTileHeight()));
-
-        return cell != null && cell.getTile() != null
-                & cell.getTile().getProperties().containsKey("isWall");
-    }
-
-    public void decreaseHealth(int number) {
-        this.health -= number;
-        if(health <= 0) {
-            this.death();
-        }
-    }
-
-    public void generateHealth() {
-        if(this.health != 9) {
-            this.health++;
-        }
-    }
-
-    public void attack() {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if(this.items.contains("sword")) {
-
-                System.out.println("hit");
-                isAttacking = true;
-                sword = swordAttack;
-
-            }
-        }
-        else sword = swordNotAttack;
-    }
-
-    public Texture getFrames() {
-        return frames;
-    }
-
 
     // private MazeGame game;
 
-    //    public void pickUpItem(Item itemPicked , Collect co) {
+//    public void pickUpItem(Item itemPicked , Collect co) {
 //
 //        switch(itemPicked.getType()) {
 //          case "Coin":
@@ -409,44 +487,7 @@ public class Player {
 //        }
 //      }
 //
-    public void death() {
-        System.out.println("Player has died respawning now");
-        this.health = 5;
-        this.coins = 0;
 
-        this.items.clear();
-
-        //this.items = new ArrayList<>();
-    }
-
-    public void playerHitPlayer(Player hit) {
-        // write boolean to check sword
-
-        if (this.items.contains("sword") && !hit.items.contains("shield")) {
-            // will need to do if have item then that can be called
-            // then decrease the helath based on that
-            // could have a damage do attribute and various attributes which change throught the generateMapItems
-            hit.decreaseHealth(this.swordDamage);
-            if (hit.health == 0) {
-                this.swordDamage++;
-                this.coins += hit.coins;
-                hit.death();
-            }
-        }
-        //need to add shield stuffr
-    }
-    public int getHealth() {
-        return health;
-    }
-    public void dispose()
-    {
-        walkDown.dispose();
-        walkLeft.dispose();
-        walkRight.dispose();
-        walkUp.dispose();
-        // player.dispose();
-
-    }
 
     /*
     public void playerKillAI(AIPlayer AI) {

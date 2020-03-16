@@ -16,7 +16,7 @@ public class AnimationTool extends ApplicationAdapter {
 
     Texture img;
     Animation animation;
-    float elapsedTime;
+    public float elapsedTime;
     String fileName;
     int width,height;
     TextureRegion[] animationFrames;
@@ -37,46 +37,31 @@ public class AnimationTool extends ApplicationAdapter {
 
     @Override
     public void create (){
-        System.out.println("ani created");
         batch = player.getSpriteBatch();
-        img = player.getFrames();
+        this.img = player.getFrames();
 
         TextureRegion[][] tmpFrames = TextureRegion.split(img,width,height);
-
         animationFrames = new TextureRegion[4];
         int index = 0;
-
         for (int i = 0; i < 2; i++){
             for(int j = 0; j < 2; j++) {
-                animationFrames[index++] = tmpFrames[j][i];
+                animationFrames[index++] = tmpFrames[i][j];
             }
         }
-
-        animation = new Animation(1f/6f,animationFrames);
-        System.out.println(img.toString());
-
-    }
-
-    public TextureRegion[] getFrames() {
-        return animationFrames;
-    }
-
-    public void setFrames(TextureRegion[] frames) {
-        this.animationFrames = frames;
-    }
-
-    public String getImgName() {
-        System.out.println(this.img.toString());
-        return this.img.toString();
+        this.animation = new Animation(1f/6f,this.animationFrames);
     }
 
     @Override
     public void render () {
-
+        //draws the animation based on the frames for this animation
         elapsedTime += Gdx.graphics.getDeltaTime();
-        batch = player.getSpriteBatch();
+        batch = this.player.getSpriteBatch();
+        batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop),player.position.getX() - this.width/2,player.position.getY() - this.height/2);
+        if (this.loop == false) {
+            System.out.println(elapsedTime % 1);
+            if(elapsedTime % 1 < 0.02  ) System.out.println(elapsedTime);
+        }
 
-        batch.draw((TextureRegion)animation.getKeyFrame(elapsedTime,this.loop),player.position.getX() - width/2,player.position.getY() - height/2);
 
     }
 
