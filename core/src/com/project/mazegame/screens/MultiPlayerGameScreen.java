@@ -23,6 +23,7 @@ import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
+import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,17 +80,22 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private Texture overlay;
     private Texture coinPick;
     private BitmapFont font;
+    private Texture enchantedGlow;
+    private Texture mapTexture, minimapOutline;
 
     private float timer;
-    public float worldTimer;
+    public static float worldTimer;
+    Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
+    private float initialisedEnchantmentTime;
     int overlayWidth;
     int overlayHeight;
 
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
+    Coordinate playerPos;
 
 
     //=====================================constructors=============================================
@@ -131,9 +137,12 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
         overlay = new Texture("UI\\circularOverlay.png");
         coinPick = new Texture("Collectibles\\coinAnimation.png");
+        enchantedGlow = new Texture("Player\\ENCHANTED.png");
+        mapTexture = new Texture("Maps\\Map2Icon.png");
+        minimapOutline = new Texture("Maps\\minimapOutline.png");
 
-        overlayWidth = overlay.getWidth();
-        overlayHeight = overlay.getHeight();
+        overlayWidth = overlay.getWidth() +300;
+        overlayHeight = overlay.getHeight() +300;
     }
 
 
@@ -232,6 +241,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         tempMapItemssize = mapItems.size();
         //start timer
         myMultiPlayer.initialPosition();
+        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+
+        playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
 
         System.out.println("mapItems: ");
         for(int i=0; i<mapItems.size();i++){
@@ -245,12 +257,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     public void render(float delta) { //method repeats a lot
         updateTime(delta);
         removeShield();
+        removeEnchantment();
         playerDamaging();
 
-        //only draw mapItems if one gets picked up
-//        if (!(mapItems.size() == tempMapItemssize)) {
-//            tempMapItemssize = mapItems.size();
-//        }
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -285,9 +294,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             game.batch.draw(overlay, myMultiPlayer.position.getX() - overlayWidth / 2, myMultiPlayer.position.getY() - overlayHeight / 2, overlayWidth, overlayHeight);
 
             int buffer = 10;
-            Coordinate playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
-            drawIcons(iconSize, buffer, playerPos);
+            playerPos.setX(myMultiPlayer.position.getX());
+            playerPos.setY(myMultiPlayer.position.getY());
+            drawIcons(iconSize,buffer,playerPos);
             drawExitButton(playerPos);
+
+            if(myMultiPlayer.items.contains("gearEnchantment"))
+                game.batch.draw(enchantedGlow ,myMultiPlayer.position.getX() -enchantedGlow.getWidth()/2 ,myMultiPlayer.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
 
             //draw other players on my screen
             for (int i = 0; i < players.size(); i++) {
@@ -300,24 +313,22 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
                 myMultiPlayer.render(game.batch);
             }
 
+            //draw timer
+            String message = "Time = " + (int) (worldTimer - (time.currentTime()));
+            font.draw(game.batch, message, myMultiPlayer.position.getX(), myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 10);
 
-            String message = "Time = " + worldTimer ;
-            font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-            font.draw(game.batch,message, myMultiPlayer.position.getX(),myMultiPlayer.position.getY() + VIEWPORT_HEIGHT/2 -10);
+            //if timer runs out
+            if ((worldTimer - time.currentTime()) < 3) {
+                overlayWidth -= 15;
+                overlayHeight -= 15;
 
-        }game.batch.end();
+                if ((worldTimer - time.currentTime()) < 0) {
+                    this.dispose();
+                    game.setScreen(new EndScreen(this.game));
 
-        //if timer runs out
-        if(worldTimer < 3) {
-            overlayWidth -= 15;
-            overlayHeight -= 15;
-
-            if(worldTimer < 0) {
-                this.dispose();
-                game.setScreen(new EndScreen(this.game));
-
+                }
             }
-        }
+        }game.batch.end();
     }
 
 
@@ -341,8 +352,12 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             //draw shield icon
             float shieldSize = 50;
             float xShield = VIEWPORT_WIDTH - shieldSize -buffer + playerX;
-            float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY;
+            float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY -50;
             game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
+
+            String message = "XP :" + myMultiPlayer.getShieldXP() ;
+            font.getData().setScale(0.5f,0.5f);
+            font.draw(game.batch,message, xShield  ,yShield );
         }
         //sword icon
         if ( myMultiPlayer.items.contains("sword")) {
@@ -350,14 +365,24 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             float xSword = VIEWPORT_WIDTH  - swordSize - buffer + playerX;
             float ySword = VIEWPORT_HEIGHT - (swordSize *2) + playerY;
             game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
+            String message = "XP :" + myMultiPlayer.getSwordXP();
+            font.getData().setScale(0.5f,0.5f);
+            font.draw(game.batch,message, xSword ,ySword  );
         }
         //draws coin icon
         for ( int i = 0; i < myMultiPlayer.coins; i ++ ) {
             float xCoin = buffer + playerX;
             float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer + playerY;
-            if ( coinSize != iconSize*2) coinSize -=5;
+            if ( coinSize != iconSize*2)
+                coinSize -=5;
             game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
         }
+        float mapSize = 100;
+        float xMap = myMultiPlayer.getX() + VIEWPORT_WIDTH /2 - mapSize - 50;
+        float yMap =  myMultiPlayer.getY() - VIEWPORT_HEIGHT/2 + 50;
+
+        game.batch.draw(minimapOutline, xMap -8 ,yMap -9,mapSize + 17 , mapSize +17);
+        game.batch.draw(mapTexture, xMap,yMap,mapSize , mapSize);
     }
 
     private void drawCollectibles() {
@@ -425,6 +450,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             }
             if (item.getType().equals("gearEnchantment")) {
                 co.gearEnchantment(item , myMultiPlayer);
+                initialisedEnchantmentTime = worldTimer - time.currentTime();
             }
         } else if (isCoin) {
             mapItems.remove(item);
@@ -618,22 +644,33 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         netClient.send(message);
     }
 
-    private void playerDamaging() {
-        if(!myMultiPlayer.items.contains("damagingPotion")) {
-            return;
-        }
-        if (initialisedPotionTime - worldTimer == 2) {
-            myMultiPlayer.loadPlayerTextures();
-            myMultiPlayer.items.remove("damagingPotion");
-        }
-    }
-
     private void removeShield() {
         if(!myMultiPlayer.items.contains("shield")) {
             return;
         }
-        if (initialisedShieldTime - worldTimer == 10) {
+        if ((worldTimer - time.currentTime()) - initialisedShieldTime  == 10) {
             myMultiPlayer.items.remove("shield");
+        }
+    }
+
+    private void removeEnchantment() {
+        if(!myMultiPlayer.items.contains("gearEnchantment")) {
+
+            return;
+        }
+        if ((worldTimer - time.currentTime()) - initialisedEnchantmentTime == 10) {
+            myMultiPlayer.items.remove("gearEnchantment");
+            System.out.println("removed enchantment");
+        }
+    }
+
+    private void playerDamaging() {
+        if(!myMultiPlayer.items.contains("damagingPotion")) {
+            return;
+        }
+        if ((worldTimer - time.currentTime()) - initialisedPotionTime == 2) {
+            myMultiPlayer.loadPlayerTextures();
+            myMultiPlayer.items.remove("damagingPotion");
         }
     }
 

@@ -239,15 +239,14 @@ public class GameScreen implements Screen {
 		drawIcons(iconSize,buffer,playerPos);
 		drawExitButton(playerPos);
 
-		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
+		if(player.items.contains("gearEnchantment"))
+			game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
 
 		player.attack();
 		player.render(game.batch);
 
 
 		String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
-
-
 		font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
 
 		//if timer runs out
@@ -306,12 +305,12 @@ public class GameScreen implements Screen {
 		}
 
 
-
 		//draws coin icon
 		for ( int i = 0; i < player.coins; i ++ ) {
 			float xCoin = buffer + playerX;
 			float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer + playerY;
-			if ( coinSize != iconSize*2) coinSize -=5;
+			if ( coinSize != iconSize*2)
+				coinSize -=5;
 			game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
 		}
 		float mapSize = 100;
@@ -320,8 +319,6 @@ public class GameScreen implements Screen {
 
 		game.batch.draw(minimapOutline, xMap -8 ,yMap -9,mapSize + 17 , mapSize +17);
 		game.batch.draw(mapTexture, xMap,yMap,mapSize , mapSize);
-
-
 	}
 
 	private void drawExitButton(Coordinate position) {
@@ -426,7 +423,7 @@ public class GameScreen implements Screen {
 			player.coins++;
 			//coinAnimation.render();
 
-			//animateCoin();
+	//			animateCoin();
 			//coinSize = 100;
 
 
@@ -521,8 +518,6 @@ public class GameScreen implements Screen {
 		int maxPotions = 50;
 		int maxX = widthInTiles;
 		int maxY = widthInTiles;
-
-
 
 		for (int i = 0; i <= maxShields; i++) {
 			Coordinate position = new Coordinate(0,0);
