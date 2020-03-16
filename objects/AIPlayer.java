@@ -18,16 +18,14 @@ public class AIPlayer extends Player {
     protected Direction dir;
     private TiledMapTileLayer collisionLayer;
 
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, Collect co) {
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
         this.collisionLayer = collisionLayer;
         initialPosition();
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
     }
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
 
-    }
     public AIPlayer() {super();}
     public Direction getDir() {
         return this.dir;
@@ -175,22 +173,5 @@ public class AIPlayer extends Player {
         this.dir = d;
     }
 
-    public void initialPosition () {
-        System.out.println(this.collisionLayer);
-        int maxX = this.collisionLayer.getWidth() ;
 
-        System.out.println("Is here" + maxX);
-        System.out.println(maxX);
-        int maxY= this.collisionLayer.getHeight();
-
-        int ranx = (int)  (( Math.random() * (maxX) ));
-        int rany = (int)  (( Math.random() * (maxY) ));
-
-        super.x = ranx * (int) this.collisionLayer.getTileWidth() + 50;
-        super.y = rany * (int) this.collisionLayer.getTileHeight() + 50;
-
-        if(super.isCellBlocked((float)super.x, (float)super.y)) {
-            initialPosition();
-        }
-    }
 }

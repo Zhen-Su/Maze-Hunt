@@ -110,7 +110,7 @@ public class GameScreen implements Screen {
         this.collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 		this.collisionLayer1 = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
         player = new Player(this.collisionLayer,"james",123);
-        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124,co1);
+        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124);
         aiPlayers = aiPlayer.AITakingOver(5);
         aicos = new ArrayList<Collect>();
 //       player.initialPosition();
@@ -184,11 +184,11 @@ public class GameScreen implements Screen {
         //updates - player position
         inputHandler.update();
         player.update(delta, 0, co);
-/*
+
         for (int i = 0; i < aiPlayers.size(); i++) {
         	aiPlayers.get(i).update(delta, 1, aicos.get(i));
 		}
-*/
+
 
         //camera
         cam.update(player.position.getX(),player.position.getY(),game);
@@ -214,7 +214,7 @@ public class GameScreen implements Screen {
 	        }
 		}
 	    // will need to add an ai there
-//		aiMultiPickUp();
+		aiMultiPickUp();
 
 	    game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
 //        game.batch.draw(overlay, aiPlayer.position.getX() - overlayWidth/2, aiPlayer.position.getY() - overlayHeight/2, overlayWidth, overlayHeight);
