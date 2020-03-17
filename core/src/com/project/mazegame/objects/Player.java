@@ -10,6 +10,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
@@ -30,6 +31,7 @@ public class Player {
     private int swordXP;
     private int shieldXP;
     private int respawnCounter = 0;
+    private BitmapFont font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
     
     Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDying;
     
@@ -49,10 +51,9 @@ public class Player {
     
     private boolean isDying = false;
     Timer time;
+    
 
     public Player(TiledMapTileLayer collisionLayer,String name, int ID ,String colour) {
-    	
-    	System.out.println("making player");
     	
     	this.health = 5;
         this.coins = 0;
@@ -75,6 +76,7 @@ public class Player {
         
         createAnimations();
         time = new Timer();
+        
     }
     
     
@@ -105,12 +107,16 @@ public class Player {
         
         if(this.isDead()) {
         	System.out.println("respawncount = " + respawnCounter);
-        	if(respawnCounter == 0) respawnCounter = time.currentTime();
+        	if(respawnCounter == 0) {
+        		respawnCounter = time.currentTime();
+        	}
+        	
         	if(time.currentTime() - respawnCounter == 3) {
         		this.death();
         		
         	}
         	setAnimation(DyingAnim);
+        	
         }else {
         
         	
@@ -183,6 +189,14 @@ public class Player {
 //        }
          if(this.items.contains("shield")) {
             sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
+        }
+        font.getData().setScale(0.5f,0.5f);
+        font.draw(sb,this.name, this.position.getX() - 30,this.position.getY() + 60);
+        
+        if(this.isDead()) {
+        	font.getData().setScale(1f,1f);
+        	String message = "Respawn in: " + ( respawnCounter -  time.currentTime()  +3);
+            font.draw(sb,message, this.position.getX() - 100,this.position.getY() + 200);
         }
     }
     
