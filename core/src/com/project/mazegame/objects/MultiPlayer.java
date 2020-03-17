@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.project.mazegame.networking.Messagess.MoveMessage;
+//import com.project.mazegame.networking.Messagess.MoveMessage;
+import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Coordinate;
 
@@ -18,7 +20,6 @@ import java.util.ArrayList;
 
 
 public class MultiPlayer extends Player {
-
     private int x, y;
     private float speed = 6;
     private float width, height;
@@ -27,6 +28,7 @@ public class MultiPlayer extends Player {
     private int id;
     public int swordDamage;
     public Coordinate position;
+    public boolean isPoisoned;
 
     private String name;
     public ArrayList<String> items;
@@ -38,10 +40,31 @@ public class MultiPlayer extends Player {
 
 
     //constructors=================================================================================
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir ){
+        super();
+//        if (debug) System.out.println("My Multiplayer instance is constructing...");
+        this.collisionLayer = collisionLayer;
+        this.health=5;
+        this.coins=0;
+        this.name=username;
+        this.items=new ArrayList<>();
+        this.position=new Coordinate(x,y);
 
+        initialPosition();
+        x = this.position.getX();
+        y = this.position.getY();
+
+        this.gameClient=gameClient;
+        this.dir=dir;
+        ArrayList<Item> items = new ArrayList<Item>();
+        width = gameClient.player_up.getWidth();
+        height = gameClient.player_up.getHeight();
+//        if (debug) System.out.println("My Multiplayer instance construction done!");
+
+    }
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir ) {
         super();
-        if (debug)System.out.println("Multiplayer is constructing...");
+//        if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health=5;
         this.coins=0;
@@ -55,10 +78,8 @@ public class MultiPlayer extends Player {
         ArrayList<Item> items = new ArrayList<Item>();
         width = gameClient.player_up.getWidth();
         height = gameClient.player_up.getHeight();
-
-        if (debug) System.out.println("Multiplayer construction done!");
+//        if (debug) System.out.println("Other Multiplayer instance construction done!");
     }
-
     //Getter&Setter=================================================================================
     public int getX() { return x; }
 
@@ -80,68 +101,67 @@ public class MultiPlayer extends Player {
 
     public void setName(String name) { this.name = name; }
 
-    public Texture getPlayerTexture() { return player; }
+    public int getCoins() { return coins; }
 
-    public void setPlayerTexture(Texture player) { this.player = player; }
+    public void setCoins(int coins) { this.coins = coins; }
 
-    public Texture getPlayer_up() { return player_up; }
+//    public void setPlayerTexture(Texture player) { this.player = player; }
+//
+//    public Texture getPlayer_up() { return player_up; }
+//
+//    public Texture getPlayer_right() { return player_right; }
+//
+//    public Texture getPlayer_left() { return player_left; }
+//
+//    public Texture getPlayer_down() { return player_down; }
 
-    public void setPlayer_up(Texture player_up) { this.player_up = player_up; }
 
-    @Override
-    public Texture getSword() {
-        return sword;
-    }
-
-    @Override
-    public void setSword(Texture sword) {
-        this.sword = sword;
-    }
-
-    public int getCoins() {
-        return coins;
-    }
-
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
-
-    public Texture getPlayer_right() { return player_right; }
-
-    public void setPlayer_right(Texture player_right) { this.player_right = player_right; }
-
-    public Texture getPlayer_left() { return player_left; }
-
-    public void setPlayer_left(Texture player_left) { this.player_left = player_left; }
-
-    public Texture getPlayer_down() { return player_down; }
-
-    public void setPlayer_down(Texture player_down) { this.player_down = player_down; }
 
     //==============================================================================================
 
     public void render (SpriteBatch sb){
 
-        switch(dir){
+//        if(isPoisoned){
+//            switch (dir) {
+//                case U:
+//                    sb.draw(gameClient.player_up1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case D:
+//                    sb.draw(gameClient.player_down1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case L:
+//                    sb.draw(gameClient.player_left1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case R:
+//                    sb.draw(gameClient.player_right1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//                case STOP:
+//                    sb.draw(gameClient.player_down1, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
+//                    break;
+//            }
+//        }else {
+        switch (dir) {
             case U:
-                sb.draw(gameClient.player_up,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_up, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
                 break;
             case D:
-                sb.draw(gameClient.player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
                 break;
             case L:
-                sb.draw(gameClient.player_left,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_left, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
                 break;
             case R:
-                sb.draw(gameClient.player_right,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_right, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
                 break;
             case STOP:
-                sb.draw(gameClient.player_down,this.position.getX()- (width/2),this.position.getY() - (height/2));
+                sb.draw(gameClient.player_down, this.position.getX() - (width / 2), this.position.getY() - (height / 2));
                 break;
         }
+        //}
+
         updateMotion();
 
-        if(this.items.contains("sword")) {	  // possible errors may occur
+        if(this.items.contains("sword")) {
             sb.draw(gameClient.sword,(float)(x),y - (height/4),50,50);
         }
         if(this.items.contains("shield")) {
@@ -194,37 +214,41 @@ public class MultiPlayer extends Player {
 
         switch (dir){
             case R:
-                this.x+=speed;
-                if(!checkCollisionMap(x, y)) {
-                    this.x -= speed;
-                    if (debug) System.out.println("hit right wall");
+                if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
+                    //try move player right
+                    x += speed;
+                    //check player isn't in a wall
+                    if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
+                        x -= speed;
+                    }else
+                        this.position.setX( x );
                 }
                 break;
             case L:
-                if(x>0) {
-                    this.x -= speed;
+                if (x > 0) {
+                    x -= speed;
                     if(!checkCollisionMap(x,y)) {
-                        this.x += speed;
-                        if (debug)  System.out.println("hit left wall");
-                    }
+                        x += speed;
+                    }else
+                        this.position.setX( x );
                 }
                 break;
             case U:
-                if (y < VIEWPORT_HEIGHT - height) {
-                    this.y += speed;
+                if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
+                    y += speed;
                     if(!checkCollisionMap(x, y)) {
-                        this.y -= speed;
-                        if (debug)  System.out.println("hit up wall");
-                    }
+                        y -= speed;
+                    }else
+                        this.position.setY( y );
                 }
                 break;
             case D:
-                if(y>0){
-                    this.y -= speed;
-                    if(!checkCollisionMap(x, y)) {
-                        this.y += speed;
-                        if (debug)  System.out.println("hit down wall");
-                    }
+                if (y > 0) {
+                    y -= speed;
+                    if(!checkCollisionMap(x, y  )) {
+                        y += speed;
+                    } else
+                        this.position.setY( y );
                 }
                 break;
             case STOP:
@@ -256,59 +280,30 @@ public class MultiPlayer extends Player {
         }
     }
 
-    @Override
-    public void loadPlayerTextures(){
-        player_up = new Texture("playerRedBackCrop.png");
-        player_right = new Texture("playerRedRightCrop.png");
-        player_left = new Texture("playerRedLeftCrop.png");
-        player_down = new Texture("playerRedFrontCrop.png");
-        sword = new Texture("sword2.png");
-        shield = new Texture("shield.png");
-    }
+    public void initialPosition () {
+        //Coordinate position = new Coordinate();
 
-    public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
-        //Overall x and y of player
-        float xWorld = possibleX ;
-        float yWorld = possibleY ;
+        int maxX = collisionLayer.getWidth() ;
+        int maxY= collisionLayer.getHeight();
+//    	System.out.println("maxX" + maxX + " , " + maxY);
 
-        boolean collisionWithMap = false;
+        int ranx = (int)  (( Math.random() * (maxX) ));
+        int rany = (int)  (( Math.random() * (maxY) ));
+//    	System.out.println("ran" + ranx + " , " + rany);
 
-        //Check corners of player to check for collision
-        //check corners T = top, B = bottom, R = right, L = left
-        boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2),collisionLayer );
-        boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2),collisionLayer);
-        boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2),collisionLayer);
-        boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2),collisionLayer);
 
-        collisionWithMap = TLbool || TRbool || BLbool || BRbool;
+        this.position.setX( ranx * (int) collisionLayer.getTileWidth() + 50);
+        this.position.setY( rany * (int) collisionLayer.getTileHeight() + 50);
 
-        //If there is a collision
-        if (collisionWithMap) return false;
-        else return true;
-    }
 
-    public boolean isCellBlocked(float x, float y,TiledMapTileLayer collisionLayer) {
-
-        Cell cell = collisionLayer.getCell(
-                (int) (x / collisionLayer.getTileWidth()),
-                (int) (y /collisionLayer.getTileHeight()));
-
-        return cell != null && cell.getTile() != null
-                & cell.getTile().getProperties().containsKey("isWall");
-    }
-
-    public void decreaseHealth(int number) {
-        this.health -= number;
-        if(health <= 0) {
-            this.death();
+        if(isCellBlocked((float)position.getX(), (float)position.getY())) {
+            initialPosition();
         }
     }
 
-    public void generateHealth() {
-        if(this.health != 9) {
-            this.health++;
-        }
-    }
+
+
+
 
 
     // private MazeGame game;
@@ -353,32 +348,9 @@ public class MultiPlayer extends Player {
 //        }
 //      }
 //
-    public void death() {
-        if(debug) System.out.println("Player has died respawning now");
-        this.health = 5;
-        this.coins = 0;
 
-        this.items.clear();
 
-        //this.items = new ArrayList<>();
-    }
 
-    public void playerHitPlayer(Player hit) {
-        // write boolean to check sword
-
-        if (this.items.contains("sword") && !hit.items.contains("shield")) {
-            // will need to do if have item then that can be called
-            // then decrease the helath based on that
-            // could have a damage do attribute and various attributes which change throught the generateMapItems
-            hit.decreaseHealth(this.swordDamage);
-            if (hit.health == 0) {
-                this.swordDamage++;
-                this.coins += hit.coins;
-                hit.death();
-            }
-        }
-        //need to add shield stuffr
-    }
     public int getHealth() {
         return health;
     }

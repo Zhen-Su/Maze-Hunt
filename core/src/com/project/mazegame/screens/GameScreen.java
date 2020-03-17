@@ -1,14 +1,13 @@
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.project.mazegame.objects.*;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
@@ -20,14 +19,15 @@ import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.*;
 
+import java.awt.Font;
+import java.awt.ItemSelectable;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
-
-import com.project.mazegame.tools.InputHandler;
-import com.project.mazegame.tools.OrthoCam;
+import static com.project.mazegame.tools.Variables.V_HEIGHT;
+import static com.project.mazegame.tools.Variables.V_WIDTH;
 
 
 
@@ -37,13 +37,18 @@ public class GameScreen implements Screen {
     private OrthoCam cam;
 
     private Player player;
-    //private AIPlayer aiPlayer;// ---------need to be implemented
+//    private Thread playerThread = new Thread(new PlayerThread());
+    private AIPlayer aiPlayer;// ---------need to be implemented
+	private ArrayList<AIPlayer> aiPlayers;
     private InputHandler inputHandler;
+//    private ArrayList<Thread> aiThreads = new ArrayList<>();
     private float delta;
+    private int numOfAI;
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
+    private TiledMapTileLayer collisionLayer1;
 
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
@@ -54,24 +59,32 @@ public class GameScreen implements Screen {
     private Texture compassTexture;
     private Texture healingPotionTexture;
     private Texture damagingPotionTexture;
+    private Texture gearEnchantmentTexture;
     private Texture audioButtonActive; //-------need to  implemented
     private Texture audioButtonInactive;
+    private Texture overlay;
+    private Texture coinPick;
+    private BitmapFont font;
 
-    private BitmapFont font = new BitmapFont();
+    private int updateCount;
+    
+    
+    AnimationTool coinAnimation;
+    
+    private float timer;
+    public float worldTimer;
     
     private Player player2;
     
     private Collect co;
-
-//    private float timer = 0;
-//    private float worldTimer = 180;
-
-    private String timeLeft;
+    private Collect co1;
+    private ArrayList<Collect> aicos;
  
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
-
-    private Timer timer;
+    
+    private float initialisedShieldTime;
+    private float initialisedPotionTime;
    
     public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
@@ -79,41 +92,62 @@ public class GameScreen implements Screen {
     
     private int tempMapItemssize;
     
+    int overlayWidth;
+    int overlayHeight;
+    int keyFrame;
+   
+    
+    
     public GameScreen(MazeGame game) {
         this.game = game;
+        this.updateCount = 0;
+        
+        
+      
         inputHandler = new InputHandler();
+        
+        timer = 0;
+        worldTimer = 120;
 
-        timer = new Timer();
-        timeLeft = Integer.toString((int)timer.currentTime());
-
-        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
+        tileMap = new TmxMapLoader().load("Map1.tmx");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
         
-        collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-
+        this.collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
+		this.collisionLayer1 = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
         player = new Player(this.collisionLayer,"james",123);
-//        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, VIEWPORT_WIDTH/2,VIEWPORT_HEIGHT/2);
+        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124);
+        aiPlayers = aiPlayer.AITakingOver(5);
+        aicos = new ArrayList<Collect>();
+
+
+        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
      
         // buttons
-        exitButtonActive = new Texture("exit_button_active.png");
-        exitButtonInactive = new Texture("exit_button_inactive.png");
-        audioButtonActive = new Texture("audioOn.png");
-        audioButtonInactive = new Texture("audioOff.png");
+        exitButtonActive = new Texture("UI\\MenuButtons\\exit_button_active.png");
+        exitButtonInactive = new Texture("UI\\MenuButtons\\exit_button_inactive.png");
+        audioButtonActive = new Texture("UI\\MenuButtons\\audioOn.png");
+        audioButtonInactive = new Texture("UI\\MenuButtons\\audioOff.png");
         
-        heartTexture = new Texture("heart.png");
-        coinTexture = new Texture("coin.png");
-        swordTexture = new Texture("sword2.png");
-        shieldTexture = new Texture("shield.png");
-        healingPotionTexture = new Texture("Potion2.png");
-        compassTexture = new Texture("RolledMap.png");
-        damagingPotionTexture = new Texture("Potion3.png");
+        heartTexture = new Texture("Collectibles\\heart.png");
+        coinTexture = new Texture("Collectibles\\\\coin.png");
+        swordTexture = new Texture("Collectibles\\\\sword2.png");
+        shieldTexture = new Texture("Collectibles\\\\shield.png");
+        healingPotionTexture = new Texture("Collectibles\\\\Potion.png");
+        gearEnchantmentTexture = new Texture("Collectibles\\\\Potion2.png");
+        compassTexture = new Texture("Collectibles\\\\RolledMap.png");
+        damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
+        overlay = new Texture("UI\\circularOverlay.png");
+        coinPick = new Texture("Collectibles\\coinAnimation.png");
+        
+        overlayWidth = overlay.getWidth() +300;
+        overlayHeight = overlay.getHeight() +300;
 
-
+		font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         
-        
+        //coinAnimation = new AnimationTool(50,50,player,coinPick,true);
+        //coinAnimation.create();
     }
     
     @Override
@@ -121,16 +155,32 @@ public class GameScreen implements Screen {
     	 //assuming it's a square map -> only need width of map and width of tile
         generateMapItems((int) collisionLayer.getWidth(), 100 );
         co = new Collect(game, player);
+        for (int i = 0; i < aiPlayers.size(); i++) {
+        	aicos.add(new Collect(game, aiPlayers.get(i)));
+		}
         tempMapItemssize = mapItems.size();
+        //start timer
+        player.initialPosition();
+
+        for (int i = 0; i < aiPlayers.size(); i++) {
+
+        	AIPlayer currentPlayerSpawn = aiPlayers.get(i);
+
+			AIPlayer playerChange = aiPlayers.remove(i);
+			playerChange.initialPosition();
+			aiPlayers.add(i, playerChange);
+
+
+		}
+
     }
-    
+    int iconSize = 30;
     @Override
     public void render(float delta) { //method repeats a lot
     	
-    	//only draw mapItems if one gets picked up
-    	if (!(mapItems.size() == tempMapItemssize)) {
-    		tempMapItemssize = mapItems.size();
-    	}
+    	updateTime(delta);
+    	removeShield();
+    	playerDamaging();
     	
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -138,65 +188,115 @@ public class GameScreen implements Screen {
         delta = Gdx.graphics.getDeltaTime();
     
         //updates - player position
-        inputHandler.update();
-        player.update(delta);
-        
-        //comment out ai player line to run correctly
-//       aiPlayer.update(delta);
+
+			inputHandler.update();
+
+
+
+				player.update(delta, 0, co, 0);
+
+
+        for (int i = 0; i < aiPlayers.size(); i++) {
+
+				AIPlayer removed = aiPlayers.remove(i);
+				removed.update(delta, 1, co, worldTimer);
+				aiPlayers.add(i, removed);
+//				aiThreads.get(i).suspend();
+//				aiThreads.get(i).sleep(50);
+
+		}
+		this.updateCount++;
+
+        //camera
+        cam.update(player.position.getX(),player.position.getY(),game);
+
         
         //draws tilemap
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
-        
-        
+      
         game.batch.begin();
-        timer.updateTimer(delta);
-		timeLeft = Integer.toString((int)timer.currentTime());
+        
         //draw collectibles
         drawCollectibles();
       
-//        System.out.println("here");
-//        System.out.println(player.position.getX() + " , " + co.nearestItem(player).getPosition().getX());
         //Collectibles pick up
 	    if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception	
-	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) &&
+	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 
 	            (player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
-	        	System.out.println("over item");
 	        	pickUpItem();
 	        	
 	        }
 		}
-	    
-	    drawExitButton();
+	    // will need to add an ai there
+
+		aiMultiPickUp();
+
+	    game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
+//        game.batch.draw(overlay, aiPlayer.position.getX() - overlayWidth/2, aiPlayer.position.getY() - overlayHeight/2, overlayWidth, overlayHeight);
         
-        int iconSize = 30;
         int buffer = 10;
+        Coordinate playerPos = new Coordinate(player.position.getX(), player.position.getY());
+        drawIcons(iconSize,buffer,playerPos);
+        drawExitButton(playerPos);
         
-        drawIcons(iconSize,buffer);
-
-
-		font.draw(game.batch, timeLeft, 500,500);
-
+        
+        player.attack();
         player.render(game.batch);
+//        aiPlayer.render(game.batch);
+        for (int i = 0; i < aiPlayers.size(); i++) {
+        	AIPlayer render = aiPlayers.remove(i);
+        	render.render(game.batch);
+        	aiPlayers.add(i, render);
+		}
+        
+        
+        String message = "Time = " + worldTimer ;
+        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+        font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
         
         game.batch.end();
         
-        
-        //camera
-        
-        //follow player
-
-        
-        cam.update(500,500);
+    	//if timer runs out 
+    	if(worldTimer < 3) {
+    		overlayWidth -= 15;
+    		overlayHeight -= 15;
+    	  
+    	   if(worldTimer < 0) {
+    		   this.dispose();
+    		   game.setScreen(new EndScreen(this.game));
+    		  
+    	   }
+    	}
         
     }
-    
-    private void drawIcons(int iconSize, int buffer) {
 
+    private void aiMultiPickUp() {
+    	for (int i  = 0; i < aiPlayers.size(); i++) {
+			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+				if ((aiPlayers.get(i).position.getX() > co.nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < co.nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
+						(aiPlayers.get(i).position.getY() > co.nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < co.nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
+					AIPlayer removedPlayer = aiPlayers.remove(i);
+					aiPickUp(removedPlayer, co);
+					aiPlayers.add(i, removedPlayer);
+
+				}
+			}
+		}
+	}
+    
+    
+    int coinSize = iconSize*2;
+    
+    
+    private void drawIcons(int iconSize, int buffer, Coordinate position) {
+    	//take player x and y into account
+    	int playerX = position.getX() - VIEWPORT_WIDTH/2;
+    	int playerY = position.getY() - VIEWPORT_HEIGHT/2;
         //draw hearts in top left corner
  
-        int xheart = buffer;
-        int yheart = VIEWPORT_HEIGHT - iconSize -buffer;
+        int xheart = buffer + playerX;
+        int yheart = VIEWPORT_HEIGHT - iconSize -buffer + playerY;
         int lives = player.getHealth();
         for(int i = 0; i < lives; i ++) {
         	  game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
@@ -205,44 +305,63 @@ public class GameScreen implements Screen {
         if (player.items.contains("shield")) {
         //draw shield icon
 	        float shieldSize = 50;
-	        float xShield = VIEWPORT_WIDTH - shieldSize -buffer;
-	        float yShield = VIEWPORT_HEIGHT - (shieldSize *3) ;
+	        float xShield = VIEWPORT_WIDTH - shieldSize -buffer + playerX;
+	        float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY;
 	        game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
+	        
+	        String message = "XP :" + player.getShieldXP() ;
+	        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+	        font.draw(game.batch,message, xShield ,yShield -50);
         }
         //sword icon
         if ( player.items.contains("sword")) {
 	        float swordSize = 50;
-	        float xSword = VIEWPORT_WIDTH  - swordSize - buffer;
-	        float ySword = VIEWPORT_HEIGHT - (swordSize *2) ;
+	        float xSword = VIEWPORT_WIDTH  - swordSize - buffer + playerX;
+	        float ySword = VIEWPORT_HEIGHT - (swordSize *2) + playerY;
 	        game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
+	        
+	        
+	        String message = "XP :" + player.getswordXP(); ;
+	        font.draw(game.batch,message, xSword ,ySword -50);
         }
+        
+       
+        
         //draws coin icon
         for ( int i = 0; i < player.coins; i ++ ) {
-	        float xCoin = buffer;
-	        float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer;
-	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin,iconSize*2 , iconSize*2);
+	        float xCoin = buffer + playerX;
+	        float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer + playerY;
+	        if ( coinSize != iconSize*2) coinSize -=5;
+	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
         }
     }
     
-    private void drawExitButton() {
-    	float x = VIEWPORT_WIDTH  - EXIT_WIDTH;
-        float y = VIEWPORT_HEIGHT - EXIT_HEIGHT;
+    private void drawExitButton(Coordinate position) {
+    	
+    	//take player x and y into account
+    	int playerX = position.getX() - VIEWPORT_WIDTH/2;
+    	int playerY = position.getY() - VIEWPORT_HEIGHT/2;
+    	
+    	int x = VIEWPORT_WIDTH  - EXIT_WIDTH + playerX;
+        int y = VIEWPORT_HEIGHT - EXIT_HEIGHT + playerY;
         
+        //origin of cursor is top left hand corner
         //exit button in top right corner
-        game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+      
+        
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            //cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
             this.dispose();
             game.setScreen(new MenuScreen(this.game));
         }
-        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
-           game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-           if (Gdx.input.isTouched())
-                Gdx.app.exit();
+        
+        if (Gdx.input.getX()  < V_WIDTH  && Gdx.input.getX()  >  V_WIDTH - EXIT_WIDTH && Gdx.input.getY() < EXIT_HEIGHT && Gdx.input.getY() > 0 ) {
+        	game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+	        if (Gdx.input.justTouched()) {
+	        	this.dispose();
+	        	game.setScreen(new MenuScreen(this.game));
+	        }
         }
-       else {
-            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-        }
+        else game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
     }
     
     private void drawCollectibles() {
@@ -265,7 +384,7 @@ public class GameScreen implements Screen {
   	    		texture = damagingPotionTexture;
   	    	}
   	    	if (mapItems.get(i).getType() == "gearEnchantment") {
-  	    		texture = healingPotionTexture;
+  	    		texture = gearEnchantmentTexture;
   	    	}
   	    	if (mapItems.get(i).getType() == "compass") {
   	    		texture = compassTexture;
@@ -277,24 +396,35 @@ public class GameScreen implements Screen {
   	    }
 
     }
-    
+    // -------------------------------------------------could move to collect class
     private void pickUpItem() {
+
     	Item item =  co.nearestItem(player);
+    	
+    	//System.out.println(player.items);
     	
     	if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")) {
     		item = co.pickedUp(co.nearestItem(player));
     		
+    		
 			if (item.getType() == "shield") {
+				item.setInitialisedTime(worldTimer);
+				initialisedShieldTime = worldTimer;
 				co.shield(item, player);
 			}
 			if (item.getType() == "sword") {
 				co.sword(item, player, player2);
 			}
 			if (item.getType() == "healingPotion") {
+				player.loadPlayerTextures();
 				co.healingPotion (player);
 			}
 			if (item.getType() == "damagingPotion") {
+				item.setInitialisedTime(worldTimer);
+				initialisedPotionTime = worldTimer;
 				co.damagingPotion(item, player);
+				
+				//System.out.println("posion");
 			}
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
@@ -302,7 +432,75 @@ public class GameScreen implements Screen {
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
+			//coinAnimation.render();
+			
+			//animateCoin();
+			//coinSize = 100;
+	
+		
 		}
+    }
+
+    private void aiPickUp(AIPlayer player, Collect aico) {
+    	Item item = aico.nearestItem(player);
+    	if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")) {
+    		item = aico.pickedUp(aico.nearestItem(player));
+
+    		if (item.getType() == "shield") {
+    			item.setInitialisedTime(worldTimer);
+    			initialisedShieldTime = worldTimer;
+    			aico.shield(item, player);
+			}
+    		if (item.getType() == "sword") {
+    			aico.sword(item, player, player2);
+			}
+    		if (item.getType() == "healingPotion") {
+    			player.loadPlayerTextures();
+    			aico.healingPotion(player);
+			}
+    		if (item.getType() == "damagingPotion") {
+    			item.setInitialisedTime(worldTimer);
+    			initialisedPotionTime = worldTimer;
+    			aico.damagingPotion(item, player);
+			}
+    		if (item.getType() == "gearEnchantment") {
+    			aico.gearEnchantment(item, player);
+			}
+
+		} else if (item.getType() == "coin") {
+    		mapItems.remove(item);
+    		player.coins++;
+		}
+
+	}
+    
+    private void animateCoin() {
+    	
+    	TextureRegion[] region = coinAnimation.getFrames();
+    	for(int i = 0 ; i < 4 ; i = keyFrame ) {
+    		game.batch.draw(region[keyFrame],player.position.getX() - 50/2,player.position.getY() - 50/2);
+    		
+    	}
+    	
+    }
+    
+    private void removeShield() {
+    	if(!player.items.contains("shield")) {
+    		return;
+    	}
+    	if (initialisedShieldTime - worldTimer == 10) {
+    		player.items.remove("shield");
+    	}
+    }
+    
+    private void playerDamaging() {
+    	if(!player.items.contains("damagingPotion")) {
+    		return;
+    	}
+    	if (initialisedPotionTime - worldTimer == 2) {
+    		player.loadPlayerTextures();
+    		player.items.remove("damagingPotion");
+    	}
     }
 
     @Override
@@ -335,17 +533,23 @@ public class GameScreen implements Screen {
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
         player.dispose();
+        aiPlayer.dispose();
         mapItems.clear();
+//        cam.update(V_WIDTH/2, V_HEIGHT/2, game);
+        cam.cam.viewportHeight = 1000;
+        cam.cam.viewportWidth = 1000;
+        cam.update(V_WIDTH/2, V_HEIGHT/2, game);
+        cam.cam.update();
+        
     }
     
     public void generateMapItems( int widthInTiles, int tileWidth ) {
         HashSet<String> positions = new HashSet<String>();
-    	System.out.println("generating");
-    	int maxShields = 3;
-		int maxCoins = 10;
-		int maxSwords = 5;
-		int maxCompasses = 3;
-		int maxPotions = 10;
+    	int maxShields = 30;
+		int maxCoins = 100;
+		int maxSwords = 50;
+		int maxCompasses = 30;
+		int maxPotions = 100;
 		int maxX = widthInTiles;
 		int maxY = widthInTiles;
 	
@@ -359,11 +563,9 @@ public class GameScreen implements Screen {
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			
 			Item item = new Item("shield", position);
-			System.out.println(position);
-			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY(),collisionLayer))) {
-//				System.out.println(position);
+
+			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 				mapItems.add(item);
-				System.out.println("adding to positions");
 				positions.add(position.toString());
 			}
 		}
@@ -373,8 +575,7 @@ public class GameScreen implements Screen {
 			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			Item item = new Item("coin", position);
-			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY(),collisionLayer))) {
-//				System.out.println(position);
+			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 				mapItems.add(item);
 				positions.add(position.toString());
 			}
@@ -386,7 +587,7 @@ public class GameScreen implements Screen {
 			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			Item item = new Item("sword", position);
-			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY(),collisionLayer))) {
+			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 				mapItems.add(item);
 				positions.add(position.toString());
 			}
@@ -398,7 +599,7 @@ public class GameScreen implements Screen {
 			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			Item item = new Item("compass", position);
-			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY(),collisionLayer))) {
+			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 				mapItems.add(item);
 				positions.add(position.toString());
 			}
@@ -413,38 +614,36 @@ public class GameScreen implements Screen {
 			
 			if (whatPotion == 1) {
 				Item item = new Item("healingPotion", position);
-				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY(),collisionLayer))) {
+				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 					mapItems.add(item);
 					positions.add(position.toString());
 				}
 			} else if (whatPotion == 2) {
 				Item item = new Item("damagingPotion", position);
-				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY(),collisionLayer))) {
+				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 					mapItems.add(item);
 					positions.add(position.toString());
 				}
 			} else {
 				Item item = new Item("gearEnchantment", position);
-				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY(),collisionLayer))) {
+				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
 					mapItems.add(item);
 					positions.add(position.toString());
 				}
 			}
 		}
-		System.out.println(positions);
 	}
-
-//	private void updateTimer(float dt) {
-//    	this.timer += dt;
-//    	if (timer >= 1) {
-//    		worldTimer--;
+    
+    private float timePassed(float theTime) {
+    	return worldTimer - theTime;
+    }
+    
+    private void updateTime(float dt) {
+    	timer += dt;
+    	if (timer >= 1) {
+    		worldTimer--;
 //    		System.out.println("World Timer: " + worldTimer);
-//			timeLeft = Integer.toString((int) worldTimer);
-//    		timer = 0;
-//		}
-//	}
-
-	private void displayText(SpriteBatch batch, String text, int x, int y) {
-
-	}
+    		timer = 0;
+    	}
+    }
 }

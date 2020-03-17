@@ -1,10 +1,15 @@
 package com.project.mazegame.networking.Client;
 
 import com.project.mazegame.networking.Messagess.CollectMessage;
+import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
+import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
+import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
+import com.project.mazegame.screens.OtherLobbyScreen;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -24,6 +29,11 @@ public class NetClient {
     private MultiPlayerGameScreen gameClient;
     private int clientUDPPort;
     private int serverUDPPort;
+
+    public String getServerIP() {
+        return serverIP;
+    }
+
     private String serverIP;
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
@@ -135,15 +145,32 @@ public class NetClient {
 
             Message msg = null;
             switch (msgType) {
-                case Message.PLAYER_COLLECT_MSG:
-                    msg = new CollectMessage(gameClient);
-                    msg.process(dis);
                 case Message.PLAYER_NEW_MSG:
                     msg = new PlayerNewMessage(gameClient);
                     msg.process(dis);
                     break;
                 case Message.PLAYER_MOVE_MSG:
                     msg = new MoveMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.PLAYER_COLLECT_MSG:
+                    msg = new CollectMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.PLAYER_EXIT_MSG:
+                    msg = new PlayerExitMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.ITEMS_CREATE:
+                    msg = new ItemCreateMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.HOST_START:
+                    msg = new StartGameMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.ITEM_COLLECTED:
+                    msg = new ItemCollectedMessage(gameClient);
                     msg.process(dis);
                     break;
             }
@@ -161,11 +188,11 @@ public class NetClient {
     }
 
     /**
-         * Only for debug (print message)
-         * @param msg
-         */
-        public void printMsg(String msg){
-            System.out.println(msg);
-        }
+     * Only for debug (print message)
+     * @param msg
+     */
+    public void printMsg(String msg){
+        System.out.println(msg);
+    }
 
 }
