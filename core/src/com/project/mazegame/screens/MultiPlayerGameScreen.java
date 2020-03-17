@@ -63,8 +63,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private MultiPlayer player2;
 
     private AssetManager manager;
-    public Texture player_up, player_right, player_left, player_down, sword,shield;
-    public Texture player_up1, player_right1, player_left1, player_down1; // player been poisoned.
+    public Texture player, sword,swordAttack,swordNotAttack,shield;
+    //public Texture player_up, player_right, player_left, player_down, sword,shield;
+    public  Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDead;
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
     private Texture heartTexture;
@@ -78,7 +79,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private Texture damagingPotionTexture;
     private Texture gearEnchantmentTexture;
     private Texture overlay;
-    private Texture coinPick;
+    //private Texture coinPick;
     private BitmapFont font;
     private Texture enchantedGlow;
     private Texture mapTexture, minimapOutline;
@@ -112,7 +113,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         manager = new AssetManager();
-        loadAsset();
+        loadAsset("orange");
 
         myMultiPlayer=new MultiPlayer(this.collisionLayer,username,this, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
@@ -176,60 +177,99 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     //==============================================================================================
 
-    public void loadAsset(){
-        manager.load("Player\\playerRedBackCrop.png", Texture.class);
-        manager.load("Player\\playerRedRightCrop.png", Texture.class);
-        manager.load("Player\\playerRedLeftCrop.png", Texture.class);
-        manager.load("Player\\playerRedFrontCrop.png", Texture.class);
-        manager.load("Collectibles\\sword2.png", Texture.class);
-        manager.load("Collectibles\\shield.png", Texture.class);
-        manager.load("Collectibles\\heart.png",Texture.class);
-        manager.load("Collectibles\\coin.png",Texture.class);
-        manager.load("Collectibles\\sword2.png",Texture.class);
-        manager.load("Collectibles\\shield.png",Texture.class);
-        manager.load("Collectibles\\Potion2.png",Texture.class);
-        manager.load("Collectibles\\RolledMap.png",Texture.class);
-        manager.load("Collectibles\\Potion3.png",Texture.class);
-//        manager.load("playerRedBackIll.png", Texture.class);
-//        manager.load("playerRedRightIll", Texture.class);
-//        manager.load("playerRedLeftIll.png", Texture.class);
-//        manager.load("playerRedFrontIll.png", Texture.class);
+    public void loadAsset(String colour){
+        switch (colour) {
+            case "blue":
+                manager.load("Player\\walkRightBlue.png",Texture.class);
+                manager.load("Player\\walkLeftBlue.png",Texture.class);
+                manager.load("Player\\walkUpBlue.png",Texture.class);
+                manager.load("Player\\walkDownBlue.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightBlue.png",Texture.class);
+                walkLeft = manager.get("Player\\walkLeftBlue.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpBlue.png",Texture.class);
+                walkDown = manager.get("Player\\walkDownBlue.png",Texture.class);
+                break;
+            case "green":
+                manager.load("Player\\walkRightGreen.png",Texture.class);
+                manager.load("Player\\walkLeftGreen.png",Texture.class);
+                manager.load("Player\\walkUpGreen.png",Texture.class);
+                manager.load("Player\\walkDownGreen.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightGreen.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftGreen.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpGreen.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownGreen.png",Texture.class);
+                break;
+            case "pink":
+                manager.load("Player\\walkRightPink.png",Texture.class);
+                manager.load("Player\\walkLeftPink.png",Texture.class);
+                manager.load("Player\\walkUpPink.png",Texture.class);
+                manager.load("Player\\walkDownPink.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightPink.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftPink.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpPink.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownPink.png",Texture.class);
+                break;
+            case "orange":
+                manager.load("Player\\walkRightOrange.png",Texture.class);
+                manager.load("Player\\walkLeftOrange.png",Texture.class);
+                manager.load("Player\\walkUpOrange.png",Texture.class);
+                manager.load("Player\\walkDownOrange.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player/walkRightOrange.png",Texture.class);
+                walkLeft= manager.get("Player/walkLeftOrange.png",Texture.class);
+                walkUp = manager.get("Player/walkUpOrange.png",Texture.class);
+                walkDown =manager.get("Player/walkDownOrange.png",Texture.class);
+                break;
+            case "lilac":
+                manager.load("Player\\walkRightLilac.png",Texture.class);
+                manager.load("Player\\walkLeftLilac.png",Texture.class);
+                manager.load("Player\\walkUpLilac.png",Texture.class);
+                manager.load("Player\\walkDownLilac.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightLilac.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftLilac.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpLilac.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownLilac.png",Texture.class);
+                break;
+            case "yellow":
+                manager.load("Player\\walkRightYellow.png",Texture.class);
+                manager.load("Player\\walkLeftYellow.png",Texture.class);
+                manager.load("Player\\walkUpYellow.png",Texture.class);
+                manager.load("Player\\walkDownYellow.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightYellow.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftYellow.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpYellow.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownYellow.png",Texture.class);
+                break;
+            default:
+                manager.load("Player\\walkRight.png",Texture.class);
+                manager.load("Player\\walkLeft.png",Texture.class);
+                manager.load("Player\\walkUp.png",Texture.class);
+                manager.load("Player\\walkDown.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRight.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeft.png",Texture.class);
+                walkUp = manager.get("Player\\walkUp.png",Texture.class);
+                walkDown =manager.get("Player\\walkDown.png",Texture.class);
+        }
 
-        manager.finishLoading();// waiting for all assets load.
+        coinPick = new Texture("Collectibles\\coinAnimation.png");
+        swordAttack = new Texture("Collectibles\\swordAttack.png");
+        swordNotAttack = new Texture("Collectibles\\sword2.png");
+        shield = new Texture("Collectibles\\shield.png");
+        swipeRight = new Texture ("Player\\swipeRight.png");
+        swipeLeft = new Texture ("Player\\swipeLeft.png");
+        swipeUp = new Texture ("Player\\swipeUp.png");
+        swipeDown = new Texture ("Player\\swipeDown.png");
+        playerDead = new Texture ("Player\\player1Selected.png");
 
-        player_up = manager.get("Player/playerRedBackCrop.png", Texture.class);
-        player_right = manager.get("Player/playerRedRightCrop.png", Texture.class);
-        player_left = manager.get("Player/playerRedLeftCrop.png", Texture.class);
-        player_down = manager.get("Player/playerRedFrontCrop.png", Texture.class);
-        sword = manager.get("Collectibles/sword2.png", Texture.class);
-        shield = manager.get("Collectibles/shield.png", Texture.class);
-
-//        heartTexture = manager.get("heart.png", Texture.class);
-//        coinTexture = manager.get("coin.png", Texture.class);
-//        swordTexture = manager.get("sword2.png", Texture.class);
-//        shieldTexture = manager.get("shield.png", Texture.class);
-//        healingPotionTexture = manager.get("Potion2.png", Texture.class);
-//        compassTexture = manager.get("RolledMap.png", Texture.class);
-//        damagingPotionTexture = manager.get("Potion3.png", Texture.class);
-
-//        player_up1 = manager.get("playerRedBackIll.png", Texture.class);
-//        player_right1 = manager.get("playerRedRightIll.png", Texture.class);
-//        player_left1 = manager.get("playerRedLeftIll.png", Texture.class);
-//        player_down1 = manager.get("playerRedFrontIll.png", Texture.class);
+        sword = swordNotAttack;
     }
 
-    public void unloadAsset(){
-        manager.unload("Player/playerRedBackCrop.png");
-        manager.unload("Player/playerRedRightCrop.png");
-        manager.unload("Player/playerRedLeftCrop.png");
-        manager.unload("Player/playerRedFrontCrop.png");
-        manager.unload("Collectibles/sword2.png");
-        manager.unload("Collectibles/shield.png");
-//        manager.unload("playerRedBackIll.png");
-//        manager.unload("playerRedRightIll.png");
-//        manager.unload("playerRedLeftIll.png");
-//        manager.unload("playerRedFrontIll.png");
-    }
 
     @Override
     public void show() {
@@ -259,7 +299,6 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         removeShield();
         removeEnchantment();
         playerDamaging();
-
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -526,7 +565,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         }
 
         //TODO handle client and server exit game events here
-        unloadAsset();
+        //unloadAsset();
         manager.clear();
         manager.dispose();
         mapItems.clear();

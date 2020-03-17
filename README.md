@@ -91,7 +91,10 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
   * 2.0.1 fix bugs on pick up items (include coin)
   * 2.0.2 integrate with timer and animations
-  * 
+  
+* Version2.1: add animation in mutiplayer, but there are some small bugs.
+  
+  
   
   
   

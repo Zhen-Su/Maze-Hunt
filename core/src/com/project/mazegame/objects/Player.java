@@ -90,8 +90,6 @@ public class Player {
         if(isCellBlocked((float)position.getX(), (float)position.getY())) {
             initialPosition();
         }
-
-
     }
 
     public void update (float delta){
@@ -179,7 +177,6 @@ public class Player {
     }
     public void setBatch(SpriteBatch sb) {
         this.batch = sb;
-
     }
 
     //-----------------------getters
@@ -241,7 +238,6 @@ public class Player {
                 sword = swordAttack;
             }
         }
-
         else {
             sword = swordNotAttack;
             swordSwipeRight.elapsedTime = 0;
@@ -317,10 +313,9 @@ public class Player {
 
     //-------------------------loading textures and animations
     public void createAnimations() {
-        width = (int) walkUp.getWidth()/2;
+        width =  walkUp.getWidth()/2;
         height = walkUp.getHeight()/2;
         coinSize = coinPick.getHeight()/2;
-
 
         frames = walkRight;
         RightAnim = new AnimationTool(width,height,this,walkRight,true);
@@ -368,7 +363,7 @@ public class Player {
         animation = new AnimationTool(width, height, this, walkUp,true);
 
         animation.create();
-        setAnimation( UpAnim);
+        setAnimation(UpAnim);
     }
 
     public void loadPlayerTextures(){
@@ -415,7 +410,6 @@ public class Player {
                 walkLeft = new Texture("Player\\walkLeft.png");
                 walkUp = new Texture("Player\\walkUp.png");
                 walkDown = new Texture("Player\\walkDown.png");
-
         }
 
         coinPick = new Texture("Collectibles\\coinAnimation.png");
@@ -430,7 +424,6 @@ public class Player {
         swipeDown = new Texture ("Player\\swipeDown.png");
 
         playerDead = new Texture ("Player\\player1Selected.png");
-
 
         sword = swordNotAttack;
     }
