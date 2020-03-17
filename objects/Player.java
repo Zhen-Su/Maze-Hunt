@@ -140,7 +140,7 @@ public class Player {
     }
 
 
-    public void update (float delta, int mode, Collect let, float time){
+    public void update (float delta, int mode, ArrayList<Item> items, float time){
         // update player movement
 //        playerThread.run();
     	

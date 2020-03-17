@@ -150,15 +150,13 @@ public class GameScreen implements Screen {
     
     @Override
     public void show() {
-    	 //assuming it's a square map -> only need width of map and width of tile
-        generateMapItems((int) collisionLayer.getWidth(), 100 );
-        co = new Collect(game, player);
+		generateMapItems((int) collisionLayer.getWidth(), 100 );
+		co = new Collect(game, player);
+		tempMapItemssize = mapItems.size();
+		//start timer
+		player.initialPosition();
 
-        tempMapItemssize = mapItems.size();
-        //start timer
-        player.initialPosition();
-
-        for (int i = 0; i < aiPlayers.size(); i++) {
+		for (int i = 0; i < aiPlayers.size(); i++) {
 
             aiPlayers.get(i).initialPosition();
 
@@ -182,13 +180,13 @@ public class GameScreen implements Screen {
 
         inputHandler.update();
 
+		ArrayList<Item> empty = new ArrayList<>();
 
-
-        player.update(delta, 0, co, 0);
+        player.update(delta, 0, empty, 0);
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-				aiPlayers.get(i).update(delta, 1, co, worldTimer);
+				aiPlayers.get(i).update(delta, 2, mapItems, worldTimer);
 //
 
 		}
@@ -208,14 +206,15 @@ public class GameScreen implements Screen {
         drawCollectibles();
       
         //Collectibles pick up
-	    if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception	
-	        if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) && 
-	            (player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
-	        	pickUpItem();
-	        	
-	        }
+		if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+			if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) &&
+					(player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
+				pickUpItem();
+
+			}
 		}
-	    // will need to add an ai there
+
+		// will need to add an ai there
 
 		aiMultiPickUp();
 

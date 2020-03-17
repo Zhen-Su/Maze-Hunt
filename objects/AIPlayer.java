@@ -75,7 +75,7 @@ public class AIPlayer extends Player {
         return null;
     }
     @Override
-    public void update (float delta , int mode, Collect lets, float time) {
+    public void update (float delta , int mode, ArrayList<Item> items, float time) {
 //        aiThread.run();
         if (initialisedTime - time > 0.3 || !updateCount) {
             if (mode == 1) {
@@ -94,13 +94,23 @@ public class AIPlayer extends Player {
 
 
             } else if (mode == 2) {
-                Item nearest = lets.nearestItem(this);
-                Coordinate near = new Coordinate(nearest.getX(), nearest.getY());
+//                System.out.println(this);
+//                System.out.println(lets);
+//                System.out.println("Map items are  " +  items);
+//                System.out.println("A sample item is " + items.get(0));
+                // step 1 find the nearest item to the player
+                Item nearestI = nearest(this, items);
+                System.out.println(nearestI.toString());
+                Coordinate near = new Coordinate(nearestI.getX(), nearestI.getY());
                 ArrayList<Coordinate> moves = avaibleMoves(super.x, super.y);
                 Coordinate bested = bestMove(near, moves);
                 super.x = bested.getX();
                 super.y = bested.getY();
                 this.change(near, bested);
+                Coordinate secondMoveToTake = direction(avaibleMoves(x, y));
+                super.x = (int) secondMoveToTake.getX();
+                super.y = (int) secondMoveToTake.getY();
+                this.change(bested, secondMoveToTake);
 
 
                 // ultimate goal is coins
@@ -119,6 +129,27 @@ public class AIPlayer extends Player {
             this.initialisedTime = time;
             updateCount = true;
         }
+    }
+    private double calcu(int px, int py, int ix, int iy) {
+        double xdif = ix - px;
+        double ydif = iy - py;
+        return Math.sqrt(Math.pow(xdif, 2) + Math.pow(ydif, 2));
+    }
+    private Item nearest(AIPlayer player, ArrayList<Item> items) {
+        int px = player.x;
+        int py = player.y;
+        Item bestItem = items.get(0);
+        int ix = bestItem.getX();
+        int iy = bestItem.getY();
+        double cShortDist = calcu(px, py, ix, iy);
+        for (int i = 0; i < items.size(); i++) {
+            double compDist = calcu(px, py, items.get(i).getX(), items.get(i).getY());
+            if (compDist < cShortDist) {
+                cShortDist = compDist;
+                bestItem = items.get(i);
+            }
+        }
+        return bestItem;
     }
     private void change(Coordinate old, Coordinate update) {
         if (old.getX() < update.getX() && old.getY() == update.getY()) {
