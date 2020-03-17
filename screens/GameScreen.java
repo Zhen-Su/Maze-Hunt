@@ -153,21 +153,14 @@ public class GameScreen implements Screen {
     	 //assuming it's a square map -> only need width of map and width of tile
         generateMapItems((int) collisionLayer.getWidth(), 100 );
         co = new Collect(game, player);
-        for (int i = 0; i < aiPlayers.size(); i++) {
-        	aicos.add(new Collect(game, aiPlayers.get(i)));
-		}
+
         tempMapItemssize = mapItems.size();
         //start timer
         player.initialPosition();
 
         for (int i = 0; i < aiPlayers.size(); i++) {
 
-        	AIPlayer currentPlayerSpawn = aiPlayers.get(i);
-
-			AIPlayer playerChange = aiPlayers.remove(i);
-			playerChange.initialPosition();
-			aiPlayers.add(i, playerChange);
-
+            aiPlayers.get(i).initialPosition();
 
 		}
 
@@ -187,23 +180,19 @@ public class GameScreen implements Screen {
     
         //updates - player position
 
-			inputHandler.update();
+        inputHandler.update();
 
 
 
-				player.update(delta, 0, co, 0);
+        player.update(delta, 0, co, 0);
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-
-				AIPlayer removed = aiPlayers.remove(i);
-				removed.update(delta, 1, co, worldTimer);
-				aiPlayers.add(i, removed);
-//				aiThreads.get(i).suspend();
-//				aiThreads.get(i).sleep(50);
+				aiPlayers.get(i).update(delta, 1, co, worldTimer);
+//
 
 		}
-		this.updateCount++;
+
 
         //camera
         cam.update(player.position.getX(),player.position.getY(),game);
@@ -243,9 +232,7 @@ public class GameScreen implements Screen {
         player.render(game.batch);
 //        aiPlayer.render(game.batch);
         for (int i = 0; i < aiPlayers.size(); i++) {
-        	AIPlayer render = aiPlayers.remove(i);
-        	render.render(game.batch);
-        	aiPlayers.add(i, render);
+        	aiPlayers.get(i).render(game.batch);
 		}
         
         
@@ -274,9 +261,8 @@ public class GameScreen implements Screen {
 			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
 				if ((aiPlayers.get(i).position.getX() > co.nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < co.nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
 						(aiPlayers.get(i).position.getY() > co.nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < co.nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
-					AIPlayer removedPlayer = aiPlayers.remove(i);
-					aiPickUp(removedPlayer, co);
-					aiPlayers.add(i, removedPlayer);
+
+					aiPickUp(aiPlayers.get(i), co);
 
 				}
 			}

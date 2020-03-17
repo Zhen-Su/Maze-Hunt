@@ -20,13 +20,13 @@ public class AIPlayer extends Player {
     private TiledMapTileLayer collisionLayer;
     private Thread aiThread;
     private float initialisedTime;
-    private int updateCount;
+    private boolean updateCount;
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
         this.collisionLayer = collisionLayer;
         initialPosition();
         aiThread = new Thread(new PlayerThread());
-        this.updateCount = 0;
+        this.updateCount = false;
 //        aiThread.start();
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
@@ -77,7 +77,7 @@ public class AIPlayer extends Player {
     @Override
     public void update (float delta , int mode, Collect lets, float time) {
 //        aiThread.run();
-        if (initialisedTime - time > 0.3 || updateCount == 0) {
+        if (initialisedTime - time > 0.3 || !updateCount) {
             if (mode == 1) {
 
 
@@ -87,7 +87,7 @@ public class AIPlayer extends Player {
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 // will need to do something with the speed
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
-        System.out.println("The ai player is moving "+ moveToTake.toString());
+//        System.out.println("The ai player is moving "+ moveToTake.toString());
                 super.x = (int) moveToTake.getX();
                 super.y = (int) moveToTake.getY();
                 this.change(old, moveToTake);
@@ -117,7 +117,7 @@ public class AIPlayer extends Player {
                 e.printStackTrace();
             }
             this.initialisedTime = time;
-            updateCount++;
+            updateCount = true;
         }
     }
     private void change(Coordinate old, Coordinate update) {
