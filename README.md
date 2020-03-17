@@ -94,6 +94,8 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
 * Version2.1: add animation in mutiplayer, but there are some small bugs.
   
+  * 2.1.1 fix bugs, player animations can work in mutiplayer.
+  
   
   
   

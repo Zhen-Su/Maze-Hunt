@@ -363,6 +363,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
                 if ((worldTimer - time.currentTime()) < 0) {
                     this.dispose();
+                    //TODO when this game over, player want to start a new game again
+                    //need to handle player exit
                     game.setScreen(new EndScreen(this.game));
 
                 }
