@@ -198,6 +198,10 @@ public class GameScreen implements Screen {
     	removeEnchantment();
     	playerDamaging();
     	
+    	if (time.currentTime() == 3) {
+    		player.decreaseHealth(10);
+    	}
+    	
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -241,9 +245,9 @@ public class GameScreen implements Screen {
         
         if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
         
-        player.attack();
-        player.render(game.batch);
         
+        player.render(game.batch);
+        player.attack();
         
         String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
         
@@ -390,7 +394,7 @@ public class GameScreen implements Screen {
     	
     	//System.out.println(player.items);
     	
-    	if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")) {
+    	if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")&& !(item.getType() == "healingPotion")&& !(item.getType() == "damagingPotion")) {
     		item = co.pickedUp(co.nearestItem(player));
     		
     		
@@ -406,30 +410,20 @@ public class GameScreen implements Screen {
 			if (item.getType() == "sword") {
 				co.sword(item, player, player2);
 			}
-			if (item.getType() == "healingPotion") {
-				player.loadPlayerTextures();
-				co.healingPotion (player);
-			}
-			if (item.getType() == "damagingPotion") {
-				item.setInitialisedTime(worldTimer - time.currentTime());
-				initialisedPotionTime = worldTimer - time.currentTime();
-				co.damagingPotion(item, player);
-				
-				//System.out.println("posion");
-			}
+			
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
-				initialisedEnchantmentTime = worldTimer - time.currentTime();
+				initialisedEnchantmentTime = time.currentTime();
 			}
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
-			//coinAnimation.render();
-			
-			//animateCoin();
-			//coinSize = 100;
-	
-		
+		}else if (item.getType() == "healingPotion") {
+			mapItems.remove(item);
+			co.healingPotion (player);
+		}else if (item.getType() == "damagingPotion") {
+			mapItems.remove(item);
+			co.damagingPotion(item, player);
 		}
     }
     

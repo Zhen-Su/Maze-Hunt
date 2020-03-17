@@ -24,6 +24,8 @@ public class AnimationTool extends ApplicationAdapter {
    boolean loop;
    
    private MazeGame game;
+   public int xOffset;
+   public int yOffset;
    
    public AnimationTool(int width, int height, Player player , Texture img, boolean loop) {
 	   this.loop = loop;
@@ -31,7 +33,8 @@ public class AnimationTool extends ApplicationAdapter {
 	   this.width = width;
 	   this.height = height;
 	   this.player = player;
-	   
+	   this.xOffset = 0;
+	   this.yOffset = 0;
    }
    
    
@@ -56,11 +59,11 @@ public class AnimationTool extends ApplicationAdapter {
 	   	  //draws the animation based on the frames for this animation
 	   	  elapsedTime += Gdx.graphics.getDeltaTime();
 	   	  batch = this.player.getSpriteBatch();
-	      batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop),player.position.getX() - this.width/2,player.position.getY() - this.height/2);
-	      if (this.loop == false) {
-	    	  System.out.println(elapsedTime % 1);
-	    	  if(elapsedTime % 1 < 0.02  ) System.out.println(elapsedTime);
-	      }
+	      batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), player.position.getX() + this.xOffset - this.width/2,player.position.getY() - this.height/2 + this.yOffset);
+//	      if (this.loop == false) {
+//	    	  System.out.println(elapsedTime % 1);
+//	    	 // if(elapsedTime % 1 < 0.02  ) System.out.println(elapsedTime);
+//	      }
 	      
 	     
    }
