@@ -53,33 +53,41 @@ public class MultiCollect {
     }
 
     public Item nearestItem(MultiPlayer player) {
-        Coordinate position = new Coordinate();
-        position = mapItems.get(0).getPosition();
 
-//		Item nearestItem = new Item(" ", position);
         Item nearestItem = mapItems.get(0);
-        //System.out.println("items: " + mapItems.size());
         for (int i = 0; i < mapItems.size(); i++) {
 
             int tempX = mapItems.get(i).getPosition().getX();
             int tempY = mapItems.get(i).getPosition().getY();
-
-//			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
-//			System.out.println("player.position x:"+player.getPosition().getX());
             int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
-            //System.out.println("temp Dist: " + tempDist);
-//			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
             int shortDist = andinsEuclidian(player.position.getX(), nearestItem.getPosition().getX(), player.position.getY(), nearestItem.getPosition().getY());
-            //System.out.println("shortDist: " + shortDist);
 
             if (tempDist < shortDist) {
                 nearestItem = mapItems.get(i);
                 indexOfItem=i;
             }
         }
-        // System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
         return nearestItem;
     }
+
+    public Item nearestItem(AIPlayer player) {
+
+        Item nearestItem = mapItems.get(0);
+        for (int i = 0; i < mapItems.size(); i++) {
+
+            int tempX = mapItems.get(i).getPosition().getX();
+            int tempY = mapItems.get(i).getPosition().getY();
+            int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
+            int shortDist = andinsEuclidian(player.position.getX(), nearestItem.getPosition().getX(), player.position.getY(), nearestItem.getPosition().getY());
+
+            if (tempDist < shortDist) {
+                nearestItem = mapItems.get(i);
+            }
+        }
+        return nearestItem;
+    }
+
+
 
     private int andinsEuclidian(int x1, int x2, int y1, int y2) {
         int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
@@ -87,40 +95,6 @@ public class MultiCollect {
         return sqrEucl;
     }
 
-    //if the player is on the same coordinates as an item then pick it up and depending on what item it is, do the corresponding function
-	/*public void main() {
-
-		Player player = new Player(collisionLayer"James", 123);
-		if (player.position == player.nearestItem().position) {
-
-			Item item = pickedUp(player);
-			Player player1 = new Player("James", 123);
-			Player player2 = new Player("James", 123);
-			if (!items.contains(item)) {
-				if (item.getType() == "shield") {
-					shield(item, player1);
-				}
-				if (item.getType() == "sword") {
-					sword(item, player1, player2);
-				}
-				if (item.getType() == "compass") {
-					compass(item);
-				}
-				if (item.getType() == "healingPotion") {
-					healingPotion(item, player1);
-				}
-				if (item.getType() == "damagingPotion") {
-					damagingPotion(item, player1);
-				}
-				if (item.getType() == "gearEnchantment") {
-					gearEnchantment(item);
-				}
-			} else {
-				items.remove(item);
-			}
-		}
-	}
-*/
 
     public void shield(Item item, MultiPlayer player1) {
 
@@ -135,36 +109,19 @@ public class MultiCollect {
 		/*if (gearEnchantment(item)) {
 			seconds += 30;
 		}*/
-
-
-//		while (timer != 0) {
-//			System.out.println("timer");
-//			if (player1.health != startHealth) {
-//				player1.health = startHealth;
-//			}
-//
-//				//change that in the decreaseHealth class in Player
-//
-//
-//			//display shield icon on screen
-//
-//		}
-
-        //items.remove(item);
-
     }
 
     public void coin(MultiPlayer player1) {
         player1.coins ++;
-        //ArrayList<String> items = player1.items;
+
     }
 
     public void sword(Item item, MultiPlayer player1, MultiPlayer player2) {
         ArrayList<String> items = player1.items;
-        int swordPower = 1;
-        if (gearEnchantment(item, player1)) {
-            swordPower += 1;
-        }
+        int swordPower = player1.getSwordXP();
+//		if (player1.items.contains("gearEnchantment")) {
+//			swordPower += 5;
+//		}
 
 //		if (player2.health == 0) { //going to come back to level
 //			swordPower += 1;
@@ -172,6 +129,7 @@ public class MultiCollect {
         player1.swordDamage++;
         //display sword icon on screen
     }
+
 
     public void compass(Item item) {
         //ArrayList<String> items = player1.items;
@@ -194,14 +152,18 @@ public class MultiCollect {
         items.remove("damagingPotion");
     }
 
-    public boolean gearEnchantment(Item item, MultiPlayer player1) {
+
+    public void gearEnchantment(Item item, MultiPlayer player1) {
         ArrayList<String> items = player1.items;
-        boolean collected = true;
-        items.remove("gearEnchantment");
-        return collected;
+        //boolean collected = true;
+        player1.increaseSwordXP( 1);
+        player1.increaseShieldXP(1);
+        System.out.println("added xp" + player1.getShieldXP()  + " , " + player1.getSwordXP());
+
 
 
     }
+
 
 
 }

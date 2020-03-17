@@ -96,7 +96,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
   * 2.1.1 fix bugs, player animations can work in mutiplayer.
   
-  
+* Version3.1: add AI in mutiplayer mode, every player show different AI players, but if AI pick up an items, this item will dispear on the map at the same time. 
   
   
   

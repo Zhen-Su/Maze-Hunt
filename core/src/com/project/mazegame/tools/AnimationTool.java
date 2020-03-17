@@ -69,6 +69,14 @@ public class AnimationTool extends ApplicationAdapter {
         this.animation = new Animation(1f / 6f, this.animationFrames);
     }
 
+    public void setFrames(TextureRegion[] frames) {
+        this.animationFrames = frames;
+    }
+
+    public TextureRegion[] getFrames() {
+        return animationFrames;
+    }
+
     @Override
     public void render() {
         //draws the animation based on the frames for this animation

@@ -72,14 +72,12 @@ public class Collect {
 
 	private int andinsEuclidian(int x1, int x2, int y1, int y2) {
 		int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
-//		System.out.println()
 		return sqrEucl;
 	}
 
 
 
 	public void shield(Item item, Player player1) {
-
 
 		final ArrayList<String> items = player1.items;
 		int seconds = 60;
@@ -89,7 +87,6 @@ public class Collect {
 		if (items.contains("gearEnchantment")) {
 			time += 30000;
 		}
-
 	}
 
 	public void coin(Player player1) {
@@ -143,12 +140,7 @@ public class Collect {
 		boolean collected = true;
 		items.remove("gearEnchantment");
 		return collected;
-
-
 	}
-
-
-
 
 }
 

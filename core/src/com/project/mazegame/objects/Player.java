@@ -47,6 +47,8 @@ public class Player {
     String colour;
 
 
+    protected int getID() {return this.ID;}
+
     public Player(){}
     public Player(TiledMapTileLayer collisionLayer,String name, int ID ,String colour) {
 
@@ -92,7 +94,7 @@ public class Player {
         }
     }
 
-    public void update (float delta){
+    public void update (float delta, int mode, ArrayList<Item> items, float time){
         // update player movement
         this.position.setX(x);
         this.position.setY(y);

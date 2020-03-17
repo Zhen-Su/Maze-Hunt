@@ -26,7 +26,6 @@ public class Item {
 	public void setType(String type) {
 		this.type = type;
 	}
-
 	public float getInitialisedTime() {
 		return this.initialisedTime;
 	}
@@ -43,13 +42,13 @@ public class Item {
 		return itemPosition;
 	}
 
-	//public int getX() {
-	//	return x;
-	//}
+	public int getX() {
+		return x;
+	}
 
-	//public int getY() {
-	//	return y;
-	//}
+	public int getY() {
+		return y;
+	}
 
 
 }

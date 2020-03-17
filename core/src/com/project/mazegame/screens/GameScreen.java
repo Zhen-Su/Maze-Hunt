@@ -103,11 +103,6 @@ public class GameScreen implements Screen {
 	public GameScreen(MazeGame game) {
 		this.game = game;
 
-		//CreateMazeScreen c = new CreateMazeScreen(game);
-//        System.out.println("here");
-
-//        System.out.println("and here");
-
 		inputHandler = new InputHandler();
 
 		//timer = 0;
@@ -203,9 +198,11 @@ public class GameScreen implements Screen {
 
 		delta = Gdx.graphics.getDeltaTime();
 
+		ArrayList<Item> empty = new ArrayList<>();
+
 		//updates - player position
 		inputHandler.update();
-		player.update(delta);
+		player.update(delta, 0, empty, 0);
 		//camera
 		cam.update(player.position.getX(),player.position.getY(),game);
 
