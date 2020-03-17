@@ -37,7 +37,7 @@ public class AnimationTool extends ApplicationAdapter {
    
    @Override
    public void create (){
-	  System.out.println("ani created");
+//	  System.out.println("ani created");
       batch = player.getSpriteBatch();
       img = player.getFrames();
 
@@ -53,7 +53,7 @@ public class AnimationTool extends ApplicationAdapter {
       }
       
       animation = new Animation(1f/6f,animationFrames);
-      System.out.println(img.toString());
+//      System.out.println(img.toString());
       
    }
    
@@ -66,7 +66,7 @@ public class AnimationTool extends ApplicationAdapter {
   }
    
    public String getImgName() {
-	   System.out.println(this.img.toString());
+//	   System.out.println(this.img.toString());
 	   return this.img.toString();
    }
 

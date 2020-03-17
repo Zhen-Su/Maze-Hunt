@@ -37,12 +37,13 @@ public class GameScreen implements Screen {
     private OrthoCam cam;
 
     private Player player;
-    private Thread playerThread = new Thread(new PlayerThread());
+//    private Thread playerThread = new Thread(new PlayerThread());
     private AIPlayer aiPlayer;// ---------need to be implemented
 	private ArrayList<AIPlayer> aiPlayers;
     private InputHandler inputHandler;
-    private ArrayList<Thread> aiThreads = new ArrayList<>();
+//    private ArrayList<Thread> aiThreads = new ArrayList<>();
     private float delta;
+    private int numOfAI;
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
@@ -117,10 +118,7 @@ public class GameScreen implements Screen {
         aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124);
         aiPlayers = aiPlayer.AITakingOver(5);
         aicos = new ArrayList<Collect>();
-        for (int i = 0; i < aiPlayers.size(); i++) {
-        	Thread threadAdd = new Thread(new PlayerThread());
-        	aiThreads.add(threadAdd);
-		}
+
 
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
         
@@ -191,33 +189,19 @@ public class GameScreen implements Screen {
 
 			inputHandler.update();
 
-				aiThreads.get(aiThreads.size() - 1).interrupt();
-				if (updateCount == 0) {
-					playerThread.start();
-				} else {
-					playerThread.run();
-				}
-				player.update(delta, 0, co);
+
+
+				player.update(delta, 0, co, 0);
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-        	try {
-        		if (i != 0) {
-        			aiThreads.get(i - 1).interrupt();
-				}
-        		if (updateCount == 0) {
-					aiThreads.get(i).start();
-				} else {
-        			aiThreads.get(i).run();
-				}
+
 				AIPlayer removed = aiPlayers.remove(i);
-				removed.update(delta, 1, aicos.get(i));
+				removed.update(delta, 1, co, worldTimer);
 				aiPlayers.add(i, removed);
-				aiThreads.get(i).suspend();
-				aiThreads.get(i).sleep(50);
-			} catch (Exception e) {
-        		e.printStackTrace();
-			}
+//				aiThreads.get(i).suspend();
+//				aiThreads.get(i).sleep(50);
+
 		}
 		this.updateCount++;
 
@@ -257,7 +241,12 @@ public class GameScreen implements Screen {
         
         player.attack();
         player.render(game.batch);
-        aiPlayer.render(game.batch);
+//        aiPlayer.render(game.batch);
+        for (int i = 0; i < aiPlayers.size(); i++) {
+        	AIPlayer render = aiPlayers.remove(i);
+        	render.render(game.batch);
+        	aiPlayers.add(i, render);
+		}
         
         
         String message = "Time = " + worldTimer ;
@@ -283,10 +272,10 @@ public class GameScreen implements Screen {
     private void aiMultiPickUp() {
     	for (int i  = 0; i < aiPlayers.size(); i++) {
 			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-				if ((aiPlayers.get(i).position.getX() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
-						(aiPlayers.get(i).position.getY() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
+				if ((aiPlayers.get(i).position.getX() > co.nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < co.nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
+						(aiPlayers.get(i).position.getY() > co.nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < co.nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
 					AIPlayer removedPlayer = aiPlayers.remove(i);
-					aiPickUp(removedPlayer, aicos.get(i));
+					aiPickUp(removedPlayer, co);
 					aiPlayers.add(i, removedPlayer);
 
 				}
@@ -408,6 +397,7 @@ public class GameScreen implements Screen {
     }
     // -------------------------------------------------could move to collect class
     private void pickUpItem() {
+
     	Item item =  co.nearestItem(player);
     	
     	//System.out.println(player.items);

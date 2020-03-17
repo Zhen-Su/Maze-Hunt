@@ -31,6 +31,7 @@ public class Player {
     private int shieldXP;
     private ArrayList<Player> otherPlayers;
     Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick;
+    private Thread playerThread;
     
     private boolean isAttacking = false;
     
@@ -77,6 +78,9 @@ public class Player {
         colour = "orange"; //----------default
        
         loadPlayerTextures();
+        playerThread = new Thread(new PlayerThread());
+//        playerThread.setPriority(1);
+//        playerThread.start();
         
         width = (int) walkUp.getWidth()/2; 
         height = walkUp.getHeight()/2; 
@@ -84,19 +88,19 @@ public class Player {
         ArrayList<Item> items = new ArrayList<Item>();
         
         frames = walkDown;
-        System.out.println("new animations");
+//        System.out.println("new animations");
         RightAnim = new AnimationTool(width,height,this,walkRight,true);
         RightAnim.create();
-        System.out.println("new animations");
+//        System.out.println("new animations");
         LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
         LeftAnim.create();
-        System.out.println("new animations");
+//        System.out.println("new animations");
         UpAnim = new AnimationTool(width,height,this,walkUp,true);
         UpAnim.create();
-        System.out.println("new animations");
+//        System.out.println("new animations");
         DownAnim = new AnimationTool(width,height,this,walkDown,true);
         DownAnim.create();
-        System.out.println("new animations");
+//        System.out.println("new animations");
         coinAnimation = new AnimationTool(width,height,this,coinPick,true);
         coinAnimation.create();
         animation = new AnimationTool(width,height,this,walkDown,true);
@@ -107,7 +111,8 @@ public class Player {
         shieldXP = 0;
         
     }
-    
+
+
     public int getswordXP() {
     	return this.swordXP;
     }
@@ -119,8 +124,8 @@ public class Player {
     public void initialPosition () {
 
     	int maxX = this.collisionLayer.getWidth() ;
-    	System.out.println("Is here");
-    	System.out.println(maxX);
+//    	System.out.println("Is here");
+//    	System.out.println(maxX);
     	int maxY= this.collisionLayer.getHeight();
 
     	int ranx = (int)  (( Math.random() * (maxX) ));
@@ -135,8 +140,9 @@ public class Player {
     }
 
 
-    public void update (float delta, int mode, Collect let){
+    public void update (float delta, int mode, Collect let, float time){
         // update player movement
+//        playerThread.run();
     	
         this.position.setX(x);
         this.position.setY(y);
@@ -204,7 +210,7 @@ public class Player {
            // player = player_up;
             frames = walkUp;
             animation.setFrames(UpAnim.getFrames());
-            System.out.println(animation.getImgName());
+//            System.out.println(animation.getImgName());
             
             
         } else if (DOWN_TOUCHED == true && UP_TOUCHED == false) {
@@ -231,7 +237,7 @@ public class Player {
     	
     	
     	setBatch(sb);
-        System.out.println(animation.getImgName());
+//        System.out.println(animation.getImgName());
     	animation.render();
     	
         if(this.items.contains("sword")) {	  // possible errors may occur
@@ -354,7 +360,7 @@ public class Player {
     	if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
     		if(this.items.contains("sword")) {
     	  
-              System.out.println("hit");
+//              System.out.println("hit");
               isAttacking = true;
               sword = swordAttack;
               
@@ -426,7 +432,8 @@ public class Player {
     }
 
     public void death() {
-        System.out.println("Player has died respawning now");
+
+//        System.out.println("Player has died respawning now");
         this.health = 5;
         this.coins = 0;
         Coordinate newPlace = genSpace(0, collisionLayer.getWidth(), 0, collisionLayer.getHeight());

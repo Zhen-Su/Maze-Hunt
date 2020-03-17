@@ -42,7 +42,7 @@ public class MultiPlayer extends Player {
     //constructors=================================================================================
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir ){
         super();
-        if (debug) System.out.println("My Multiplayer instance is constructing...");
+//        if (debug) System.out.println("My Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health=5;
         this.coins=0;
@@ -59,12 +59,12 @@ public class MultiPlayer extends Player {
         ArrayList<Item> items = new ArrayList<Item>();
         width = gameClient.player_up.getWidth();
         height = gameClient.player_up.getHeight();
-        if (debug) System.out.println("My Multiplayer instance construction done!");
+//        if (debug) System.out.println("My Multiplayer instance construction done!");
 
     }
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir ) {
         super();
-        if (debug) System.out.println("Other Multiplayer instance is constructing...");
+//        if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health=5;
         this.coins=0;
@@ -78,7 +78,7 @@ public class MultiPlayer extends Player {
         ArrayList<Item> items = new ArrayList<Item>();
         width = gameClient.player_up.getWidth();
         height = gameClient.player_up.getHeight();
-        if (debug) System.out.println("Other Multiplayer instance construction done!");
+//        if (debug) System.out.println("Other Multiplayer instance construction done!");
     }
     //Getter&Setter=================================================================================
     public int getX() { return x; }

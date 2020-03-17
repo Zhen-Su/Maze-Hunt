@@ -96,7 +96,7 @@ public class HostLobbyScreen implements Screen {
     }
 
     private void backToMenuScreen(){
-        System.out.println("back to menu screen");
+//        System.out.println("back to menu screen");
         game.setScreen(new MenuScreen(this.game));
     }
 

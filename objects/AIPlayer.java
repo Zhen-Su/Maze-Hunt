@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
+import com.project.mazegame.tools.PlayerThread;
 
 import java.util.ArrayList;
 
@@ -17,14 +18,20 @@ public class AIPlayer extends Player {
     private Collect co;
     protected Direction dir;
     private TiledMapTileLayer collisionLayer;
-
+    private Thread aiThread;
+    private float initialisedTime;
+    private int updateCount;
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
         this.collisionLayer = collisionLayer;
         initialPosition();
+        aiThread = new Thread(new PlayerThread());
+        this.updateCount = 0;
+//        aiThread.start();
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
     }
+    public void setInitialisedTime(float time) {this.initialisedTime = time;}
 
     public AIPlayer() {super();}
     public Direction getDir() {
@@ -42,7 +49,7 @@ public class AIPlayer extends Player {
 //                String newName = incrementString(prev.getName());
                 int newID1 = prev.getID();
                 int newID2 = newID1++;
-                System.out.println("A new ai is created");
+//                System.out.println("A new ai is created");
                 players.add(new AIPlayer(this.collisionLayer, "albert", newID2));
 
             }
@@ -50,8 +57,8 @@ public class AIPlayer extends Player {
         return players;
     }
     private static String incrementString(String currentString) {
-        System.out.println("Still works");
-        System.out.println(currentString);
+//        System.out.println("Still works");
+//        System.out.println(currentString);
         String extractAI = currentString.substring(0, 2);
         if (!extractAI.equals("AI")) {
             try {
@@ -68,44 +75,49 @@ public class AIPlayer extends Player {
         return null;
     }
     @Override
-    public void update (float delta , int mode, Collect lets) {
-        int sleep = 500;
-        if (mode == 1) {
+    public void update (float delta , int mode, Collect lets, float time) {
+//        aiThread.run();
+        if (initialisedTime - time > 0.3 || updateCount == 0) {
+            if (mode == 1) {
 
 
                 Coordinate old = super.position;
                 this.position.setX((int) x);
                 this.position.setY((int) y);
-        // contantsnatly throwing exeption possibly becasue not linked to player
-        // will need to do something with the speed
-        Coordinate moveToTake = direction(avaibleMoves(x, y));
+                // contantsnatly throwing exeption possibly becasue not linked to player
+                // will need to do something with the speed
+                Coordinate moveToTake = direction(avaibleMoves(x, y));
         System.out.println("The ai player is moving "+ moveToTake.toString());
-        super.x = (int) moveToTake.getX();
-        super.y = (int) moveToTake.getY();
-        this.change(old, moveToTake);
+                super.x = (int) moveToTake.getX();
+                super.y = (int) moveToTake.getY();
+                this.change(old, moveToTake);
 
 
-    } else if (mode == 2) {
-            Item nearest = lets.nearestItem(this);
-            Coordinate near = new Coordinate(nearest.getX(), nearest.getY());
-            ArrayList<Coordinate> moves = avaibleMoves(super.x, super.y);
-            Coordinate bested = bestMove(near, moves);
-            super.x = bested.getX();
-            super.y = bested.getY();
-            this.change(near, bested);
+            } else if (mode == 2) {
+                Item nearest = lets.nearestItem(this);
+                Coordinate near = new Coordinate(nearest.getX(), nearest.getY());
+                ArrayList<Coordinate> moves = avaibleMoves(super.x, super.y);
+                Coordinate bested = bestMove(near, moves);
+                super.x = bested.getX();
+                super.y = bested.getY();
+                this.change(near, bested);
 
-            try {
-                Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+                // ultimate goal is coins
+            } else {
+                try {
+                    throw new Exception();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            // ultimate goal is coins
-        } else {
             try {
-                throw new Exception();
+//            aiThread.sleep(200);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            this.initialisedTime = time;
+            updateCount++;
         }
     }
     private void change(Coordinate old, Coordinate update) {

@@ -26,7 +26,7 @@ public class SplashScreen implements Screen {
 
     @Override
     public void show() {
-        System.out.println("Now is SPLASH Screen..");
+//        System.out.println("Now is SPLASH Screen..");
         Gdx.input.setInputProcessor(stage);
 
         Runnable transitionRunnable = new Runnable() {

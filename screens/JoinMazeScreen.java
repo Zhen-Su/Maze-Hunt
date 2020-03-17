@@ -79,11 +79,11 @@ public class JoinMazeScreen implements Screen {
     }
 
     private void backToMenuScreen(){
-        System.out.println("back to");
+//        System.out.println("back to");
         // cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
         //this.dispose();
         game.setScreen(new MenuScreen(this.game));
-        System.out.println("shouldn't see");
+//        System.out.println("shouldn't see");
     }
     //----------------------------------------------------------------------------------------------
     //Override method

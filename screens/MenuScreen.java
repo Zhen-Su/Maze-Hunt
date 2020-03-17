@@ -116,7 +116,7 @@ public class MenuScreen implements Screen {
         if (isHovering(drawX, JOIN_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
-                System.out.println("mult2i");
+//                System.out.println("mult2i");
                 bgm.stop();
                 this.dispose();
                 game.setScreen(new JoinMazeScreen(game));
