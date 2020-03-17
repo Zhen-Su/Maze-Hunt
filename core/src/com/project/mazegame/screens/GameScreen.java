@@ -252,7 +252,7 @@ public class GameScreen implements Screen {
         
         
         String message = "Time = " + worldTimer ;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+//        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
         
         game.batch.end();
