@@ -196,11 +196,7 @@ public class GameScreen implements Screen {
     	updateTime(delta);
     	removeShield();
     	removeEnchantment();
-    	playerDamaging();
-    	
-    	if (time.currentTime() == 3) {
-    		player.decreaseHealth(10);
-    	}
+ 
     	
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -456,16 +452,7 @@ public class GameScreen implements Screen {
     		System.out.println("removed enchantment");
     	}
     }
-    
-    private void playerDamaging() {
-    	if(!player.items.contains("damagingPotion")) {
-    		return;
-    	}
-    	if ((worldTimer - time.currentTime()) - initialisedPotionTime == 2) {
-    		player.loadPlayerTextures();
-    		player.items.remove("damagingPotion");
-    	}
-    }
+ 
 
     @Override
     public void resize(int width, int height) {
