@@ -291,7 +291,7 @@ public class Player {
     
     public void attack() {
     	if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-    		if(this.items.contains("sword")) {
+    		if(this.items.contains("sword") && !this.isDead()) {
     			if (animation.toString().equals(RightAnim.toString())) 
     				setSwordAnimation(swordSwipeRight);
     			else if (animation.toString().equals(LeftAnim.toString())) 

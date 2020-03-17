@@ -140,9 +140,6 @@ public class Collect {
 		//boolean collected = true;
 		player1.increaseSwordXP( 1);
 		player1.increaseShieldXP(1);
-		System.out.println("added xp" + player1.getShieldXP()  + " , " + player1.getSwordXP());
-		
-
 
 	}
 	

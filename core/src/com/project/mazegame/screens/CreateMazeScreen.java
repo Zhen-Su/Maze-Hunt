@@ -55,7 +55,7 @@ public class CreateMazeScreen implements Screen {
     private static int PLAYER2_Y = PLAYER_Y - 150;
     private static int MAP_Y = PLAYER2_Y -  150;
     
-    
+    Texture createYourMaze;
     Texture joinMazeButtonActive;
     Texture joinMazeButtonInactive;
     Texture diffButton1,diffButton1Selected,diffButton2,diffButton2Selected,diffButton3,diffButton3Selected;
@@ -104,7 +104,7 @@ public class CreateMazeScreen implements Screen {
         diffButton3Selected = new Texture("UI\\MenuButtons\\diff3Selected.png");
         //playerRegion = TextureRegion.split(new Texture("Player\\walkDownYellow.png"),playerSelected.getWidth()-2,playerSelected.getHeight()-2);
        // txture =  playerRegion[0][0];
-       
+        createYourMaze = new Texture("UI\\Titles\\CreateyourMaze.png");
         
         
         Map1 = new Texture("Maps\\Map1Icon.png");
@@ -229,7 +229,7 @@ public class CreateMazeScreen implements Screen {
     	difficultyButtons = new Button[] {AIDifficulty1Button,AIDifficulty2Button,AIDifficulty3Button};
     	mapButtons = new Button[] {Map1Button,Map2Button,Map3Button};
     	 
-    	CreateMaze = new Button(DRAW_X ,MAP_Y - 110, size * 2,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
+    	CreateMaze = new Button(DRAW_X - 50,MAP_Y - 170, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
     	
     	font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
     }
@@ -266,9 +266,9 @@ public class CreateMazeScreen implements Screen {
     	
     	
     	String message = "Create New Maze" ;
+    	game.batch.draw(createYourMaze, DRAW_X -300 , MazeGame.HEIGHT -200, 900, 200);
+		
         
-        font.draw(game.batch,message, DRAW_X  , MazeGame.HEIGHT -100);
-          
         
         message = "Select AI" ;
         
@@ -276,7 +276,7 @@ public class CreateMazeScreen implements Screen {
         
         message = "Difficulty" ;
        
-        font.draw(game.batch,message, DRAW_X ,AI_Y + 50);
+        font.draw(game.batch,message, DRAW_X + 20,AI_Y + 50);
         
         message = "Select Player" ;
         
@@ -351,6 +351,13 @@ public class CreateMazeScreen implements Screen {
     					if(!playerChosen) {
         					this.isPressed = true;
         					playerChosen = true;
+        				}else {
+        					//change all others to false
+        					resetButtons(this.type);
+        					
+//        					change this one to true
+        					this.isPressed = true;
+        					playerChosen = true;
         				}
     				}
     				if(this.type == "map") {
@@ -358,12 +365,22 @@ public class CreateMazeScreen implements Screen {
         					this.isPressed = true;
         					mapChosen = true;
         				}
+    					else {
+    						resetButtons(this.type);
+    						this.isPressed = true;
+        					mapChosen = true;
+    					}
     				}
     				if(this.type == "difficulty") {
     					if(!difficultyChosen) {
+    						this.isPressed = true;
+        					difficultyChosen = true;
+        				}else {
+        					resetButtons(this.type);
         					this.isPressed = true;
         					difficultyChosen = true;
         				}
+    					
     				}
     				
  
@@ -403,6 +420,36 @@ public class CreateMazeScreen implements Screen {
     	public boolean isButtonHovering() {
     		
     		return isHovering(this.x,this.y,this.width,this.height);
+    	}
+    	
+    	private void resetButtons(String type) {
+    		
+    		
+    		//loop through buttons changing their isPredd to false
+    		if(type.equals("player")) {
+	    		for( int i = 0; i < playerButtons.length ; i ++) {
+	        		if(playerButtons[i].isPressed) {
+	        			playerButtons[i].isPressed  = false;
+	        	
+	        		}
+	        	}
+    		}
+    		if(type.equals("difficulty")) {
+	    		for( int i = 0; i < difficultyButtons.length ; i ++) {
+	        		if(difficultyButtons[i].isPressed) {
+	        			difficultyButtons[i].isPressed = false;
+	        		
+	        		}
+	        	}
+    		}
+    		if(type.equals("map")) {
+	        	for( int i = 0; i < mapButtons.length ; i ++) {
+	        		if(mapButtons[i].isPressed) {
+	        			mapButtons[i].isPressed = false;
+	        		
+	        		}
+	        	}
+    		}
     	}
     }
    
