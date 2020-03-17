@@ -153,35 +153,27 @@ public class CreateMazeScreen implements Screen {
     	numOfAI = "3";
     	
     	//loop though buttons to see which is chosen
-    	System.out.println("---diff");
+    
     	for( int i = 0; i < difficultyButtons.length ; i ++) {
-//    		System.out.println(i);
-//    		System.out.println(difficultyButtons.length);
-//    		System.out.println(difficultyButtons[0]);
-//    		System.out.println(difficultyButtons[1]);
-//    		System.out.println(difficultyButtons[2]);
-//    		System.out.println(difficultyButtons[i].isPressed);
     		if(difficultyButtons[i].isPressed) {
     			difficulty = difficultyButtons[i].name;
-    			System.out.println(difficulty);
+    		
     		}
-    	}System.out.println("----player");
+    	}
     	for( int i = 0; i < playerButtons.length ; i ++) {
     		if(playerButtons[i].isPressed) {
     			player = playerButtons[i].name;
-    			System.out.println(player);
+    	
     		}
     	}
-    	System.out.println("---map");
+    	
     	for( int i = 0; i < mapButtons.length ; i ++) {
     		if(mapButtons[i].isPressed) {
     			map= mapButtons[i].name;
-    			System.out.println(map);
+    		
     		}
     	}
     
-//    	numOfAI = "6";
-    	
     	ArrayList<String> input = new ArrayList<>();
     	input.add(map);
     	input.add(player);
@@ -244,6 +236,11 @@ public class CreateMazeScreen implements Screen {
 
     @Override
     public void render(float delta) {
+    	
+    	if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            this.dispose();
+            game.setScreen(new MenuScreen(this.game));
+        }
     	
     	game.batch.begin();
     	game.batch.draw(backGround,0,0,1000,1000);
@@ -336,7 +333,6 @@ public class CreateMazeScreen implements Screen {
     	
     	public void draw() {
     		
-    		//if(this.isPressed) System.out.println("pressed ");
     		
     		if (isButtonHovering()) {
     			
@@ -390,8 +386,6 @@ public class CreateMazeScreen implements Screen {
     		}
     		
 
-//    		if(this.isPressed) System.out.println("pressed ");
-    		
     		if(isPressed) 
     			
     			this.texture = this.active;

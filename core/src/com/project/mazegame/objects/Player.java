@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.badlogic.gdx.utils.IntIntMap;
 //import com.project.mazegame.Pair;
 //import com.project.mazegame.Player;
 import com.project.mazegame.tools.*;
@@ -51,6 +52,12 @@ public class Player {
     
     private boolean isDying = false;
     Timer time;
+    
+    public float initialisedShieldTime;
+    public float initialisedPotionTime;
+    public float initialisedEnchantmentTime;
+    
+    private static int shieldIconSize = 50;
     
 
     public Player(TiledMapTileLayer collisionLayer,String name, int ID ,String colour) {
@@ -99,6 +106,8 @@ public class Player {
     }
     
     public void update (float delta){
+    	removeShield();
+    	removeEnchantment();
     	time.updateTimer(delta);
     	
         // update player movement
@@ -106,7 +115,6 @@ public class Player {
         this.position.setY(y);
         
         if(this.isDead()) {
-        	System.out.println("respawncount = " + respawnCounter);
         	if(respawnCounter == 0) {
         		respawnCounter = time.currentTime();
         	}
@@ -188,8 +196,11 @@ public class Player {
 //            sb.draw(sword,(float)(x),y - (height/4),50,50);
 //        }
          if(this.items.contains("shield")) {
-            sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),50,50);
+        	
+            sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),shieldIconSize, shieldIconSize);
         }
+         
+         
         font.getData().setScale(0.5f,0.5f);
         font.draw(sb,this.name, this.position.getX() - 30,this.position.getY() + 60);
         
@@ -232,6 +243,9 @@ public class Player {
     public int getHealth() {
     	return health;
     }
+    public float getTime() {
+    	return this.time.currentTime();
+    }
     //-----------------functions
     public void increaseSwordXP(int XP) {
     	this.swordXP += XP;
@@ -253,6 +267,27 @@ public class Player {
     }
     
     // ---------------------------player functionality
+    
+    private void removeShield() {
+    	if(!this.items.contains("shield")) {
+    		return;
+    	}
+    
+    	if ((time.currentTime()) - initialisedShieldTime  == 10) {
+    		this.items.remove("shield");
+    	}
+    }
+    
+    private void removeEnchantment() {
+    	if(!this.items.contains("gearEnchantment")) {
+    		
+    		return;
+    	}
+    	if ((time.currentTime()) - initialisedEnchantmentTime == 10) {
+    		this.items.remove("gearEnchantment");
+
+    	}
+    }
     
     public void attack() {
     	if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
@@ -293,7 +328,6 @@ public class Player {
     
     public void death() {
     	this.initialPosition();
-        System.out.println("Player has died respawning now");
         setAnimation(DownAnim);
         this.coins = 0;
         this.health = 5;

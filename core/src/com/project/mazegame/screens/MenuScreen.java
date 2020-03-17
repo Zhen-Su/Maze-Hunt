@@ -82,7 +82,7 @@ public class MenuScreen implements Screen {
 
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
-        bgm.play();
+//        bgm.play();
 
     }
 
@@ -104,7 +104,7 @@ public class MenuScreen implements Screen {
         int drawX = xMid("MB");
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
-            if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
                 bgm.stop();
                 game.setScreen(new CreateMazeScreen(game));
             }
@@ -115,7 +115,7 @@ public class MenuScreen implements Screen {
 
         if (isHovering(drawX, JOIN_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
-            if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
                 System.out.println("mult2i");
                 bgm.stop();
                 this.dispose();
@@ -127,7 +127,7 @@ public class MenuScreen implements Screen {
 
         if (isHovering(drawX, CREATE_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
-            if(Gdx.input.isTouched())
+            if(Gdx.input.justTouched())
             {
                 bgm.stop();
                 game.setScreen(new CreateMazeScreen(game));
@@ -139,7 +139,7 @@ public class MenuScreen implements Screen {
         drawX = xMid("SB");
         if (isHovering(drawX, EXIT_Y, SB_WIDTH, SB_HEIGHT)) {
             game.batch.draw(exitButtonActive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
-            if (Gdx.input.isTouched())
+            if (Gdx.input.justTouched())
                 Gdx.app.exit();
         }
         else {
@@ -148,7 +148,7 @@ public class MenuScreen implements Screen {
 
         drawX = xMid("AudioButton");
         if (isHovering(drawX, AUDIO_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {
-            if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
                 if (bgm.isPlaying()) {
                     bgm.setLooping(false);
                     bgm.stop();

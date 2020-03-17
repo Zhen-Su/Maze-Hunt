@@ -43,7 +43,7 @@ public class CSVStuff {
             writer.append("\n");
 
         }
-        System.out.print("Written successfully");
+       
         writer.flush();
         writer.close();
       } catch (IOException e) {
