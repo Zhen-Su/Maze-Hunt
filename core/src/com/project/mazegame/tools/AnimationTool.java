@@ -1,5 +1,6 @@
 package com.project.mazegame.tools;
 import com.badlogic.gdx.ApplicationAdapter;
+import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -37,9 +38,6 @@ public class AnimationTool extends ApplicationAdapter {
         this.yOffset = 0;
     }
 
-    public AnimationTool(){ }
-
-
     @Override
     public void create (){
         batch = player.getSpriteBatch();
@@ -62,12 +60,7 @@ public class AnimationTool extends ApplicationAdapter {
         elapsedTime += Gdx.graphics.getDeltaTime();
         batch = this.player.getSpriteBatch();
         batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), player.position.getX() + this.xOffset - this.width/2,player.position.getY() - this.height/2 + this.yOffset);
-//	      if (this.loop == false) {
-//	    	  System.out.println(elapsedTime % 1);
-//	    	 // if(elapsedTime % 1 < 0.02  ) System.out.println(elapsedTime);
-//	      }
-
-
     }
+
 
 }

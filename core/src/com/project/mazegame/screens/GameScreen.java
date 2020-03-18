@@ -158,6 +158,8 @@ public class GameScreen implements Screen {
 		overlay = new Texture("UI\\circularOverlay.png");
 		coinPick = new Texture("Collectibles\\coinAnimation.png");
 
+
+
 		minimapOutline = new Texture("Maps\\minimapOutline.png");
 		overlayWidth = overlay.getWidth() +300;
 		overlayHeight = overlay.getHeight() +300;
@@ -173,7 +175,7 @@ public class GameScreen implements Screen {
 	public void show() {
 		//assuming it's a square map -> only need width of map and width of tile
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
-		co = new Collect(game, player);
+		co = new Collect(game, player,null);
 		tempMapItemssize = mapItems.size();
 		//start timer
 		player.initialPosition();
@@ -309,8 +311,8 @@ public class GameScreen implements Screen {
 			game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
 		}
 		float mapSize = 100;
-		float xMap = player.x + VIEWPORT_WIDTH /2 - mapSize - 50;
-		float yMap =  player.y - VIEWPORT_HEIGHT/2 + 50;
+		float xMap = player.getX() + VIEWPORT_WIDTH /2 - mapSize - 50;
+		float yMap =  player.getY() - VIEWPORT_HEIGHT/2 + 50;
 
 
 		if(player.items.contains("minimap")) {
@@ -390,8 +392,11 @@ public class GameScreen implements Screen {
 	private void pickUpItem() {
 		Item item =  co.nearestItem(player);
 
+
+
 		if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")&& !(item.getType() == "healingPotion")&& !(item.getType() == "damagingPotion")) {
 			item = co.pickedUp(co.nearestItem(player));
+
 
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
@@ -481,7 +486,6 @@ public class GameScreen implements Screen {
 
 	public void generateMapItems( int widthInTiles, int tileWidth ) {
 		HashSet<String> positions = new HashSet<String>();
-
 		int maxShields = 15;
 		int maxCoins = 50;
 		int maxSwords = 25;
@@ -489,6 +493,7 @@ public class GameScreen implements Screen {
 		int maxPotions = 50;
 		int maxX = widthInTiles;
 		int maxY = widthInTiles;
+
 
 
 		for (int i = 0; i <= maxShields; i++) {

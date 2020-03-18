@@ -62,7 +62,7 @@ public class StartGameMessage implements Message{
         try{
 
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getId()){
+            if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
 
@@ -71,7 +71,7 @@ public class StartGameMessage implements Message{
             gameClient.setHostStartGame(start);
 
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
+            System.out.println("My id: " +this.gameClient.getMultiPlayer().getID());
             System.out.println("This start game message is from: id"+id);
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 

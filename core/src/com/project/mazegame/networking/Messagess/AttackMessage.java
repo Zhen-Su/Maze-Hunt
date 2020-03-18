@@ -1,5 +1,7 @@
 package com.project.mazegame.networking.Messagess;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
@@ -25,7 +27,7 @@ public class AttackMessage implements Message{
         this.attackdir = attackdir;
     }
 
-    public AttackMessage(MultiPlayerGameScreen gameClient){}
+    public AttackMessage(MultiPlayerGameScreen gameClient){this.gameClient = gameClient;}
 
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
@@ -52,23 +54,28 @@ public class AttackMessage implements Message{
     @Override
     public void process(DataInputStream dis) {
         try {
-            int msgType = dis.readInt();
             int id = dis.readInt();
+            if(id == this.gameClient.getMultiPlayer().getID()){
+                return;
+            }
             String attackdir = dis.readUTF();
+
             for(MultiPlayer t : gameClient.getPlayers())
             {
-                if(t.getId() == id)
+                if(t.getID() == id)
                 {
-                    if(attackdir == "Right"){
-                        t.attack();
-                    }else if(attackdir == "Left"){
-                        t.attack();
-                    }else if(attackdir == "Up"){
-                        t.attack();
-                    }else if(attackdir == "Down"){
+                    if(attackdir == "Attack")
+                    {
                         t.attack();
                     }
                 }
+            }
+
+            if(debug) {
+                System.out.println("-------------------------------");
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
+                System.out.println("I received that attack Msg " + attackdir + " from that player");
+                System.out.println("-------------------------------");
             }
 
         } catch (IOException e){

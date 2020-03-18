@@ -20,8 +20,8 @@ import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
-import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
 import com.project.mazegame.tools.Timer;
 
@@ -30,13 +30,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-//import static com.project.mazegame.screens.GameScreen.mapItems;
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 
 public class MultiPlayerGameScreen implements Screen,InputProcessor {
+    private boolean debug = true;
     //Use for Host player
     private GameServer server;
     private boolean isHost = true;
@@ -59,13 +59,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
     private int tempMapItemssize;
-    private MultiCollect co;
+    private Collect co;
     private MultiPlayer player2;
 
     private AssetManager manager;
     public Texture player, sword,swordAttack,swordNotAttack,shield;
     //public Texture player_up, player_right, player_left, player_down, sword,shield;
-    public  Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDead;
+    public  Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDying;
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
     private Texture minimapTexture;
@@ -88,7 +88,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
 
     private float timer;
-    public static float worldTimer =60;
+    public static float worldTimer =50;
     Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -133,13 +133,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         audioButtonInactive = new Texture("UI\\MenuButtons\\audioOff.png");
 
         heartTexture = new Texture("Collectibles\\heart.png");
-        coinTexture = new Texture("Collectibles\\\\coin.png");
-        swordTexture = new Texture("Collectibles\\\\sword2.png");
-        shieldTexture = new Texture("Collectibles\\\\shield.png");
-        healingPotionTexture = new Texture("Collectibles\\\\Potion.png");
-        gearEnchantmentTexture = new Texture("Collectibles\\\\Potion2.png");
-        minimapTexture = new Texture("Collectibles\\\\RolledMap.png");
-        damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
+        coinTexture = new Texture("Collectibles\\coin.png");
+        swordTexture = new Texture("Collectibles\\sword2.png");
+        shieldTexture = new Texture("Collectibles\\shield.png");
+        healingPotionTexture = new Texture("Collectibles\\Potion.png");
+        gearEnchantmentTexture = new Texture("Collectibles\\Potion2.png");
+        minimapTexture = new Texture("Collectibles\\RolledMap.png");
+        damagingPotionTexture = new Texture("Collectibles\\Potion3.png");
         overlay = new Texture("UI\\circularOverlay.png");
         coinPick = new Texture("Collectibles\\coinAnimation.png");
 
@@ -274,7 +274,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         swipeLeft = new Texture ("Player\\swipeLeft.png");
         swipeUp = new Texture ("Player\\swipeUp.png");
         swipeDown = new Texture ("Player\\swipeDown.png");
-        playerDead = new Texture ("Player\\player1Selected.png");
+        playerDying = new Texture ("Player\\playerDying.png");
         playerIcon = new Texture("Player\\playerOnMap.png");
 
         manager.load("myFont.fnt",BitmapFont.class);
@@ -291,7 +291,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         if(isImHost()) {
             generateMapItems(collisionLayer.getWidth(), 100);
         }
-        co = new MultiCollect(game, myMultiPlayer,this);
+        co = new Collect(game, myMultiPlayer,this);
+//        co.setGameClient(this);
         tempMapItemssize = mapItems.size();
         //start timer
         myMultiPlayer.initialPosition();
@@ -359,7 +360,6 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             for (int i = 0; i < players.size(); i++) {
                 MultiPlayer otherPlayer = players.get(i);
                 otherPlayer.render(game.batch);
-                otherPlayer.attack();
             }
 
             //draw myself on my screen
@@ -382,11 +382,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
                     //TODO when this game over, player want to start a new game again
                     //need to handle player exit
                     game.setScreen(new EndScreen(this.game));
-
-                    //if gameover, then close server from hostplayer
-                    if(isHost){
-                        server.dispose(this);
+                    if(isHost) {
+                        this.server.dispose(this);
+                        if(debug) {
+                            System.out.println("Server Close");
+                        }
                     }
+                    //if gameover, then close server from hostplayer
                 }
             }
         }game.batch.end();
@@ -496,7 +498,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         boolean containHealingPotion = item.getType().equals("healingPotion");
         boolean containDamagingPotion = item.getType().equals("damagingPotion");
 
-        int indexOfItem = co.getIndexOfItem();
+        int indexOfItem = co.indexOfItem;
 
         if (!containItems && !isCoin && !containHealingPotion && !containDamagingPotion) {
 
@@ -535,7 +537,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
         //send message when player pick up coin or other items
         if(!containItems||isCoin) {
-            CollectMessage itemCollected = new CollectMessage(this.getMultiPlayer().getId(), this, item.getType(), item.getPosition().getX(), item.getPosition().getY(), indexOfItem);
+            CollectMessage itemCollected = new CollectMessage(this.getMultiPlayer().getID(), this, item.getType(), item.getPosition().getX(), item.getPosition().getY(), indexOfItem);
             this.getNc().send(itemCollected);
         }
 
@@ -563,6 +565,11 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             if (Gdx.input.justTouched()) {
                 this.dispose();
                 game.setScreen(new MenuScreen(this.game));
+                this.server.dispose(this);
+                if(debug) {
+                    System.out.println("Server close");
+                }
+
             }
         }
         else game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
@@ -716,7 +723,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     }
 
     private void sendItemGenMsg(Coordinate position,Item item){
-        ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), item.getType(), position.getX(), position.getY());
+        ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getID(), item.getType(), position.getX(), position.getY());
         System.out.println(position.toString());
         netClient.send(message);
     }

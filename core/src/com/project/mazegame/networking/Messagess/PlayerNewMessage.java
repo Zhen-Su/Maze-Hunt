@@ -45,7 +45,7 @@ public class PlayerNewMessage implements Message {
         DataOutputStream dos = new DataOutputStream(baos);
         try {
             dos.writeInt(msgType);
-            dos.writeInt(multiPlayer.getId());
+            dos.writeInt(multiPlayer.getID());
             dos.writeInt(multiPlayer.position.getX());
             dos.writeInt(multiPlayer.position.getY());
             dos.writeInt(multiPlayer.getDir().ordinal());
@@ -69,7 +69,7 @@ public class PlayerNewMessage implements Message {
         try{
 
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getId()){
+            if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
 
@@ -80,7 +80,7 @@ public class PlayerNewMessage implements Message {
 
             boolean exist = false;
             for (MultiPlayer t : gameClient.getPlayers()){
-                if(id == t.getId()){
+                if(id == t.getID()){
                     exist = true;
                     break;
                 }
@@ -91,10 +91,10 @@ public class PlayerNewMessage implements Message {
                 MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir);
 
                 System.out.println("--------------------------------------");
-                System.out.println("my id: "+this.gameClient.getMultiPlayer().getId());
+                System.out.println("my id: "+this.gameClient.getMultiPlayer().getID());
                 System.out.println("this player new message is from: id "+id);
 
-                newPlayer.setId(id);
+                newPlayer.setID(id);
                 gameClient.getPlayers().add(newPlayer);
                 gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
 

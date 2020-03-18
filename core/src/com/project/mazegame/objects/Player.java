@@ -21,36 +21,36 @@ import com.badlogic.gdx.utils.IntIntMap;
 import com.project.mazegame.tools.*;
 
 public class Player {
-    public int x, y;
-    private Texture player, sword,swordAttack,swordNotAttack,shield;
-    private float speed = 6;
-    private int width, height ,coinSize;
+    protected int x, y;
+    protected Texture player, sword,swordAttack,swordNotAttack,shield;
+    protected float speed = 6;
+    protected int width, height ,coinSize;
     public int coins;
     public int health = 5;
-    private int ID;
+    protected int ID;
     public int swordDamage;
-    private int swordXP;
-    private int shieldXP;
-    private int respawnCounter = 0;
-    private BitmapFont font;
+    protected int swordXP;
+    protected int shieldXP;
+    protected int respawnCounter = 0;
+    protected BitmapFont font;
 
-    Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDying;
+    protected Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDying;
 
     private boolean isAttacking = false;
-
-    public String name;
+    protected String name;
     public ArrayList<String> items;
     public Coordinate position;
 
-    private TiledMapTileLayer collisionLayer;
+    protected TiledMapTileLayer collisionLayer;
 
-    AnimationTool RightAnim, LeftAnim ,UpAnim ,DownAnim ,animation , DyingAnim;
-    AnimationTool coinAnimation,swordSwipeRight,swordSwipeLeft,swordSwipeUp,swordSwipeDown , swipeAnim;
+
+    protected AnimationTool RightAnim, LeftAnim ,UpAnim ,DownAnim ,animation , DyingAnim;
+    protected AnimationTool coinAnimation,swordSwipeRight,swordSwipeLeft,swordSwipeUp,swordSwipeDown , swipeAnim;
     SpriteBatch batch;
 
     String colour;
 
-    private boolean isDying = false;
+    protected boolean isDying = false;
     Timer time;
 
     public float initialisedShieldTime;
@@ -73,7 +73,6 @@ public class Player {
         this.colour = colour;
         swordXP = 0;
         shieldXP = 0;
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
 
         initialPosition();
 
@@ -81,13 +80,112 @@ public class Player {
         loadPlayerTextures();
 
         ArrayList<Item> items = new ArrayList<Item>();
-
+        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         createAnimations();
         time = new Timer();
-
     }
-    public Player(){}
 
+    public Player(TiledMapTileLayer collisionLayer, String username) {
+    }
+
+    public Player(TiledMapTileLayer collisionLayer, String username, int x, int y, Direction dir) {
+    }
+    //Getter&Setter=================================================================================
+    public int getID() {
+        return ID;
+    }
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+    public int getX() {
+        return x;
+    }
+    public void setX(int x) {
+        this.x = x;
+    }
+    public int getY() {
+        return y;
+    }
+    public void setY(int y) {
+        this.y = y;
+    }
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public AnimationTool getRightAnim() {
+        return RightAnim;
+    }
+    public void setRightAnim(AnimationTool rightAnim) {
+        RightAnim = rightAnim;
+    }
+    public AnimationTool getLeftAnim() {
+        return LeftAnim;
+    }
+    public void setLeftAnim(AnimationTool leftAnim) {
+        LeftAnim = leftAnim;
+    }
+    public AnimationTool getUpAnim() {
+        return UpAnim;
+    }
+    public void setUpAnim(AnimationTool upAnim) {
+        UpAnim = upAnim;
+    }
+    public AnimationTool getDownAnim() {
+        return DownAnim;
+    }
+    public void setDownAnim(AnimationTool downAnim) {
+        DownAnim = downAnim;
+    }
+    public AnimationTool getAnimation() {
+        return animation;
+    }
+    public AnimationTool getDyingAnim() {
+        return DyingAnim;
+    }
+    public void setDyingAnim(AnimationTool dyingAnim) {
+        DyingAnim = dyingAnim;
+    }
+    public AnimationTool getCoinAnimation() {
+        return coinAnimation;
+    }
+    public void setCoinAnimation(AnimationTool coinAnimation) {
+        this.coinAnimation = coinAnimation;
+    }
+    public AnimationTool getSwordSwipeRight() {
+        return swordSwipeRight;
+    }
+    public void setSwordSwipeRight(AnimationTool swordSwipeRight) {
+        this.swordSwipeRight = swordSwipeRight;
+    }
+    public AnimationTool getSwordSwipeLeft() {
+        return swordSwipeLeft;
+    }
+    public void setSwordSwipeLeft(AnimationTool swordSwipeLeft) {
+        this.swordSwipeLeft = swordSwipeLeft;
+    }
+    public AnimationTool getSwordSwipeUp() {
+        return swordSwipeUp;
+    }
+    public void setSwordSwipeUp(AnimationTool swordSwipeUp) {
+        this.swordSwipeUp = swordSwipeUp;
+    }
+    public AnimationTool getSwordSwipeDown() {
+        return swordSwipeDown;
+    }
+    public void setSwordSwipeDown(AnimationTool swordSwipeDown) {
+        this.swordSwipeDown = swordSwipeDown;
+    }
+    public AnimationTool getSwipeAnim() {
+        return swipeAnim;
+    }
+    public void setSwipeAnim(AnimationTool swipeAnim) {
+        this.swipeAnim = swipeAnim;
+    }
+
+    //==============================================================================================
     public void initialPosition () {
         int maxX = collisionLayer.getWidth() ;
         int maxY= collisionLayer.getHeight();

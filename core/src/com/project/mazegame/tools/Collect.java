@@ -1,6 +1,7 @@
 package com.project.mazegame.tools;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Variables.*;
 
 import com.project.mazegame.screens.GameScreen;
@@ -22,14 +23,20 @@ public class Collect {
 	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
+	public int indexOfItem;
+
 	public ArrayList<Coordinate> positions;
-	public Collect (MazeGame game ,Player player) {
+
+	public Collect (MazeGame game ,Player player, MultiPlayerGameScreen gameClient) {
 		test = new GameScreen(game);
 
-		mapItems = GameScreen.mapItems;
+		if(player instanceof MultiPlayer){
+			mapItems =gameClient.mapItems;
+		}else {
+			mapItems = GameScreen.mapItems;
+		}
+
 		items = player.items;
-
-
 	}
 
 
@@ -43,8 +50,8 @@ public class Collect {
 	}
 
 	public Item nearestItem(Player player) {
-		Coordinate position = new Coordinate();
-		position = mapItems.get(0).getPosition();
+//		Coordinate position = new Coordinate();
+//		position = mapItems.get(0).getPosition();
 
 //		Item nearestItem = new Item(" ", position);
 		Item nearestItem = mapItems.get(0);
@@ -64,6 +71,7 @@ public class Collect {
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
 				//System.out.println("found shorter!");
+				indexOfItem=i;
 			}
 		}
 		//System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());

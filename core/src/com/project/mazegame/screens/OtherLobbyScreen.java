@@ -147,7 +147,7 @@ public class OtherLobbyScreen implements Screen {
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();
-            PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
+            PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(message);
         }
     }

@@ -21,7 +21,7 @@ public class CollectMessage implements Message {
     private int x;
     private int y;
     private int indexOfItem;
-    private boolean debug =false;
+    private boolean debug =true;
 
     private MultiPlayerGameScreen gameClient;
 
@@ -70,7 +70,7 @@ public class CollectMessage implements Message {
         try {
 
             int id = dis.readInt();
-            if (id == this.gameClient.getMultiPlayer().getId()) {
+            if (id == this.gameClient.getMultiPlayer().getID()) {
                 return;
             }
 
@@ -81,7 +81,7 @@ public class CollectMessage implements Message {
 
             // add item to other player's items list
             for(MultiPlayer t : gameClient.getPlayers()) {
-                if (t.getId() == id) {
+                if (t.getID() == id) {
                     // add item to other player's items list
                     if (!itemType.equals("coin")) {
                         t.items.add(itemType);
@@ -93,7 +93,7 @@ public class CollectMessage implements Message {
 
             if(debug) {
                 System.out.println("-------------------------------");
-                System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
                 System.out.println("This player collect items message is from: id" + id);
                 System.out.println("Item's Type: " + itemType);
                 System.out.println("Item's Position x: " + itemsX + " y: " + itemsY);

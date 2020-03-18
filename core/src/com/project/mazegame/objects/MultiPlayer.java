@@ -12,49 +12,30 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.project.mazegame.networking.Messagess.AttackMessage;
+import com.project.mazegame.networking.Messagess.DeadMessage;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
-import com.project.mazegame.tools.MultiAnimationTool;
+import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Coordinate;
 
 import java.util.ArrayList;
 
 
 public class MultiPlayer extends Player {
-    private int x, y;
-    private float speed = 6;
-    private int width, height, coinSize;
-    public int coins;
-    public int health = 5;
-    private int id;
-    public int swordDamage;
-    public Coordinate position;
-    public boolean isPoisoned;
-    String colour;
-    private int swordXP;
-    private int shieldXP;
-    private int respawnCounter = 0;
-    private Texture player, sword,swordAttack,swordNotAttack,shield;
-    private boolean isAttacking = false;
-    private BitmapFont font;
 
-
-    private String name;
-    public ArrayList<String> items;
     private MultiPlayerGameScreen gameClient;
     public boolean bL, bU, bR, bD;
+
     private Direction dir;
-    private TiledMapTileLayer collisionLayer;
     public static boolean debug = false;
 
-    MultiAnimationTool RightAnim, LeftAnim, UpAnim, DownAnim, animation;
-    MultiAnimationTool coinAnimation, swordSwipeRight, swordSwipeLeft, swordSwipeUp, swordSwipeDown, swipeAnim;
-    SpriteBatch batch;
+
+
 
 
     //constructors=================================================================================
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir) {
-        super();
+        super(collisionLayer,username);
         if (debug) System.out.println("My Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health = 5;
@@ -81,7 +62,7 @@ public class MultiPlayer extends Player {
     }
 
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
-        super();
+        super(collisionLayer,username,x,y,dir);
         if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health = 5;
@@ -89,7 +70,6 @@ public class MultiPlayer extends Player {
         this.name = username;
         this.items = new ArrayList<>();
         this.font=gameClient.bitmapFont;
-
 
         this.x = x;
         this.y = y;
@@ -104,83 +84,85 @@ public class MultiPlayer extends Player {
     }
 
     //Getter&Setter=================================================================================
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public Direction getDir() {
         return dir;
     }
-
     public void setDir(Direction dir) {
         this.dir = dir;
     }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCoins() {
-        return coins;
-    }
-
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
-
-    public int getSwordXP() {
-        return this.swordXP;
-    }
-
-    public int getShieldXP() {
-        return this.shieldXP;
-    }
-
-    public void setAnimation(MultiAnimationTool direction) {
-        animation = direction;
-    }
-
-    public void setSwordAnimation(MultiAnimationTool direction) {
-        swipeAnim = direction;
-    }
-
-    public void setBatch(SpriteBatch sb) {
-        this.batch = sb;
-    }
-
-    public SpriteBatch getSpriteBatch() {
-        return this.batch;
-    }
-
-    public Texture getFrames() {
-        return gameClient.frames;
-    }
-
     //==============================================================================================
+
+    public void createAnimations() {
+
+        walkUp = gameClient.walkUp;
+        walkDown=gameClient.walkDown;
+        walkRight=gameClient.walkRight;
+        walkLeft=gameClient.walkLeft;
+        coinPick=gameClient.coinPick;
+        playerDying=gameClient.playerDying;
+        swipeRight=gameClient.swipeRight;
+        swipeLeft=gameClient.swipeLeft;
+        swipeUp=gameClient.swipeUp;
+        swipeDown=gameClient.swipeDown;
+
+        width =  walkUp.getWidth()/2;
+        height = walkUp.getHeight()/2;
+        coinSize = coinPick.getHeight()/2;
+
+        frames = walkRight;
+        RightAnim = new AnimationTool(width,height,this,walkRight,true);
+        RightAnim.create();
+
+        frames = walkLeft;
+        LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
+        LeftAnim.create();
+
+        frames = walkUp;
+        UpAnim = new AnimationTool(width,height,this,walkUp,true);
+        UpAnim.create();
+
+        frames = walkDown;
+        DownAnim = new AnimationTool(width,height,this,walkDown,true);
+        DownAnim.create();
+
+        frames = playerDying;
+        DyingAnim = new AnimationTool(width,height,this,playerDying,false);
+        DyingAnim.create();
+        //Create animations - make the frames but don't render them
+
+        frames = swipeRight;
+        swordSwipeRight = new AnimationTool(100, 100, this ,swipeRight, false );
+        swordSwipeRight.xOffset = 70;
+        swordSwipeRight.yOffset = 0;
+
+        swordSwipeRight.create();
+
+        frames = swipeLeft;
+        swordSwipeLeft = new AnimationTool(100, 100, this ,swipeLeft, false );
+        swordSwipeLeft.xOffset = -70;
+        swordSwipeLeft.yOffset = 0;
+        swordSwipeLeft.create();
+
+        frames = swipeUp;
+        swordSwipeUp = new AnimationTool(100, 100, this ,swipeUp, false );
+        swordSwipeUp.xOffset = 0;
+        swordSwipeUp.yOffset = 70;
+        swordSwipeUp.create();
+
+        frames = swipeDown;
+        swordSwipeDown = new AnimationTool(100, 100, this ,swipeDown, false );
+        swordSwipeDown.xOffset = 0;
+        swordSwipeDown.yOffset = -70;
+        swordSwipeDown.create();
+
+        swipeAnim= new AnimationTool(100, 100, this ,swipeDown, false );
+        swipeAnim.create();
+
+        animation = new AnimationTool(width, height, this, walkUp,true);
+
+        animation.create();
+        setAnimation(UpAnim);
+    }
 
     public void render(SpriteBatch sb) {
 
@@ -203,8 +185,7 @@ public class MultiPlayer extends Player {
                 break;
         }
 
-        animation.render();
-
+        this.animation.render();
         updateMotion();
 
         if (this.items.contains("sword"))
@@ -215,57 +196,7 @@ public class MultiPlayer extends Player {
 
         font.getData().setScale(0.5f,0.5f);
         font.draw(sb,this.name, this.position.getX() - 30,this.position.getY() + 60);
-
     }
-
-    public void createAnimations() {
-        width = gameClient.walkUp.getWidth() / 2;
-        height = gameClient.walkUp.getHeight() / 2;
-        coinSize = gameClient.coinPick.getHeight() / 2;
-
-        gameClient.frames = gameClient.walkRight;
-        RightAnim = new MultiAnimationTool(width, height, this, gameClient.walkRight, true);
-        RightAnim.create();
-
-        gameClient.frames = gameClient.walkLeft;
-        LeftAnim = new MultiAnimationTool(width, height, this, gameClient.walkLeft, true);
-        LeftAnim.create();
-
-        gameClient.frames = gameClient.walkUp;
-        UpAnim = new MultiAnimationTool(width, height, this, gameClient.walkUp, true);
-        UpAnim.create();
-
-        gameClient.frames = gameClient.walkDown;
-        DownAnim = new MultiAnimationTool(width, height, this, gameClient.walkDown, true);
-        DownAnim.create();
-
-        //Create animations - make the frames but don't render them
-        gameClient.frames = gameClient.swipeRight;
-        swordSwipeRight = new MultiAnimationTool(100, 100, this, gameClient.swipeRight, false);
-        swordSwipeRight.create();
-
-        gameClient.frames = gameClient.swipeLeft;
-        swordSwipeLeft = new MultiAnimationTool(100, 100, this, gameClient.swipeLeft, false);
-        swordSwipeLeft.create();
-
-        gameClient.frames = gameClient.swipeUp;
-        swordSwipeUp = new MultiAnimationTool(100, 100, this, gameClient.swipeUp, false);
-        swordSwipeUp.create();
-
-        gameClient.frames = gameClient.swipeDown;
-        swordSwipeDown = new MultiAnimationTool(100, 100, this, gameClient.swipeDown, false);
-        swordSwipeDown.create();
-
-        swipeAnim = new MultiAnimationTool(100, 100, this, gameClient.swipeDown, false);
-        swipeAnim.create();
-
-        //setAnimation( UpAnim);
-        animation = new MultiAnimationTool(width, height, (MultiPlayer) this, gameClient.walkUp, true);
-
-        animation.create();
-        setAnimation(UpAnim);
-    }
-
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Input.Keys.RIGHT:
@@ -386,7 +317,7 @@ public class MultiPlayer extends Player {
         }
 
         if (dir != oldDir) {
-            MoveMessage message = new MoveMessage(id, this.position.getX(), this.position.getY(), dir);
+            MoveMessage message = new MoveMessage(ID, this.position.getX(), this.position.getY(), dir);
             gameClient.getNc().send(message);
         }
     }
@@ -466,10 +397,11 @@ public class MultiPlayer extends Player {
         if (debug) System.out.println("Player has died respawning now");
         this.health = 5;
         this.coins = 0;
-
         this.items.clear();
 
-        //this.items = new ArrayList<>();
+        //Send dead info to server
+        DeadMessage deadmsg = new DeadMessage(ID,"DEAD");
+        this.gameClient.getNc().send(deadmsg);
     }
 
     public void playerHitPlayer(Player hit) {
@@ -488,49 +420,6 @@ public class MultiPlayer extends Player {
         }
         //need to add shield stuffr
     }
-
-
-    public void attack() {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if(this.items.contains("sword") && !this.isDead()) {
-                if (animation.toString().equals(RightAnim.toString())) {
-                    setSwordAnimation(swordSwipeRight);
-                    AttackMessage attackMsg = new AttackMessage(id,"Right");
-                    gameClient.getNc().send(attackMsg);
-                }
-                else if (animation.toString().equals(LeftAnim.toString())) {
-                    setSwordAnimation(swordSwipeLeft);
-                    AttackMessage attackMsg = new AttackMessage(id,"Left");
-                    gameClient.getNc().send(attackMsg);
-                }
-                else if (animation.toString().equals(UpAnim.toString())) {
-                    setSwordAnimation(swordSwipeUp);
-                    AttackMessage attackMsg = new AttackMessage(id,"Up");
-                    gameClient.getNc().send(attackMsg);
-                }
-                else if (animation.toString().equals(DownAnim.toString())) {
-                    setSwordAnimation(swordSwipeDown);
-                    AttackMessage attackMsg = new AttackMessage(id,"Down");
-                    gameClient.getNc().send(attackMsg);
-                }
-
-                //do animation
-
-                swipeAnim.render();
-                isAttacking = true;
-                sword = swordAttack;
-            }
-        }
-
-        else {
-            sword = swordNotAttack;
-            swordSwipeRight.elapsedTime = 0;
-            swordSwipeLeft.elapsedTime = 0;
-            swordSwipeUp.elapsedTime = 0;
-            swordSwipeDown.elapsedTime = 0;
-        }
-    }
-
 
     public int getHealth() {
         return health;

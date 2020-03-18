@@ -76,7 +76,7 @@ public class NetClient {
             int id = dis.readInt();
             this.serverUDPPort = dis.readInt();
             printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
-            gameClient.getMultiPlayer().setId(id);
+            gameClient.getMultiPlayer().setID(id);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {

@@ -86,7 +86,7 @@ public class HostLobbyScreen implements Screen {
 
     private void handleInput(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getId());
+            StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(start);
             gameClient.setImHost(true);
             game.setScreen(gameClient);
