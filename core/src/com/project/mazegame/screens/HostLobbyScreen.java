@@ -39,8 +39,9 @@ public class HostLobbyScreen implements Screen {
         this.gameServer = gameServer;
         new Thread(gameServer).start();
         try {
-            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress());
+            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress(),true);
             this.gameClient=gameClient;
+            this.gameClient.setServer(gameServer);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

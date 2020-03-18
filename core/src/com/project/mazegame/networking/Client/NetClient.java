@@ -1,5 +1,6 @@
 package com.project.mazegame.networking.Client;
 
+import com.project.mazegame.networking.Messagess.AttackMessage;
 import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
@@ -165,6 +166,10 @@ public class NetClient {
                     break;
                 case Message.HOST_START:
                     msg = new StartGameMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.ATTACK_MSG:
+                    msg = new AttackMessage(gameClient);
                     msg.process(dis);
                     break;
             }

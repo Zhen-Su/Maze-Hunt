@@ -21,7 +21,7 @@ public class CollectMessage implements Message {
     private int x;
     private int y;
     private int indexOfItem;
-    private boolean debug =true;
+    private boolean debug =false;
 
     private MultiPlayerGameScreen gameClient;
 

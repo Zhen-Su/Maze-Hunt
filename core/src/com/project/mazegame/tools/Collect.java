@@ -86,9 +86,7 @@ public class Collect {
 		int startHealth = player1.health;
 
 		int time = 60000;
-		if (items.contains("gearEnchantment")) {
-			time += 30000;
-		}
+
 
 	}
 
@@ -99,10 +97,10 @@ public class Collect {
 
 	public void sword(Item item, Player player1, Player player2) {
 		ArrayList<String> items = player1.items;
-		int swordPower = 1;
-		if (gearEnchantment(item, player1)) {
-			swordPower += 1;
-		}
+		int swordPower = player1.getSwordXP();
+//		if (player1.items.contains("gearEnchantment")) {
+//			swordPower += 5;
+//		}
 
 //		if (player2.health == 0) { //going to come back to level
 //			swordPower += 1;
@@ -111,7 +109,7 @@ public class Collect {
 		//display sword icon on screen
 	}
 
-	public void compass(Item item) {
+	public void minimap(Item item) {
 		//ArrayList<String> items = player1.items;
 		//pick nearest player, follow it
 		//display compass
@@ -128,9 +126,7 @@ public class Collect {
 	public void damagingPotion(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
 
-
-		player1.decreaseHealth(1);
-		player1.decreaseHealth(1);
+		player1.decreaseHealth(3);
 
 //		player1.playerPosioned();
 
@@ -138,11 +134,13 @@ public class Collect {
 		//player1.loadPlayerTextures();
 	}
 
-	public boolean gearEnchantment(Item item, Player player1) {
+	public void gearEnchantment(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
-		boolean collected = true;
-		items.remove("gearEnchantment");
-		return collected;
+		//boolean collected = true;
+		player1.increaseSwordXP( 1);
+		player1.increaseShieldXP(1);
+		System.out.println("added xp" + player1.getShieldXP()  + " , " + player1.getSwordXP());
+
 
 
 	}

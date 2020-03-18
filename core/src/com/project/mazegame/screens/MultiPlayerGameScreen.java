@@ -23,6 +23,7 @@ import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
+import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,14 +37,14 @@ import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 
 public class MultiPlayerGameScreen implements Screen,InputProcessor {
+    //Use for Host player
+    private GameServer server;
+    private boolean isHost = true;
 
     private boolean HostStartGame = false;
 
     //Item List List
     public ArrayList<Item> mapItems = new ArrayList<Item>();
-
-    //Items position Set
-    public static HashSet<String> positions = new HashSet<String>();
 
     private MazeGame game;
     private OrthoCam cam;
@@ -62,10 +63,12 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private MultiPlayer player2;
 
     private AssetManager manager;
-    public Texture player_up, player_right, player_left, player_down, sword,shield;
-    public Texture player_up1, player_right1, player_left1, player_down1; // player been poisoned.
+    public Texture player, sword,swordAttack,swordNotAttack,shield;
+    //public Texture player_up, player_right, player_left, player_down, sword,shield;
+    public  Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDead;
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
+    private Texture minimapTexture;
     private Texture heartTexture;
     private Texture coinTexture;
     private Texture swordTexture;
@@ -77,36 +80,44 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private Texture damagingPotionTexture;
     private Texture gearEnchantmentTexture;
     private Texture overlay;
-    private Texture coinPick;
+    //private Texture coinPick;
     private BitmapFont font;
+    public BitmapFont bitmapFont;
+    private Texture enchantedGlow;
+    private Texture mapTexture, minimapOutline,playerIcon;;
+
 
     private float timer;
-    public float worldTimer;
+    public static float worldTimer =60;
+    Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
+    private float initialisedEnchantmentTime;
     int overlayWidth;
     int overlayHeight;
 
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
+    Coordinate playerPos;
 
 
     //=====================================constructors=============================================
 
-    public MultiPlayerGameScreen(MazeGame game,String username,String serverIP) {
+    public MultiPlayerGameScreen(MazeGame game,String username,String serverIP,boolean isHost) {
         this.game = game;
-
+        this.isHost = isHost;
         timer = 0;
-        worldTimer = 60;
 
-        tileMap = new TmxMapLoader().load("Map1.tmx");
+        tileMap = new TmxMapLoader().load("Map3.tmx");
+        //TODO this 113 line should be changed after integrate with customize.
+        mapTexture = new Texture("Maps\\Map3Icon.png");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         manager = new AssetManager();
-        loadAsset();
+        loadAsset("orange");
 
         myMultiPlayer=new MultiPlayer(this.collisionLayer,username,this, Direction.STOP);
         netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
@@ -127,13 +138,16 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         shieldTexture = new Texture("Collectibles\\\\shield.png");
         healingPotionTexture = new Texture("Collectibles\\\\Potion.png");
         gearEnchantmentTexture = new Texture("Collectibles\\\\Potion2.png");
-        compassTexture = new Texture("Collectibles\\\\RolledMap.png");
+        minimapTexture = new Texture("Collectibles\\\\RolledMap.png");
         damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
         overlay = new Texture("UI\\circularOverlay.png");
         coinPick = new Texture("Collectibles\\coinAnimation.png");
 
-        overlayWidth = overlay.getWidth();
-        overlayHeight = overlay.getHeight();
+        minimapOutline = new Texture("Maps\\minimapOutline.png");
+        overlayWidth = overlay.getWidth() +300;
+        overlayHeight = overlay.getHeight() +300;
+        enchantedGlow = new Texture("Player\\ENCHANTED.png");
+        playerIcon = new Texture("Player\\playerOnMap.png");
     }
 
 
@@ -165,62 +179,111 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         this.imHost = imHost;
     }
 
+    public GameServer getServer() { return server; }
+
+    public void setServer(GameServer server) { this.server = server; }
+
+
     //==============================================================================================
 
-    public void loadAsset(){
-        manager.load("Player\\playerRedBackCrop.png", Texture.class);
-        manager.load("Player\\playerRedRightCrop.png", Texture.class);
-        manager.load("Player\\playerRedLeftCrop.png", Texture.class);
-        manager.load("Player\\playerRedFrontCrop.png", Texture.class);
-        manager.load("Collectibles\\sword2.png", Texture.class);
-        manager.load("Collectibles\\shield.png", Texture.class);
-        manager.load("Collectibles\\heart.png",Texture.class);
-        manager.load("Collectibles\\coin.png",Texture.class);
-        manager.load("Collectibles\\sword2.png",Texture.class);
-        manager.load("Collectibles\\shield.png",Texture.class);
-        manager.load("Collectibles\\Potion2.png",Texture.class);
-        manager.load("Collectibles\\RolledMap.png",Texture.class);
-        manager.load("Collectibles\\Potion3.png",Texture.class);
-//        manager.load("playerRedBackIll.png", Texture.class);
-//        manager.load("playerRedRightIll", Texture.class);
-//        manager.load("playerRedLeftIll.png", Texture.class);
-//        manager.load("playerRedFrontIll.png", Texture.class);
+    public void loadAsset(String colour){
+        switch (colour) {
+            case "blue":
+                manager.load("Player\\walkRightBlue.png",Texture.class);
+                manager.load("Player\\walkLeftBlue.png",Texture.class);
+                manager.load("Player\\walkUpBlue.png",Texture.class);
+                manager.load("Player\\walkDownBlue.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightBlue.png",Texture.class);
+                walkLeft = manager.get("Player\\walkLeftBlue.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpBlue.png",Texture.class);
+                walkDown = manager.get("Player\\walkDownBlue.png",Texture.class);
+                break;
+            case "green":
+                manager.load("Player\\walkRightGreen.png",Texture.class);
+                manager.load("Player\\walkLeftGreen.png",Texture.class);
+                manager.load("Player\\walkUpGreen.png",Texture.class);
+                manager.load("Player\\walkDownGreen.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightGreen.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftGreen.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpGreen.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownGreen.png",Texture.class);
+                break;
+            case "pink":
+                manager.load("Player\\walkRightPink.png",Texture.class);
+                manager.load("Player\\walkLeftPink.png",Texture.class);
+                manager.load("Player\\walkUpPink.png",Texture.class);
+                manager.load("Player\\walkDownPink.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightPink.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftPink.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpPink.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownPink.png",Texture.class);
+                break;
+            case "orange":
+                manager.load("Player\\walkRightOrange.png",Texture.class);
+                manager.load("Player\\walkLeftOrange.png",Texture.class);
+                manager.load("Player\\walkUpOrange.png",Texture.class);
+                manager.load("Player\\walkDownOrange.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player/walkRightOrange.png",Texture.class);
+                walkLeft= manager.get("Player/walkLeftOrange.png",Texture.class);
+                walkUp = manager.get("Player/walkUpOrange.png",Texture.class);
+                walkDown =manager.get("Player/walkDownOrange.png",Texture.class);
+                break;
+            case "lilac":
+                manager.load("Player\\walkRightLilac.png",Texture.class);
+                manager.load("Player\\walkLeftLilac.png",Texture.class);
+                manager.load("Player\\walkUpLilac.png",Texture.class);
+                manager.load("Player\\walkDownLilac.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightLilac.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftLilac.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpLilac.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownLilac.png",Texture.class);
+                break;
+            case "yellow":
+                manager.load("Player\\walkRightYellow.png",Texture.class);
+                manager.load("Player\\walkLeftYellow.png",Texture.class);
+                manager.load("Player\\walkUpYellow.png",Texture.class);
+                manager.load("Player\\walkDownYellow.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRightYellow.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeftYellow.png",Texture.class);
+                walkUp = manager.get("Player\\walkUpYellow.png",Texture.class);
+                walkDown =manager.get("Player\\walkDownYellow.png",Texture.class);
+                break;
+            default:
+                manager.load("Player\\walkRight.png",Texture.class);
+                manager.load("Player\\walkLeft.png",Texture.class);
+                manager.load("Player\\walkUp.png",Texture.class);
+                manager.load("Player\\walkDown.png",Texture.class);
+                manager.finishLoading();
+                walkRight = manager.get("Player\\walkRight.png",Texture.class);
+                walkLeft= manager.get("Player\\walkLeft.png",Texture.class);
+                walkUp = manager.get("Player\\walkUp.png",Texture.class);
+                walkDown =manager.get("Player\\walkDown.png",Texture.class);
+        }
 
-        manager.finishLoading();// waiting for all assets load.
+        coinPick = new Texture("Collectibles\\coinAnimation.png");
+        swordAttack = new Texture("Collectibles\\swordAttack.png");
+        swordNotAttack = new Texture("Collectibles\\sword2.png");
+        shield = new Texture("Collectibles\\shield.png");
+        swipeRight = new Texture ("Player\\swipeRight.png");
+        swipeLeft = new Texture ("Player\\swipeLeft.png");
+        swipeUp = new Texture ("Player\\swipeUp.png");
+        swipeDown = new Texture ("Player\\swipeDown.png");
+        playerDead = new Texture ("Player\\player1Selected.png");
+        playerIcon = new Texture("Player\\playerOnMap.png");
 
-        player_up = manager.get("Player/playerRedBackCrop.png", Texture.class);
-        player_right = manager.get("Player/playerRedRightCrop.png", Texture.class);
-        player_left = manager.get("Player/playerRedLeftCrop.png", Texture.class);
-        player_down = manager.get("Player/playerRedFrontCrop.png", Texture.class);
-        sword = manager.get("Collectibles/sword2.png", Texture.class);
-        shield = manager.get("Collectibles/shield.png", Texture.class);
+        manager.load("myFont.fnt",BitmapFont.class);
+        manager.finishLoading();
+        bitmapFont=manager.get("myFont.fnt",BitmapFont.class);
 
-//        heartTexture = manager.get("heart.png", Texture.class);
-//        coinTexture = manager.get("coin.png", Texture.class);
-//        swordTexture = manager.get("sword2.png", Texture.class);
-//        shieldTexture = manager.get("shield.png", Texture.class);
-//        healingPotionTexture = manager.get("Potion2.png", Texture.class);
-//        compassTexture = manager.get("RolledMap.png", Texture.class);
-//        damagingPotionTexture = manager.get("Potion3.png", Texture.class);
-
-//        player_up1 = manager.get("playerRedBackIll.png", Texture.class);
-//        player_right1 = manager.get("playerRedRightIll.png", Texture.class);
-//        player_left1 = manager.get("playerRedLeftIll.png", Texture.class);
-//        player_down1 = manager.get("playerRedFrontIll.png", Texture.class);
+        sword = swordNotAttack;
     }
 
-    public void unloadAsset(){
-        manager.unload("Player/playerRedBackCrop.png");
-        manager.unload("Player/playerRedRightCrop.png");
-        manager.unload("Player/playerRedLeftCrop.png");
-        manager.unload("Player/playerRedFrontCrop.png");
-        manager.unload("Collectibles/sword2.png");
-        manager.unload("Collectibles/shield.png");
-//        manager.unload("playerRedBackIll.png");
-//        manager.unload("playerRedRightIll.png");
-//        manager.unload("playerRedLeftIll.png");
-//        manager.unload("playerRedFrontIll.png");
-    }
 
     @Override
     public void show() {
@@ -232,6 +295,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         tempMapItemssize = mapItems.size();
         //start timer
         myMultiPlayer.initialPosition();
+        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+
+        playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
 
         System.out.println("mapItems: ");
         for(int i=0; i<mapItems.size();i++){
@@ -245,12 +311,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     public void render(float delta) { //method repeats a lot
         updateTime(delta);
         removeShield();
+        removeEnchantment();
         playerDamaging();
-
-        //only draw mapItems if one gets picked up
-//        if (!(mapItems.size() == tempMapItemssize)) {
-//            tempMapItemssize = mapItems.size();
-//        }
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -285,39 +347,49 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             game.batch.draw(overlay, myMultiPlayer.position.getX() - overlayWidth / 2, myMultiPlayer.position.getY() - overlayHeight / 2, overlayWidth, overlayHeight);
 
             int buffer = 10;
-            Coordinate playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
-            drawIcons(iconSize, buffer, playerPos);
+            playerPos.setX(myMultiPlayer.position.getX());
+            playerPos.setY(myMultiPlayer.position.getY());
+            drawIcons(iconSize,buffer,playerPos);
             drawExitButton(playerPos);
+
+            if(myMultiPlayer.items.contains("gearEnchantment"))
+                game.batch.draw(enchantedGlow ,myMultiPlayer.position.getX() -enchantedGlow.getWidth()/2 ,myMultiPlayer.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
 
             //draw other players on my screen
             for (int i = 0; i < players.size(); i++) {
                 MultiPlayer otherPlayer = players.get(i);
                 otherPlayer.render(game.batch);
+                otherPlayer.attack();
             }
 
             //draw myself on my screen
             if (null != myMultiPlayer) {
                 myMultiPlayer.render(game.batch);
+                myMultiPlayer.attack();
             }
 
+            //draw timer
+            String message = "Time = " + (int) (worldTimer - (time.currentTime()));
+            font.draw(game.batch, message, myMultiPlayer.position.getX(), myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 10);
 
-            String message = "Time = " + worldTimer ;
-            font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-            font.draw(game.batch,message, myMultiPlayer.position.getX(),myMultiPlayer.position.getY() + VIEWPORT_HEIGHT/2 -10);
+            //if timer runs out
+            if ((worldTimer - time.currentTime()) < 3) {
+                overlayWidth -= 15;
+                overlayHeight -= 15;
 
+                if ((worldTimer - time.currentTime()) < 0) {
+                    this.dispose();
+                    //TODO when this game over, player want to start a new game again
+                    //need to handle player exit
+                    game.setScreen(new EndScreen(this.game));
+
+                    //if gameover, then close server from hostplayer
+                    if(isHost){
+                        server.dispose(this);
+                    }
+                }
+            }
         }game.batch.end();
-
-        //if timer runs out
-        if(worldTimer < 3) {
-            overlayWidth -= 15;
-            overlayHeight -= 15;
-
-            if(worldTimer < 0) {
-                this.dispose();
-                game.setScreen(new EndScreen(this.game));
-
-            }
-        }
     }
 
 
@@ -341,8 +413,12 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             //draw shield icon
             float shieldSize = 50;
             float xShield = VIEWPORT_WIDTH - shieldSize -buffer + playerX;
-            float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY;
+            float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY -50;
             game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
+
+            String message = "XP :" + myMultiPlayer.getShieldXP() ;
+            font.getData().setScale(0.5f,0.5f);
+            font.draw(game.batch,message, xShield  ,yShield );
         }
         //sword icon
         if ( myMultiPlayer.items.contains("sword")) {
@@ -350,13 +426,31 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             float xSword = VIEWPORT_WIDTH  - swordSize - buffer + playerX;
             float ySword = VIEWPORT_HEIGHT - (swordSize *2) + playerY;
             game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
+            String message = "XP :" + myMultiPlayer.getSwordXP();
+            font.getData().setScale(0.5f,0.5f);
+            font.draw(game.batch,message, xSword ,ySword  );
         }
         //draws coin icon
         for ( int i = 0; i < myMultiPlayer.coins; i ++ ) {
             float xCoin = buffer + playerX;
             float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer + playerY;
-            if ( coinSize != iconSize*2) coinSize -=5;
+            if ( coinSize != iconSize*2)
+                coinSize -=5;
             game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
+        }
+        float mapSize = 100;
+        float xMap = myMultiPlayer.getX() + VIEWPORT_WIDTH /2 - mapSize - 50;
+        float yMap =  myMultiPlayer.getY() - VIEWPORT_HEIGHT/2 + 50;
+
+
+        if(myMultiPlayer.items.contains("minimap")) {
+            game.batch.draw(minimapOutline, xMap - 8, yMap - 9, mapSize + 17, mapSize + 17);
+            game.batch.draw(mapTexture, xMap, yMap, mapSize, mapSize);
+
+            //draw player position
+            int x = (myMultiPlayer.position.getX() - 500 + 60) / 20;
+            int y = (myMultiPlayer.position.getY() - 500 + 80) / 20;
+            game.batch.draw(playerIcon, xMap + x, yMap + y, 5, 5);
         }
     }
 
@@ -383,8 +477,8 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             if (mapItems.get(i).getType().equals("gearEnchantment")) {
                 texture = healingPotionTexture;
             }
-            if (mapItems.get(i).getType().equals("compass")) {
-                texture = compassTexture;
+            if (mapItems.get(i).getType().equals("minimap")) {
+                texture = minimapTexture;
             }
 
             int x = mapItems.get(i).getPosition().getX();
@@ -399,37 +493,44 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         Item item =  co.nearestItem(myMultiPlayer);
         boolean containItems = myMultiPlayer.items.contains(item.getType());
         boolean isCoin = item.getType().equals("coin");
+        boolean containHealingPotion = item.getType().equals("healingPotion");
+        boolean containDamagingPotion = item.getType().equals("damagingPotion");
+
         int indexOfItem = co.getIndexOfItem();
 
-        if (!containItems && !isCoin) {
+        if (!containItems && !isCoin && !containHealingPotion && !containDamagingPotion) {
 
             item = co.pickedUp(co.nearestItem(myMultiPlayer));
 
             if (item.getType().equals("shield")) {
-                item.setInitialisedTime(worldTimer);
-                initialisedShieldTime = worldTimer;
+                item.setInitialisedTime(time.currentTime());
+                myMultiPlayer.initialisedShieldTime = time.currentTime();
                 co.shield(item, myMultiPlayer);
+                if(myMultiPlayer.items.contains("gearEnchantment")) {
+                    myMultiPlayer.initialisedShieldTime += 3;
+                }
             }
             if (item.getType().equals("sword")) {
                 co.sword(item, myMultiPlayer, player2);
             }
-            if (item.getType().equals("healingPotion")) {
-                //TODO need to think about texture
-                //myMultiPlayer.loadPlayerTextures();
-                co.healingPotion (myMultiPlayer);
-            }
-            if (item.getType().equals("damagingPotion")) {
-                item.setInitialisedTime(worldTimer);
-                initialisedPotionTime = worldTimer;
-                co.damagingPotion(item, myMultiPlayer);
-            }
             if (item.getType().equals("gearEnchantment")) {
                 co.gearEnchantment(item , myMultiPlayer);
+                myMultiPlayer.initialisedEnchantmentTime = time.currentTime();
+                if(myMultiPlayer.items.contains("shield"))
+                    myMultiPlayer.initialisedShieldTime += 3;
+            }
+            if(item.getType().equals("minimap")) {
+                co.minimap(item);
             }
         } else if (isCoin) {
             mapItems.remove(item);
             myMultiPlayer.coins++;
-            coinSize = 100;
+        }else if (containHealingPotion) {
+            mapItems.remove(item);
+            co.healingPotion (myMultiPlayer);
+        }else if (containDamagingPotion) {
+            mapItems.remove(item);
+            co.damagingPotion(item, myMultiPlayer);
         }
 
         //send message when player pick up coin or other items
@@ -500,7 +601,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         }
 
         //TODO handle client and server exit game events here
-        unloadAsset();
+        //unloadAsset();
         manager.clear();
         manager.dispose();
         mapItems.clear();
@@ -511,11 +612,13 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     }
 
     public void generateMapItems( int widthInTiles, int tileWidth ) {
-        int maxShields = 30;
-        int maxCoins = 100;
-        int maxSwords = 50;
-        int maxCompasses = 30;
-        int maxPotions = 100;
+        HashSet<String> positions = new HashSet<String>();
+
+        int maxShields = 15;
+        int maxCoins = 50;
+        int maxSwords = 25;
+        int maxMinimaps = 15;
+        int maxPotions = 50;
         int maxX = widthInTiles;
         int maxY = widthInTiles;
 
@@ -565,11 +668,11 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             }
         }
 
-        for (int i = 0; i < maxCompasses; i++) {
+        for (int i = 0; i < maxMinimaps; i++) {
             Coordinate position = new Coordinate(0, 0);
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
             position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
-            Item item = new Item("compass", position);
+            Item item = new Item("minimap", position);
             if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
@@ -618,31 +721,42 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         netClient.send(message);
     }
 
+    private void removeShield() {
+        if(!myMultiPlayer.items.contains("shield")) {
+            return;
+        }
+        if ((worldTimer - time.currentTime()) - initialisedShieldTime  == 10) {
+            myMultiPlayer.items.remove("shield");
+        }
+    }
+
+    private void removeEnchantment() {
+        if(!myMultiPlayer.items.contains("gearEnchantment")) {
+
+            return;
+        }
+        if ((worldTimer - time.currentTime()) - initialisedEnchantmentTime == 10) {
+            myMultiPlayer.items.remove("gearEnchantment");
+            System.out.println("removed enchantment");
+        }
+    }
+
     private void playerDamaging() {
         if(!myMultiPlayer.items.contains("damagingPotion")) {
             return;
         }
-        if (initialisedPotionTime - worldTimer == 2) {
+        if ((worldTimer - time.currentTime()) - initialisedPotionTime == 2) {
             myMultiPlayer.loadPlayerTextures();
             myMultiPlayer.items.remove("damagingPotion");
         }
     }
 
-    private void removeShield() {
-        if(!myMultiPlayer.items.contains("shield")) {
-            return;
-        }
-        if (initialisedShieldTime - worldTimer == 10) {
-            myMultiPlayer.items.remove("shield");
-        }
-    }
-
     private void updateTime(float dt) {
-        timer += dt;
-        if (timer >= 1) {
+        float initial  = time.currentTime();
+        time.updateTimer(dt);
+
+        if (!(time.currentTime() == initial)) {
             worldTimer--;
-//    		System.out.println("World Timer: " + worldTimer);
-            timer = 0;
         }
     }
 

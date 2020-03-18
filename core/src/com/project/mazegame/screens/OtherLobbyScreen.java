@@ -137,7 +137,7 @@ public class OtherLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
             if(hasReady) {
-                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip);
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false);
                 setGameClient(gameClient);
                 setHostPlayerName(gameClient.getPlayers().get(0).getName());
                 setPlayers(gameClient.getPlayers());

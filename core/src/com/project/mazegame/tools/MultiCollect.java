@@ -154,6 +154,12 @@ public class MultiCollect {
 
     }
 
+    public void minimap(Item item) {
+        //ArrayList<String> items = player1.items;
+        //pick nearest player, follow it
+        //display compass
+    }
+
     public void coin(MultiPlayer player1) {
         player1.coins ++;
         //ArrayList<String> items = player1.items;
