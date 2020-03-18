@@ -1,6 +1,7 @@
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.project.mazegame.networking.Messagess.AINewMessage;
 import com.project.mazegame.objects.*;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -37,13 +38,15 @@ public class GameScreen implements Screen {
     private OrthoCam cam;
 
     private Player player;
-//    private Thread playerThread = new Thread(new PlayerThread());
     private AIPlayer aiPlayer;// ---------need to be implemented
 	private ArrayList<AIPlayer> aiPlayers;
     private InputHandler inputHandler;
-//    private ArrayList<Thread> aiThreads = new ArrayList<>();
+    private AIPlayer aiPlayerAttack;
+    private Player playerAttack;
     private float delta;
     private int numOfAI;
+    private int posAP;
+    private int posAAI;
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
@@ -102,7 +105,8 @@ public class GameScreen implements Screen {
         this.game = game;
         this.updateCount = 0;
         
-        
+        aiPlayerAttack = null;
+        playerAttack = null;
       
         inputHandler = new InputHandler();
         
@@ -116,7 +120,7 @@ public class GameScreen implements Screen {
 		this.collisionLayer1 = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
         player = new Player(this.collisionLayer,"james",123);
         aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124);
-        aiPlayers = aiPlayer.AITakingOver(5);
+        aiPlayers = aiPlayer.AITakingOver(3);
         aicos = new ArrayList<Collect>();
 
 
@@ -152,6 +156,9 @@ public class GameScreen implements Screen {
     public void show() {
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
 		co = new Collect(game, player);
+		for (int i = 0; i < aiPlayers.size(); i++) {
+			aicos.add(new Collect(game, aiPlayers.get(i)));
+		}
 		tempMapItemssize = mapItems.size();
 		//start timer
 		player.initialPosition();
@@ -186,7 +193,7 @@ public class GameScreen implements Screen {
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-				aiPlayers.get(i).update(delta, 2, mapItems, worldTimer);
+				aiPlayers.get(i).update(delta, 1, mapItems, worldTimer);
 //
 
 		}
@@ -225,9 +232,30 @@ public class GameScreen implements Screen {
         Coordinate playerPos = new Coordinate(player.position.getX(), player.position.getY());
         drawIcons(iconSize,buffer,playerPos);
         drawExitButton(playerPos);
+        // first check is for players
+		// first call players
+		ArrayList<Player> emptyattack = new ArrayList<>();
+		if(isPlayerOnSameP(player, emptyattack, aiPlayers)) {
+			if(isHuman1()) {
+				player.attackP(emptyattack.get(posAP), worldTimer);
+			} else {
+				player.attackAI(aiPlayers.get(posAAI), worldTimer);
+			}
+		}
+		// go through list one by one remove the player from that list
+		for (int i = 0; i < aiPlayers.size(); i++) {
+			AIPlayer playerTurn = aiPlayers.remove(i);
+			if (isPlayerOnSameAI(playerTurn, emptyattack, aiPlayers)) {
+				if(isHuman1()) {
+					playerTurn.attackP(emptyattack.get(posAP), worldTimer);
+				} else {
+					player.attackAI(aiPlayers.get(posAAI), worldTimer);
+				}
+			}
+			aiPlayers.add(i, playerTurn);
+		}
         
-        
-        player.attack();
+
         player.render(game.batch);
 //        aiPlayer.render(game.batch);
         for (int i = 0; i < aiPlayers.size(); i++) {
@@ -254,14 +282,101 @@ public class GameScreen implements Screen {
     	}
         
     }
+    private boolean isHuman1() {
+    	if (aiPlayerAttack != null && playerAttack == null) {
+    		return false;
+		} else if (aiPlayerAttack == null && playerAttack != null) {
+    		return true;
+		} else {
+			try {
+				throw new Exception();
+			} catch (Exception e) {
+				System.out.println("This should not be happening");
+			}
+		}
+    	return true;
+	}
+
+    private boolean isPlayerOnSameAI(AIPlayer current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+    	// first thing cycle through list checking and comparing coordinates
+		// if one person on same square that is the player attack return true and set attackplayer
+		this.aiPlayerAttack = null;
+		this.playerAttack = null;
+		Coordinate currentC = new Coordinate(current.x, current.y);
+		if (!playersA.isEmpty()) {
+			for (int i = 0; i < playersA.size(); i++) {
+				Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					this.playerAttack = playersA.get(i);
+					this.aiPlayerAttack = null;
+					this.posAP = i;
+					return true;
+				}
+			}
+		}
+		if (!aiPlayersA.isEmpty()) {
+			for (int i = 0; i < aiPlayersA.size(); i++) {
+				Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					this.playerAttack = null;
+					this.aiPlayerAttack = aiPlayersA.get(i);
+					this.posAAI = i;
+					return true;
+				}
+			}
+		}
+		return false;
+
+	}
+	private boolean isPlayerOnSameP(Player current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+		// first thing cycle through list checking and comparing coordinates
+		// if one person on same square that is the player attack return true and set attackplayer
+		this.aiPlayerAttack = null;
+		this.playerAttack = null;
+		Coordinate currentC = new Coordinate(current.x, current.y);
+		if (!playersA.isEmpty()) {
+			for (int i = 0; i < playersA.size(); i++) {
+				Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					this.playerAttack = playersA.get(i);
+					this.aiPlayerAttack = null;
+					this.posAP = i;
+					return true;
+				}
+			}
+		}
+		if (!aiPlayersA.isEmpty()) {
+			for (int i = 0; i < aiPlayersA.size(); i++) {
+				Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					this.playerAttack = null;
+					this.aiPlayerAttack = aiPlayersA.get(i);
+					this.posAAI = i;
+					return true;
+				}
+			}
+		}
+		return false;
+
+	}
+	private boolean sameSpace(Coordinate investigation, Coordinate check) {
+    	// get  coordinates then abs and check difference
+		int xCorI = investigation.getX();
+		int xCorC = check.getX();
+		int yCorI = investigation.getY();
+		int yCorC = check.getY();
+		int xdist = Math.abs(xCorI - xCorC);
+		int ydist = Math.abs(yCorI - yCorC);
+		return (xdist <= 100 && ydist <= 100);
+	}
 
     private void aiMultiPickUp() {
     	for (int i  = 0; i < aiPlayers.size(); i++) {
 			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-				if ((aiPlayers.get(i).position.getX() > co.nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < co.nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
-						(aiPlayers.get(i).position.getY() > co.nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < co.nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
+				if ((aiPlayers.get(i).position.getX() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
+						(aiPlayers.get(i).position.getY() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
 
-					aiPickUp(aiPlayers.get(i), co);
+					aiPickUp(aiPlayers.get(i), aicos.get(i));
 
 				}
 			}

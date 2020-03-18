@@ -1,5 +1,7 @@
 package com.project.mazegame.objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.objects.Player;
@@ -21,12 +23,18 @@ public class AIPlayer extends Player {
     private Thread aiThread;
     private float initialisedTime;
     private boolean updateCount;
+    private float attackPlayerTime;
+    private float attackAITime;
+    private boolean attackPStart;
+    private boolean attackAIStart;
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
         this.collisionLayer = collisionLayer;
         initialPosition();
         aiThread = new Thread(new PlayerThread());
         this.updateCount = false;
+        this.attackAIStart = false;
+        this.attackPStart = false;
 //        aiThread.start();
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
@@ -212,6 +220,39 @@ public class AIPlayer extends Player {
 
 
     }
+    @Override
+    public void attackP(Player playerA, float time) {
+        if (attackPlayerTime - time > 0.3 || !attackPStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                sword = swordAttack;
+                playerA.decreaseHealth(1);
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                    playerA.death();
+                }
+            }
+        }
+        this.attackPlayerTime = time;
+        this.attackPStart = true;
+    }
+    @Override
+    public void attackAI(AIPlayer playerA, float time) {
+        if (attackAITime - time > 0.3 || !attackAIStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                sword = swordAttack;
+                playerA.decreaseHealth(1);
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                    playerA.death();
+                }
+            }
+        }
+        this.attackAITime = time;
+        this.attackAIStart = true;
+    }
+
     public void setDir(Direction d) {
         this.dir = d;
     }

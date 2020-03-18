@@ -32,8 +32,12 @@ public class Player {
     private ArrayList<Player> otherPlayers;
     Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick;
     private Thread playerThread;
+    private float aiAttackTime;
+    private float playerAttackTime;
+    private boolean startPAttack;
+    private boolean startAIAttack;
     
-    private boolean isAttacking = false;
+    protected boolean isAttacking = false;
     
     public String name;
     public ArrayList<String> items;
@@ -74,6 +78,8 @@ public class Player {
     	initialPosition();
         x = this.position.getX();
         y = this.position.getY();
+        this.startPAttack = false;
+        this.startAIAttack = false;
 
         colour = "orange"; //----------default
        
@@ -349,24 +355,48 @@ public class Player {
     
     public void decreaseHealth(int number) {
       this.health -= number;
-      if(health <= 0) {
-         this.death();
-      }
     }
     
 
     
-    public void attack() {
-    	if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-    		if(this.items.contains("sword")) {
-    	  
-//              System.out.println("hit");
-              isAttacking = true;
-              sword = swordAttack;
-              
-    		} 
-    	}
-    	else sword = swordNotAttack;
+    public void attackP(Player playerA, float time) {
+        if (playerAttackTime - time > 0.3 || !startPAttack) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+//              System.out.println("Player is attacking");
+                    isAttacking = true;
+                    sword = swordAttack;
+                    playerA.decreaseHealth(1);
+                    if (playerA.health == 0) {
+                        this.coins += playerA.coins;
+                        playerA.death();
+                    }
+
+                }
+            } else sword = swordNotAttack;
+        }
+        this.playerAttackTime = time;
+        startPAttack = true;
+    }
+
+    public void attackAI(AIPlayer playerA, float time) {
+        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                    System.out.println("Player as attacking me");
+                    isAttacking = true;
+                    sword = swordAttack;
+                    playerA.decreaseHealth(1);
+                    if (playerA.health == 0) {
+                        System.out.println("I am about to die");
+                        this.coins += playerA.coins;
+                        playerA.death();
+                    }
+                }
+            }
+        }
+        this.aiAttackTime = time;
+        startAIAttack = true;
     }
     
     public Texture getFrames() {
@@ -420,7 +450,11 @@ public class Player {
     }
 
 
-    public Coordinate genSpace(int minX, int maxX, int minY, int maxY) {
+    public Coordinate genSpace() {
+        int maxX = collisionLayer.getWidth();
+        int maxY = collisionLayer.getHeight();
+        int minY = 0;
+        int minX = 0;
         int firstX = (int) (Math.random() * maxX - minX + 1) + minX;
         int firstY = (int) (Math.random() * maxY - minY + 1) + minY;
         boolean canGo = checkCollisionMap(firstX, firstY);
@@ -436,9 +470,7 @@ public class Player {
 //        System.out.println("Player has died respawning now");
         this.health = 5;
         this.coins = 0;
-        Coordinate newPlace = genSpace(0, collisionLayer.getWidth(), 0, collisionLayer.getHeight());
-        this.x = newPlace.getX();
-        this.y = newPlace.getY();
+        this.initialPosition();
         this.items.clear();
 
         //this.items = new ArrayList<>();
