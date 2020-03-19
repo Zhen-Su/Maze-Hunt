@@ -239,7 +239,9 @@ public class GameScreen implements Screen {
 			if(isHuman1()) {
 				player.attackP(emptyattack.get(posAP), worldTimer);
 			} else {
-				player.attackAI(aiPlayers.get(posAAI), worldTimer);
+				AIPlayer playerinsert = aiPlayers.remove(posAAI);
+				player.attackAI(playerinsert, worldTimer);
+				aiPlayers.add(posAAI, playerinsert);
 			}
 		}
 		// go through list one by one remove the player from that list

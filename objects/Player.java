@@ -34,8 +34,10 @@ public class Player {
     private Thread playerThread;
     private float aiAttackTime;
     private float playerAttackTime;
+    protected float deathTime;
     private boolean startPAttack;
     private boolean startAIAttack;
+//    protected boolean haveyoudied;
     
     protected boolean isAttacking = false;
     
@@ -74,7 +76,7 @@ public class Player {
         this.swordDamage = 0;
         this.ID = ID;
     	this.collisionLayer = collisionLayer;
-    	
+//    	this.haveyoudied = false;
     	initialPosition();
         x = this.position.getX();
         y = this.position.getY();
@@ -149,93 +151,92 @@ public class Player {
     public void update (float delta, int mode, ArrayList<Item> items, float time){
         // update player movement
 //        playerThread.run();
-    	
-        this.position.setX(x);
-        this.position.setY(y);
-        
-        
-        
-        if (RIGHT_TOUCHED) {
-        	
-        	right = true;
-        	
-        	
-            if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
-                //try move player right
-                x += speed;
-                //check player isn't in a wall
-                if(!checkCollisionMap(x, y)) { //if it's in a wall, move player back
-                    x -= speed;
-                   
-                }else
-                    this.position.setX( x );
-            }
-        }
-        if (LEFT_TOUCHED) {
-        	left = true;
-        	
-            if (x > 0) {
-                x -= speed;
-                if(!checkCollisionMap(x,y)) {
+
+            this.position.setX(x);
+            this.position.setY(y);
+
+
+            if (RIGHT_TOUCHED) {
+
+                right = true;
+
+
+                if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
+                    //try move player right
                     x += speed;
-                    
-                }else
-                    this.position.setX( x );    
+                    //check player isn't in a wall
+                    if (!checkCollisionMap(x, y)) { //if it's in a wall, move player back
+                        x -= speed;
+
+                    } else
+                        this.position.setX(x);
+                }
             }
-        }
-        if (UP_TOUCHED) {
-        	up = true;
-        	
-            if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
-            	y += speed;
-                if(!checkCollisionMap(x, y)) {
-                	y -= speed;
-                	
-                }else 
-	            	this.position.setY( y ); 
+            if (LEFT_TOUCHED) {
+                left = true;
+
+                if (x > 0) {
+                    x -= speed;
+                    if (!checkCollisionMap(x, y)) {
+                        x += speed;
+
+                    } else
+                        this.position.setX(x);
+                }
             }
-        }
-        if (DOWN_TOUCHED) {
-        	down = true;
-        	
-            if (y > 0) {
-            	y -= speed;
-                if(!checkCollisionMap(x, y  )) { 
-                	y += speed;
-                	
-                } else 
-	            	this.position.setY( y ); 
-                
+            if (UP_TOUCHED) {
+                up = true;
+
+                if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
+                    y += speed;
+                    if (!checkCollisionMap(x, y)) {
+                        y -= speed;
+
+                    } else
+                        this.position.setY(y);
+                }
             }
-        }
-        
-        
-        
-        //change player texture
-        if (UP_TOUCHED == true && DOWN_TOUCHED == false) {
-           // player = player_up;
-            frames = walkUp;
-            animation.setFrames(UpAnim.getFrames());
+            if (DOWN_TOUCHED) {
+                down = true;
+
+                if (y > 0) {
+                    y -= speed;
+                    if (!checkCollisionMap(x, y)) {
+                        y += speed;
+
+                    } else
+                        this.position.setY(y);
+
+                }
+            }
+
+
+            //change player texture
+            if (UP_TOUCHED == true && DOWN_TOUCHED == false) {
+                // player = player_up;
+                frames = walkUp;
+                animation.setFrames(UpAnim.getFrames());
 //            System.out.println(animation.getImgName());
-            
-            
-        } else if (DOWN_TOUCHED == true && UP_TOUCHED == false) {
-        	//player = player_down;
-        	frames = walkDown;
-        	animation.setFrames(DownAnim.getFrames());
-        	
-        }  else if (LEFT_TOUCHED == true && RIGHT_TOUCHED == false) {
-        	//player = player_left;
-        	frames = walkLeft;
-        	animation.setFrames(LeftAnim.getFrames());
-        	
-        	
-        } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
-        	//player = player_right;
-        	frames = walkRight;
-        	animation.setFrames(RightAnim.getFrames());
-        
-        }
+
+
+            } else if (DOWN_TOUCHED == true && UP_TOUCHED == false) {
+                //player = player_down;
+                frames = walkDown;
+                animation.setFrames(DownAnim.getFrames());
+
+            } else if (LEFT_TOUCHED == true && RIGHT_TOUCHED == false) {
+                //player = player_left;
+                frames = walkLeft;
+                animation.setFrames(LeftAnim.getFrames());
+
+
+            } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
+                //player = player_right;
+                frames = walkRight;
+                animation.setFrames(RightAnim.getFrames());
+
+            }
+
     }
    
 
@@ -369,7 +370,8 @@ public class Player {
                     playerA.decreaseHealth(1);
                     if (playerA.health == 0) {
                         this.coins += playerA.coins;
-                        playerA.death();
+                        playerA.death(time);
+
                     }
 
                 }
@@ -379,8 +381,8 @@ public class Player {
         startPAttack = true;
     }
 
-    public void attackAI(AIPlayer playerA, float time) {
-        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+    public AIPlayer attackAI(AIPlayer playerA, float time) {
+//        if (aiAttackTime - time > 0.3 || !startAIAttack) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                     System.out.println("Player as attacking me");
@@ -390,13 +392,15 @@ public class Player {
                     if (playerA.health == 0) {
                         System.out.println("I am about to die");
                         this.coins += playerA.coins;
-                        playerA.death();
+                        playerA.death(time);
+
                     }
                 }
-            }
+//            }
         }
         this.aiAttackTime = time;
         startAIAttack = true;
+        return playerA;
     }
     
     public Texture getFrames() {
@@ -465,13 +469,15 @@ public class Player {
         return new Coordinate(firstX, firstY);
     }
 
-    public void death() {
+    public void death(float time) {
 
 //        System.out.println("Player has died respawning now");
         this.health = 5;
         this.coins = 0;
         this.initialPosition();
         this.items.clear();
+        this.deathTime = time;
+//        this.haveyoudied = true;
 
         //this.items = new ArrayList<>();
     }
@@ -483,7 +489,7 @@ public class Player {
 
 
     public boolean isplayerSameSpace(ArrayList<Player> players) { return this.getPosition().getX() == nearestPlayer(players).getPosition().getX() && this.getPosition().getY() == nearestPlayer(players).getPosition().getY();}
-
+    /*
     public void playerOnSameSpace(Player player1) {
         // first thing is in event of key press
         if (isplayerSameSpace(otherPlayers)) {
@@ -495,104 +501,11 @@ public class Player {
             }
         }
     }
+    */
 
     public boolean hasSword () {return this.items.contains("Sword"); }
     public boolean hasShield () {return this.items.contains("Shield"); }
 
-    /*
-    public void playerKillAI(AIPlayer AI) {
-        if (AI.health == 0) {
-        this.pickUpCoins(5);
-      } else {
-        AI.decreaseHealth(1);
-      }
-    }
-
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-
-    public float getSpeed() {
-    	return speed;
-    }
-
-
-    public String toString() {
-        return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
-      }
-
-
-
-
-
-    public int getID() {
-        return this.ID;
-    }
-    public int getX () {
-    	return (int) x;
-    }
-    public int getY () {
-    	return (int) y;
-    }
-    */
-
-
-
-    // private MazeGame game;
-    
-//    public void pickUpItem(Item itemPicked , Collect co) {
-//        
-//        switch(itemPicked.getType()) {
-//          case "Coin":
-//            this.coins++;
-//            //remove from map
-////            co.pickedUp(itemPicked);
-//            
-//            break;
-//          case "Shield":
-//
-//            //hasShield = true;
-//            co.shield(itemPicked, this);
-//            //hasShield = false;
-//            break;
-//          case "Sword":
-//            hasSword = true;
-//            //Player player2 = new Player(collisionLayer"Hi", 234);
-//            //co.sword(itemPicked, this, player2);
-//
-//            break;
-//          case "Compass":
-//            hasCompass = true;
-//            co.compass(itemPicked);
-//            break;
-//          case "Healing Potion":
-//            hasHealingPotion = true;
-//            co.healingPotion(this);
-//            hasDamagingPotion = false;
-//            break;
-//          case "Damaging Potion":
-//            hasDamagingPotion = true;
-//            co.damagingPotion(itemPicked, this);
-//            hasDamagingPotion = false;
-//            break;
-//          /*default:
-//            throw new Exception("Item does not exist yet");*/
-//        }
-//      }
-//    
 
     
 

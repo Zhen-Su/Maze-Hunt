@@ -95,7 +95,7 @@ public class AIPlayer extends Player {
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 // will need to do something with the speed
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
-//        System.out.println("The ai player is moving "+ moveToTake.toString());
+        System.out.println("The ai player is moving "+ moveToTake.toString());
                 super.x = (int) moveToTake.getX();
                 super.y = (int) moveToTake.getY();
                 this.change(old, moveToTake);
@@ -229,7 +229,7 @@ public class AIPlayer extends Player {
                 playerA.decreaseHealth(1);
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
-                    playerA.death();
+                    playerA.death(time);
                 }
             }
         }
@@ -237,7 +237,7 @@ public class AIPlayer extends Player {
         this.attackPStart = true;
     }
     @Override
-    public void attackAI(AIPlayer playerA, float time) {
+    public AIPlayer attackAI(AIPlayer playerA, float time) {
         if (attackAITime - time > 0.3 || !attackAIStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                 super.isAttacking = true;
@@ -245,12 +245,14 @@ public class AIPlayer extends Player {
                 playerA.decreaseHealth(1);
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
-                    playerA.death();
+                    playerA.death(time);
+                    return playerA;
                 }
             }
         }
         this.attackAITime = time;
         this.attackAIStart = true;
+        return playerA;
     }
 
     public void setDir(Direction d) {
