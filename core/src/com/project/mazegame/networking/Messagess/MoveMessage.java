@@ -62,14 +62,14 @@ public class MoveMessage implements Message {
     public void process(DataInputStream dis) {
         try{
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getId()){
+            if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
             Direction dir = Direction.values()[dis.readInt()];
             int newX = dis.readInt();
             int newY = dis.readInt();
-            for(MultiPlayer t : gameClient.getPlayers()){
-                if(t.getId() == id){
+            for(Player t : gameClient.getPlayers()){
+                if(t.getID() == id){
 
                     //change coordinate and direction
                     t.setDir(dir);
@@ -78,7 +78,7 @@ public class MoveMessage implements Message {
 
                     if(debug) {
                         System.out.println("****************************");
-                        System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+                        System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
                         System.out.println("This move message is from: id" + id);
                         System.out.println("This (id" + id + ") player's position x: " + newX);
                         System.out.println("This (id" + id + ") player's position y: " + newY);
@@ -103,6 +103,11 @@ public class MoveMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 
 }

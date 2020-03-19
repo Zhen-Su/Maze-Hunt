@@ -98,6 +98,8 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
 * Version3.1: add AI in mutiplayer mode, every player show different AI players, but if AI pick up an items, this item will dispear on the map at the same time. 
   
+  * 3.1.1 Add Assets.class, use assets to load resources. Add AI player in multiplayer, but still have some bugs
+  
   
   
   

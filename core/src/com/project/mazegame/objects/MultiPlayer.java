@@ -7,47 +7,31 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.project.mazegame.networking.Messagess.AttackMessage;
+import com.project.mazegame.networking.Messagess.DeadMessage;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.AnimationTool;
+import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.Coordinate;
 
 import java.util.ArrayList;
 
 
 public class MultiPlayer extends Player {
-    private int x, y;
-    private float speed = 6;
-    private int width, height, coinSize;
-    public int coins;
-    public int health = 5;
-    private int id;
-    public int swordDamage;
-    public Coordinate position;
-    public boolean isPoisoned;
-    String colour;
-    private int swordXP;
-    private int shieldXP;
 
-    private String name;
-    public ArrayList<String> items;
     private MultiPlayerGameScreen gameClient;
     public boolean bL, bU, bR, bD;
     private Direction dir;
-    private TiledMapTileLayer collisionLayer;
     public static boolean debug = false;
 
-    AnimationTool RightAnim, LeftAnim, UpAnim, DownAnim, animation;
-    AnimationTool coinAnimation, swordSwipeRight, swordSwipeLeft, swordSwipeUp, swordSwipeDown, swipeAnim;
-    SpriteBatch batch;
-
-
     //constructors=================================================================================
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir) {
-        super();
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir,String colour) {
+        super(collisionLayer,username);
         if (debug) System.out.println("My Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health = 5;
@@ -56,14 +40,16 @@ public class MultiPlayer extends Player {
         this.items = new ArrayList<>();
         this.position = new Coordinate(x, y);
         this.swordDamage = 0;
-//        this.colour=colour;
+        this.colour=colour;
         swordXP = 0;
         shieldXP = 0;
+        this.font=gameClient.bitmapFont;
 
         initialPosition();
         x = this.position.getX();
         y = this.position.getY();
 
+        loadPlayerTextures();
         this.gameClient = gameClient;
         this.dir = dir;
         ArrayList<Item> items = new ArrayList<Item>();
@@ -72,19 +58,22 @@ public class MultiPlayer extends Player {
         if (debug) System.out.println("My Multiplayer instance construction done!");
     }
 
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
-        super();
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir,String colour) {
+        super(collisionLayer,username,x,y,dir);
         if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health = 5;
         this.coins = 0;
         this.name = username;
         this.items = new ArrayList<>();
+        this.font=gameClient.bitmapFont;
+        this.colour = colour;
 
         this.x = x;
         this.y = y;
         this.position = new Coordinate(x, y);
 
+        loadPlayerTextures();
         this.gameClient = gameClient;
         this.dir = dir;
         ArrayList<Item> items = new ArrayList<Item>();
@@ -94,83 +83,75 @@ public class MultiPlayer extends Player {
     }
 
     //Getter&Setter=================================================================================
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
     public Direction getDir() {
         return dir;
     }
-
     public void setDir(Direction dir) {
         this.dir = dir;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCoins() {
-        return coins;
-    }
-
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
-
-    public int getSwordXP() {
-        return this.swordXP;
-    }
-
-    public int getShieldXP() {
-        return this.shieldXP;
-    }
-
-    public void setAnimation(AnimationTool direction) {
-        animation = direction;
-    }
-
-    public void setSwordAnimation(AnimationTool direction) {
-        swipeAnim = direction;
-    }
-
-    public void setBatch(SpriteBatch sb) {
-        this.batch = sb;
-    }
-
-    public SpriteBatch getSpriteBatch() {
-        return this.batch;
-    }
-
-    public Texture getFrames() {
-        return gameClient.frames;
-    }
-
     //==============================================================================================
+
+//    public void loadPlayerTextures(){
+//
+//        switch (colour) {
+//            case "blue":
+//                walkRight=Assets.manager.get(Assets.walkRightBlue, Texture.class);
+//                walkLeft=Assets.manager.get(Assets.walkLeftBlue, Texture.class);
+//                walkUp=Assets.manager.get(Assets.walkUpBlue, Texture.class);
+//                walkDown=Assets.manager.get(Assets.walkDownBlue, Texture.class);
+//                break;
+//            case "green":
+//                walkRight=Assets.manager.get(Assets.walkRightGreen, Texture.class);
+//                walkLeft=Assets.manager.get(Assets.walkLeftGreen, Texture.class);
+//                walkUp=Assets.manager.get(Assets.walkUpGreen, Texture.class);
+//                walkDown=Assets.manager.get(Assets.walkDownGreen, Texture.class);
+//                break;
+//            case "pink":
+//                walkRight=Assets.manager.get(Assets.walkRightPink, Texture.class);
+//                walkLeft=Assets.manager.get(Assets.walkLeftPink, Texture.class);
+//                walkUp=Assets.manager.get(Assets.walkUpPink, Texture.class);
+//                walkDown=Assets.manager.get(Assets.walkDownPink, Texture.class);
+//                break;
+//            case "orange":
+//                walkRight=Assets.manager.get(Assets.walkRightOrange, Texture.class);
+//                walkLeft=Assets.manager.get(Assets.walkLeftOrange, Texture.class);
+//                walkUp=Assets.manager.get(Assets.walkUpOrange, Texture.class);
+//                walkDown=Assets.manager.get(Assets.walkDownOrange, Texture.class);
+//                break;
+//            case "lilac":
+//                walkRight=Assets.manager.get(Assets.walkRightLilac, Texture.class);
+//                walkLeft=Assets.manager.get(Assets.walkLeftLilac, Texture.class);
+//                walkUp=Assets.manager.get(Assets.walkUpLilac, Texture.class);
+//                walkDown=Assets.manager.get(Assets.walkDownLilac, Texture.class);
+//                break;
+//            case "yellow":
+//                walkRight=Assets.manager.get(Assets.walkRightYellow, Texture.class);
+//                walkLeft=Assets.manager.get(Assets.walkLeftYellow, Texture.class);
+//                walkUp=Assets.manager.get(Assets.walkUpYellow, Texture.class);
+//                walkDown=Assets.manager.get(Assets.walkDownYellow, Texture.class);
+//                break;
+//            default:
+//                walkRight=Assets.manager.get(Assets.walkRight, Texture.class);
+//                walkLeft=Assets.manager.get(Assets.walkLeft, Texture.class);
+//                walkUp=Assets.manager.get(Assets.walkUp, Texture.class);
+//                walkDown=Assets.manager.get(Assets.walkDown, Texture.class);
+//        }
+//
+//        coinPick=Assets.manager.get(Assets.coinPick, Texture.class);
+//        swordAttack=Assets.manager.get(Assets.swordAttack, Texture.class);
+//        swordNotAttack=Assets.manager.get(Assets.swordNotAttack, Texture.class);
+//        shield=Assets.manager.get(Assets.shield, Texture.class);
+//        swipeRight=Assets.manager.get(Assets.swipeRight, Texture.class);
+//        swipeLeft=Assets.manager.get(Assets.swipeLeft, Texture.class);
+//        swipeUp=Assets.manager.get(Assets.swipeUp, Texture.class);
+//        swipeDown=Assets.manager.get(Assets.swipeDown, Texture.class);
+//        playerDying=Assets.manager.get(Assets.playerDying, Texture.class);
+//        font=Assets.manager.get(Assets.font, BitmapFont.class);
+//
+//        sword = swordNotAttack;
+//    }
+
 
     public void render(SpriteBatch sb) {
 
@@ -193,8 +174,7 @@ public class MultiPlayer extends Player {
                 break;
         }
 
-        animation.render();
-
+        this.animation.render();
         updateMotion();
 
         if (this.items.contains("sword"))
@@ -203,56 +183,9 @@ public class MultiPlayer extends Player {
         if (this.items.contains("shield"))
             sb.draw(gameClient.shield, (float) (x - (width / 1.5)), y - (height / 2), 50, 50);
 
+        font.getData().setScale(0.5f,0.5f);
+        font.draw(sb,this.name, this.position.getX() - 30,this.position.getY() + 60);
     }
-
-    public void createAnimations() {
-        width = gameClient.walkUp.getWidth() / 2;
-        height = gameClient.walkUp.getHeight() / 2;
-        coinSize = gameClient.coinPick.getHeight() / 2;
-
-        gameClient.frames = gameClient.walkRight;
-        RightAnim = new AnimationTool(width, height, this, gameClient.walkRight, true);
-        RightAnim.create();
-
-        gameClient.frames = gameClient.walkLeft;
-        LeftAnim = new AnimationTool(width, height, this, gameClient.walkLeft, true);
-        LeftAnim.create();
-
-        gameClient.frames = gameClient.walkUp;
-        UpAnim = new AnimationTool(width, height, this, gameClient.walkUp, true);
-        UpAnim.create();
-
-        gameClient.frames = gameClient.walkDown;
-        DownAnim = new AnimationTool(width, height, this, gameClient.walkDown, true);
-        DownAnim.create();
-
-        //Create animations - make the frames but don't render them
-        gameClient.frames = gameClient.swipeRight;
-        swordSwipeRight = new AnimationTool(100, 100, this, gameClient.swipeRight, false);
-        swordSwipeRight.create();
-
-        gameClient.frames = gameClient.swipeLeft;
-        swordSwipeLeft = new AnimationTool(100, 100, this, gameClient.swipeLeft, false);
-        swordSwipeLeft.create();
-
-        gameClient.frames = gameClient.swipeUp;
-        swordSwipeUp = new AnimationTool(100, 100, this, gameClient.swipeUp, false);
-        swordSwipeUp.create();
-
-        gameClient.frames = gameClient.swipeDown;
-        swordSwipeDown = new AnimationTool(100, 100, this, gameClient.swipeDown, false);
-        swordSwipeDown.create();
-
-        swipeAnim = new AnimationTool(100, 100, this, gameClient.swipeDown, false);
-        swipeAnim.create();
-
-        //setAnimation( UpAnim);
-        animation = new AnimationTool(width, height, (MultiPlayer) this, gameClient.walkUp, true);
-
-        animation.create();
-        setAnimation(UpAnim);
-    }
-
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Input.Keys.RIGHT:
@@ -296,46 +229,60 @@ public class MultiPlayer extends Player {
         this.position.setX(x);
         this.position.setY(y);
 
-        switch (dir) {
-            case R:
-                if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) {
-                    x += speed;
-                    //check player isn't in a wall
-                    if (!checkCollisionMap(x, y)) { //if it's in a wall, move player back
-                        x -= speed;
-                    } else
-                        this.position.setX(x);
-                }
-                break;
-            case L:
-                if (x > 0) {
-                    x -= speed;
-                    if (!checkCollisionMap(x, y)) {
+        if(this.isDead()) {
+            if(respawnCounter == 0) {
+                respawnCounter = time.currentTime();
+            }
+
+            if(time.currentTime() - respawnCounter == 3) {
+                this.death();
+
+            }
+            setAnimation(DyingAnim);
+
+        }else {
+
+            switch (dir) {
+                case R:
+                    if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) {
                         x += speed;
-                    } else
-                        this.position.setX(x);
-                }
-                break;
-            case U:
-                if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
-                    y += speed;
-                    if (!checkCollisionMap(x, y)) {
-                        y -= speed;
-                    } else
-                        this.position.setY(y);
-                }
-                break;
-            case D:
-                if (y > 0) {
-                    y -= speed;
-                    if (!checkCollisionMap(x, y)) {
+                        //check player isn't in a wall
+                        if (!checkCollisionMap(x, y)) { //if it's in a wall, move player back
+                            x -= speed;
+                        } else
+                            this.position.setX(x);
+                    }
+                    break;
+                case L:
+                    if (x > 0) {
+                        x -= speed;
+                        if (!checkCollisionMap(x, y)) {
+                            x += speed;
+                        } else
+                            this.position.setX(x);
+                    }
+                    break;
+                case U:
+                    if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
                         y += speed;
-                    } else
-                        this.position.setY(y);
-                }
-                break;
-            case STOP:
-                break;
+                        if (!checkCollisionMap(x, y)) {
+                            y -= speed;
+                        } else
+                            this.position.setY(y);
+                    }
+                    break;
+                case D:
+                    if (y > 0) {
+                        y -= speed;
+                        if (!checkCollisionMap(x, y)) {
+                            y += speed;
+                        } else
+                            this.position.setY(y);
+                    }
+                    break;
+                case STOP:
+                    break;
+            }
         }
     }
 
@@ -359,7 +306,7 @@ public class MultiPlayer extends Player {
         }
 
         if (dir != oldDir) {
-            MoveMessage message = new MoveMessage(id, this.position.getX(), this.position.getY(), dir);
+            MoveMessage message = new MoveMessage(ID, this.position.getX(), this.position.getY(), dir);
             gameClient.getNc().send(message);
         }
     }
@@ -439,10 +386,11 @@ public class MultiPlayer extends Player {
         if (debug) System.out.println("Player has died respawning now");
         this.health = 5;
         this.coins = 0;
-
         this.items.clear();
 
-        //this.items = new ArrayList<>();
+        //Send dead info to server
+        DeadMessage deadmsg = new DeadMessage(ID,"DEAD");
+        this.gameClient.getNc().send(deadmsg);
     }
 
     public void playerHitPlayer(Player hit) {

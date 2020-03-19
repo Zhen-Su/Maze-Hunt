@@ -1,7 +1,10 @@
 package com.project.mazegame.objects;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
@@ -21,41 +24,49 @@ public class AIPlayer extends Player {
     private Thread aiThread;
     private float initialisedTime;
     private boolean updateCount;
+    private float attackPlayerTime;
+    private float attackAITime;
+    private boolean attackPStart;
+    private boolean attackAIStart;
+    private String colour;
+    private AIGameClient aiGameClient;
 
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
-        super(collisionLayer, name = "Super AI", ID,"orange");
+
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, String colour,Direction dir) {
+        super(collisionLayer, name, ID, colour);
+        this.colour = colour;
         this.collisionLayer = collisionLayer;
         initialPosition();
+        this.dir=dir;
         aiThread = new Thread(new PlayerThread());
         this.updateCount = false;
-//        aiThread.start();
-//        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
+        this.attackAIStart = false;
+        this.attackPStart = false;
+        System.out.println("An AI player construct done..");
     }
 
-    public void setInitialisedTime(float time) {this.initialisedTime = time;}
-    public AIPlayer() {super();}
+    public void setInitialisedTime(float time) {
+        this.initialisedTime = time;
+    }
+
+
     public Direction getDir() {
         return this.dir;
     }
+
+    public void setAiGameClient(AIGameClient aiGameClient) { this.aiGameClient = aiGameClient; }
+
     public ArrayList<AIPlayer> AITakingOver(int number) {
         ArrayList<AIPlayer> players = new ArrayList<>();
 
-
         for (int i = 0; i < number; i++) {
-            if (i == 0) {
-                players.add(new AIPlayer(this.collisionLayer, "AI0", 000));
-            } else {
-                AIPlayer prev = players.get(i-1);
-//                String newName = incrementString(prev.getName());
-                int newID1 = prev.getID();
-                int newID2 = newID1++;
-//                System.out.println("A new ai is created");
-                players.add(new AIPlayer(this.collisionLayer, "albert", newID2));
+            players.add(new AIPlayer(this.collisionLayer, "AI"+i, i, colour,Direction.STOP));
 
-            }
         }
         return players;
     }
+
+
     private static String incrementString(String currentString) {
 //        System.out.println("Still works");
 //        System.out.println(currentString);
@@ -74,13 +85,11 @@ public class AIPlayer extends Player {
         }
         return null;
     }
-    @Override
-    public void update (float delta , int mode, ArrayList<Item> items, float time) {
+
+    public void update(float delta, int mode, ArrayList<Item> items, float time) {
 //        aiThread.run();
         if (initialisedTime - time > 0.3 || !updateCount) {
             if (mode == 1) {
-
-
                 Coordinate old = super.position;
                 this.position.setX((int) x);
                 this.position.setY((int) y);
@@ -91,7 +100,6 @@ public class AIPlayer extends Player {
                 super.x = (int) moveToTake.getX();
                 super.y = (int) moveToTake.getY();
                 this.change(old, moveToTake);
-
 
             } else if (mode == 2) {
 //                System.out.println(this);
@@ -130,11 +138,13 @@ public class AIPlayer extends Player {
             updateCount = true;
         }
     }
+
     private double calcu(int px, int py, int ix, int iy) {
         double xdif = ix - px;
         double ydif = iy - py;
         return Math.sqrt(Math.pow(xdif, 2) + Math.pow(ydif, 2));
     }
+
     private Item nearest(AIPlayer player, ArrayList<Item> items) {
         int px = player.x;
         int py = player.y;
@@ -151,6 +161,7 @@ public class AIPlayer extends Player {
         }
         return bestItem;
     }
+
     private void change(Coordinate old, Coordinate update) {
         if (old.getX() < update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.R;
@@ -172,13 +183,14 @@ public class AIPlayer extends Player {
         }
 
     }
+
     private ArrayList<Coordinate> avaibleMoves(int x, int y) {
         int move = 40;
         ArrayList<Coordinate> moves = new ArrayList<>();
-        if (checkCollisionMap((x + move), y) ){
+        if (checkCollisionMap((x + move), y)) {
             moves.add(new Coordinate((x + move), y));
         }
-        if (checkCollisionMap((x -move), y)) {
+        if (checkCollisionMap((x - move), y)) {
             moves.add(new Coordinate((x - move), y));
         }
         if (checkCollisionMap(x, (y + move))) {
@@ -195,9 +207,10 @@ public class AIPlayer extends Player {
             return null;
         }
 
-        int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
+        int randomTake = (int) (Math.random() * ((openDoor.size() - 1) + 1));
         return openDoor.get(randomTake);
     }
+
     private Coordinate bestMove(Coordinate target, ArrayList<Coordinate> onesToUse) {
         Coordinate best = onesToUse.get(0);
         for (int i = 0; i < onesToUse.size(); i++) {
@@ -207,11 +220,47 @@ public class AIPlayer extends Player {
         }
         return best;
     }
+
     private Boolean targets(Coordinate target, Coordinate other, Coordinate compare) {
         return Math.abs(target.getX() - other.getX()) < Math.abs(target.getX() - compare.getX()) || Math.abs(target.getY() - other.getY()) < Math.abs(target.getY() - compare.getY());
 
 
     }
+
+    @Override
+    public void attackP(Player playerA, float time) {
+        if (attackPlayerTime - time > 0.3 || !attackPStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                sword = swordAttack;
+                playerA.decreaseHealth(1);
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                    playerA.death();
+                }
+            }
+        }
+        this.attackPlayerTime = time;
+        this.attackPStart = true;
+    }
+
+    @Override
+    public void attackAI(AIPlayer playerA, float time) {
+        if (attackAITime - time > 0.3 || !attackAIStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                sword = swordAttack;
+                playerA.decreaseHealth(1);
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                    playerA.death();
+                }
+            }
+        }
+        this.attackAITime = time;
+        this.attackAIStart = true;
+    }
+
     public void setDir(Direction d) {
         this.dir = d;
     }

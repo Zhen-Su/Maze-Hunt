@@ -92,6 +92,7 @@ public class GameServer implements Runnable {
         }
     }
 
+
     /**
      * Client inner class
      * @author kevin
@@ -156,7 +157,7 @@ public class GameServer implements Runnable {
         isRunning = false;
 
         //Send message to all client the server will close.
-        PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
+        PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getID());
         gameClient.getNc().send(message);
         try {
             Thread.currentThread().sleep(100);

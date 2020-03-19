@@ -69,7 +69,7 @@ public class ItemCreateMessage implements Message {
     public void process(DataInputStream dis) {
         try {
             int id = dis.readInt();
-            if (id == this.gameClient.getMultiPlayer().getId()) {
+            if (id == this.gameClient.getMultiPlayer().getID()) {
                 return;
             }
 
@@ -84,7 +84,7 @@ public class ItemCreateMessage implements Message {
 
             if(debug) {
                 System.out.println("-------------------------------");
-                System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
                 System.out.println("This item generation message is from: id" + id);
                 System.out.println("This (id" + id + ") player collect: " + itemType);
                 System.out.println("Items position x: " + itemsX + " y: " + itemsY);
@@ -99,5 +99,10 @@ public class ItemCreateMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

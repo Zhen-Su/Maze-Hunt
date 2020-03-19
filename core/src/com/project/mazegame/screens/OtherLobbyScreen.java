@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.project.mazegame.objects.Player;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class OtherLobbyScreen implements Screen {
     private MultiPlayerGameScreen gameClient;
     private Texture backGround;
     private String hostPlayerName;
-    private List<MultiPlayer> players;
+    private List<Player> players;
     private boolean hasReady = true;
 
     String username;
@@ -73,9 +74,9 @@ public class OtherLobbyScreen implements Screen {
 
     public void setHostPlayerName(String hostPlayerName) { this.hostPlayerName = hostPlayerName; }
 
-    public List<MultiPlayer> getPlayers() { return players; }
+    public List<Player> getPlayers() { return players; }
 
-    public void setPlayers(List<MultiPlayer> players) { this.players = players; }
+    public void setPlayers(List<Player> players) { this.players = players; }
 
     @Override
     public void show() {
@@ -106,7 +107,7 @@ public class OtherLobbyScreen implements Screen {
                 //draw the ready players on the screen
                 int currY = 800;
                 font.draw(game.batch, username, 230, 850);
-                for (MultiPlayer multiPlayer : players) {
+                for (Player multiPlayer : players) {
                     font.draw(game.batch, multiPlayer.getName(), 230, currY);
                     currY -= 50;
                 }
@@ -137,7 +138,7 @@ public class OtherLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
             if(hasReady) {
-                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip);
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false);
                 setGameClient(gameClient);
                 setHostPlayerName(gameClient.getPlayers().get(0).getName());
                 setPlayers(gameClient.getPlayers());
@@ -147,7 +148,7 @@ public class OtherLobbyScreen implements Screen {
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();
-            PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
+            PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(message);
         }
     }

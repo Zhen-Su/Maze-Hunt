@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class CSVStuff {
 
     public static ArrayList<String> readCSVFile() {
-        String fileRead = "/Users/kevin/mazeHunt/android/csvFile.csv";
+        String fileRead = "android/csvFile.csv";
         BufferedReader buff = null;
         String line = "";
         ArrayList<String> output = new ArrayList<>();

@@ -1,6 +1,7 @@
 package com.project.mazegame.networking.Messagess;
 
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayOutputStream;
@@ -70,7 +71,7 @@ public class CollectMessage implements Message {
         try {
 
             int id = dis.readInt();
-            if (id == this.gameClient.getMultiPlayer().getId()) {
+            if (id == this.gameClient.getMultiPlayer().getID()) {
                 return;
             }
 
@@ -80,8 +81,8 @@ public class CollectMessage implements Message {
             int indexOfItem = dis.readInt();
 
             // add item to other player's items list
-            for(MultiPlayer t : gameClient.getPlayers()) {
-                if (t.getId() == id) {
+            for(Player t : gameClient.getPlayers()) {
+                if (t.getID() == id) {
                     // add item to other player's items list
                     if (!itemType.equals("coin")) {
                         t.items.add(itemType);
@@ -93,7 +94,7 @@ public class CollectMessage implements Message {
 
             if(debug) {
                 System.out.println("-------------------------------");
-                System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
                 System.out.println("This player collect items message is from: id" + id);
                 System.out.println("Item's Type: " + itemType);
                 System.out.println("Item's Position x: " + itemsX + " y: " + itemsY);
@@ -108,5 +109,10 @@ public class CollectMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

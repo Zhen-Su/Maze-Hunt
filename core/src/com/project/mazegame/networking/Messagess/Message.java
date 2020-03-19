@@ -11,7 +11,11 @@ public interface Message {
     public static final int PLAYER_EXIT_MSG=4;
     public static final int HOST_START = 5;
     public static final int ITEMS_CREATE = 6;
+    public static final int ATTACK_MSG = 7;
+    public static final int DEAD_MSG = 8;
+    int AI_NEW_MSG=9;
 
     void send(DatagramSocket ds, String serverIP, int serverUDPPort);
     void process(DataInputStream dis);
+    void process(DataInputStream dis,int aiIndex);
 }

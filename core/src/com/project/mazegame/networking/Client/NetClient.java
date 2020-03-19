@@ -1,5 +1,6 @@
 package com.project.mazegame.networking.Client;
 
+import com.project.mazegame.networking.Messagess.AttackMessage;
 import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
@@ -7,6 +8,7 @@ import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
+import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayInputStream;
@@ -27,11 +29,6 @@ public class NetClient {
     private MultiPlayerGameScreen gameClient;
     private int clientUDPPort;
     private int serverUDPPort;
-
-    public String getServerIP() {
-        return serverIP;
-    }
-
     private String serverIP;
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
@@ -49,9 +46,8 @@ public class NetClient {
     /**
      * Conncet to GameServer,send udp port and IP to GameServer then close tcp socket.
      * @param ip   server IP
-     * @param serverTCPPort server TCP port
      */
-    public void connect(String ip, int serverTCPPort) {
+    public synchronized void connect(String ip, boolean createAI, int index) {
         serverIP = ip;
         try {
             try {
@@ -60,7 +56,7 @@ public class NetClient {
             } catch (SocketException e) {
                 e.printStackTrace();
             }
-            socket = new Socket(ip, serverTCPPort);   // TCPSocket
+            socket = new Socket(ip, GameServer.SERVER_TCP_PORT);   // TCPSocket
             if(debug) printMsg("Connected to server!");
 
             //Send client udp port to GameServer.
@@ -74,8 +70,12 @@ public class NetClient {
             DataInputStream dis = new DataInputStream(is);
             int id = dis.readInt();
             this.serverUDPPort = dis.readInt();
-            printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
-            gameClient.getMultiPlayer().setId(id);
+            if(!createAI) {
+                printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
+                gameClient.getMultiPlayer().setID(id);
+            }else{
+                gameClient.aiGameClients.get(index).getAiPlayer().setID(id); //change AI player's id
+            }
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -92,10 +92,17 @@ public class NetClient {
         }
 
 
-        PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
-        send(msg);
+        //TODO need to integrate two kind of message(AI&Player)
+        if(createAI) {
+            PlayerNewMessage msg = new PlayerNewMessage(gameClient.aiGameClients.get(index).getAiPlayer());
+            send(msg);
+        }else{
+            PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
+            send(msg);
+        }
 
-        new Thread(new ClientThread()).start();
+
+        new Thread(new ClientThread(createAI,index)).start();
     }
 
     public void send(Message msg) {
@@ -104,11 +111,18 @@ public class NetClient {
 
     /**
      * Inner class
-     * For Client to send and receive messages
+     * For Client to receive and process messages
      */
     public class ClientThread implements Runnable {
 
         byte[] receiveBuf = new byte[1024];
+        int aiIndex;
+        boolean isAImsg;
+
+        public ClientThread(boolean isAImsg,int aiIndex){
+            this.isAImsg=isAImsg;
+            this.aiIndex=aiIndex;
+        }
 
         @Override
         public void run() {
@@ -126,7 +140,7 @@ public class NetClient {
         }
 
         /**
-         * Process the data which rececive from server
+         * Process the data which received from server
          *
          * @param datagramPacket
          */
@@ -144,8 +158,13 @@ public class NetClient {
             Message msg = null;
             switch (msgType) {
                 case Message.PLAYER_NEW_MSG:
-                    msg = new PlayerNewMessage(gameClient);
-                    msg.process(dis);
+                    if(isAImsg){
+                        msg = new PlayerNewMessage(gameClient,gameClient.aiGameClients.get(aiIndex));
+                        msg.process(dis,aiIndex);
+                    }else{
+                        msg = new PlayerNewMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
                 case Message.PLAYER_MOVE_MSG:
                     msg = new MoveMessage(gameClient);
@@ -165,6 +184,10 @@ public class NetClient {
                     break;
                 case Message.HOST_START:
                     msg = new StartGameMessage(gameClient);
+                    msg.process(dis);
+                    break;
+                case Message.ATTACK_MSG:
+                    msg = new AttackMessage(gameClient);
                     msg.process(dis);
                     break;
             }
