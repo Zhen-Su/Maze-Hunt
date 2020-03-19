@@ -1,25 +1,5 @@
 package com.project.mazegame.screens;
 
-<<<<<<< HEAD
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.TextureData;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.project.mazegame.MazeGame;
-import com.project.mazegame.networking.Server.GameServer;
-import com.project.mazegame.tools.CSVStuff;
-
-import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
-
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-
-import static com.project.mazegame.tools.Variables.*;
-=======
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -36,14 +16,12 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
 
->>>>>>> yueyi2
 
 public class CreateMazeScreen implements Screen {
 
     private MazeGame game;
     public String username;
     private boolean hasEnterUsername =false;
-<<<<<<< HEAD
     
     
     private static final int LB_WIDTH = 350;
@@ -206,7 +184,6 @@ public class CreateMazeScreen implements Screen {
     	
 	}
 
-=======
     private HostLobbyScreen hostlobby;
 
     private static final String TAG = JoinMazeScreen.class.getSimpleName();
@@ -239,13 +216,11 @@ public class CreateMazeScreen implements Screen {
         this.game = game;
     }
 
->>>>>>> yueyi2
 
     //---------------------------------------Override-----------------------------------------------
     //----------------------------------------------------------------------------------------------
     @Override
     public void show() {
-<<<<<<< HEAD
     
     	int buf = 110;
 
@@ -287,7 +262,6 @@ public class CreateMazeScreen implements Screen {
     	CreateMaze = new Button(DRAW_X - 50,MAP_Y - 170, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
     	
     	font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-=======
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
         stage = new Stage(new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT));
@@ -325,12 +299,10 @@ public class CreateMazeScreen implements Screen {
 
         stage.addActor(usernameTextField);
         stage.addActor(numField);
->>>>>>> yueyi2
     }
 
     @Override
     public void render(float delta) {
-<<<<<<< HEAD
     	
     	if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             this.dispose();
@@ -569,7 +541,6 @@ public class CreateMazeScreen implements Screen {
                 return -10;
         }
     }
-=======
         game.batch.begin();
         game.batch.draw(backGround,0,0,1000,1000);
 
@@ -593,7 +564,6 @@ public class CreateMazeScreen implements Screen {
 
 
 
->>>>>>> yueyi2
     @Override
     public void resize(int width, int height) {
 
@@ -616,9 +586,7 @@ public class CreateMazeScreen implements Screen {
 
     @Override
     public void dispose() {
-<<<<<<< HEAD
     	font.dispose();
-=======
 
 
     }
@@ -648,7 +616,6 @@ public class CreateMazeScreen implements Screen {
         //this.dispose();
         game.setScreen(new MenuScreen(this.game));
         System.out.println("shouldn't see");
->>>>>>> yueyi2
     }
 }
 
