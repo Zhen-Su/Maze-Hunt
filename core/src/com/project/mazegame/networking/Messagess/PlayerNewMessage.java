@@ -79,7 +79,7 @@ public class PlayerNewMessage implements Message {
             String username = dis.readUTF();
 
             boolean exist = false;
-            for (MultiPlayer t : gameClient.getPlayers()){
+            for (Player t : gameClient.getPlayers()){
                 if(id == t.getID()){
                     exist = true;
                     break;

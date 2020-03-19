@@ -12,6 +12,7 @@ import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.Player;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -76,7 +77,7 @@ public class HostLobbyScreen implements Screen {
             font.draw(game.batch, "Ready Player:   ", 70, 850);
 
             int currY = 850;
-            for (MultiPlayer multiPlayer : gameClient.getPlayers()) {
+            for (Player multiPlayer : gameClient.getPlayers()) {
                 font.draw(game.batch, multiPlayer.getName(), 230, currY);
                 currY -= 50;
             }

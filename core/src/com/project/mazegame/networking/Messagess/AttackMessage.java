@@ -3,6 +3,7 @@ package com.project.mazegame.networking.Messagess;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayOutputStream;
@@ -60,7 +61,7 @@ public class AttackMessage implements Message{
             }
             String attackdir = dis.readUTF();
 
-            for(MultiPlayer t : gameClient.getPlayers())
+            for(Player t : gameClient.getPlayers())
             {
                 if(t.getID() == id)
                 {

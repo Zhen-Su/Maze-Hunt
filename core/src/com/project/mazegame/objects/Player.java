@@ -33,6 +33,7 @@ public class Player {
     protected int shieldXP;
     protected int respawnCounter = 0;
     protected BitmapFont font;
+    protected Direction dir;
 
     protected Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDying;
 
@@ -109,6 +110,8 @@ public class Player {
     public void setY(int y) {
         this.y = y;
     }
+    public Direction getDir() { return dir; }
+    public void setDir(Direction dir) { this.dir = dir; }
     public String getName() {
         return name;
     }

@@ -68,7 +68,7 @@ public class MoveMessage implements Message {
             Direction dir = Direction.values()[dis.readInt()];
             int newX = dis.readInt();
             int newY = dis.readInt();
-            for(MultiPlayer t : gameClient.getPlayers()){
+            for(Player t : gameClient.getPlayers()){
                 if(t.getID() == id){
 
                     //change coordinate and direction

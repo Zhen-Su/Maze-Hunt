@@ -20,6 +20,7 @@ import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.OrthoCam;
@@ -51,7 +52,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     private MultiPlayer myMultiPlayer;
     private NetClient netClient = new NetClient(this);
-    private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
+    private List<Player> players = new ArrayList<>();
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
     private boolean imHost;
 
@@ -157,9 +158,9 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
     public void setMultiPlayer(MultiPlayer multiPlayer) { this.myMultiPlayer = multiPlayer; }
 
-    public List<MultiPlayer> getPlayers() { return players; }
+    public List<Player> getPlayers() { return players; }
 
-    public void setPlayers(List<MultiPlayer> players) { this.players = players; }
+    public void setPlayers(List<Player> players) { this.players = players; }
 
     public NetClient getNc() { return netClient; }
 
@@ -358,7 +359,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
 
             //draw other players on my screen
             for (int i = 0; i < players.size(); i++) {
-                MultiPlayer otherPlayer = players.get(i);
+                Player otherPlayer = players.get(i);
                 otherPlayer.render(game.batch);
             }
 
@@ -603,7 +604,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         exitButtonInactive.dispose();
         myMultiPlayer.dispose();
         for(int i=0;i<players.size();i++){
-            MultiPlayer otherMultiPlayer = players.get(i);
+            Player otherMultiPlayer = players.get(i);
             otherMultiPlayer.dispose();
         }
 

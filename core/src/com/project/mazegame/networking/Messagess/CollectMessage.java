@@ -1,6 +1,7 @@
 package com.project.mazegame.networking.Messagess;
 
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayOutputStream;
@@ -80,7 +81,7 @@ public class CollectMessage implements Message {
             int indexOfItem = dis.readInt();
 
             // add item to other player's items list
-            for(MultiPlayer t : gameClient.getPlayers()) {
+            for(Player t : gameClient.getPlayers()) {
                 if (t.getID() == id) {
                     // add item to other player's items list
                     if (!itemType.equals("coin")) {

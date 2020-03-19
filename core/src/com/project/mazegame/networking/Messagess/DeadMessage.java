@@ -1,6 +1,7 @@
 package com.project.mazegame.networking.Messagess;
 
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayOutputStream;
@@ -55,7 +56,7 @@ public class DeadMessage implements Message {
                 return;
             }
             String deadMsg = dis.readUTF();
-            for(MultiPlayer t : gameClient.getPlayers()){
+            for(Player t : gameClient.getPlayers()){
                 if(t.getID() == id)
                 {
                     if(deadMsg == "DEAD") {
