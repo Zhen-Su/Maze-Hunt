@@ -31,6 +31,7 @@ public class Player {
     private int shieldXP;
     private ArrayList<Player> otherPlayers;
     Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick;
+    public Coordinate moveTo;
     private Thread playerThread;
     private float aiAttackTime;
     private float playerAttackTime;
@@ -80,6 +81,7 @@ public class Player {
     	initialPosition();
         x = this.position.getX();
         y = this.position.getY();
+        this.moveTo = new Coordinate(this.position.getX(), this.position.getY());
         this.startPAttack = false;
         this.startAIAttack = false;
 
@@ -475,6 +477,7 @@ public class Player {
         this.health = 5;
         this.coins = 0;
         this.initialPosition();
+        this.moveTo = new Coordinate(this.position.getX(), this.position.getY());
         this.items.clear();
         this.deathTime = time;
 //        this.haveyoudied = true;

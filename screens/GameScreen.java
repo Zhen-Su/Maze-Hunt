@@ -238,9 +238,13 @@ public class GameScreen implements Screen {
 		if(isPlayerOnSameP(player, emptyattack, aiPlayers)) {
 			if(isHuman1()) {
 				player.attackP(emptyattack.get(posAP), worldTimer);
+				emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
+				emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
 			} else {
 				AIPlayer playerinsert = aiPlayers.remove(posAAI);
 				player.attackAI(playerinsert, worldTimer);
+				playerinsert.x = playerinsert.moveTo.getX();
+				playerinsert.y = playerinsert.moveTo.getY();
 				aiPlayers.add(posAAI, playerinsert);
 			}
 		}
@@ -250,17 +254,29 @@ public class GameScreen implements Screen {
 			if (isPlayerOnSameAI(playerTurn, emptyattack, aiPlayers)) {
 				if(isHuman1()) {
 					playerTurn.attackP(emptyattack.get(posAP), worldTimer);
+					emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
+					emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
 				} else {
 					player.attackAI(aiPlayers.get(posAAI), worldTimer);
+					aiPlayers.get(posAAI).x = emptyattack.get(posAAI).moveTo.getX();
+					aiPlayers.get(posAAI).y = emptyattack.get(posAAI).moveTo.getY();
 				}
 			}
 			aiPlayers.add(i, playerTurn);
 		}
-        
+        /*
+		for (int i = 0; i< aiPlayers.size(); i++) {
+			aiPlayers.get(i).x = aiPlayers.get(i).moveTo.getX();
+        	aiPlayers.get(i).y = aiPlayers.get(i).moveTo.getY();
+		}
+		*/
 
         player.render(game.batch);
 //        aiPlayer.render(game.batch);
+
         for (int i = 0; i < aiPlayers.size(); i++) {
+//        	aiPlayers.get(i).x = aiPlayers.get(i).moveTo.getX();
+//        	aiPlayers.get(i).y = aiPlayers.get(i).moveTo.getY();
         	aiPlayers.get(i).render(game.batch);
 		}
         
