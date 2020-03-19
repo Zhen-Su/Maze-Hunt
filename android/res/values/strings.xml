@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-<<<<<<< HEAD
     <string name="app_name">gdx-game</string>
-=======
-    <string name="app_name">anotherworld</string>
->>>>>>> yueyi2
 
 </resources>

@@ -1,5 +1,7 @@
 package com.project.mazegame.screens;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -15,6 +17,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.CSVStuff;
+
 
 
 public class CreateMazeScreen implements Screen {
@@ -53,6 +57,32 @@ public class CreateMazeScreen implements Screen {
     private static int PLAYER2_Y = PLAYER_Y - 150;
     private static int MAP_Y = PLAYER2_Y -  150;
     
+    private HostLobbyScreen hostlobby;
+
+    private static final String TAG = JoinMazeScreen.class.getSimpleName();
+
+
+    public static final float WORLD_WIDTH = 480;
+    public static final float WORLD_HEIGHT = 800;
+
+    public static final int TEXT_FIELD_WIDTH = 300;
+    public static final int TEXT_FIELD_HEIGHT = 50;
+
+    private Stage stage;
+
+    private Texture bgTexture;
+
+    private Texture cursorTexture;
+
+    private BitmapFont bitmapFont;
+
+    private BitmapFont font;
+
+    private TextField usernameTextField;
+
+    private TextField numField;
+
+    
     Texture createYourMaze;
     Texture joinMazeButtonActive;
     Texture joinMazeButtonInactive;
@@ -73,7 +103,7 @@ public class CreateMazeScreen implements Screen {
     Button Map1Button,Map2Button,Map3Button;
     Button[] mapButtons;
     Button CreateMaze;
-    BitmapFont font;
+    
     boolean playerChosen;
     boolean mapChosen;
     boolean difficultyChosen;
@@ -184,37 +214,8 @@ public class CreateMazeScreen implements Screen {
     	
 	}
 
-    private HostLobbyScreen hostlobby;
 
-    private static final String TAG = JoinMazeScreen.class.getSimpleName();
-
-
-    public static final float WORLD_WIDTH = 480;
-    public static final float WORLD_HEIGHT = 800;
-
-    public static final int TEXT_FIELD_WIDTH = 300;
-    public static final int TEXT_FIELD_HEIGHT = 50;
-
-    private Stage stage;
-
-    private Texture bgTexture;
-
-    private Texture cursorTexture;
-
-    private BitmapFont bitmapFont;
-
-    private BitmapFont font;
-
-    private TextField usernameTextField;
-
-    private TextField numField;
-
-
-    Texture backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
-
-    public CreateMazeScreen(MazeGame game) {
-        this.game = game;
-    }
+    
 
 
     //---------------------------------------Override-----------------------------------------------
@@ -280,8 +281,8 @@ public class CreateMazeScreen implements Screen {
         style.font = bitmapFont;
         style.fontColor = new Color(1, 1, 1, 1);
 
-        BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
-        font = new BitmapFont();
+        //BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
+        font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
         font.setColor(Color.RED);
         font.getData().setScale(2f);
 
@@ -311,6 +312,23 @@ public class CreateMazeScreen implements Screen {
     	
     	game.batch.begin();
     	game.batch.draw(backGround,0,0,1000,1000);
+   
+
+        font.draw(game.batch, "Press enter to enter Host lobby ", 350, 480);
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            Gdx.app.log(TAG, "username = " + usernameTextField.getText());
+            Gdx.app.log(TAG, "number of AI players = " + numField.getText());
+            game.setScreen(new HostLobbyScreen(game,usernameTextField.getText()));
+        }
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+        {
+            backToMenuScreen();
+        }
+        
+        stage.act();
+        stage.draw();
+    
 
     	player1Button.draw();
     	player2Button.draw();
@@ -541,25 +559,7 @@ public class CreateMazeScreen implements Screen {
                 return -10;
         }
     }
-        game.batch.begin();
-        game.batch.draw(backGround,0,0,1000,1000);
-
-        font.draw(game.batch, "Press enter to enter Host lobby ", 350, 480);
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            Gdx.app.log(TAG, "username = " + usernameTextField.getText());
-            Gdx.app.log(TAG, "number of AI players = " + numField.getText());
-            game.setScreen(new HostLobbyScreen(game,usernameTextField.getText()));
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
-        {
-            backToMenuScreen();
-        }
-
-        stage.act();
-        game.batch.end();
-        stage.draw();
-    }
+   
 
 
 

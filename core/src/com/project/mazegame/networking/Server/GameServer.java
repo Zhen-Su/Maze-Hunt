@@ -16,15 +16,7 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-public class GameServer {
-=======
 public class GameServer implements Runnable {
->>>>>>> origin/yueyi1
-=======
-public class GameServer implements Runnable {
->>>>>>> yueyi2
 
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
@@ -49,33 +41,12 @@ public class GameServer implements Runnable {
      * @param args
      */
     public static void main(String[] args) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        new GameServer().start();
-    }
-
-    /**
-     * Start game! (NOT A THREAD)
-     * For the final integration, remove main() method in this class, and put this start() method into constructor
-     */
-    @SuppressWarnings("resource")
-    public void start(){
-=======
         new Thread(new GameServer()).start();
     }
 
 
     @Override
     public void run() {
->>>>>>> origin/yueyi1
-=======
-        new Thread(new GameServer()).start();
-    }
-
-
-    @Override
-    public void run() {
->>>>>>> yueyi2
 
         isRunning = true;
 
@@ -90,17 +61,8 @@ public class GameServer implements Runnable {
         while(isRunning) {
             Socket s =null;
             try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                printMsg("Waiting for a client……");
-=======
                 printMsg("Waiting for a client");
                 Thread.currentThread().setName("Server TCP Thread");
->>>>>>> origin/yueyi1
-=======
-                printMsg("Waiting for a client");
-                Thread.currentThread().setName("Server TCP Thread");
->>>>>>> yueyi2
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
 
                 //Receive client's UDP Port from GameClient
@@ -130,14 +92,7 @@ public class GameServer implements Runnable {
         }
     }
 
-<<<<<<< HEAD
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/yueyi1
-=======
->>>>>>> yueyi2
     /**
      * Client inner class
      * @author kevin
@@ -166,16 +121,8 @@ public class GameServer implements Runnable {
 
         @Override
         public void run() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-            Thread.currentThread().setName("Server UDP Thread");
->>>>>>> origin/yueyi1
-            DatagramSocket ds =null;
-=======
             Thread.currentThread().setName("Server UDP Thread");
             //DatagramSocket ds =null;
->>>>>>> yueyi2
             try {
                 ds = new DatagramSocket(SERVER_UDP_PORT);
             } catch (SocketException e) {

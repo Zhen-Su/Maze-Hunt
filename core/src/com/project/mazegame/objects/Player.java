@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -31,7 +32,7 @@ public class Player {
     public int swordDamage;
   
     
-    private BitmapFont font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+    //private BitmapFont font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
  
 
     protected int swordXP;
@@ -64,7 +65,7 @@ public class Player {
     public float initialisedEnchantmentTime;
 
     private static int shieldIconSize = 50;
-
+    private AssetManager manager;
 
     public Player(TiledMapTileLayer collisionLayer,String name, int ID ,String colour) {
 
@@ -82,7 +83,7 @@ public class Player {
 
         initialPosition();
 
-
+        manager = new AssetManager();
         loadPlayerTextures();
 
         ArrayList<Item> items = new ArrayList<Item>();
@@ -564,49 +565,51 @@ public class Player {
     public void loadPlayerTextures(){
 
         switch (colour) {
-            case "blue":
-                walkRight = new Texture("Player\\walkRightBlue.png");
-                walkLeft = new Texture("Player\\walkLeftBlue.png");
-                walkUp = new Texture("Player\\walkUpBlue.png");
-                walkDown = new Texture("Player\\walkDownBlue.png");
-                break;
-            case "green":
-                walkRight = new Texture("Player\\walkRightGreen.png");
-                walkLeft = new Texture("Player\\walkLeftGreen.png");
-                walkUp = new Texture("Player\\walkUpGreen.png");
-                walkDown = new Texture("Player\\walkDownGreen.png");
-                break;
-            case "pink":
-                walkRight = new Texture("Player\\walkRightPink.png");
-                walkLeft = new Texture("Player\\walkLeftPink.png");
-                walkUp = new Texture("Player\\walkUpPink.png");
-                walkDown = new Texture("Player\\walkDownPink.png");
-                break;
-            case "orange":
-                walkRight = new Texture("Player\\walkRightOrange.png");
-                walkLeft = new Texture("Player\\walkLeftOrange.png");
-                walkUp = new Texture("Player\\walkUpOrange.png");
-                walkDown = new Texture("Player\\walkDownOrange.png");
-                break;
-            case "lilac":
-                walkRight = new Texture("Player\\walkRightLilac.png");
-                walkLeft = new Texture("Player\\walkLeftLilac.png");
-                walkUp = new Texture("Player\\walkUpLilac.png");
-                walkDown = new Texture("Player\\walkDownLilac.png");
-                break;
-            case "yellow":
-                walkRight = new Texture("Player\\walkRightYellow.png");
-                walkLeft = new Texture("Player\\walkLeftYellow.png");
-                walkUp = new Texture("Player\\walkUpYellow.png");
-                walkDown = new Texture("Player\\walkDownYellow.png");
-                break;
-            default:
-                walkRight = new Texture("Player\\walkRight.png");
-                walkLeft = new Texture("Player\\walkLeft.png");
-                walkUp = new Texture("Player\\walkUp.png");
-                walkDown = new Texture("Player\\walkDown.png");
+        
+        case "blue":
+            walkRight = new Texture("Player\\walkRightBlue.png");
+            walkLeft = new Texture("Player\\walkLeftBlue.png");
+            walkUp = new Texture("Player\\walkUpBlue.png");
+            walkDown = new Texture("Player\\walkDownBlue.png");
+            break;
+        case "green":
+            walkRight = new Texture("Player\\walkRightGreen.png");
+            walkLeft = new Texture("Player\\walkLeftGreen.png");
+            walkUp = new Texture("Player\\walkUpGreen.png");
+            walkDown = new Texture("Player\\walkDownGreen.png");
+            break;
+        case "pink":
+            walkRight = new Texture("Player\\walkRightPink.png");
+            walkLeft = new Texture("Player\\walkLeftPink.png");
+            walkUp = new Texture("Player\\walkUpPink.png");
+            walkDown = new Texture("Player\\walkDownPink.png");
+            break;
+        case "orange":
+            walkRight = new Texture("Player\\walkRightOrange.png");
+            walkLeft = new Texture("Player\\walkLeftOrange.png");
+            walkUp = new Texture("Player\\walkUpOrange.png");
+            walkDown = new Texture("Player\\walkDownOrange.png");
+            break;
+        case "lilac":
+            walkRight = new Texture("Player\\walkRightLilac.png");
+            walkLeft = new Texture("Player\\walkLeftLilac.png");
+            walkUp = new Texture("Player\\walkUpLilac.png");
+            walkDown = new Texture("Player\\walkDownLilac.png");
+            break;
+        case "yellow":
+            walkRight = new Texture("Player\\walkRightYellow.png");
+            walkLeft = new Texture("Player\\walkLeftYellow.png");
+            walkUp = new Texture("Player\\walkUpYellow.png");
+            walkDown = new Texture("Player\\walkDownYellow.png");
+            break;
+        default:
+            walkRight = new Texture("Player\\walkRight.png");
+            walkLeft = new Texture("Player\\walkLeft.png");
+            walkUp = new Texture("Player\\walkUp.png");
+            walkDown = new Texture("Player\\walkDown.png");
 
-        }
+    }
+
 
         coinPick = new Texture("Collectibles\\coinAnimation.png");
 

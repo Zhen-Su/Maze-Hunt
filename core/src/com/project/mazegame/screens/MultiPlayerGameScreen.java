@@ -544,7 +544,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             mapItems.remove(item);
             co.damagingPotion(item, myMultiPlayer);
         }
-    }
+    
 
         //send message when player pick up coin or other items
         if(!containItems||isCoin) {

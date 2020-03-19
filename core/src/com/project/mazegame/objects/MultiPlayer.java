@@ -60,8 +60,6 @@ public class MultiPlayer extends Player {
 
         if (debug) System.out.println("My Multiplayer instance construction done!");
     }
-    //Getter&Setter=================================================================================
-    public int getX() { return x; }
 
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
         super(collisionLayer,username,x,y,dir);
@@ -429,6 +427,5 @@ public class MultiPlayer extends Player {
 
     public void dispose() {
     }
-    */
 
 }

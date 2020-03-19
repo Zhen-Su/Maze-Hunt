@@ -50,14 +50,7 @@ public class MoveMessage implements Message {
         byte[] buf = baos.toByteArray();
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-            System.out.println("I'm id"+id+", I'll send a move message.");
->>>>>>> origin/yueyi1
-=======
             if(debug) System.out.println("I'm id"+id+", I'll send a move message.");
->>>>>>> yueyi2
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,19 +66,11 @@ public class MoveMessage implements Message {
                 return;
             }
             Direction dir = Direction.values()[dis.readInt()];
-<<<<<<< HEAD
-<<<<<<< HEAD
-            int newx = dis.readInt();
-            int newy = dis.readInt();
-            for(MultiPlayer t : gameClient.getPlayers()){
-                if(t.getId() == id){
-=======
             int newX = dis.readInt();
             int newY = dis.readInt();
             for(Player t : gameClient.getPlayers()){
                 if(t.getID() == id){
 
->>>>>>> yueyi2
                     //change coordinate and direction
                     t.setDir(dir);
                     t.setX(newX);
@@ -99,27 +84,6 @@ public class MoveMessage implements Message {
                         System.out.println("This (id" + id + ") player's position y: " + newY);
                         System.out.println("****************************");
                     }
-<<<<<<< HEAD
-                    break;
-=======
-            int newX = dis.readInt();
-            int newY = dis.readInt();
-            for(MultiPlayer t : gameClient.getPlayers()){
-                if(t.getId() == id){
-
-                    //change coordinate and direction
-                    t.setDir(dir);
-                    t.setX(newX);
-                    t.setY(newY);
-
-                    System.out.println("****************************");
-                    System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
-                    System.out.println("This move message is from: id"+id);
-                    System.out.println("This (id"+id+ ") player's position x: " +newX);
-                    System.out.println("This (id"+id+ ") player's position y: " +newY);
-                    System.out.println("****************************");
-=======
->>>>>>> yueyi2
 
                     //change player texture
 //                    if(t.bU ==true && t.bD == false){
@@ -134,10 +98,6 @@ public class MoveMessage implements Message {
 //                        t.setPlayerTexture(t.getPlayer_down());
 //                    }
 //                    break;
-<<<<<<< HEAD
->>>>>>> origin/yueyi1
-=======
->>>>>>> yueyi2
                 }
             }
         } catch (IOException e) {

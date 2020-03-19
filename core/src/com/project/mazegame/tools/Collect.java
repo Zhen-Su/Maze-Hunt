@@ -28,11 +28,11 @@ public class Collect {
 
 	public ArrayList<Coordinate> positions;
 
-	public Collect (MazeGame game ,Player player, MultiPlayerGameScreen gameClient) {
+	public Collect (MazeGame game ,Player player/*, MultiPlayerGameScreen gameClient*/) {
 		test = new GameScreen(game);
 
 		if(player instanceof MultiPlayer){
-			mapItems =gameClient.mapItems;
+			//mapItems =gameClient.mapItems;
 		}else {
 			mapItems = GameScreen.mapItems;
 		}

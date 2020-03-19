@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.Variables;
 
 //import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
@@ -15,8 +16,6 @@ public class EndScreen implements Screen {
     private static final int LB_WIDTH = 350;
     private static final int LB_HEIGHT = 200;
 
-    private static final int LB_WIDTH = 350;
-    private static final int LB_HEIGHT = 200;
 
     private static final int MB_WIDTH = 250;
     private static final int MB_HEIGHT = 100;
@@ -33,25 +32,15 @@ public class EndScreen implements Screen {
     Texture playButtonInactive;
     Texture leaderboard;
 
-    private static final int SB_HEIGHT = 80;
-    private static final int SB_WIDTH = 50;
-    private static final int PLAY_Y = 100;
-
-    private MazeGame game;
-    Texture backGround;
-    Texture title;
-    private Music bgm;
-    Texture playButtonActive;
-    Texture playButtonInactive;
-    Texture leaderboard;
-    
     public EndScreen(MazeGame game) {
         this.game = game;
-        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
-        title = new Texture("UI\\Titles\\GAMEOVER!.png");
-        playButtonActive = new Texture("UI\\MenuButtons\\BackToMenuButton.png");
-        playButtonInactive = new Texture ("UI\\MenuButtons\\backToMenuButtonPressed.png");
-        leaderboard = new Texture("UI\\Backgrounds\\Leaderboard.png");
+        backGround = Assets.manager.get(Assets.menuBackground, Texture.class);
+        title =  Assets.manager.get(Assets.GAMEOVER, Texture.class);
+        playButtonActive = Assets.manager.get(Assets.BackToMenuButton, Texture.class);
+        playButtonInactive = Assets.manager.get(Assets.backToMenuButtonPressed, Texture.class);
+        leaderboard = Assets.manager.get(Assets.Leaderboard, Texture.class);
+        
+        
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
