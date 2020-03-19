@@ -23,7 +23,6 @@ public class PlayerNewMessage implements Message {
 
     public PlayerNewMessage(MultiPlayer multiPlayer) {
         this.multiPlayer = multiPlayer;
-        this.gameClient = gameClient;
     }
 
     public PlayerNewMessage(MultiPlayerGameScreen gameClient) {
@@ -46,6 +45,7 @@ public class PlayerNewMessage implements Message {
         DataOutputStream dos = new DataOutputStream(baos);
         try {
             dos.writeInt(msgType);
+<<<<<<< HEAD
             dos.writeInt(multiPlayer.getId());
 <<<<<<< HEAD
             dos.writeInt((int) multiPlayer.getpX());
@@ -54,6 +54,11 @@ public class PlayerNewMessage implements Message {
             dos.writeInt(multiPlayer.position.getX());
             dos.writeInt(multiPlayer.position.getY());
 >>>>>>> origin/yueyi1
+=======
+            dos.writeInt(multiPlayer.getID());
+            dos.writeInt(multiPlayer.position.getX());
+            dos.writeInt(multiPlayer.position.getY());
+>>>>>>> yueyi2
             dos.writeInt(multiPlayer.getDir().ordinal());
             dos.writeUTF(multiPlayer.getName());
         } catch (IOException e) {
@@ -75,7 +80,7 @@ public class PlayerNewMessage implements Message {
         try{
 
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getId()){
+            if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
 
@@ -85,8 +90,8 @@ public class PlayerNewMessage implements Message {
             String username = dis.readUTF();
 
             boolean exist = false;
-            for (MultiPlayer t : gameClient.getPlayers()){
-                if(id == t.getId()){
+            for (Player t : gameClient.getPlayers()){
+                if(id == t.getID()){
                     exist = true;
                     break;
                 }
@@ -95,6 +100,7 @@ public class PlayerNewMessage implements Message {
                 PlayerNewMessage msg = new PlayerNewMessage(gameClient);
                 gameClient.getNc().send(msg);
                 MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir);
+<<<<<<< HEAD
 <<<<<<< HEAD
                 System.out.println("the new player has been construct!");
                 newPlayer.setId(id);
@@ -111,6 +117,19 @@ public class PlayerNewMessage implements Message {
                 System.out.println("I've added this player to list!!");
                 System.out.println("--------------------------------------");
 >>>>>>> origin/yueyi1
+=======
+
+                System.out.println("--------------------------------------");
+                System.out.println("my id: "+this.gameClient.getMultiPlayer().getID());
+                System.out.println("this player new message is from: id "+id);
+
+                newPlayer.setID(id);
+                gameClient.getPlayers().add(newPlayer);
+                gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
+
+                System.out.println("I've added this player to list!!");
+                System.out.println("--------------------------------------");
+>>>>>>> yueyi2
             }
 
         } catch (IOException e) {

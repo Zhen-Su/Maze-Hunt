@@ -30,8 +30,57 @@ import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 import static com.project.mazegame.tools.Variables.*;
 
+	private Player player;
+//	private AIPlayer aiPlayer;// ---------need to be implemented
+	private InputHandler inputHandler;
+	private float delta;
 
-public class GameScreen implements Screen {
+	private TiledMap tileMap;//
+	private OrthogonalTiledMapRenderer tileMapRenderer;//
+	private TiledMapTileLayer collisionLayer;
+
+	private Texture exitButtonActive,exitButtonInactive;
+
+	private Texture heartTexture;
+	private Texture coinTexture;
+	private Texture swordTexture;
+	private Texture shieldTexture;
+	private Texture minimapTexture;
+	private Texture healingPotionTexture;
+	private Texture damagingPotionTexture;
+	private Texture gearEnchantmentTexture;
+	private Texture audioButtonActive; //-------need to  implemented
+	private Texture audioButtonInactive;
+	private Texture overlay;
+	private Texture coinPick;
+	private BitmapFont font;
+	private Texture mapTexture, minimapOutline, playerIcon;
+
+	private Texture enchantedGlow;
+
+
+	AnimationTool coinAnimation;
+
+	//    private float timer;
+	public static float worldTimer;
+
+	Timer time = new Timer();
+
+	private Player player2;
+
+	private Collect co;
+
+	private final int EXIT_WIDTH = 50;
+	private final int EXIT_HEIGHT = 20;
+
+
+
+
+	public static ArrayList<Item> mapItems = new ArrayList<Item>();
+
+	private final int EXIT_Y = VIEWPORT_HEIGHT;
+
+	private int tempMapItemssize;
 
     private MazeGame game;
     private OrthoCam cam;
@@ -405,12 +454,14 @@ public class GameScreen implements Screen {
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				
+
 				}
 			}
 			if (item.getType() == "sword") {
 				co.sword(item, player, player2);
 			}
 			
+
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
 				player.initialisedEnchantmentTime = time.currentTime();
@@ -493,7 +544,7 @@ public class GameScreen implements Screen {
 		int maxPotions = 50;
 		int maxX = widthInTiles;
 		int maxY = widthInTiles;
-	
+
 
 
 		for (int i = 0; i <= maxShields; i++) {
@@ -501,7 +552,7 @@ public class GameScreen implements Screen {
 			
 			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
-			
+
 			Item item = new Item("shield", position);
 
 			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
@@ -512,7 +563,7 @@ public class GameScreen implements Screen {
 
 		for (int i = 0; i < maxCoins; i++) {
 			Coordinate position = new Coordinate(0,0);
-			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			Item item = new Item("coin", position);
 			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
@@ -524,7 +575,7 @@ public class GameScreen implements Screen {
 
 		for (int i = 0; i < maxSwords; i++) {
 			Coordinate position = new Coordinate(0,0);
-			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			Item item = new Item("sword", position);
 			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
@@ -536,7 +587,7 @@ public class GameScreen implements Screen {
 
 		for (int i = 0; i < maxMinimaps; i++) {
 			Coordinate position = new Coordinate(0,0);
-			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			Item item = new Item("minimap", position);
 			if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {
@@ -548,10 +599,10 @@ public class GameScreen implements Screen {
 
 		for (int i = 0; i < maxPotions; i++) {
 			Coordinate position = new Coordinate(0,0);
-			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 			int whatPotion = (int)(Math.random() * 4);
-			
+
 			if (whatPotion == 1) {
 				Item item = new Item("healingPotion", position);
 				if(!(positions.contains(position.toString())) && !(player.isCellBlocked((float)position.getX(), (float)position.getY()))) {

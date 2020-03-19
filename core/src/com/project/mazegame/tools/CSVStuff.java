@@ -10,7 +10,11 @@ import java.util.ArrayList;
 public class CSVStuff {
 
     public static ArrayList<String> readCSVFile() {
+<<<<<<< HEAD
         String fileRead = "C:\\Users\\barne\\MazeGame\\android\\csvFile.csv";
+=======
+        String fileRead = "android/csvFile.csv";
+>>>>>>> yueyi2
         BufferedReader buff = null;
         String line = "";
         ArrayList<String> output = new ArrayList<>();
@@ -34,6 +38,7 @@ public class CSVStuff {
 
     public static void writeCSV(ArrayList<String> list) {
         try {
+<<<<<<< HEAD
         
         String outPutCSV = "C:\\Users\\barne\\MazeGame\\android\\csvFile.csv";
         FileWriter writer = new FileWriter(outPutCSV);
@@ -51,6 +56,25 @@ public class CSVStuff {
       }
     }
 	
+=======
+
+            String outPutCSV = "/Users/kevin/mazeHunt/android/csvFile.csv ";
+            FileWriter writer = new FileWriter(outPutCSV);
+            for (int i = 0; i < list.size(); i++) {
+                writer.append(list.get(i));
+                writer.append(",");
+                writer.append("\n");
+
+            }
+            System.out.print("Written successfully");
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+>>>>>>> yueyi2
 
 
 }

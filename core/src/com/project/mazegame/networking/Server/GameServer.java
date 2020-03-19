@@ -1,4 +1,7 @@
 package com.project.mazegame.networking.Server;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -14,25 +17,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 public class GameServer {
 =======
 public class GameServer implements Runnable {
 >>>>>>> origin/yueyi1
+=======
+public class GameServer implements Runnable {
+>>>>>>> yueyi2
 
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
     public static final int SERVER_UDP_PORT=7777;
-    static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
+    private static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
     private boolean isRunning = false;
     private ServerSocket serverSocket;
     private Socket s;
+    private boolean debug =false;
+
+    public static List<Client> getClients() { return clients; }
+
+    public static void setClients(List<Client> clients) { GameServer.clients = clients; }
+
+    public boolean isRunning() { return isRunning; }
+
+    public void setRunning(boolean running) { isRunning = running; }
 
 
     /**
-     * Main method
+     * option
      * @param args
      */
     public static void main(String[] args) {
+<<<<<<< HEAD
 <<<<<<< HEAD
         new GameServer().start();
     }
@@ -51,6 +68,14 @@ public class GameServer implements Runnable {
     @Override
     public void run() {
 >>>>>>> origin/yueyi1
+=======
+        new Thread(new GameServer()).start();
+    }
+
+
+    @Override
+    public void run() {
+>>>>>>> yueyi2
 
         isRunning = true;
 
@@ -66,11 +91,16 @@ public class GameServer implements Runnable {
             Socket s =null;
             try {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 printMsg("Waiting for a client……");
 =======
                 printMsg("Waiting for a client");
                 Thread.currentThread().setName("Server TCP Thread");
 >>>>>>> origin/yueyi1
+=======
+                printMsg("Waiting for a client");
+                Thread.currentThread().setName("Server TCP Thread");
+>>>>>>> yueyi2
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
 
                 //Receive client's UDP Port from GameClient
@@ -102,9 +132,12 @@ public class GameServer implements Runnable {
 
 <<<<<<< HEAD
 
+<<<<<<< HEAD
 
 =======
 >>>>>>> origin/yueyi1
+=======
+>>>>>>> yueyi2
     /**
      * Client inner class
      * @author kevin
@@ -128,15 +161,21 @@ public class GameServer implements Runnable {
      */
     private class UDPThread implements Runnable{
 
+        public DatagramSocket ds =null;
         byte[] receiveBuffer = new byte[1024];
 
         @Override
         public void run() {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             Thread.currentThread().setName("Server UDP Thread");
 >>>>>>> origin/yueyi1
             DatagramSocket ds =null;
+=======
+            Thread.currentThread().setName("Server UDP Thread");
+            //DatagramSocket ds =null;
+>>>>>>> yueyi2
             try {
                 ds = new DatagramSocket(SERVER_UDP_PORT);
             } catch (SocketException e) {
@@ -147,12 +186,12 @@ public class GameServer implements Runnable {
                 DatagramPacket dp = new DatagramPacket(receiveBuffer,receiveBuffer.length);
                 try {
                     ds.receive(dp);
-                    printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
+                   // printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
                     for (Client c : clients){
                         if(c!=null) {
                             dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
                             ds.send(dp);
-                            printMsg("I've broadcasted to client");
+                            //printMsg("I've broadcasted to client");
                         }
                     }
                 } catch (IOException e) {
@@ -167,13 +206,21 @@ public class GameServer implements Runnable {
     /**
      * Stop all threads
      */
-    public void dispose() {
+    public void dispose(MultiPlayerGameScreen gameClient) {
         isRunning = false;
-        //Close all Clients
 
+        //Send message to all client the server will close.
+        PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getID());
+        gameClient.getNc().send(message);
+        try {
+            Thread.currentThread().sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        //Close all Clients
         clients.clear();
         clients=null;
-        //Close Server
+        //Close TCP Server
         if(serverSocket!=null) {
             try {
                 serverSocket.close();
@@ -181,6 +228,7 @@ public class GameServer implements Runnable {
                 e.printStackTrace();
             }
         }
+        System.out.println("Dispose server and clients...");
     }
 
     /**

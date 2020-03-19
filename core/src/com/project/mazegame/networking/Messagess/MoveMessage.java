@@ -20,9 +20,9 @@ public class MoveMessage implements Message {
     private int pX, pY;
     private Direction dir;
     private MultiPlayerGameScreen gameClient;
+    private boolean debug =false;
 
     public MoveMessage(int id, int pX, int pY, Direction dir) {
-        // TODO Auto-generated constructor stub
         this.id=id;
         this.pX=pX;
         this.pY=pY;
@@ -30,14 +30,12 @@ public class MoveMessage implements Message {
     }
 
     public MoveMessage(MultiPlayerGameScreen gameClient) {
-        // TODO Auto-generated constructor stub
         this.gameClient=gameClient;
     }
 
 
     @Override
     public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
-        // TODO Auto-generated method stub
         ByteArrayOutputStream baos = new ByteArrayOutputStream(30);
         DataOutputStream dos = new DataOutputStream(baos);
         try {
@@ -53,9 +51,13 @@ public class MoveMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             System.out.println("I'm id"+id+", I'll send a move message.");
 >>>>>>> origin/yueyi1
+=======
+            if(debug) System.out.println("I'm id"+id+", I'll send a move message.");
+>>>>>>> yueyi2
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,32 +67,39 @@ public class MoveMessage implements Message {
 
     @Override
     public void process(DataInputStream dis) {
-        // TODO Auto-generated method stub
         try{
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getId()){
+            if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
             Direction dir = Direction.values()[dis.readInt()];
+<<<<<<< HEAD
 <<<<<<< HEAD
             int newx = dis.readInt();
             int newy = dis.readInt();
             for(MultiPlayer t : gameClient.getPlayers()){
                 if(t.getId() == id){
+=======
+            int newX = dis.readInt();
+            int newY = dis.readInt();
+            for(Player t : gameClient.getPlayers()){
+                if(t.getID() == id){
+
+>>>>>>> yueyi2
                     //change coordinate and direction
                     t.setDir(dir);
-                    t.setpX(newx);
-                    t.setpY(newy);
-//                    System.out.println("zhen x: "+x);
-//                    System.out.println("zhen y:" +y);
-                    //change player texture
-                    if(t.bU ==true && t.bD == false){
-                        t.setPlayerTexture(t.getPlayer_up());
-                    }else if(t.bD==true&&t.bU==false){
-                        t.setPlayerTexture(t.getPlayer_down());
-                    }else {
-                        t.setPlayerTexture(t.getPlayer_middle());
+                    t.setX(newX);
+                    t.setY(newY);
+
+                    if(debug) {
+                        System.out.println("****************************");
+                        System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
+                        System.out.println("This move message is from: id" + id);
+                        System.out.println("This (id" + id + ") player's position x: " + newX);
+                        System.out.println("This (id" + id + ") player's position y: " + newY);
+                        System.out.println("****************************");
                     }
+<<<<<<< HEAD
                     break;
 =======
             int newX = dis.readInt();
@@ -109,6 +118,8 @@ public class MoveMessage implements Message {
                     System.out.println("This (id"+id+ ") player's position x: " +newX);
                     System.out.println("This (id"+id+ ") player's position y: " +newY);
                     System.out.println("****************************");
+=======
+>>>>>>> yueyi2
 
                     //change player texture
 //                    if(t.bU ==true && t.bD == false){
@@ -123,7 +134,10 @@ public class MoveMessage implements Message {
 //                        t.setPlayerTexture(t.getPlayer_down());
 //                    }
 //                    break;
+<<<<<<< HEAD
 >>>>>>> origin/yueyi1
+=======
+>>>>>>> yueyi2
                 }
             }
         } catch (IOException e) {

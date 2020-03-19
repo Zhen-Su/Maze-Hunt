@@ -2,6 +2,7 @@ package com.project.mazegame.tools;
 import com.project.mazegame.CountDown;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Variables.*;
 
 import com.project.mazegame.screens.GameScreen;
@@ -19,21 +20,27 @@ import com.project.mazegame.tools.Variables;
 public class Collect {
 	public Coordinate position = new Coordinate();
 	public Item item = new Item(" ", position);
-	
+
 	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
+	public int indexOfItem;
+
 	public ArrayList<Coordinate> positions;
-	public Collect (MazeGame game ,Player player) {
+
+	public Collect (MazeGame game ,Player player, MultiPlayerGameScreen gameClient) {
 		test = new GameScreen(game);
-		
-		mapItems = GameScreen.mapItems;
+
+		if(player instanceof MultiPlayer){
+			mapItems =gameClient.mapItems;
+		}else {
+			mapItems = GameScreen.mapItems;
+		}
+
 		items = player.items;
-		
-		
 	}
-	
-	
+
+
 	//ArrayList<Item> items = test.items;
 	//if the player picks up an item, remove it from the map and return the item collected
 	public Item pickedUp(Item item) {
@@ -44,14 +51,14 @@ public class Collect {
 	}
 
 	public Item nearestItem(Player player) {
-		Coordinate position = new Coordinate();
-		position = mapItems.get(0).getPosition();
-		
+//		Coordinate position = new Coordinate();
+//		position = mapItems.get(0).getPosition();
+
 //		Item nearestItem = new Item(" ", position);
 		Item nearestItem = mapItems.get(0);
 		//System.out.println("items: " + mapItems.size());
 		for (int i = 0; i < mapItems.size(); i++) {
-			
+
 			int tempX = mapItems.get(i).getPosition().getX();
 			int tempY = mapItems.get(i).getPosition().getY();
 
@@ -65,12 +72,13 @@ public class Collect {
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
 				//System.out.println("found shorter!");
+				indexOfItem=i;
 			}
 		}
 		//System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
 		return nearestItem;
 	}
-	
+
 	private int andinsEuclidian(int x1, int x2, int y1, int y2) {
 		int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
 //		System.out.println()
@@ -80,14 +88,14 @@ public class Collect {
 
 
 	public void shield(Item item, Player player1) {
-		
-		
+
+
 		final ArrayList<String> items = player1.items;
 		int seconds = 60;
 		int startHealth = player1.health;
-		
+
 		int time = 60000;
-		
+
 
 	}
 
@@ -120,17 +128,17 @@ public class Collect {
 		//ArrayList<String> items = player1.items;
 		player1.generateHealth();
 		player1.generateHealth();
-		
+
 		items.remove("healingPotion");
 	}
 
 	public void damagingPotion(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
-		
+
 		player1.decreaseHealth(3);
-		
+
 //		player1.playerPosioned();
-		
+
 		//items.remove("damagingPotion");
 		//player1.loadPlayerTextures();
 	}
@@ -143,6 +151,8 @@ public class Collect {
 
 	}
 	
+
+
 
 
 
