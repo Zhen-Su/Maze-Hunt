@@ -108,7 +108,7 @@ public class Collect {
 		//display sword icon on screen
 	}
 
-	public void compass(Item item) {
+	public void minimap(Item item) {
 		//ArrayList<String> items = player1.items;
 		//pick nearest player, follow it
 		//display compass

@@ -87,13 +87,14 @@ public class MenuScreen implements Screen {
 
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
-        bgm.play();
+//        bgm.play();
 
     }
 
     @Override
     public void show() {
 //    	cam = new OrthoCam(game,false, V_WIDTH, V_HEIGHT, V_WIDTH/2,V_HEIGHT/2);
+    	
     }
 
     @Override

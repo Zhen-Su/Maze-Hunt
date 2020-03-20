@@ -6,8 +6,6 @@ import com.badlogic.gdx.graphics.Texture;
 public class Assets {
 	public static final AssetManager manager= new AssetManager();
 
-	
-	
 	public static final String playSoloButton = "UI/MenuButtons/playSoloButton.png";
 	public static final String playSoloButtonPressed = "UI/MenuButtons/playSoloButtonPressed.png";
 	public static final String exit_button_active = "UI/MenuButtons/exit_button_active.png";
@@ -44,6 +42,9 @@ public class Assets {
 	public static final String Leaderboard = "UI/Backgrounds/Leaderboard.png";
 //	public static final String GAMEOVER = "UI\\Titles\\GAMEOVER!.png";
 	
+	public Assets (){
+		load();
+	}
 	
 	
 	public static void load() {
