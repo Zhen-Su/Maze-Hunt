@@ -25,7 +25,7 @@ public class ItemCreateMessage implements Message {
     private int x;
     private int y;
     private MultiPlayerGameScreen gameClient;
-    private boolean debug=true;
+    private boolean debug=false;
 
 
     public ItemCreateMessage(int id, String itemType, int x, int y) {
@@ -99,5 +99,10 @@ public class ItemCreateMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

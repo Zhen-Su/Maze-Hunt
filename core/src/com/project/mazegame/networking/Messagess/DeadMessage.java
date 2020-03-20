@@ -76,4 +76,9 @@ public class DeadMessage implements Message {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
+    }
 }

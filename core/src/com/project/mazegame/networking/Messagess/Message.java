@@ -13,7 +13,10 @@ public interface Message {
     public static final int ITEMS_CREATE = 6;
     public static final int ATTACK_MSG = 7;
     public static final int DEAD_MSG = 8;
+    public static final int AI_NEW_MSG=9;
+    public static final int REMOVE_MSG=10;
 
     void send(DatagramSocket ds, String serverIP, int serverUDPPort);
     void process(DataInputStream dis);
+    void process(DataInputStream dis,int aiIndex);
 }

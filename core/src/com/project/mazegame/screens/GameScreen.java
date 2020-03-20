@@ -4,8 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.project.mazegame.objects.*;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.TextureData;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -30,14 +32,9 @@ import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 import static com.project.mazegame.tools.Variables.*;
 
-
 public class GameScreen implements Screen {
-
-	private MazeGame game;
-	private OrthoCam cam;
-
 	private Player player;
-//	private AIPlayer aiPlayer;// ---------need to be implemented
+	//private AIPlayer aiPlayer;// ---------need to be implemented
 	private InputHandler inputHandler;
 	private float delta;
 
@@ -64,9 +61,6 @@ public class GameScreen implements Screen {
 
 	private Texture enchantedGlow;
 
-
-	AnimationTool coinAnimation;
-
 	//    private float timer;
 	public static float worldTimer;
 
@@ -79,19 +73,21 @@ public class GameScreen implements Screen {
 	private final int EXIT_WIDTH = 50;
 	private final int EXIT_HEIGHT = 20;
 
-
-
-
 	public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
 	private final int EXIT_Y = VIEWPORT_HEIGHT;
 
 	private int tempMapItemssize;
 
+	private MazeGame game;
+	private OrthoCam cam;
+
 	private int numOfAI;
 	private String map;
 	private String playerSkin;
 	private String AIDifficulty;
+
+	private AssetManager manager;
 
 	int overlayWidth;
 	int overlayHeight;
@@ -102,10 +98,10 @@ public class GameScreen implements Screen {
 	public GameScreen(MazeGame game) {
 		this.game = game;
 
+
 		inputHandler = new InputHandler();
 
 		worldTimer = 60;
-
 
 		// read csv file
 		ArrayList<String> output = CSVStuff.readCSVFile();
@@ -118,15 +114,15 @@ public class GameScreen implements Screen {
 
 		if(this.map.equals( "map1")) {
 			tileMap = new TmxMapLoader().load("Map1.tmx");
-			mapTexture = new Texture("Maps\\Map1Icon.png");
+			mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class);
 		}
 		else if(this.map.equals("map2")) {
 			tileMap = new TmxMapLoader().load("Map2.tmx");
-			mapTexture = new Texture("Maps\\Map2Icon.png");
+			mapTexture = Assets.manager.get(Assets.map2Icon, Texture.class);
 		}
 		else {
 			tileMap = new TmxMapLoader().load("Map3.tmx");
-			mapTexture = new Texture("Maps\\Map3Icon.png");
+			mapTexture = Assets.manager.get(Assets.map3Icon, Texture.class);
 		}
 
 		tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -141,38 +137,40 @@ public class GameScreen implements Screen {
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-		// buttons
-		exitButtonActive = new Texture("UI\\MenuButtons\\exit_button_active.png");
-		exitButtonInactive = new Texture("UI\\MenuButtons\\exit_button_inactive.png");
-		audioButtonActive = new Texture("UI\\MenuButtons\\audioOn.png");
-		audioButtonInactive = new Texture("UI\\MenuButtons\\audioOff.png");
-
-		heartTexture = new Texture("Collectibles\\heart.png");
-		coinTexture = new Texture("Collectibles\\\\coin.png");
-		swordTexture = new Texture("Collectibles\\\\sword2.png");
-		shieldTexture = new Texture("Collectibles\\\\shield.png");
-		healingPotionTexture = new Texture("Collectibles\\\\Potion.png");
-		gearEnchantmentTexture = new Texture("Collectibles\\\\Potion2.png");
-		minimapTexture = new Texture("Collectibles\\\\RolledMap.png");
-		damagingPotionTexture = new Texture("Collectibles\\\\Potion3.png");
-		overlay = new Texture("UI\\circularOverlay.png");
-		coinPick = new Texture("Collectibles\\coinAnimation.png");
-
-
-
-		minimapOutline = new Texture("Maps\\minimapOutline.png");
-		overlayWidth = overlay.getWidth() +300;
-		overlayHeight = overlay.getHeight() +300;
-		enchantedGlow = new Texture("Player\\ENCHANTED.png");
-		playerIcon = new Texture("Player\\playerOnMap.png");
-
-
 		//coinAnimation = new AnimationTool(50,50,player,coinPick,true);
 		//coinAnimation.create();
 	}
 
+	public void getAsset(){
+		// buttons
+
+		exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
+		exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive,Texture.class);
+		audioButtonActive = Assets.manager.get(Assets.audioOn,Texture.class);
+		audioButtonInactive= Assets.manager.get(Assets.audioOff,Texture.class);
+		heartTexture = Assets.manager.get(Assets.heart,Texture.class);
+		coinTexture = Assets.manager.get(Assets.coin,Texture.class);
+		swordTexture = Assets.manager.get(Assets.sword,Texture.class);
+		shieldTexture = Assets.manager.get(Assets.shield,Texture.class);
+		healingPotionTexture = Assets.manager.get(Assets.Potion,Texture.class);
+		gearEnchantmentTexture = Assets.manager.get(Assets.Potion2,Texture.class);
+		damagingPotionTexture = Assets.manager.get(Assets.Potion3,Texture.class);
+		minimapTexture = Assets.manager.get(Assets.RolledMap,Texture.class);
+		overlay = Assets.manager.get(Assets.circularOverlay,Texture.class);
+		coinPick= Assets.manager.get(Assets.coinAnimation,Texture.class);
+		minimapOutline = Assets.manager.get(Assets.minimapOutline,Texture.class);
+		enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
+		playerIcon = Assets.manager.get(Assets.playerOnMap,Texture.class);
+
+		overlayWidth = overlay.getWidth() +300;
+		overlayHeight = overlay.getHeight() +300;
+	}
+
 	@Override
 	public void show() {
+
+		getAsset();
+
 		//assuming it's a square map -> only need width of map and width of tile
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
 		co = new Collect(game, player,null);
@@ -188,9 +186,6 @@ public class GameScreen implements Screen {
 	public void render(float delta) { //method repeats a lot
 
 		updateTime(delta);
-//    	player.removeShield();
-//    	removeEnchantment();
-
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -393,7 +388,6 @@ public class GameScreen implements Screen {
 		Item item =  co.nearestItem(player);
 
 
-
 		if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")&& !(item.getType() == "healingPotion")&& !(item.getType() == "damagingPotion")) {
 			item = co.pickedUp(co.nearestItem(player));
 
@@ -404,12 +398,12 @@ public class GameScreen implements Screen {
 				co.shield(item, player);
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
-
 				}
 			}
 			if (item.getType() == "sword") {
 				co.sword(item, player, player2);
 			}
+
 
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
@@ -430,6 +424,7 @@ public class GameScreen implements Screen {
 			mapItems.remove(item);
 			co.damagingPotion(item, player);
 		}
+		//System.out.println(player.items);
 	}
 
 	private void animateCoin() {

@@ -105,4 +105,9 @@ public class MoveMessage implements Message {
         }
     }
 
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
+    }
+
 }

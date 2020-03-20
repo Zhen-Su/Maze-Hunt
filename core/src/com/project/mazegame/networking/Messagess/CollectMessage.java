@@ -22,7 +22,7 @@ public class CollectMessage implements Message {
     private int x;
     private int y;
     private int indexOfItem;
-    private boolean debug =true;
+    private boolean debug =false;
 
     private MultiPlayerGameScreen gameClient;
 
@@ -51,7 +51,6 @@ public class CollectMessage implements Message {
             dos.writeInt(x);
             dos.writeInt(y);
             dos.writeInt(indexOfItem);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -69,7 +68,6 @@ public class CollectMessage implements Message {
     @Override
     public void process(DataInputStream dis) {
         try {
-
             int id = dis.readInt();
             if (id == this.gameClient.getMultiPlayer().getID()) {
                 return;
@@ -83,8 +81,8 @@ public class CollectMessage implements Message {
             // add item to other player's items list
             for(Player t : gameClient.getPlayers()) {
                 if (t.getID() == id) {
-                    // add item to other player's items list
-                    if (!itemType.equals("coin")) {
+                    // add item(except coin, healingPotin and damagingPotion) to other player's items list
+                    if (!itemType.equals("coin") && !itemType.equals("healingPotion") && !itemType.equals("damagingPotion")) {
                         t.items.add(itemType);
                     }
                 }
@@ -109,5 +107,10 @@ public class CollectMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

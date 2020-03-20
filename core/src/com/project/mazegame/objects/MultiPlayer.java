@@ -14,9 +14,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.project.mazegame.networking.Messagess.AttackMessage;
 import com.project.mazegame.networking.Messagess.DeadMessage;
 import com.project.mazegame.networking.Messagess.MoveMessage;
+import com.project.mazegame.networking.Messagess.RemoveItemsMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.AnimationTool;
+import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.Coordinate;
+import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
 
@@ -25,17 +28,12 @@ public class MultiPlayer extends Player {
 
     private MultiPlayerGameScreen gameClient;
     public boolean bL, bU, bR, bD;
-
     private Direction dir;
     public static boolean debug = false;
 
-
-
-
-
     //constructors=================================================================================
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir) {
-        super(collisionLayer,username);
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir, String colour) {
+        super(collisionLayer, username);
         if (debug) System.out.println("My Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health = 5;
@@ -44,40 +42,47 @@ public class MultiPlayer extends Player {
         this.items = new ArrayList<>();
         this.position = new Coordinate(x, y);
         this.swordDamage = 0;
-//        this.colour=colour;
+        this.colour = colour;
         swordXP = 0;
         shieldXP = 0;
-        this.font=gameClient.bitmapFont;
+        this.font = gameClient.bitmapFont;
+        time = new Timer();
 
         initialPosition();
-        x = this.position.getX();
-        y = this.position.getY();
+        this.x = this.position.getX();
+        this.y = this.position.getY();
 
+        loadPlayerTextures();
         this.gameClient = gameClient;
         this.dir = dir;
-        ArrayList<Item> items = new ArrayList<Item>();
         createAnimations();
 
         if (debug) System.out.println("My Multiplayer instance construction done!");
     }
 
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir) {
-        super(collisionLayer,username,x,y,dir);
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour) {
+        super(collisionLayer, username, x, y, dir);
         if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health = 5;
         this.coins = 0;
         this.name = username;
         this.items = new ArrayList<>();
-        this.font=gameClient.bitmapFont;
+        this.colour = colour;
+        this.font = gameClient.bitmapFont;
+        time = new Timer();
 
-        this.x = x;
-        this.y = y;
-        this.position = new Coordinate(x, y);
+//        this.position = new Coordinate(x, y);
+//        this.x = this.position.getX();
+//        this.y = this.position.getY();
+        this.x=x;
+        this.y=y;
+        this.position=new Coordinate(x,y);
+        System.out.println("other player's position: ("+this.position.getX()+","+this.position.getY()+")");
 
+        loadPlayerTextures();
         this.gameClient = gameClient;
         this.dir = dir;
-        ArrayList<Item> items = new ArrayList<Item>();
         createAnimations();
 
         if (debug) System.out.println("Other Multiplayer instance construction done!");
@@ -92,111 +97,83 @@ public class MultiPlayer extends Player {
     }
     //==============================================================================================
 
-    public void createAnimations() {
-
-        walkUp = gameClient.walkUp;
-        walkDown=gameClient.walkDown;
-        walkRight=gameClient.walkRight;
-        walkLeft=gameClient.walkLeft;
-        coinPick=gameClient.coinPick;
-        playerDying=gameClient.playerDying;
-        swipeRight=gameClient.swipeRight;
-        swipeLeft=gameClient.swipeLeft;
-        swipeUp=gameClient.swipeUp;
-        swipeDown=gameClient.swipeDown;
-
-        width =  walkUp.getWidth()/2;
-        height = walkUp.getHeight()/2;
-        coinSize = coinPick.getHeight()/2;
-
-        frames = walkRight;
-        RightAnim = new AnimationTool(width,height,this,walkRight,true);
-        RightAnim.create();
-
-        frames = walkLeft;
-        LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
-        LeftAnim.create();
-
-        frames = walkUp;
-        UpAnim = new AnimationTool(width,height,this,walkUp,true);
-        UpAnim.create();
-
-        frames = walkDown;
-        DownAnim = new AnimationTool(width,height,this,walkDown,true);
-        DownAnim.create();
-
-        frames = playerDying;
-        DyingAnim = new AnimationTool(width,height,this,playerDying,false);
-        DyingAnim.create();
-        //Create animations - make the frames but don't render them
-
-        frames = swipeRight;
-        swordSwipeRight = new AnimationTool(100, 100, this ,swipeRight, false );
-        swordSwipeRight.xOffset = 70;
-        swordSwipeRight.yOffset = 0;
-
-        swordSwipeRight.create();
-
-        frames = swipeLeft;
-        swordSwipeLeft = new AnimationTool(100, 100, this ,swipeLeft, false );
-        swordSwipeLeft.xOffset = -70;
-        swordSwipeLeft.yOffset = 0;
-        swordSwipeLeft.create();
-
-        frames = swipeUp;
-        swordSwipeUp = new AnimationTool(100, 100, this ,swipeUp, false );
-        swordSwipeUp.xOffset = 0;
-        swordSwipeUp.yOffset = 70;
-        swordSwipeUp.create();
-
-        frames = swipeDown;
-        swordSwipeDown = new AnimationTool(100, 100, this ,swipeDown, false );
-        swordSwipeDown.xOffset = 0;
-        swordSwipeDown.yOffset = -70;
-        swordSwipeDown.create();
-
-        swipeAnim= new AnimationTool(100, 100, this ,swipeDown, false );
-        swipeAnim.create();
-
-        animation = new AnimationTool(width, height, this, walkUp,true);
-
-        animation.create();
-        setAnimation(UpAnim);
-    }
-
+    /**
+     * draw player in the screen, if player dead then only draw the death animation.
+     *
+     * @param sb
+     */
     public void render(SpriteBatch sb) {
 
         setBatch(sb);
-        switch (dir) {
-            case U:
-                setAnimation(UpAnim);
-                break;
-            case D:
-                setAnimation(DownAnim);
-                break;
-            case R:
-                setAnimation(RightAnim);
-                break;
-            case L:
-                setAnimation(LeftAnim);
-                break;
-            case STOP:
-                setAnimation(DownAnim);
-                break;
+        if (this.isDead()) {
+            font.getData().setScale(1f, 1f);
+            String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
+            font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
+            this.animation.render();
+        } else {
+            switch (dir) {
+                case U:
+                    setAnimation(UpAnim);
+                    break;
+                case D:
+                    setAnimation(DownAnim);
+                    break;
+                case R:
+                    setAnimation(RightAnim);
+                    break;
+                case L:
+                    setAnimation(LeftAnim);
+                    break;
+                case STOP:
+                    setAnimation(DownAnim);
+                    break;
+            }
+            //render animation
+            this.animation.render();
+            //update player's position
+            updateMotion();
+            //draw sword and shield
+            if (this.items.contains("sword"))
+                sb.draw(sword, (float) (x), y - (height / 4), 50, 50);
+
+            if(this.items.contains("shield"))
+                sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),shieldIconSize, shieldIconSize);
+
+            if (this.items.contains("gearEnchantment"))
+                sb.draw(gameClient.enchantedGlow, this.position.getX() - gameClient.enchantedGlow.getWidth() / 2, this.position.getY() - gameClient.enchantedGlow.getHeight() / 2, gameClient.enchantedGlow.getWidth(), gameClient.enchantedGlow.getHeight());
+
+            //draw player's name
+            font.getData().setScale(0.5f, 0.5f);
+            font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
         }
-
-        this.animation.render();
-        updateMotion();
-
-        if (this.items.contains("sword"))
-            sb.draw(gameClient.sword, (float) (x), y - (height / 4), 50, 50);
-
-        if (this.items.contains("shield"))
-            sb.draw(gameClient.shield, (float) (x - (width / 1.5)), y - (height / 2), 50, 50);
-
-        font.getData().setScale(0.5f,0.5f);
-        font.draw(sb,this.name, this.position.getX() - 30,this.position.getY() + 60);
     }
+
+    /**
+     * update player's state in a regular time(delta).
+     * @param delta
+     */
+    public void update(float delta) {
+        removeShield();
+        removeEnchantment();
+        time.updateTimer(delta);
+
+        if (this.isDead()) {
+            if (respawnCounter == 0) {
+                respawnCounter = time.currentTime();
+            }
+            if (time.currentTime() - respawnCounter == 3) {
+                this.death();
+            }
+            setAnimation(DyingAnim);
+        }
+    }
+
+    /**
+     * Handle key release event
+     *
+     * @param keycode
+     * @return
+     */
     public boolean keyDown(int keycode) {
         switch (keycode) {
             case Input.Keys.RIGHT:
@@ -216,6 +193,12 @@ public class MultiPlayer extends Player {
         return true;
     }
 
+    /**
+     * Handle key press event
+     *
+     * @param keycode
+     * @return
+     */
     public boolean keyUp(int keycode) {
         switch (keycode) {
             case Input.Keys.RIGHT:
@@ -235,70 +218,60 @@ public class MultiPlayer extends Player {
         return true;
     }
 
+    /**
+     * Update player's position
+     */
     public void updateMotion() {
 
         this.position.setX(x);
         this.position.setY(y);
 
-        if(this.isDead()) {
-            if(respawnCounter == 0) {
-                respawnCounter = time.currentTime();
-            }
-
-            if(time.currentTime() - respawnCounter == 3) {
-                this.death();
-
-            }
-            setAnimation(DyingAnim);
-
-        }else {
-
-            switch (dir) {
-                case R:
-                    if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) {
-                        x += speed;
-                        //check player isn't in a wall
-                        if (!checkCollisionMap(x, y)) { //if it's in a wall, move player back
-                            x -= speed;
-                        } else
-                            this.position.setX(x);
-                    }
-                    break;
-                case L:
-                    if (x > 0) {
+        switch (dir) {
+            case R:
+                if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) {
+                    x += speed;
+                    //check player isn't in a wall
+                    if (!checkCollisionMap(x, y)) { //if it's in a wall, move player back
                         x -= speed;
-                        if (!checkCollisionMap(x, y)) {
-                            x += speed;
-                        } else
-                            this.position.setX(x);
-                    }
-                    break;
-                case U:
-                    if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
-                        y += speed;
-                        if (!checkCollisionMap(x, y)) {
-                            y -= speed;
-                        } else
-                            this.position.setY(y);
-                    }
-                    break;
-                case D:
-                    if (y > 0) {
+                    } else
+                        this.position.setX(x);
+                }
+                break;
+            case L:
+                if (x > 0) {
+                    x -= speed;
+                    if (!checkCollisionMap(x, y)) {
+                        x += speed;
+                    } else
+                        this.position.setX(x);
+                }
+                break;
+            case U:
+                if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
+                    y += speed;
+                    if (!checkCollisionMap(x, y)) {
                         y -= speed;
-                        if (!checkCollisionMap(x, y)) {
-                            y += speed;
-                        } else
-                            this.position.setY(y);
-                    }
-                    break;
-                case STOP:
-                    break;
-            }
+                    } else
+                        this.position.setY(y);
+                }
+                break;
+            case D:
+                if (y > 0) {
+                    y -= speed;
+                    if (!checkCollisionMap(x, y)) {
+                        y += speed;
+                    } else
+                        this.position.setY(y);
+                }
+                break;
+            case STOP:
+                break;
         }
+
     }
 
     /**
-     * If direction is changed, send message to server immediately.
+     * If the direction is changed, send a move message to game server immediately.
      * boolean bL, bU, bR, bD is only used to decide when should send message
      */
     private void locateDirection() {
@@ -322,23 +295,22 @@ public class MultiPlayer extends Player {
         }
     }
 
-    public void initialPosition() {
-        //Coordinate position = new Coordinate();
+    public void initialPosition () {
+        int maxX = collisionLayer.getWidth() ;
+        int maxY= collisionLayer.getHeight();
 
-        int maxX = collisionLayer.getWidth();
-        int maxY = collisionLayer.getHeight();
-//    	System.out.println("maxX" + maxX + " , " + maxY);
+        int ranx = (int)  (( Math.random() * (maxX) ));
+        int rany = (int)  (( Math.random() * (maxY) ));
 
-        int ranx = (int) ((Math.random() * (maxX)));
-        int rany = (int) ((Math.random() * (maxY)));
-//    	System.out.println("ran" + ranx + " , " + rany);
+        this.position.setX( ranx * (int) collisionLayer.getTileWidth() + 50);
+        this.position.setY( rany * (int) collisionLayer.getTileHeight() + 50);
 
-        this.position.setX(ranx * (int) collisionLayer.getTileWidth() + 50);
-        this.position.setY(rany * (int) collisionLayer.getTileHeight() + 50);
-
-        if (isCellBlocked((float) position.getX(), (float) position.getY())) {
+        if(isCellBlocked((float)position.getX(), (float)position.getY())) {
             initialPosition();
         }
+
+//        this.x = this.position.getX();
+//        this.y = this.position.getY();
     }
 
     public boolean checkCollisionMap(float possibleX, float possibleY) { // true = good to move | false = can't move there
@@ -374,9 +346,6 @@ public class MultiPlayer extends Player {
 
     public void decreaseHealth(int number) {
         this.health -= number;
-        if (health <= 0) {
-            this.death();
-        }
     }
 
     public void generateHealth() {
@@ -394,13 +363,17 @@ public class MultiPlayer extends Player {
     }
 
     public void death() {
-        if (debug) System.out.println("Player has died respawning now");
-        this.health = 5;
+        this.initialPosition();
+        this.x = this.position.getX();
+        this.y = this.position.getY();
+        setAnimation(DownAnim);
         this.coins = 0;
+        this.health = 5;
         this.items.clear();
+        this.respawnCounter = 0;
 
         //Send dead info to server
-        DeadMessage deadmsg = new DeadMessage(ID,"DEAD");
+        DeadMessage deadmsg = new DeadMessage(ID, "DEAD");
         this.gameClient.getNc().send(deadmsg);
     }
 
@@ -419,6 +392,38 @@ public class MultiPlayer extends Player {
             }
         }
         //need to add shield stuffr
+    }
+
+    public void removeShield() {
+        if (!this.items.contains("shield")) {
+            return;
+        }
+        if ((time.currentTime()) - initialisedShieldTime == 10) {
+            int indexOfItem = items.indexOf("shield");
+            System.out.println("Before remove: "+items);
+            System.out.println("Index of Item:"+indexOfItem);
+
+            this.items.remove("shield");
+            System.out.println("After remove: "+items);
+
+            RemoveItemsMessage removeItemsMessage = new RemoveItemsMessage(ID,indexOfItem,"shield",gameClient);
+            this.gameClient.getNc().send(removeItemsMessage);
+        }
+    }
+
+    public void removeEnchantment() {
+        if (!this.items.contains("gearEnchantment")) {
+            return;
+        }
+        if ((time.currentTime()) - initialisedEnchantmentTime == 10) {
+            int indexOfItem = items.indexOf("gearEnchantment");
+            System.out.println("Before remove: "+items);
+            this.items.remove("gearEnchantment");
+            System.out.println("After remove: "+items);
+
+            RemoveItemsMessage removeItemsMessage = new RemoveItemsMessage(ID,indexOfItem,"gearEnchantment",gameClient);
+            this.gameClient.getNc().send(removeItemsMessage);
+        }
     }
 
     public int getHealth() {

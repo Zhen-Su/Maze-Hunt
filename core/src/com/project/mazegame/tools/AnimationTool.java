@@ -38,6 +38,14 @@ public class AnimationTool extends ApplicationAdapter {
         this.yOffset = 0;
     }
 
+    public void setFrames(TextureRegion[] frames) {
+        this.animationFrames = frames;
+    }
+
+    public TextureRegion[] getFrames() {
+        return animationFrames;
+    }
+
     @Override
     public void create (){
         batch = player.getSpriteBatch();
@@ -53,6 +61,7 @@ public class AnimationTool extends ApplicationAdapter {
         }
         this.animation = new Animation(1f/6f,this.animationFrames);
     }
+
 
     @Override
     public void render () {
