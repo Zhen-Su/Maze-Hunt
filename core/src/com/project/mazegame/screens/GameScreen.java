@@ -17,14 +17,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.objects.Item;
-import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.*;
 
 import java.awt.Font;
 import java.awt.ItemSelectable;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
@@ -114,7 +113,7 @@ public class GameScreen implements Screen {
      
         
         // read csv file
-        ArrayList<String> output = CSVStuff.readCSVFile();
+        ArrayList<String> output = CSVStuff.readCSVFile("csvFile");
     
         this.map = output.get(0);
         this.playerSkin = output.get(1);
@@ -183,6 +182,20 @@ public class GameScreen implements Screen {
         overlayHeight = overlay.getHeight() +300;
        
        
+    }
+    
+    private void writeCoinCSV() {
+    	ArrayList<String> input = new ArrayList<>();
+    	
+    
+    	
+    	
+    	input.add(player.getName() + " = " + player.coins);
+    	
+    	
+    	System.out.println("in method " + input );
+    	
+    	CSVStuff.writeCSV(input , "coinCSV");
     }
     
     @Override
@@ -268,6 +281,7 @@ public class GameScreen implements Screen {
     	  
     	   if((worldTimer - time.currentTime()) < 0) {
     		   this.dispose();
+    		   writeCoinCSV();
     		   game.setScreen(new EndScreen(this.game));
     		  
     	   }

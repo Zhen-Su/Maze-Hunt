@@ -1,13 +1,18 @@
 package com.project.mazegame.screens;
 
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.Assets;
+import com.project.mazegame.tools.CSVStuff;
 import com.project.mazegame.tools.Variables;
 
 //import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
@@ -23,6 +28,8 @@ public class EndScreen implements Screen {
     private static final int SB_HEIGHT = 80;
     private static final int SB_WIDTH = 50;
     private static final int PLAY_Y = 100;
+    
+    private BitmapFont font;
 
     private MazeGame game;
     Texture backGround;
@@ -31,6 +38,7 @@ public class EndScreen implements Screen {
     Texture playButtonActive;
     Texture playButtonInactive;
     Texture leaderboard;
+    ArrayList<String> output;
 
     public EndScreen(MazeGame game) {
         this.game = game;
@@ -44,6 +52,18 @@ public class EndScreen implements Screen {
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
+        
+        output = CSVStuff.readCSVFile("coinCSV");
+        
+        for(int i = 0 ; i <= output.size(); i ++) {
+        	
+        	
+        	System.out.println("End" + output);
+        }
+        font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
+        font.setColor(Color.BLACK);
+        font.getData().setScale(1f);
+       
     }
 
     @Override
@@ -61,7 +81,13 @@ public class EndScreen implements Screen {
         game.batch.draw(backGround,0,0,1000,1000);
         game.batch.draw(title,0,700,1000 , 300);
         game.batch.draw(leaderboard,250,200, 500 , 500);
-
+        
+        for(int i = 0 ;  i < output.size(); i ++) {
+        	
+            font.draw(game.batch,output.get(i) , 450 ,500 - (i*50));
+        }
+        
+        
 
         int drawX = xMid("MB");
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {

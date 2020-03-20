@@ -21,6 +21,7 @@ import com.project.mazegame.objects.AIPlayer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.tools.CSVStuff;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.MultiCollect;
@@ -389,6 +390,7 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
                     this.dispose();
                     //TODO when this game over, player want to start a new game again
                     //need to handle player exit
+                    writeCoinCSV();
                     game.setScreen(new EndScreen(this.game));
 
                 }
@@ -602,6 +604,18 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             }
         }
         else game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+    }
+    
+    private void writeCoinCSV() {
+    	ArrayList<String> input = new ArrayList<>();
+    	
+    	List<MultiPlayer> players = getPlayers();
+    	
+    	for (int i = 0 ; i < players.size(); i ++) {
+    		input.add(players.get(i).getName() + " = " + players.get(i).coins);
+    	}
+    	
+    	CSVStuff.writeCSV(input , "coinCSV");
     }
 
 

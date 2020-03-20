@@ -9,10 +9,10 @@ import java.util.ArrayList;
 
 public class CSVStuff {
 
-    public static ArrayList<String> readCSVFile() {
+    public static ArrayList<String> readCSVFile(String filename) {
 
 
-        String fileRead ="C:\\Users\\barne\\MazeGame\\android\\csvFile.csv";
+        String fileRead ="C:\\Users\\barne\\MazeGame\\android\\"+filename+".csv";
 
 
         BufferedReader buff = null;
@@ -36,11 +36,11 @@ public class CSVStuff {
         return null;
     }
 
-    public static void writeCSV(ArrayList<String> list) {
+    public static void writeCSV(ArrayList<String> list, String filename) {
         try {
 
     
-        String outPutCSV = "C:\\Users\\barne\\MazeGame\\android\\csvFile.csv";
+        String outPutCSV = "C:\\Users\\barne\\MazeGame\\android\\"+ filename + ".csv";
         FileWriter writer = new FileWriter(outPutCSV);
         for (int i = 0; i < list.size(); i++) {
             writer.append(list.get(i));

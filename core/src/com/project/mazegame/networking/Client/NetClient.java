@@ -1,21 +1,14 @@
-<<<<<<< HEAD
 package com.project.mazegame.networking.Client;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import com.project.mazegame.networking.Messagess.CollectMessage;
->>>>>>> origin/yueyi1
-=======
 import com.project.mazegame.networking.Messagess.AttackMessage;
 import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
->>>>>>> yueyi2
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
+import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
 import java.io.ByteArrayInputStream;
@@ -36,26 +29,10 @@ public class NetClient {
     private MultiPlayerGameScreen gameClient;
     private int clientUDPPort;
     private int serverUDPPort;
-
-    public String getServerIP() {
-        return serverIP;
-    }
-
     private String serverIP;
-<<<<<<< HEAD
-<<<<<<< HEAD
-    public DatagramSocket datagramSocket = null;
-    private Socket socket = null;
-=======
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
     public static boolean debug=true;
->>>>>>> origin/yueyi1
-=======
-    private DatagramSocket datagramSocket = null;
-    private Socket socket = null;
-    public static boolean debug=true;
->>>>>>> yueyi2
 
     public int getClientUDPPort() {
         return clientUDPPort;
@@ -69,60 +46,36 @@ public class NetClient {
     /**
      * Conncet to GameServer,send udp port and IP to GameServer then close tcp socket.
      * @param ip   server IP
-     * @param serverTCPPort server TCP port
      */
-    public void connect(String ip, int serverTCPPort) {
+    public synchronized void connect(String ip, boolean createAI, int index) {
         serverIP = ip;
         try {
             try {
-<<<<<<< HEAD
-<<<<<<< HEAD
-                System.out.println("Client UDP socket have be opened");
-=======
                 if(debug) System.out.println("Client UDP socket have be opened");
->>>>>>> origin/yueyi1
-=======
-                if(debug) System.out.println("Client UDP socket have be opened");
->>>>>>> yueyi2
                 datagramSocket = new DatagramSocket(clientUDPPort);  // UDPSocket
             } catch (SocketException e) {
                 e.printStackTrace();
             }
-<<<<<<< HEAD
-<<<<<<< HEAD
-            //ds = new DatagramSocket(serverUDPPort);   //UDPSocket
-            socket = new Socket(ip, serverTCPPort);   // TCPSocket
-            printMsg("Connected to server");
-=======
-            socket = new Socket(ip, serverTCPPort);   // TCPSocket
+            socket = new Socket(ip, GameServer.SERVER_TCP_PORT);   // TCPSocket
             if(debug) printMsg("Connected to server!");
->>>>>>> origin/yueyi1
-=======
-            socket = new Socket(ip, serverTCPPort);   // TCPSocket
-            if(debug) printMsg("Connected to server!");
->>>>>>> yueyi2
 
             //Send client udp port to GameServer.
             OutputStream os = socket.getOutputStream();
             DataOutputStream dos = new DataOutputStream(os);
             dos.writeInt(clientUDPPort);
-<<<<<<< HEAD
-<<<<<<< HEAD
-            printMsg("I've sent my udp port to Game Server!");
-=======
             if(debug) printMsg("I've sent my udp port to Game Server!");
->>>>>>> origin/yueyi1
-=======
-            if(debug) printMsg("I've sent my udp port to Game Server!");
->>>>>>> yueyi2
 
             //Receive an unique ID and Server udp port
             InputStream is = socket.getInputStream();
             DataInputStream dis = new DataInputStream(is);
             int id = dis.readInt();
             this.serverUDPPort = dis.readInt();
-            printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
-            gameClient.getMultiPlayer().setID(id);
+            if(!createAI) {
+                printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
+                gameClient.getMultiPlayer().setID(id);
+            }else{
+                gameClient.aiGameClients.get(index).getAiPlayer().setID(id); //change AI player's id
+            }
         } catch (UnknownHostException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -138,25 +91,18 @@ public class NetClient {
             }
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-        new Thread(new ClientThread()).start();
-=======
->>>>>>> origin/yueyi1
-=======
->>>>>>> yueyi2
 
-        PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
-        send(msg);
+        //TODO need to integrate two kind of message(AI&Player)
+        if(createAI) {
+            PlayerNewMessage msg = new PlayerNewMessage(gameClient.aiGameClients.get(index).getAiPlayer());
+            send(msg);
+        }else{
+            PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
+            send(msg);
+        }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        new Thread(new ClientThread()).start();
->>>>>>> origin/yueyi1
-=======
-        new Thread(new ClientThread()).start();
->>>>>>> yueyi2
+
+        new Thread(new ClientThread(createAI,index)).start();
     }
 
     public void send(Message msg) {
@@ -165,36 +111,27 @@ public class NetClient {
 
     /**
      * Inner class
-     * For Client to send and receive messages
+     * For Client to receive and process messages
      */
     public class ClientThread implements Runnable {
 
         byte[] receiveBuf = new byte[1024];
+        int aiIndex;
+        boolean isAImsg;
+
+        public ClientThread(boolean isAImsg,int aiIndex){
+            this.isAImsg=isAImsg;
+            this.aiIndex=aiIndex;
+        }
 
         @Override
         public void run() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-            System.out.println("Client thread start...");
-=======
             if(debug) System.out.println("Client UDP thread start...");
             Thread.currentThread().setName("Client UDP Thread");
->>>>>>> origin/yueyi1
-=======
-            if(debug) System.out.println("Client UDP thread start...");
-            Thread.currentThread().setName("Client UDP Thread");
->>>>>>> yueyi2
             while (null != datagramSocket) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
                 try {
                     datagramSocket.receive(datagramPacket);
-<<<<<<< HEAD
-<<<<<<< HEAD
-                    System.out.println("I've received a packet from server");
-=======
->>>>>>> origin/yueyi1
-=======
->>>>>>> yueyi2
                     process(datagramPacket);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -203,7 +140,7 @@ public class NetClient {
         }
 
         /**
-         * Process the data which rececive from server
+         * Process the data which received from server
          *
          * @param datagramPacket
          */
@@ -220,15 +157,14 @@ public class NetClient {
 
             Message msg = null;
             switch (msgType) {
-<<<<<<< HEAD
-=======
-                case Message.PLAYER_COLLECT_MSG:
-                    msg = new CollectMessage(gameClient);
-                    msg.process(dis);
->>>>>>> origin/yueyi1
                 case Message.PLAYER_NEW_MSG:
-                    msg = new PlayerNewMessage(gameClient);
-                    msg.process(dis);
+                    if(isAImsg){
+                        msg = new PlayerNewMessage(gameClient,gameClient.aiGameClients.get(aiIndex));
+                        msg.process(dis,aiIndex);
+                    }else{
+                        msg = new PlayerNewMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
                 case Message.PLAYER_MOVE_MSG:
                     msg = new MoveMessage(gameClient);
@@ -277,197 +213,3 @@ public class NetClient {
     }
 
 }
-=======
-package com.project.mazegame.networking.Client;
-
-import com.project.mazegame.networking.Messagess.CollectMessage;
-import com.project.mazegame.networking.Messagess.ItemCreateMessage;
-import com.project.mazegame.networking.Messagess.Message;
-import com.project.mazegame.networking.Messagess.MoveMessage;
-import com.project.mazegame.networking.Messagess.PlayerExitMessage;
-import com.project.mazegame.networking.Messagess.PlayerNewMessage;
-import com.project.mazegame.networking.Messagess.StartGameMessage;
-import com.project.mazegame.screens.MultiPlayerGameScreen;
-
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
-import java.util.Random;
-
-public class NetClient {
-
-    private MultiPlayerGameScreen gameClient;
-    private int clientUDPPort;
-    private int serverUDPPort;
-
-    public String getServerIP() {
-        return serverIP;
-    }
-
-    private String serverIP;
-    private DatagramSocket datagramSocket = null;
-    private Socket socket = null;
-    public static boolean debug=true;
-
-    public int getClientUDPPort() {
-        return clientUDPPort;
-    }
-
-    public NetClient(MultiPlayerGameScreen gameClient){
-        this.gameClient = gameClient;
-        this.clientUDPPort=getRandomUDPPort();
-    }
-
-    /**
-     * Conncet to GameServer,send udp port and IP to GameServer then close tcp socket.
-     * @param ip   server IP
-     * @param serverTCPPort server TCP port
-     */
-    public void connect(String ip, int serverTCPPort) {
-        serverIP = ip;
-        try {
-            try {
-                if(debug) System.out.println("Client UDP socket have be opened");
-                datagramSocket = new DatagramSocket(clientUDPPort);  // UDPSocket
-            } catch (SocketException e) {
-                e.printStackTrace();
-            }
-            socket = new Socket(ip, serverTCPPort);   // TCPSocket
-            if(debug) printMsg("Connected to server!");
-
-            //Send client udp port to GameServer.
-            OutputStream os = socket.getOutputStream();
-            DataOutputStream dos = new DataOutputStream(os);
-            dos.writeInt(clientUDPPort);
-            if(debug) printMsg("I've sent my udp port to Game Server!");
-
-            //Receive an unique ID and Server udp port
-            InputStream is = socket.getInputStream();
-            DataInputStream dis = new DataInputStream(is);
-            int id = dis.readInt();
-            this.serverUDPPort = dis.readInt();
-            printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
-            gameClient.getMultiPlayer().setId(id);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (socket != null) {
-                    socket.close();  //We do not need this tcp socket anymore.
-                    socket = null;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
-        send(msg);
-
-        new Thread(new ClientThread()).start();
-    }
-
-    public void send(Message msg) {
-        msg.send(datagramSocket, serverIP, serverUDPPort);
-    }
-
-    /**
-     * Inner class
-     * For Client to send and receive messages
-     */
-    public class ClientThread implements Runnable {
-
-        byte[] receiveBuf = new byte[1024];
-
-        @Override
-        public void run() {
-            if(debug) System.out.println("Client UDP thread start...");
-            Thread.currentThread().setName("Client UDP Thread");
-            while (null != datagramSocket) {
-                DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
-                try {
-                    datagramSocket.receive(datagramPacket);
-                    process(datagramPacket);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        /**
-         * Process the data which rececive from server
-         *
-         * @param datagramPacket
-         */
-        private void process(DatagramPacket datagramPacket) {
-            ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf, 0, datagramPacket.getLength());
-            DataInputStream dis = new DataInputStream(bais);
-
-            int msgType = 0;
-            try {
-                msgType = dis.readInt();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            Message msg = null;
-            switch (msgType) {
-                case Message.PLAYER_NEW_MSG:
-                    msg = new PlayerNewMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.PLAYER_MOVE_MSG:
-                    msg = new MoveMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.PLAYER_COLLECT_MSG:
-                    msg = new CollectMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.PLAYER_EXIT_MSG:
-                    msg = new PlayerExitMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.ITEMS_CREATE:
-                    msg = new ItemCreateMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.HOST_START:
-                    msg = new StartGameMessage(gameClient);
-                    msg.process(dis);
-                    break;
-            }
-        }
-    }
-
-    /**
-     ** Randomly generate UDP port from 1024 to 5000
-     * @return
-     */
-    private int getRandomUDPPort(){
-        Random random=new Random();
-        return random.nextInt(3977)+1024;
-        //rand.nextInt(MAX - MIN + 1) + MIN
-    }
-
-    /**
-     * Only for debug (print message)
-     * @param msg
-     */
-    public void printMsg(String msg){
-        System.out.println(msg);
-    }
-
-}
->>>>>>> origin/yueyi1

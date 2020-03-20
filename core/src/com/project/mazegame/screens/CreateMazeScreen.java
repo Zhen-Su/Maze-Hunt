@@ -208,7 +208,7 @@ public class CreateMazeScreen implements Screen {
     	input.add(difficulty);
     	input.add(numOfAI);
     	
-    	CSVStuff.writeCSV(input);
+    	CSVStuff.writeCSV(input , "csvFile");
     	
     	
     	
@@ -262,7 +262,7 @@ public class CreateMazeScreen implements Screen {
     	 
     	CreateMaze = new Button(DRAW_X - 50,MAP_Y - 170, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
     	
-    	font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+    	//font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
         stage = new Stage(new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT));
@@ -283,8 +283,8 @@ public class CreateMazeScreen implements Screen {
 
         //BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
-        font.setColor(Color.RED);
-        font.getData().setScale(2f);
+        font.setColor(Color.WHITE);
+       // font.getData().setScale(0.5f);
 
         usernameTextField = new TextField("Player1", style);
         numField = new TextField("Num of AI Players", style);
@@ -318,7 +318,7 @@ public class CreateMazeScreen implements Screen {
    
 
         font.draw(game.batch, "Press enter to enter Host lobby ", 350, 480);
-
+/*
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             Gdx.app.log(TAG, "username = " + usernameTextField.getText());
             Gdx.app.log(TAG, "number of AI players = " + numField.getText());
@@ -331,9 +331,10 @@ public class CreateMazeScreen implements Screen {
         
         stage.act();
         stage.draw();
-    
+   */
 
-    	player1Button.draw();
+    	
+    player1Button.draw();
     	player2Button.draw();
     	player3Button.draw();
     	player4Button.draw();

@@ -107,12 +107,12 @@ public class MenuScreen implements Screen {
 
         game.batch.draw(backGround,0,0,1000,1000);
         game.batch.draw(mazeGame,25, 650, 950, 325);
-        int drawX = xMid("MB");
+        int drawX = xMid("MB") ;
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.justTouched()) {
                 bgm.stop();
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new CreateMazeScreen(game));
             }
         } else {
             game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
