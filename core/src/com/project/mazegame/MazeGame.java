@@ -7,33 +7,27 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.project.mazegame.screens.MenuScreen;
 import com.project.mazegame.screens.SplashScreen;
-import com.project.mazegame.tools.Assets;
 
 public class MazeGame extends Game {
 	public SpriteBatch batch;
-	public static AssetManager manager;
+	public AssetManager assets;
 	public OrthographicCamera camera;
 
-	
+
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = 1000;
 
 
 	@Override
 	public void create () {
-		
-		batch = new SpriteBatch();
-	
+		assets = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
 		//this.setScreen(new SplashScreen(this));
 
 		//Only for test
-		Assets.load();
-		Assets.manager.finishLoading();
-		System.out.println(Assets.manager.update());
 		this.setScreen(new MenuScreen(this));
-		
+		batch = new SpriteBatch();
 	}
 
 	@Override
@@ -46,7 +40,5 @@ public class MazeGame extends Game {
 	public void dispose () {
 		batch.dispose();
 		this.getScreen().dispose();
-		  Assets.dispose();
-	        
 	}
 }
