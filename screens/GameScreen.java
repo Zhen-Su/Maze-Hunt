@@ -249,17 +249,20 @@ public class GameScreen implements Screen {
 			}
 		}
 		// go through list one by one remove the player from that list
+		ArrayList<Player> forAI = new ArrayList<>();
+		forAI.add(player);
 		for (int i = 0; i < aiPlayers.size(); i++) {
 			AIPlayer playerTurn = aiPlayers.remove(i);
-			if (isPlayerOnSameAI(playerTurn, emptyattack, aiPlayers)) {
+			if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
 				if(isHuman1()) {
-					playerTurn.attackP(emptyattack.get(posAP), worldTimer);
-					emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
-					emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
+					System.out.println("An ai is about to attack me");
+					playerTurn.attackP(forAI.get(posAP), worldTimer);
+					forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
+					forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
 				} else {
 					player.attackAI(aiPlayers.get(posAAI), worldTimer);
-					aiPlayers.get(posAAI).x = emptyattack.get(posAAI).moveTo.getX();
-					aiPlayers.get(posAAI).y = emptyattack.get(posAAI).moveTo.getY();
+					aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
+					aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
 				}
 			}
 			aiPlayers.add(i, playerTurn);

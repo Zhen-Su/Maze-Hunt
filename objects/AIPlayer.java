@@ -85,7 +85,14 @@ public class AIPlayer extends Player {
     @Override
     public void update (float delta , int mode, ArrayList<Item> items, float time) {
 //        aiThread.run();
-        if (initialisedTime - time > 0.3 || !updateCount) {
+        if (super.haveyoudied) {
+            System.out.println("I have gone here " + this.getID());
+            if (deathTime - time > 5) {
+                haveyoudied = false;
+                System.out.println(deathTime - time);
+            }
+        }
+        if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
             if (mode == 1) {
 
 
@@ -222,8 +229,10 @@ public class AIPlayer extends Player {
     }
     @Override
     public void attackP(Player playerA, float time) {
+        System.out.println("I am executing");
         if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                System.out.println("Going here");
                 super.isAttacking = true;
                 sword = swordAttack;
                 playerA.decreaseHealth(1);
@@ -238,8 +247,10 @@ public class AIPlayer extends Player {
     }
     @Override
     public AIPlayer attackAI(AIPlayer playerA, float time) {
+        System.out.println("I am executing");
         if (attackAITime - time > 0.3 || !attackAIStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                System.out.println("Has gone here");
                 super.isAttacking = true;
                 sword = swordAttack;
                 playerA.decreaseHealth(1);

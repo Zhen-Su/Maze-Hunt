@@ -38,7 +38,7 @@ public class Player {
     protected float deathTime;
     private boolean startPAttack;
     private boolean startAIAttack;
-//    protected boolean haveyoudied;
+    protected boolean haveyoudied;
     
     protected boolean isAttacking = false;
     
@@ -77,7 +77,7 @@ public class Player {
         this.swordDamage = 0;
         this.ID = ID;
     	this.collisionLayer = collisionLayer;
-//    	this.haveyoudied = false;
+    	this.haveyoudied = false;
     	initialPosition();
         x = this.position.getX();
         y = this.position.getY();
@@ -153,7 +153,12 @@ public class Player {
     public void update (float delta, int mode, ArrayList<Item> items, float time){
         // update player movement
 //        playerThread.run();
-
+        if (this.haveyoudied) {
+            if (deathTime - time > 5) {
+                this.haveyoudied = false;
+            }
+        }
+        if (!haveyoudied) {
             this.position.setX(x);
             this.position.setY(y);
 
@@ -238,6 +243,9 @@ public class Player {
                 animation.setFrames(RightAnim.getFrames());
 
             }
+        }
+        moveTo.setX(x);
+        moveTo.setY(y);
 
     }
    
@@ -384,13 +392,14 @@ public class Player {
     }
 
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-//        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+        if (aiAttackTime - time > 0.3 || !startAIAttack) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                     System.out.println("Player as attacking me");
                     isAttacking = true;
                     sword = swordAttack;
                     playerA.decreaseHealth(1);
+                    this.coins += 1;
                     if (playerA.health == 0) {
                         System.out.println("I am about to die");
                         this.coins += playerA.coins;
@@ -398,10 +407,11 @@ public class Player {
 
                     }
                 }
-//            }
+            }
+            this.aiAttackTime = time;
+            startAIAttack = true;
         }
-        this.aiAttackTime = time;
-        startAIAttack = true;
+
         return playerA;
     }
     
@@ -480,7 +490,7 @@ public class Player {
         this.moveTo = new Coordinate(this.position.getX(), this.position.getY());
         this.items.clear();
         this.deathTime = time;
-//        this.haveyoudied = true;
+        this.haveyoudied = true;
 
         //this.items = new ArrayList<>();
     }
