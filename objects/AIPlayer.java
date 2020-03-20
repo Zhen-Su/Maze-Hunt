@@ -235,7 +235,7 @@ public class AIPlayer extends Player {
                 System.out.println("Going here");
                 super.isAttacking = true;
                 sword = swordAttack;
-                playerA.decreaseHealth(1);
+                playerA.decreaseHealth(1 + super.getGearCount());
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
                     playerA.death(time);
@@ -253,7 +253,7 @@ public class AIPlayer extends Player {
                 System.out.println("Has gone here");
                 super.isAttacking = true;
                 sword = swordAttack;
-                playerA.decreaseHealth(1);
+                playerA.decreaseHealth(1 + super.getGearCount());
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
                     playerA.death(time);

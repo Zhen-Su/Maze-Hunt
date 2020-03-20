@@ -377,7 +377,7 @@ public class Player {
 //              System.out.println("Player is attacking");
                     isAttacking = true;
                     sword = swordAttack;
-                    playerA.decreaseHealth(1);
+                    playerA.decreaseHealth(1 + getGearCount());
                     if (playerA.health == 0) {
                         this.coins += playerA.coins;
                         playerA.death(time);
@@ -398,7 +398,9 @@ public class Player {
                     System.out.println("Player as attacking me");
                     isAttacking = true;
                     sword = swordAttack;
-                    playerA.decreaseHealth(1);
+                    int gearEnchantCount = 0;
+
+                    playerA.decreaseHealth(1 + getGearCount());
                     this.coins += 1;
                     if (playerA.health == 0) {
                         System.out.println("I am about to die");
@@ -413,6 +415,14 @@ public class Player {
         }
 
         return playerA;
+    }
+    protected int getGearCount() {
+        int count = 0;
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).equals("gearEnchantment"))
+                count++;
+        }
+        return count;
     }
     
     public Texture getFrames() {
