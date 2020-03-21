@@ -107,10 +107,11 @@ public class CreateMazeScreen implements Screen {
     boolean playerChosen;
     boolean mapChosen;
     boolean difficultyChosen;
-    
+    boolean multi;
 
-    public CreateMazeScreen(MazeGame game) {
+    public CreateMazeScreen(MazeGame game , boolean multi) {
         this.game = game;
+        this.multi = multi;
        // this.playerEnterUsername();
         
         joinMazeButtonInactive = new Texture("UI\\MenuButtons\\button.png");
@@ -455,7 +456,10 @@ public class CreateMazeScreen implements Screen {
     					
     					if(playerChosen && difficultyChosen && mapChosen) {
     						setPreferences();
-    						game.setScreen(new GameScreen(game));
+    						if (multi)
+    							game.setScreen(new HostLobbyScreen(game, usernameTextField.getText()));
+    						else
+    							game.setScreen(new GameScreen(game));
     					}
     				}
     				

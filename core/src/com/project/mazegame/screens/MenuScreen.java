@@ -10,7 +10,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.OrthoCam;
 
 
@@ -106,7 +108,7 @@ public class MenuScreen implements Screen {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
                 bgm.stop();
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new CreateMazeScreen(game , false));
             }
         } else {
             game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
@@ -130,7 +132,7 @@ public class MenuScreen implements Screen {
             if(Gdx.input.justTouched())
             {
                 bgm.stop();
-                game.setScreen(new CreateMazeScreen(game));
+                game.setScreen(new CreateMazeScreen(game , true));
             }
         } else {
             game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
