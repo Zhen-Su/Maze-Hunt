@@ -119,6 +119,7 @@ public class GameScreen implements Screen {
         this.playerSkin = output.get(1);
         this.AIDifficulty = output.get(2);
         this.numOfAI = Integer.parseInt(output.get(3));
+        String name = output.get(4);
         
         
         if(this.map.equals( "map1")) {
@@ -138,7 +139,7 @@ public class GameScreen implements Screen {
         
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        player = new Player(this.collisionLayer,"james",123 , this.playerSkin);
+        player = new Player(this.collisionLayer,name,123 , this.playerSkin);
        
 //       player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);

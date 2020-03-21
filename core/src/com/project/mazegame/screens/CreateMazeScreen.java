@@ -51,11 +51,11 @@ public class CreateMazeScreen implements Screen {
     private static final int AUDIO_Y = MazeGame.HEIGHT - AUDIO_HEIGHT;
     
     
-    private static int AI_Y =  MazeGame.HEIGHT -300;
+    private static int AI_Y =  MazeGame.HEIGHT -450;
     private static int DRAW_X = 350;
-    private static int PLAYER_Y = AI_Y - 150;
-    private static int PLAYER2_Y = PLAYER_Y - 150;
-    private static int MAP_Y = PLAYER2_Y -  150;
+    private static int PLAYER_Y = AI_Y - 120;
+    private static int PLAYER2_Y = PLAYER_Y - 120;
+    private static int MAP_Y = PLAYER2_Y -  120;
     
     private HostLobbyScreen hostlobby;
 
@@ -174,11 +174,13 @@ public class CreateMazeScreen implements Screen {
     	String player= new String();
     	String map = new String();
     	String numOfAI = new String();
+    	String name = new String();
     	
     	difficulty = "3";
     	player = "red";
     	map = "map 1";
     	numOfAI = "3";
+    	name = "Barry";
     	
     	//loop though buttons to see which is chosen
     
@@ -201,12 +203,17 @@ public class CreateMazeScreen implements Screen {
     		
     		}
     	}
+    	
+    	name = usernameTextField.getText();
+    	numOfAI = numField.getText();
+       
     
     	ArrayList<String> input = new ArrayList<>();
     	input.add(map);
     	input.add(player);
     	input.add(difficulty);
     	input.add(numOfAI);
+    	input.add(name);
     	
     	CSVStuff.writeCSV(input , "csvFile");
     	
@@ -234,13 +241,15 @@ public class CreateMazeScreen implements Screen {
     	drawX += buf;
     	AIDifficulty3Button = new Button(drawX ,AI_Y, size,size, diffButton3Selected, diffButton3,"difficulty" , "difficulty 3");
     	
-    	drawX = DRAW_X;
+    	drawX = DRAW_X - 30;
+    	buf = 150;
     	player1Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player1 ,"player" , "red");
     	drawX += buf;
     	player2Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player2 ,"player", "blue");
     	drawX += buf;
     	player3Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player3 ,"player", "green");
-    	drawX = DRAW_X;
+    	drawX = DRAW_X - 100;
+    	buf = 150;
     	player4Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player4 ,"player", "lilac");
     	drawX += buf;
     	player5Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player5 ,"player", "orange");
@@ -260,7 +269,7 @@ public class CreateMazeScreen implements Screen {
     	difficultyButtons = new Button[] {AIDifficulty1Button,AIDifficulty2Button,AIDifficulty3Button};
     	mapButtons = new Button[] {Map1Button,Map2Button,Map3Button};
     	 
-    	CreateMaze = new Button(DRAW_X - 50,MAP_Y - 170, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
+    	CreateMaze = new Button(DRAW_X,MAP_Y - 100, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
     	
     	//font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -269,34 +278,41 @@ public class CreateMazeScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        bgTexture = createBackgroundTexture();
+        bgTexture = createBackgroundTexture(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
         cursorTexture = createCursorTexture();
 
-        bitmapFont = new BitmapFont();
-        bitmapFont.getData().setScale(2.0F);
+        font = new BitmapFont();
+        font.getData().setScale(1.5F);
 
         TextField.TextFieldStyle style = new TextField.TextFieldStyle();
         style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
         style.cursor = new TextureRegionDrawable(new TextureRegion(cursorTexture));
-        style.font = bitmapFont;
-        style.fontColor = new Color(1, 1, 1, 1);
+        style.font = font;
+        style.fontColor = new Color(1,1,1, 1);
+       
 
         //BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
         font.setColor(Color.WHITE);
-       // font.getData().setScale(0.5f);
+        font.getData().setScale(0.5f);
 
-        usernameTextField = new TextField("Player1", style);
-        numField = new TextField("Num of AI Players", style);
+        usernameTextField = new TextField("Enter Name", style);
+        
+        bgTexture = createBackgroundTexture(50, 50);
+        style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
+        numField = new TextField("6", style);
 
         usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
-        numField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
+        numField.setSize(50,50);
 
-        usernameTextField.setPosition(90, 500);
-        numField.setPosition(90, 430);
+        usernameTextField.setPosition(150, 550);
+        numField.setPosition(120, 450);
 
         usernameTextField.setAlignment(Align.center);
         numField.setAlignment(Align.center);
+        numField.setMaxLength(2);
+       
+       
 
         stage.addActor(usernameTextField);
         stage.addActor(numField);
@@ -317,8 +333,8 @@ public class CreateMazeScreen implements Screen {
     	game.batch.draw(backGround,0,0,1000,1000);
    
 
-        font.draw(game.batch, "Press enter to enter Host lobby ", 350, 480);
-/*
+        
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             Gdx.app.log(TAG, "username = " + usernameTextField.getText());
             Gdx.app.log(TAG, "number of AI players = " + numField.getText());
@@ -329,12 +345,10 @@ public class CreateMazeScreen implements Screen {
             backToMenuScreen();
         }
         
-        stage.act();
-        stage.draw();
-   */
+      
 
     	
-    player1Button.draw();
+        player1Button.draw();
     	player2Button.draw();
     	player3Button.draw();
     	player4Button.draw();
@@ -343,7 +357,7 @@ public class CreateMazeScreen implements Screen {
     	player7Button.draw();
     	
     	 
-    	AIButton.draw();
+    	//AIButton.draw();
     	AIDifficulty1Button.draw();
     	AIDifficulty2Button.draw();
     	AIDifficulty3Button.draw();
@@ -352,16 +366,23 @@ public class CreateMazeScreen implements Screen {
     	Map2Button.draw();
     	Map3Button.draw();
     	
+    	CreateMaze.draw();
     	
     	
-    	String message = "Create New Maze" ;
+    	String message;
     	game.batch.draw(createYourMaze, DRAW_X -300 , MazeGame.HEIGHT -200, 900, 200);
 		
+    	font.getData().setScale(0.8f);
+    	message = "Press enter to enter Host lobby ";
+    	font.draw(game.batch, message, DRAW_X - 300, 800);
         
-        
-        message = "Select AI" ;
-        
-        font.draw(game.batch,message, DRAW_X - 300 ,AI_Y + 50);
+    	message = "Enter name";
+    	font.draw(game.batch, message, DRAW_X - 300, 730);
+    	
+        message = "Select AI"  ;
+        font.draw(game.batch,message, DRAW_X - 300 ,AI_Y + 70);
+        message = "number"  ;
+        font.draw(game.batch,message, DRAW_X - 300 ,AI_Y + 40);
         
         message = "Difficulty" ;
        
@@ -374,8 +395,8 @@ public class CreateMazeScreen implements Screen {
         message = "Select Map" ;
        
         font.draw(game.batch,message, DRAW_X - 300 ,MAP_Y + 50);
-    	 
-        CreateMaze.draw();
+        
+        
         /*if(hasEnterUsername){
             try {
                 Gdx.app.log("Server","I'm a server!");
@@ -389,8 +410,10 @@ public class CreateMazeScreen implements Screen {
             game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
 
         }*/
-    	 
-    	 game.batch.end();
+        
+        game.batch.end();
+        stage.act();
+        stage.draw();
     }
  
     
@@ -595,10 +618,10 @@ public class CreateMazeScreen implements Screen {
 
     }
 
-    private Texture createBackgroundTexture() {
-        Pixmap pixmap = new Pixmap(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Pixmap.Format.RGBA8888);
-        pixmap.setColor(1, 0, 0, 1);
-        pixmap.drawRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
+    private Texture createBackgroundTexture(int width ,int height) {
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        pixmap.setColor(0.5f, 1, 0, 1);
+        pixmap.drawRectangle(0,0, pixmap.getWidth(), pixmap.getHeight());
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
         return texture;
