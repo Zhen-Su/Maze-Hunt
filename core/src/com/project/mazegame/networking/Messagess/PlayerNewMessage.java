@@ -106,11 +106,12 @@ public class PlayerNewMessage implements Message {
 
                 System.out.println("--------------------------------------");
                 System.out.println("my id: "+this.gameClient.getMultiPlayer().getID());
-                System.out.println("this player new message is from: id "+id);
+                System.out.println("I'm a Real player: this player new message is from: id "+id);
 
                 if(!isAIPlayer) {
                     MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour);
                     newPlayer.setID(id);
+                    System.out.println("id"+id+" 's position: ("+x+","+y+")");
                     gameClient.getPlayers().add(newPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
                 }else {
@@ -159,7 +160,7 @@ public class PlayerNewMessage implements Message {
 
                 System.out.println("--------------------------------------");
                 System.out.println("my id: "+aigameClient.getAiPlayer().getID());
-                System.out.println("this player new message is from: id "+id);
+                System.out.println("I'm an AI player: this player new message is from: id "+id);
 
                 if(!isAIPlayer) {
                     MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour);

@@ -20,15 +20,13 @@ public class Collect {
 	public Coordinate position = new Coordinate();
 	public Item item = new Item(" ", position);
 
-	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
 	public int indexOfItem;
 
 	public ArrayList<Coordinate> positions;
 
-	public Collect (MazeGame game ,Player player, MultiPlayerGameScreen gameClient) {
-		test = new GameScreen(game);
+	public Collect (Player player, MultiPlayerGameScreen gameClient) {
 
 		if(player instanceof MultiPlayer){
 			mapItems =gameClient.mapItems;
@@ -95,7 +93,6 @@ public class Collect {
 
 		int time = 60000;
 
-
 	}
 
 	public void coin(Player player1) {
@@ -103,7 +100,7 @@ public class Collect {
 		//ArrayList<String> items = player1.items;
 	}
 
-	public void sword(Item item, Player player1, Player player2) {
+	public void sword(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
 		int swordPower = player1.getSwordXP();
 //		if (player1.items.contains("gearEnchantment")) {
@@ -131,10 +128,10 @@ public class Collect {
 		items.remove("healingPotion");
 	}
 
-	public void damagingPotion(Item item, Player player1) {
+	public void damagingPotion(Player player1) {
 		ArrayList<String> items = player1.items;
 
-		player1.decreaseHealth(3);
+		player1.decreaseHealth(10);
 
 //		player1.playerPosioned();
 

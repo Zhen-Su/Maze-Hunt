@@ -22,6 +22,7 @@ public class StartGameMessage implements Message{
     public boolean HostStartGame;
     private int id;
     private MultiPlayerGameScreen gameClient;
+    private boolean debug =false;
 
     public StartGameMessage(MultiPlayerGameScreen gameClient) { this.gameClient = gameClient;}
 
@@ -70,10 +71,12 @@ public class StartGameMessage implements Message{
             //set my HostStartGame true
             gameClient.setHostStartGame(start);
 
-            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            System.out.println("My id: " +this.gameClient.getMultiPlayer().getID());
-            System.out.println("This start game message is from: id"+id);
-            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            if(debug) {
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
+                System.out.println("This start game message is from: id" + id);
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            }
 
         }catch (IOException e)
         {

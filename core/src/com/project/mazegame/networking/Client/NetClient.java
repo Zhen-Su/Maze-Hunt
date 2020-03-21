@@ -1,7 +1,6 @@
 package com.project.mazegame.networking.Client;
 
 import com.project.mazegame.networking.Messagess.AttackMessage;
-import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
@@ -32,48 +31,49 @@ public class NetClient {
     private String serverIP;
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
-    public static boolean debug=true;
+    public static boolean debug = true;
 
     public int getClientUDPPort() {
         return clientUDPPort;
     }
 
-    public NetClient(MultiPlayerGameScreen gameClient){
+    public NetClient(MultiPlayerGameScreen gameClient) {
         this.gameClient = gameClient;
-        this.clientUDPPort=getRandomUDPPort();
+        this.clientUDPPort = getRandomUDPPort();
     }
 
     /**
      * Conncet to GameServer,send udp port and IP to GameServer then close tcp socket.
-     * @param ip   server IP
+     *
+     * @param ip server IP
      */
-    public synchronized void connect(String ip, boolean createAI, int index) {
+    public void connect(String ip, boolean createAI, int index) {
         serverIP = ip;
         try {
             try {
-                if(debug) System.out.println("Client UDP socket have be opened");
+                if (debug) System.out.println("Client UDP socket have be opened");
                 datagramSocket = new DatagramSocket(clientUDPPort);  // UDPSocket
             } catch (SocketException e) {
                 e.printStackTrace();
             }
             socket = new Socket(ip, GameServer.SERVER_TCP_PORT);   // TCPSocket
-            if(debug) printMsg("Connected to server!");
+            if (debug) printMsg("Connected to server!");
 
             //Send client udp port to GameServer.
             OutputStream os = socket.getOutputStream();
             DataOutputStream dos = new DataOutputStream(os);
             dos.writeInt(clientUDPPort);
-            if(debug) printMsg("I've sent my udp port to Game Server!");
+            if (debug) printMsg("I've sent my udp port to Game Server!");
 
             //Receive an unique ID and Server udp port
             InputStream is = socket.getInputStream();
             DataInputStream dis = new DataInputStream(is);
             int id = dis.readInt();
             this.serverUDPPort = dis.readInt();
-            if(!createAI) {
+            if (!createAI) {
                 printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
                 gameClient.getMultiPlayer().setID(id);
-            }else{
+            } else {
                 gameClient.aiGameClients.get(index).getAiPlayer().setID(id); //change AI player's id
             }
         } catch (UnknownHostException e) {
@@ -92,17 +92,17 @@ public class NetClient {
         }
 
 
-        //TODO need to integrate two kind of message(AI&Player)
-        if(createAI) {
+        //TODO send ID,x,y,etc
+        if (createAI) {
             PlayerNewMessage msg = new PlayerNewMessage(gameClient.aiGameClients.get(index).getAiPlayer());
             send(msg);
-        }else{
+        } else {
             PlayerNewMessage msg = new PlayerNewMessage(gameClient.getMultiPlayer());
             send(msg);
         }
 
 
-        new Thread(new ClientThread(createAI,index)).start();
+        new Thread(new ClientThread(createAI, index)).start();
     }
 
     public void send(Message msg) {
@@ -119,14 +119,14 @@ public class NetClient {
         int aiIndex;
         boolean isAImsg;
 
-        public ClientThread(boolean isAImsg,int aiIndex){
-            this.isAImsg=isAImsg;
-            this.aiIndex=aiIndex;
+        public ClientThread(boolean isAImsg, int aiIndex) {
+            this.isAImsg = isAImsg;
+            this.aiIndex = aiIndex;
         }
 
         @Override
         public void run() {
-            if(debug) System.out.println("Client UDP thread start...");
+            if (debug) System.out.println("Client UDP thread start...");
             Thread.currentThread().setName("Client UDP Thread");
             while (null != datagramSocket) {
                 DatagramPacket datagramPacket = new DatagramPacket(receiveBuf, receiveBuf.length);
@@ -158,20 +158,16 @@ public class NetClient {
             Message msg = null;
             switch (msgType) {
                 case Message.PLAYER_NEW_MSG:
-                    if(isAImsg){
-                        msg = new PlayerNewMessage(gameClient,gameClient.aiGameClients.get(aiIndex));
-                        msg.process(dis,aiIndex);
-                    }else{
+                    if (isAImsg) {
+                        msg = new PlayerNewMessage(gameClient, gameClient.aiGameClients.get(aiIndex));
+                        msg.process(dis, aiIndex);
+                    } else {
                         msg = new PlayerNewMessage(gameClient);
                         msg.process(dis);
                     }
                     break;
                 case Message.PLAYER_MOVE_MSG:
                     msg = new MoveMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.PLAYER_COLLECT_MSG:
-                    msg = new CollectMessage(gameClient);
                     msg.process(dis);
                     break;
                 case Message.PLAYER_EXIT_MSG:
@@ -195,20 +191,22 @@ public class NetClient {
     }
 
     /**
-     ** Randomly generate UDP port from 1024 to 5000
+     * * Randomly generate UDP port from 1024 to 5000
+     *
      * @return
      */
-    private int getRandomUDPPort(){
-        Random random=new Random();
-        return random.nextInt(3977)+1024;
+    private int getRandomUDPPort() {
+        Random random = new Random();
+        return random.nextInt(3977) + 1024;
         //rand.nextInt(MAX - MIN + 1) + MIN
     }
 
     /**
      * Only for debug (print message)
+     *
      * @param msg
      */
-    public void printMsg(String msg){
+    public void printMsg(String msg) {
         System.out.println(msg);
     }
 

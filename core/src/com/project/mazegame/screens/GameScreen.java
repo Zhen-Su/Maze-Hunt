@@ -173,7 +173,7 @@ public class GameScreen implements Screen {
 
 		//assuming it's a square map -> only need width of map and width of tile
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
-		co = new Collect(game, player,null);
+		co = new Collect(player,null);
 		tempMapItemssize = mapItems.size();
 		//start timer
 		player.initialPosition();
@@ -186,9 +186,6 @@ public class GameScreen implements Screen {
 	public void render(float delta) { //method repeats a lot
 
 		updateTime(delta);
-//    	player.removeShield();
-//    	removeEnchantment();
-
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -391,7 +388,6 @@ public class GameScreen implements Screen {
 		Item item =  co.nearestItem(player);
 
 
-
 		if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")&& !(item.getType() == "healingPotion")&& !(item.getType() == "damagingPotion")) {
 			item = co.pickedUp(co.nearestItem(player));
 
@@ -402,12 +398,10 @@ public class GameScreen implements Screen {
 				co.shield(item, player);
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
-
-
 				}
 			}
 			if (item.getType() == "sword") {
-				co.sword(item, player, player2);
+				co.sword(item, player);
 			}
 
 
@@ -428,8 +422,9 @@ public class GameScreen implements Screen {
 			co.healingPotion (player);
 		}else if (item.getType() == "damagingPotion") {
 			mapItems.remove(item);
-			co.damagingPotion(item, player);
+			co.damagingPotion(player);
 		}
+		//System.out.println(player.items);
 	}
 
 	private void animateCoin() {

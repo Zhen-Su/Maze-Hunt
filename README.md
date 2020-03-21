@@ -91,14 +91,12 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
   * 2.0.1 fix bugs on pick up items (include coin)
   * 2.0.2 integrate with timer and animations
+  * 2.0.3 better inheritance, ready to intergrate with AI in mutiplayer 
+  * 2.0.3 shield and glows can dispare at the same time in different screen
   
-* Version2.1: add animation in mutiplayer, but there are some small bugs.
+* Version3.0 IMPORTANT UPDATE. Change the mechanism of mutiplayer. Make code more simple and readable.
   
-  * 2.1.1 fix bugs, player animations can work in mutiplayer.
   
-* Version3.1: add AI in mutiplayer mode, every player show different AI players, but if AI pick up an items, this item will dispear on the map at the same time. 
-  
-  * 3.1.1 Add Assets.class, use assets to load resources. Add AI player in multiplayer, but still have some bugs
   
   
   

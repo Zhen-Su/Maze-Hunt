@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Client.NetClient;
-import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.AIGameClient;
@@ -23,6 +21,7 @@ import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
+import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.OrthoCam;
@@ -65,13 +64,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
     private int tempMapItemssize;
-    private Collect co;
     private ArrayList<Collect> aicos = new ArrayList<>();
     private MultiPlayer player2;
 
-    private AssetManager manager;
-    public Texture player, sword, swordAttack, swordNotAttack, shield;
-    public Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
+    public Texture player,coinPick;
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
     private Texture minimapTexture;
@@ -89,13 +85,13 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     //private Texture coinPick;
     private BitmapFont font;
     public BitmapFont bitmapFont;
-    private Texture enchantedGlow;
+    public Texture enchantedGlow;
     private Texture mapTexture, minimapOutline, playerIcon;;
 
 
     private float timer;
-    public static float worldTimer = 50;
-    Timer time = new Timer();
+    public static float worldTimer = 360;
+    public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
     private float initialisedEnchantmentTime;
@@ -122,16 +118,13 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-//        manager = new AssetManager();
-//        loadAsset("orange");
-
         //TODO need to think about colour thing(customize)
         myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP,"orange");
         netClient.connect(serverIP,false,0);
 
         if (isHost) {
             //create AI players
-            createAIplayers(2);
+            createAIplayers(0);
             //Every AI player connect to GameServer
             for (int i = 0; i < aiGameClients.size(); i++) {
                 NetClient nc = aiGameClients.get(i).getNetClient();
@@ -143,28 +136,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
 
-        // buttons
-        exitButtonActive = new Texture("UI\\MenuButtons\\exit_button_active.png");
-        exitButtonInactive = new Texture("UI\\MenuButtons\\exit_button_inactive.png");
-        audioButtonActive = new Texture("UI\\MenuButtons\\audioOn.png");
-        audioButtonInactive = new Texture("UI\\MenuButtons\\audioOff.png");
-
-        heartTexture = new Texture("Collectibles\\heart.png");
-        coinTexture = new Texture("Collectibles\\coin.png");
-        swordTexture = new Texture("Collectibles\\sword2.png");
-        shieldTexture = new Texture("Collectibles\\shield.png");
-        healingPotionTexture = new Texture("Collectibles\\Potion.png");
-        gearEnchantmentTexture = new Texture("Collectibles\\Potion2.png");
-        minimapTexture = new Texture("Collectibles\\RolledMap.png");
-        damagingPotionTexture = new Texture("Collectibles\\Potion3.png");
-        overlay = new Texture("UI\\circularOverlay.png");
-        coinPick = new Texture("Collectibles\\coinAnimation.png");
-
-        minimapOutline = new Texture("Maps\\minimapOutline.png");
-        overlayWidth = overlay.getWidth() + 300;
-        overlayHeight = overlay.getHeight() + 300;
-        enchantedGlow = new Texture("Player\\ENCHANTED.png");
-        playerIcon = new Texture("Player\\playerOnMap.png");
+        getAsset();
     }
 
 
@@ -233,112 +205,36 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
             for (int i = 0; i < aiPlayers.size(); i++) {
                 aiNetClients.add(new NetClient(this));
-                aicos.add(new Collect(game, aiPlayers.get(i), null));
+                aicos.add(new Collect(aiPlayers.get(i), null));
                 //create AIGameClients for every ai player
                 aiGameClients.add(new AIGameClient(aiPlayers.get(i), aicos.get(i), aiNetClients.get(i)));
             }
         }
     }
 
+    public void getAsset(){
+        // buttons
+        exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
+        exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive,Texture.class);
+        audioButtonActive = Assets.manager.get(Assets.audioOn,Texture.class);
+        audioButtonInactive= Assets.manager.get(Assets.audioOff,Texture.class);
+        heartTexture = Assets.manager.get(Assets.heart,Texture.class);
+        coinTexture = Assets.manager.get(Assets.coin,Texture.class);
+        swordTexture = Assets.manager.get(Assets.sword,Texture.class);
+        shieldTexture = Assets.manager.get(Assets.shield,Texture.class);
+        healingPotionTexture = Assets.manager.get(Assets.Potion,Texture.class);
+        gearEnchantmentTexture = Assets.manager.get(Assets.Potion2,Texture.class);
+        damagingPotionTexture = Assets.manager.get(Assets.Potion3,Texture.class);
+        minimapTexture = Assets.manager.get(Assets.RolledMap,Texture.class);
+        overlay = Assets.manager.get(Assets.circularOverlay,Texture.class);
+        coinPick= Assets.manager.get(Assets.coinAnimation,Texture.class);
+        minimapOutline = Assets.manager.get(Assets.minimapOutline,Texture.class);
+        enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
+        playerIcon = Assets.manager.get(Assets.playerOnMap,Texture.class);
 
-    public void loadAsset(String colour) {
-        switch (colour) {
-            case "blue":
-                manager.load("Player\\walkRightBlue.png", Texture.class);
-                manager.load("Player\\walkLeftBlue.png", Texture.class);
-                manager.load("Player\\walkUpBlue.png", Texture.class);
-                manager.load("Player\\walkDownBlue.png", Texture.class);
-                manager.finishLoading();
-                walkRight = manager.get("Player/walkRightBlue.png", Texture.class);
-                walkLeft = manager.get("Player/walkLeftBlue.png", Texture.class);
-                walkUp = manager.get("Player/walkUpBlue.png", Texture.class);
-                walkDown = manager.get("Player/walkDownBlue.png", Texture.class);
-                break;
-            case "green":
-                manager.load("Player\\walkRightGreen.png", Texture.class);
-                manager.load("Player\\walkLeftGreen.png", Texture.class);
-                manager.load("Player\\walkUpGreen.png", Texture.class);
-                manager.load("Player\\walkDownGreen.png", Texture.class);
-                manager.finishLoading();
-                walkRight = manager.get("Player/walkRightGreen.png", Texture.class);
-                walkLeft = manager.get("Player/walkLeftGreen.png", Texture.class);
-                walkUp = manager.get("Player/walkUpGreen.png", Texture.class);
-                walkDown = manager.get("Player/walkDownGreen.png", Texture.class);
-                break;
-            case "pink":
-                manager.load("Player\\walkRightPink.png", Texture.class);
-                manager.load("Player\\walkLeftPink.png", Texture.class);
-                manager.load("Player\\walkUpPink.png", Texture.class);
-                manager.load("Player\\walkDownPink.png", Texture.class);
-                manager.finishLoading();
-                walkRight = manager.get("Player/walkRightPink.png", Texture.class);
-                walkLeft = manager.get("Player/walkLeftPink.png", Texture.class);
-                walkUp = manager.get("Player/walkUpPink.png", Texture.class);
-                walkDown = manager.get("Player/walkDownPink.png", Texture.class);
-                break;
-            case "orange":
-                manager.load("Player\\walkRightOrange.png", Texture.class);
-                manager.load("Player\\walkLeftOrange.png", Texture.class);
-                manager.load("Player\\walkUpOrange.png", Texture.class);
-                manager.load("Player\\walkDownOrange.png", Texture.class);
-                manager.finishLoading();
-                walkRight = manager.get("Player/walkRightOrange.png", Texture.class);
-                walkLeft = manager.get("Player/walkLeftOrange.png", Texture.class);
-                walkUp = manager.get("Player/walkUpOrange.png", Texture.class);
-                walkDown = manager.get("Player/walkDownOrange.png", Texture.class);
-                break;
-            case "lilac":
-                manager.load("Player\\walkRightLilac.png", Texture.class);
-                manager.load("Player\\walkLeftLilac.png", Texture.class);
-                manager.load("Player\\walkUpLilac.png", Texture.class);
-                manager.load("Player\\walkDownLilac.png", Texture.class);
-                manager.finishLoading();
-                walkRight = manager.get("Player/walkRightLilac.png", Texture.class);
-                walkLeft = manager.get("Player/walkLeftLilac.png", Texture.class);
-                walkUp = manager.get("Player/walkUpLilac.png", Texture.class);
-                walkDown = manager.get("Player/walkDownLilac.png", Texture.class);
-                break;
-            case "yellow":
-                manager.load("Player\\walkRightYellow.png", Texture.class);
-                manager.load("Player\\walkLeftYellow.png", Texture.class);
-                manager.load("Player\\walkUpYellow.png", Texture.class);
-                manager.load("Player\\walkDownYellow.png", Texture.class);
-                manager.finishLoading();
-                walkRight = manager.get("Player/walkRightYellow.png", Texture.class);
-                walkLeft = manager.get("Player/walkLeftYellow.png", Texture.class);
-                walkUp = manager.get("Player/walkUpYellow.png", Texture.class);
-                walkDown = manager.get("Player/walkDownYellow.png", Texture.class);
-                break;
-            default:
-                manager.load("Player\\walkRight.png", Texture.class);
-                manager.load("Player\\walkLeft.png", Texture.class);
-                manager.load("Player\\walkUp.png", Texture.class);
-                manager.load("Player\\walkDown.png", Texture.class);
-                manager.finishLoading();
-                walkRight = manager.get("Player/walkRight.png", Texture.class);
-                walkLeft = manager.get("Player/walkLeft.png", Texture.class);
-                walkUp = manager.get("Player/walkUp.png", Texture.class);
-                walkDown = manager.get("Player/walkDown.png", Texture.class);
-        }
-
-        coinPick = new Texture("Collectibles\\coinAnimation.png");
-        swordAttack = new Texture("Collectibles\\swordAttack.png");
-        swordNotAttack = new Texture("Collectibles\\sword2.png");
-        shield = new Texture("Collectibles\\shield.png");
-        swipeRight = new Texture("Player\\swipeRight.png");
-        swipeLeft = new Texture("Player\\swipeLeft.png");
-        swipeUp = new Texture("Player\\swipeUp.png");
-        swipeDown = new Texture("Player\\swipeDown.png");
-        playerDying = new Texture("Player\\playerDying.png");
-        playerIcon = new Texture("Player\\playerOnMap.png");
-
-        manager.load("myFont.fnt", BitmapFont.class);
-        manager.finishLoading();
-        bitmapFont = manager.get("myFont.fnt", BitmapFont.class);
-
-        sword = swordNotAttack;
+        overlayWidth = overlay.getWidth() +300;
+        overlayHeight = overlay.getHeight() +300;
     }
-
 
     @Override
     public void show() {
@@ -346,8 +242,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         if (isImHost()) {
             generateMapItems(collisionLayer.getWidth(), 100);
         }
-        co = new Collect(game, myMultiPlayer, this);
-//        co.setGameClient(this);
+
         tempMapItemssize = mapItems.size();
         //start timer
         myMultiPlayer.initialPosition();
@@ -367,9 +262,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     @Override
     public void render(float delta) { //method repeats a lot
         updateTime(delta);
-        removeShield();
-        removeEnchantment();
-        playerDamaging();
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -378,6 +270,14 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         //comment out ai player line to run correctly
 //       aiPlayer.update(delta);
+
+        //update other player
+        for(Player otherPlayer : players){
+            otherPlayer.update(delta);
+        }
+
+        //update myself
+        myMultiPlayer.update(delta);
 
         //camera
         cam.update(myMultiPlayer.position.getX(), myMultiPlayer.position.getY(), game);
@@ -390,14 +290,25 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         game.batch.begin();
         {
 
-//        draw collectibles
+           //draw collectibles
             drawCollectibles();
 
-            //Collectibles pick up
+            //Collectibles pick up for me
             if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-                if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX() + 100) &&
-                        (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < co.nearestItem(myMultiPlayer).getPosition().getY() + 100)) {
-                    pickUpItem();
+                if ((myMultiPlayer.position.getX() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX() + 100) &&
+                        (myMultiPlayer.position.getY() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY() + 100)) {
+                    pickUpItem(myMultiPlayer);
+                }
+            }
+
+            //Collectibles pick up for other player
+            if(!(mapItems.size() == 0)){
+                for(int i=0; i<players.size();i++){
+                    Player otherPlayer = players.get(i);
+                    if((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX())&& (otherPlayer.position.getX()<otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()+100) &&
+                            (otherPlayer.position.getY()>otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY()<otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()+100)){
+                        pickUpItem(otherPlayer);
+                    }
                 }
             }
 
@@ -408,9 +319,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             playerPos.setY(myMultiPlayer.position.getY());
             drawIcons(iconSize, buffer, playerPos);
             drawExitButton(playerPos);
-
-            if (myMultiPlayer.items.contains("gearEnchantment"))
-                game.batch.draw(enchantedGlow, myMultiPlayer.position.getX() - enchantedGlow.getWidth() / 2, myMultiPlayer.position.getY() - enchantedGlow.getHeight() / 2, enchantedGlow.getWidth(), enchantedGlow.getHeight());
 
             //draw other players on my screen
             for (int i = 0; i < players.size(); i++) {
@@ -529,7 +437,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             if (mapItems.get(i).getType().equals("healingPotion")) {
                 texture = healingPotionTexture;
             }
-
             if (mapItems.get(i).getType().equals("damagingPotion")) {
                 texture = damagingPotionTexture;
             }
@@ -547,57 +454,48 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     }
 
-    public void pickUpItem() {
+    public void pickUpItem(Player player) {
+        Item item = player.getCo().nearestItem(player);
 
-        Item item = co.nearestItem(myMultiPlayer);
-        boolean containItems = myMultiPlayer.items.contains(item.getType());
+        boolean containItems = player.items.contains(item.getType());
         boolean isCoin = item.getType().equals("coin");
-        boolean containHealingPotion = item.getType().equals("healingPotion");
-        boolean containDamagingPotion = item.getType().equals("damagingPotion");
+        boolean isHealingPotion = item.getType().equals("healingPotion");
+        boolean isDamagingPotion = item.getType().equals("damagingPotion");
 
-        int indexOfItem = co.indexOfItem;
-
-        if (!containItems && !isCoin && !containHealingPotion && !containDamagingPotion) {
-
-            item = co.pickedUp(co.nearestItem(myMultiPlayer));
+        if (!containItems && !isCoin && !isHealingPotion && !isDamagingPotion) {
+            //Only shield, gearEnchantment, sword ,minimap can add to items list.
+            item = player.getCo().pickedUp(player.getCo().nearestItem(player));
 
             if (item.getType().equals("shield")) {
                 item.setInitialisedTime(time.currentTime());
-                myMultiPlayer.initialisedShieldTime = time.currentTime();
-                co.shield(item, myMultiPlayer);
-                if (myMultiPlayer.items.contains("gearEnchantment")) {
-                    myMultiPlayer.initialisedShieldTime += 3;
+                player.initialisedShieldTime = time.currentTime();
+                player.getCo().shield(item, player);
+                if (player.items.contains("gearEnchantment")) {
+                    player.initialisedShieldTime += 3;
                 }
             }
             if (item.getType().equals("sword")) {
-                co.sword(item, myMultiPlayer, player2);
+                player.getCo().sword(item, player);
             }
             if (item.getType().equals("gearEnchantment")) {
-                co.gearEnchantment(item, myMultiPlayer);
-                myMultiPlayer.initialisedEnchantmentTime = time.currentTime();
-                if (myMultiPlayer.items.contains("shield"))
-                    myMultiPlayer.initialisedShieldTime += 3;
+                player.getCo().gearEnchantment(item, player);
+                player.initialisedEnchantmentTime = time.currentTime();
+                if (player.items.contains("shield"))
+                    player.initialisedShieldTime += 3;
             }
             if (item.getType().equals("minimap")) {
-                co.minimap(item);
+                player.getCo().minimap(item);
             }
         } else if (isCoin) {
             mapItems.remove(item);
-            myMultiPlayer.coins++;
-        } else if (containHealingPotion) {
+            player.coins++;
+        } else if (isHealingPotion) {
             mapItems.remove(item);
-            co.healingPotion(myMultiPlayer);
-        } else if (containDamagingPotion) {
+            player.getCo().healingPotion(player);
+        } else if (isDamagingPotion) {
             mapItems.remove(item);
-            co.damagingPotion(item, myMultiPlayer);
+            player.getCo().damagingPotion(player);
         }
-
-        //send message when player pick up coin or other items
-        if (!containItems || isCoin) {
-            CollectMessage itemCollected = new CollectMessage(this.getMultiPlayer().getID(), this, item.getType(), item.getPosition().getX(), item.getPosition().getY(), indexOfItem);
-            this.getNc().send(itemCollected);
-        }
-
     }
 
     private void drawExitButton(Coordinate position) {
@@ -664,9 +562,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         }
 
         //TODO handle client and server exit game events here
-        //unloadAsset();
-        manager.clear();
-        manager.dispose();
         mapItems.clear();
         cam.cam.viewportHeight = 1000;
         cam.cam.viewportWidth = 1000;
@@ -784,35 +679,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         netClient.send(message);
     }
 
-    private void removeShield() {
-        if (!myMultiPlayer.items.contains("shield")) {
-            return;
-        }
-        if ((worldTimer - time.currentTime()) - initialisedShieldTime == 10) {
-            myMultiPlayer.items.remove("shield");
-        }
-    }
-
-    private void removeEnchantment() {
-        if (!myMultiPlayer.items.contains("gearEnchantment")) {
-
-            return;
-        }
-        if ((worldTimer - time.currentTime()) - initialisedEnchantmentTime == 10) {
-            myMultiPlayer.items.remove("gearEnchantment");
-            System.out.println("removed enchantment");
-        }
-    }
-
-    private void playerDamaging() {
-        if (!myMultiPlayer.items.contains("damagingPotion")) {
-            return;
-        }
-        if ((worldTimer - time.currentTime()) - initialisedPotionTime == 2) {
-            myMultiPlayer.loadPlayerTextures();
-            myMultiPlayer.items.remove("damagingPotion");
-        }
-    }
 
     private void updateTime(float dt) {
         float initial = time.currentTime();
