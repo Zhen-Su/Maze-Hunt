@@ -193,7 +193,7 @@ public class GameScreen implements Screen {
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-				aiPlayers.get(i).update(delta, 1, mapItems, worldTimer);
+				aiPlayers.get(i).update(delta, 3, mapItems, worldTimer);
 //
 
 		}
@@ -235,7 +235,7 @@ public class GameScreen implements Screen {
 
         // genereates list of players at the moment empty but with networking will be changed
 		ArrayList<Player> emptyattack = new ArrayList<>();
-		emptyattack.add(player);
+//		emptyattack.add(player);
 		// first checks for the player to see if there is a player
 		if(isPlayerOnSameP(player, emptyattack, aiPlayers)) {
 			//checks if the player is human or not
