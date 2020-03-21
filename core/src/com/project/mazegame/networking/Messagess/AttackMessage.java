@@ -83,12 +83,9 @@ public class AttackMessage implements Message{
             e.printStackTrace();
         }
     }
-<<<<<<< HEAD
-=======
 
     @Override
     public void process(DataInputStream dis, int aiIndex) {
 
     }
->>>>>>> origin/yueyi1
 }

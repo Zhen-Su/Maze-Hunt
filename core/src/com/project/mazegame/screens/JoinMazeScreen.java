@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/yueyi1
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Application;
@@ -82,11 +78,7 @@ public class JoinMazeScreen implements Screen {
         style.font = bitmapFont;
         style.fontColor = new Color(1, 1, 1, 1);
 
-<<<<<<< HEAD
-        BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("myFont.fnt"));
-=======
         BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
->>>>>>> origin/yueyi1
         font = new BitmapFont();
         font.setColor(Color.RED);
         font.getData().setScale(2f);

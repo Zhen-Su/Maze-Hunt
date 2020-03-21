@@ -9,17 +9,12 @@ import java.util.ArrayList;
 
 public class CSVStuff {
 
-<<<<<<< HEAD
     public static ArrayList<String> readCSVFile(String filename) {
 
 
         String fileRead ="C:\\Users\\barne\\MazeGame\\android\\"+filename+".csv";
 
 
-=======
-    public static ArrayList<String> readCSVFile() {
-        String fileRead = "android/csvFile.csv";
->>>>>>> origin/yueyi1
         BufferedReader buff = null;
         String line = "";
         ArrayList<String> output = new ArrayList<>();

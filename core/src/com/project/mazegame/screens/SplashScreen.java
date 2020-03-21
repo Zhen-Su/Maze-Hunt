@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/yueyi1
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -40,15 +36,9 @@ public class SplashScreen implements Screen {
             }
         };
 
-<<<<<<< HEAD
-        game.assets.manager.load("UI/splash2.png", Texture.class);
-        game.assets.manager.finishLoading();// waiting for all assets load.
-        splashTex = game.assets.manager.get("UI\\splash2.png", Texture.class);
-=======
         game.assets.load("UI\\splash2.png", Texture.class);
         game.assets.finishLoading();// waiting for all assets load.
         splashTex = game.assets.get("UI\\splash2.png", Texture.class);
->>>>>>> origin/yueyi1
         splashImg = new Image(splashTex);
         splashImg.setOrigin(splashImg.getWidth() , splashImg.getHeight()/2);
         splashImg.setPosition(stage.getWidth() / 2 - 32, stage.getHeight() + 32);
@@ -99,15 +89,7 @@ public class SplashScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-<<<<<<< HEAD
-      
-        game.assets.dispose();
-    }
-}
-
-=======
         game.assets.clear();
         game.assets.dispose();
     }
 }
->>>>>>> origin/yueyi1
