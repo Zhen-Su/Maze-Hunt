@@ -17,13 +17,14 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.objects.Item;
+import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.*;
 
 import java.awt.Font;
 import java.awt.ItemSelectable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
@@ -71,9 +72,6 @@ public class GameScreen implements Screen {
 
 	private final int EXIT_WIDTH = 50;
 	private final int EXIT_HEIGHT = 20;
-
-
-
 
 	public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
@@ -206,7 +204,7 @@ public class GameScreen implements Screen {
          
     	 //assuming it's a square map -> only need width of map and width of tile
         generateMapItems((int) collisionLayer.getWidth(), 100 );
-        co = new Collect(game, player);
+        co = new Collect(player,null);
         tempMapItemssize = mapItems.size();
         //start timer
         player.initialPosition();
@@ -343,8 +341,8 @@ public class GameScreen implements Screen {
 	        game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
         }
         float mapSize = 100;
-        float xMap = player.x + VIEWPORT_WIDTH /2 - mapSize - 50;
-        float yMap =  player.y - VIEWPORT_HEIGHT/2 + 50;
+        float xMap = player.getX() + VIEWPORT_WIDTH /2 - mapSize - 50;
+        float yMap =  player.getY() - VIEWPORT_HEIGHT/2 + 50;
         
         
         if(player.items.contains("minimap")) {
@@ -433,17 +431,15 @@ public class GameScreen implements Screen {
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
 				player.initialisedShieldTime = time.currentTime();
-				co.shield(item, player);
+				co.sword(item, player);
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
-				
-
 				}
 			}
 			if (item.getType() == "sword") {
-				co.sword(item, player, player2);
+				co.sword(item, player);
 			}
-			
+
 
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
@@ -462,7 +458,7 @@ public class GameScreen implements Screen {
 			co.healingPotion (player);
 		}else if (item.getType() == "damagingPotion") {
 			mapItems.remove(item);
-			co.damagingPotion(item, player);
+			co.damagingPotion(player);
 		}
     }
     
@@ -532,8 +528,8 @@ public class GameScreen implements Screen {
 
 		for (int i = 0; i <= maxShields; i++) {
 			Coordinate position = new Coordinate(0,0);
-			
-			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);			
+
+			position.changeX((int)((Math.random() * (maxX ))) * tileWidth);
 			position.changeY((int)((Math.random() * (maxY )))* tileWidth);
 
 			Item item = new Item("shield", position);
@@ -607,19 +603,17 @@ public class GameScreen implements Screen {
 			}
 		}
 	}
-    
-    private float timePassed(float theTime) {
-    	return worldTimer - theTime;
-    }
-    
-    private void updateTime(float dt) {
-    	float initial  = time.currentTime();
-    	time.updateTimer(dt);
-    	
-    	if (!(time.currentTime() == initial)) {
-    		worldTimer--;  	
-    	}
-    }
+
+	private float timePassed(float theTime) {
+		return worldTimer - theTime;
+	}
+
+	private void updateTime(float dt) {
+		float initial  = time.currentTime();
+		time.updateTimer(dt);
+
+		if (!(time.currentTime() == initial)) {
+			worldTimer--;
+		}
+	}
 }
-
-

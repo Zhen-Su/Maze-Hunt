@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/yueyi1
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -29,6 +32,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+<<<<<<< HEAD
+=======
+import com.project.mazegame.objects.Player;
+>>>>>>> origin/yueyi1
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -51,7 +58,11 @@ public class OtherLobbyScreen implements Screen {
     private MultiPlayerGameScreen gameClient;
     private Texture backGround;
     private String hostPlayerName;
+<<<<<<< HEAD
     private List<MultiPlayer> players;
+=======
+    private List<Player> players;
+>>>>>>> origin/yueyi1
     private boolean hasReady = true;
 
     String username;
@@ -74,14 +85,24 @@ public class OtherLobbyScreen implements Screen {
 
     public void setHostPlayerName(String hostPlayerName) { this.hostPlayerName = hostPlayerName; }
 
+<<<<<<< HEAD
     public List<MultiPlayer> getPlayers() { return players; }
 
     public void setPlayers(List<MultiPlayer> players) { this.players = players; }
+=======
+    public List<Player> getPlayers() { return players; }
+
+    public void setPlayers(List<Player> players) { this.players = players; }
+>>>>>>> origin/yueyi1
 
     @Override
     public void show() {
         backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
+<<<<<<< HEAD
         bitmapFont = new BitmapFont(Gdx.files.internal("myFont.fnt"));
+=======
+        bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
+>>>>>>> origin/yueyi1
         font = new BitmapFont();
         font.setColor(Color.RED);
         font.getData().setScale(1.5f);
@@ -107,7 +128,11 @@ public class OtherLobbyScreen implements Screen {
                 //draw the ready players on the screen
                 int currY = 800;
                 font.draw(game.batch, username, 230, 850);
+<<<<<<< HEAD
                 for (MultiPlayer multiPlayer : players) {
+=======
+                for (Player multiPlayer : players) {
+>>>>>>> origin/yueyi1
                     font.draw(game.batch, multiPlayer.getName(), 230, currY);
                     currY -= 50;
                 }
@@ -138,8 +163,21 @@ public class OtherLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
             if(hasReady) {
+<<<<<<< HEAD
                 MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip);
                 setGameClient(gameClient);
+=======
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false);
+                setGameClient(gameClient);
+                //TODO Thread problem!!!!
+                try {
+                    Thread.currentThread().sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //TODO this need make more general, if second create maze, then host player is not the first in List
+                //TODO if host player not ready, then will show an EXCEPTION!!!!!!
+>>>>>>> origin/yueyi1
                 setHostPlayerName(gameClient.getPlayers().get(0).getName());
                 setPlayers(gameClient.getPlayers());
                 hasReady = false;
@@ -148,7 +186,11 @@ public class OtherLobbyScreen implements Screen {
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();
+<<<<<<< HEAD
             PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
+=======
+            PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getID());
+>>>>>>> origin/yueyi1
             gameClient.getNc().send(message);
         }
     }
@@ -187,4 +229,7 @@ public class OtherLobbyScreen implements Screen {
     }
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/yueyi1

@@ -10,17 +10,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.OrthoCam;
 
 
 public class MenuScreen implements Screen {
 
-	
-	
-	
     private MazeGame game;
 
     private Music bgm;
@@ -51,7 +46,7 @@ public class MenuScreen implements Screen {
     private static final int AUDIO_Y = MazeGame.HEIGHT - AUDIO_HEIGHT;
 
 
-    private Texture playButtonActive;
+    Texture playButtonActive;
     Texture playButtonInactive;
     Texture exitButtonActive;
     Texture exitButtonInactive;
@@ -94,7 +89,6 @@ public class MenuScreen implements Screen {
     @Override
     public void show() {
 //    	cam = new OrthoCam(game,false, V_WIDTH, V_HEIGHT, V_WIDTH/2,V_HEIGHT/2);
-    	
     }
 
     @Override
@@ -107,12 +101,12 @@ public class MenuScreen implements Screen {
 
         game.batch.draw(backGround,0,0,1000,1000);
         game.batch.draw(mazeGame,25, 650, 950, 325);
-        int drawX = xMid("MB") ;
+        int drawX = xMid("MB");
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
-            if (Gdx.input.justTouched()) {
+            if (Gdx.input.isTouched()) {
                 bgm.stop();
-                game.setScreen(new CreateMazeScreen(game));
+                game.setScreen(new GameScreen(game));
             }
         } else {
             game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
@@ -216,7 +210,7 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-       // playButtonActive.dispose();
+        playButtonActive.dispose();
         playButtonInactive.dispose();
         audioOn.dispose();
         audioOff.dispose();

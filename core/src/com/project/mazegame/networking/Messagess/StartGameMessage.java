@@ -22,6 +22,7 @@ public class StartGameMessage implements Message{
     public boolean HostStartGame;
     private int id;
     private MultiPlayerGameScreen gameClient;
+    private boolean debug =false;
 
     public StartGameMessage(MultiPlayerGameScreen gameClient) { this.gameClient = gameClient;}
 
@@ -63,9 +64,13 @@ public class StartGameMessage implements Message{
 
             int id = dis.readInt();
 <<<<<<< HEAD
+<<<<<<< HEAD
             if(id == this.gameClient.getMultiPlayer().getID()){
 =======
             if(id == this.gameClient.getMultiPlayer().getId()){
+>>>>>>> origin/yueyi1
+=======
+            if(id == this.gameClient.getMultiPlayer().getID()){
 >>>>>>> origin/yueyi1
                 return;
             }
@@ -74,6 +79,7 @@ public class StartGameMessage implements Message{
             //set my HostStartGame true
             gameClient.setHostStartGame(start);
 
+<<<<<<< HEAD
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 <<<<<<< HEAD
             System.out.println("My id: " +this.gameClient.getMultiPlayer().getID());
@@ -82,10 +88,23 @@ public class StartGameMessage implements Message{
 >>>>>>> origin/yueyi1
             System.out.println("This start game message is from: id"+id);
             System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+=======
+            if(debug) {
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
+                System.out.println("This start game message is from: id" + id);
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            }
+>>>>>>> origin/yueyi1
 
         }catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

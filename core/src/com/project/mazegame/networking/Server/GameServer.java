@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/yueyi1
 package com.project.mazegame.networking.Server;
 import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
@@ -188,6 +191,7 @@ public class GameServer implements Runnable {
     }
 
 }
+<<<<<<< HEAD
 =======
 package com.project.mazegame.networking.Server;
 import com.project.mazegame.networking.Messagess.PlayerExitMessage;
@@ -377,4 +381,6 @@ public class GameServer implements Runnable {
     }
 
 }
+>>>>>>> origin/yueyi1
+=======
 >>>>>>> origin/yueyi1

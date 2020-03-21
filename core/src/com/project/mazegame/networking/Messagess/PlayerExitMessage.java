@@ -58,9 +58,13 @@ public class PlayerExitMessage implements Message {
             int id = dis.readInt();
 //            boolean isServerRunning = dis.readBoolean();
 <<<<<<< HEAD
+<<<<<<< HEAD
             if(id == this.gameClient.getMultiPlayer().getID()){
 =======
             if(id == this.gameClient.getMultiPlayer().getId()){
+>>>>>>> origin/yueyi1
+=======
+            if(id == this.gameClient.getMultiPlayer().getID()){
 >>>>>>> origin/yueyi1
                 return;
             }
@@ -71,9 +75,13 @@ public class PlayerExitMessage implements Message {
 
             System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 <<<<<<< HEAD
+<<<<<<< HEAD
             System.out.println("My id: " +this.gameClient.getMultiPlayer().getID());
 =======
             System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
+>>>>>>> origin/yueyi1
+=======
+            System.out.println("My id: " +this.gameClient.getMultiPlayer().getID());
 >>>>>>> origin/yueyi1
             System.out.println("This exit game message is from: id"+id);
             System.out.println("The idex of this exit player in players list: "+indexOfExitPlayer);
@@ -82,5 +90,10 @@ public class PlayerExitMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

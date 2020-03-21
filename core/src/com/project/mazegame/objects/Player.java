@@ -2,78 +2,74 @@ package com.project.mazegame.objects;
 
 import static com.project.mazegame.tools.Variables.*;
 
-import com.project.mazegame.MazeGame;
-import com.project.mazegame.objects.*;
 import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
-import com.badlogic.gdx.utils.IntIntMap;
-//import com.project.mazegame.Pair;
-//import com.project.mazegame.Player;
 import com.project.mazegame.tools.*;
 
 public class Player {
-	public int x, y;
-    private Texture player, sword,swordAttack,swordNotAttack,shield;
-    private float speed = 6;
-    private int width, height ,coinSize;
-    public int coins;
-    public int health = 5;
-    protected int ID;
-    public int swordDamage;
-  
-    
-    //private BitmapFont font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
- 
 
-    protected int swordXP;
-    protected int shieldXP;
-    protected int respawnCounter = 0;
-    protected BitmapFont font;
-    protected Direction dir;
-
-    protected Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick , swipeRight , swipeLeft , swipeUp , swipeDown , playerDying;
-
-    private boolean isAttacking = false;
+    protected int x, y;
+    protected float speed = 6;
+    protected String colour;
     protected String name;
     public ArrayList<String> items;
     public Coordinate position;
-
+    protected int width, height, coinSize;
+    public int coins;
+    public int health = 5;
+    protected int ID;
+    protected Direction dir;
+    public int swordDamage;
+    protected int swordXP;
+    protected int shieldXP;
+    public int respawnCounter = 0;
     protected TiledMapTileLayer collisionLayer;
+    public Collect co;
 
+    private float aiAttackTime;
+    private float playerAttackTime;
+    private boolean startPAttack;
+    private boolean startAIAttack;
+    protected boolean isAttacking = false;
 
-    protected AnimationTool RightAnim, LeftAnim ,UpAnim ,DownAnim ,animation , DyingAnim;
-    protected AnimationTool coinAnimation,swordSwipeRight,swordSwipeLeft,swordSwipeUp,swordSwipeDown , swipeAnim;
-    SpriteBatch batch;
+    protected BitmapFont font;
+    protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
+    protected Texture player, sword, swordAttack, swordNotAttack, shield;
 
-    String colour;
+    protected AnimationTool RightAnim;
+    protected AnimationTool LeftAnim;
+    protected AnimationTool UpAnim;
+    protected AnimationTool DownAnim;
+    protected AnimationTool animation;
+    protected AnimationTool DyingAnim;
+    protected AnimationTool coinAnimation, swordSwipeRight, swordSwipeLeft, swordSwipeUp, swordSwipeDown, swipeAnim;
+    private SpriteBatch batch;
 
     protected boolean isDying = false;
-    Timer time;
+    protected Timer time;
 
     public float initialisedShieldTime;
     public float initialisedPotionTime;
     public float initialisedEnchantmentTime;
 
-    private static int shieldIconSize = 50;
-    private AssetManager manager;
+    public static int shieldIconSize = 50;
 
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID ,String colour) {
+
+    public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour) {
 
         this.health = 5;
         this.coins = 0;
         this.name = name;
         this.items = new ArrayList<>();
-        this.position = new Coordinate(x,y);
+        this.position = new Coordinate(x, y);
         this.swordDamage = 0;
         this.ID = ID;
         this.collisionLayer = collisionLayer;
@@ -83,11 +79,7 @@ public class Player {
 
         initialPosition();
 
-        manager = new AssetManager();
         loadPlayerTextures();
-
-        ArrayList<Item> items = new ArrayList<Item>();
-        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         createAnimations();
         time = new Timer();
     }
@@ -101,240 +93,56 @@ public class Player {
     public int getID() {
         return ID;
     }
+
     public void setID(int ID) {
         this.ID = ID;
     }
+
+    public Direction getDir() {
+        return dir;
+    }
+
+    public void setDir(Direction dir) {
+        this.dir = dir;
+    }
+
     public int getX() {
         return x;
     }
+
     public void setX(int x) {
         this.x = x;
     }
+
     public int getY() {
         return y;
     }
+
     public void setY(int y) {
         this.y = y;
     }
-    public Direction getDir() { return dir; }
-    public void setDir(Direction dir) { this.dir = dir; }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
-    public AnimationTool getRightAnim() {
-        return RightAnim;
-    }
-    public void setRightAnim(AnimationTool rightAnim) {
-        RightAnim = rightAnim;
-    }
-    public AnimationTool getLeftAnim() {
-        return LeftAnim;
-    }
-    public void setLeftAnim(AnimationTool leftAnim) {
-        LeftAnim = leftAnim;
-    }
-    public AnimationTool getUpAnim() {
-        return UpAnim;
-    }
-    public void setUpAnim(AnimationTool upAnim) {
-        UpAnim = upAnim;
-    }
-    public AnimationTool getDownAnim() {
-        return DownAnim;
-    }
-    public void setDownAnim(AnimationTool downAnim) {
-        DownAnim = downAnim;
-    }
-    public AnimationTool getAnimation() {
-        return animation;
-    }
-    public AnimationTool getDyingAnim() {
-        return DyingAnim;
-    }
-    public void setDyingAnim(AnimationTool dyingAnim) {
-        DyingAnim = dyingAnim;
-    }
-    public AnimationTool getCoinAnimation() {
-        return coinAnimation;
-    }
-    public void setCoinAnimation(AnimationTool coinAnimation) {
-        this.coinAnimation = coinAnimation;
-    }
-    public AnimationTool getSwordSwipeRight() {
-        return swordSwipeRight;
-    }
-    public void setSwordSwipeRight(AnimationTool swordSwipeRight) {
-        this.swordSwipeRight = swordSwipeRight;
-    }
-    public AnimationTool getSwordSwipeLeft() {
-        return swordSwipeLeft;
-    }
-    public void setSwordSwipeLeft(AnimationTool swordSwipeLeft) {
-        this.swordSwipeLeft = swordSwipeLeft;
-    }
-    public AnimationTool getSwordSwipeUp() {
-        return swordSwipeUp;
-    }
-    public void setSwordSwipeUp(AnimationTool swordSwipeUp) {
-        this.swordSwipeUp = swordSwipeUp;
-    }
-    public AnimationTool getSwordSwipeDown() {
-        return swordSwipeDown;
-    }
-    public void setSwordSwipeDown(AnimationTool swordSwipeDown) {
-        this.swordSwipeDown = swordSwipeDown;
-    }
-    public AnimationTool getSwipeAnim() {
-        return swipeAnim;
-    }
-    public void setSwipeAnim(AnimationTool swipeAnim) {
-        this.swipeAnim = swipeAnim;
-    }
-
-    //==============================================================================================
-    public void initialPosition () {
-        int maxX = collisionLayer.getWidth() ;
-        int maxY= collisionLayer.getHeight();
-
-        int ranx = (int)  (( Math.random() * (maxX) ));
-        int rany = (int)  (( Math.random() * (maxY) ));
-
-        this.position.setX( ranx * (int) collisionLayer.getTileWidth() + 50);
-        this.position.setY( rany * (int) collisionLayer.getTileHeight() + 50);
-
-        if(isCellBlocked((float)position.getX(), (float)position.getY())) {
-            initialPosition();
-        }
-
-        x = this.position.getX();
-        y = this.position.getY();
-    }
-
-    public void update (float delta){
-        removeShield();
-        removeEnchantment();
-        time.updateTimer(delta);
-
-        // update player movement
-        this.position.setX(x);
-        this.position.setY(y);
-
-        if(this.isDead()) {
-            if(respawnCounter == 0) {
-                respawnCounter = time.currentTime();
-            }
-
-            if(time.currentTime() - respawnCounter == 3) {
-                this.death();
-
-            }
-            setAnimation(DyingAnim);
-
-        }else {
-
-
-            if (RIGHT_TOUCHED) {
-                if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
-                    //try move player right
-                    x += speed;
-                    //check player isn't in a wall
-                    if(!checkCollisionMap(x, y))  //if it's in a wall, move player back
-                        x -= speed;
-                    else
-                        this.position.setX( x );
-                }
-            }
-            if (LEFT_TOUCHED) {
-                if (x > 0) {
-                    x -= speed;
-                    if(!checkCollisionMap(x,y))
-                        x += speed;
-                    else
-                        this.position.setX( x );
-                }
-            }
-            if (UP_TOUCHED) {
-                if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
-                    y += speed;
-                    if(!checkCollisionMap(x, y))
-                        y -= speed;
-                    else
-                        this.position.setY( y );
-                }
-            }
-            if (DOWN_TOUCHED) {
-                if (y > 0) {
-                    y -= speed;
-                    if(!checkCollisionMap(x, y  ))
-                        y += speed;
-                    else
-                        this.position.setY( y );
-
-                }
-            }
-
-            //change player texture
-            if (UP_TOUCHED == true && DOWN_TOUCHED == false) {
-                setAnimation( UpAnim);
-            } else if (DOWN_TOUCHED == true && UP_TOUCHED == false) {
-                setAnimation(DownAnim);
-            }  else if (LEFT_TOUCHED == true && RIGHT_TOUCHED == false) {
-                setAnimation( LeftAnim);
-            } else if (RIGHT_TOUCHED == true && LEFT_TOUCHED == false) {
-                setAnimation( RightAnim);
-            } else {
-                setAnimation(DownAnim);
-            }
-
-
-        }
-
-    }
-    
-    public void render (SpriteBatch sb){
-
-        setBatch(sb);
-        animation.render();
-
-        //draw items held by player
-//        if(this.items.contains("sword")) {
-//            sb.draw(sword,(float)(x),y - (height/4),50,50);
-//        }
-        if(this.items.contains("shield")) {
-
-            sb.draw(shield,(float) (x- (width/1.5)),y - (height/2),shieldIconSize, shieldIconSize);
-        }
-
-
-        font.getData().setScale(0.5f,0.5f);
-        font.draw(sb,this.name, this.position.getX() - 30,this.position.getY() + 60);
-
-        if(this.isDead()) {
-            font.getData().setScale(1f,1f);
-            String message = "Respawn in: " + ( respawnCounter -  time.currentTime()  +3);
-            font.draw(sb,message, this.position.getX() - 100,this.position.getY() + 200);
-        }
-    }
-
-    //------------------------setters
 
     public void setAnimation(AnimationTool direction) {
         animation = direction;
     }
+
     public void setSwordAnimation(AnimationTool direction) {
         swipeAnim = direction;
-
     }
+
     public void setBatch(SpriteBatch sb) {
         this.batch = sb;
-
     }
 
-    //-----------------------getters
-    public SpriteBatch getSpriteBatch () {
+    public SpriteBatch getSpriteBatch() {
         return this.batch;
     }
 
@@ -345,15 +153,160 @@ public class Player {
     public int getSwordXP() {
         return this.swordXP;
     }
+
     public int getShieldXP() {
         return this.shieldXP;
     }
+
     public int getHealth() {
         return health;
     }
+
     public float getTime() {
         return this.time.currentTime();
     }
+
+    public String getColour() {
+        return colour;
+    }
+
+    public void setColour(String colour) {
+        this.colour = colour;
+    }
+
+    public AnimationTool getDyingAnim() {
+        return DyingAnim;
+    }
+    public Collect getCo() {
+        return co;
+    }
+
+    public void setCo(Collect co) {
+        this.co = co;
+    }
+    //==============================================================================================
+
+
+    public void initialPosition() {
+        int maxX = collisionLayer.getWidth();
+        int maxY = collisionLayer.getHeight();
+
+        int ranx = (int) ((Math.random() * (maxX)));
+        int rany = (int) ((Math.random() * (maxY)));
+
+        this.position.setX(ranx * (int) collisionLayer.getTileWidth() + 50);
+        this.position.setY(rany * (int) collisionLayer.getTileHeight() + 50);
+
+        if (isCellBlocked((float) position.getX(), (float) position.getY())) {
+            initialPosition();
+        }
+
+        x = this.position.getX();
+        y = this.position.getY();
+    }
+
+    public void update(float delta) {
+        removeShield();
+        removeEnchantment();
+        time.updateTimer(delta);
+
+        // update player movement
+        this.position.setX(x);
+        this.position.setY(y);
+
+        if (this.isDead()) {
+            if (respawnCounter == 0) {
+                respawnCounter = time.currentTime();
+            }
+
+            if (time.currentTime() - respawnCounter == 3) {
+                this.death();
+            }
+            setAnimation(DyingAnim);
+
+        } else {
+
+            if (RIGHT_TOUCHED) {
+                if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
+                    //try move player right
+                    x += speed;
+                    //check player isn't in a wall
+                    if (!checkCollisionMap(x, y))  //if it's in a wall, move player back
+                        x -= speed;
+                    else
+                        this.position.setX(x);
+                }
+            }
+            if (LEFT_TOUCHED) {
+                if (x > 0) {
+                    x -= speed;
+                    if (!checkCollisionMap(x, y))
+                        x += speed;
+                    else
+                        this.position.setX(x);
+                }
+            }
+            if (UP_TOUCHED) {
+                if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
+                    y += speed;
+                    if (!checkCollisionMap(x, y))
+                        y -= speed;
+                    else
+                        this.position.setY(y);
+                }
+            }
+            if (DOWN_TOUCHED) {
+                if (y > 0) {
+                    y -= speed;
+                    if (!checkCollisionMap(x, y))
+                        y += speed;
+                    else
+                        this.position.setY(y);
+
+                }
+            }
+
+            //change player texture
+            if (UP_TOUCHED && !DOWN_TOUCHED) {
+                setAnimation(UpAnim);
+            } else if (DOWN_TOUCHED && !UP_TOUCHED) {
+                setAnimation(DownAnim);
+            } else if (LEFT_TOUCHED && !RIGHT_TOUCHED) {
+                setAnimation(LeftAnim);
+            } else if (RIGHT_TOUCHED && !LEFT_TOUCHED) {
+                setAnimation(RightAnim);
+            } else {
+                setAnimation(DownAnim);
+            }
+        }
+    }
+
+    public void render(SpriteBatch sb) {
+
+        setBatch(sb);
+        animation.render();
+
+        //draw items held by player
+//        if(this.items.contains("sword")) {
+//            sb.draw(sword,(float)(x),y - (height/4),50,50);
+//        }
+        if (this.items.contains("shield")) {
+
+            sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
+        }
+
+
+        font.getData().setScale(0.5f, 0.5f);
+        font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
+
+        if (this.isDead()) {
+            font.getData().setScale(1f, 1f);
+            String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
+            font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
+            animation.render();
+        }
+    }
+
     //-----------------functions
     public void increaseSwordXP(int XP) {
         this.swordXP += XP;
@@ -364,31 +317,29 @@ public class Player {
 
     public void decreaseHealth(int number) {
         this.health -= number;
-
-
     }
 
     public void generateHealth() {
-        if(this.health != 9) {
+        if (this.health != 9) {
             this.health++;
         }
     }
 
     // ---------------------------player functionality
 
-    private void removeShield() {
-        if(!this.items.contains("shield")) {
+    public void removeShield() {
+        if (!this.items.contains("shield")) {
             return;
         }
 
-        if ((time.currentTime()) - initialisedShieldTime  == 10) {
+        if ((time.currentTime()) - initialisedShieldTime == 10) {
             this.items.remove("shield");
+
         }
     }
 
-    private void removeEnchantment() {
-        if(!this.items.contains("gearEnchantment")) {
-
+    public void removeEnchantment() {
+        if (!this.items.contains("gearEnchantment")) {
             return;
         }
         if ((time.currentTime()) - initialisedEnchantmentTime == 10) {
@@ -399,7 +350,7 @@ public class Player {
 
     public void attack() {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if(this.items.contains("sword") && !this.isDead()) {
+            if (this.items.contains("sword") && !this.isDead()) {
                 if (animation.toString().equals(RightAnim.toString()))
                     setSwordAnimation(swordSwipeRight);
                 else if (animation.toString().equals(LeftAnim.toString()))
@@ -415,9 +366,7 @@ public class Player {
                 isAttacking = true;
                 sword = swordAttack;
             }
-        }
-
-        else {
+        } else {
             sword = swordNotAttack;
             swordSwipeRight.elapsedTime = 0;
             swordSwipeLeft.elapsedTime = 0;
@@ -427,10 +376,10 @@ public class Player {
     }
 
     public boolean isDead() {
-        if(this.health <= 0) {
-            return true;
+        if (this.health <= 0) {
 
-        }else
+            return true;
+        } else
             return false;
     }
 
@@ -441,9 +390,6 @@ public class Player {
         this.health = 5;
         this.items.clear();
         this.respawnCounter = 0;
-
-
-
 
         //this.items = new ArrayList<>();
     }
@@ -469,19 +415,19 @@ public class Player {
 
     //-------------------------check collisions
 
-    public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
+    public boolean checkCollisionMap(float possibleX, float possibleY) { // true = good to move | false = can't move there
         //Overall x and y of player
-        float xWorld = possibleX ;
-        float yWorld = possibleY ;
+        float xWorld = possibleX;
+        float yWorld = possibleY;
 
         boolean collisionWithMap = false;
 
         //Check corners of player to check for collision
         //check corners T = top, B = bottom, R = right, L = left
-        boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2) );
-        boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2));
-        boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2));
-        boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2));
+        boolean TLbool = isCellBlocked(xWorld - (width / 2), yWorld + (height / 2));
+        boolean TRbool = isCellBlocked(xWorld + (width / 2), yWorld + (height / 2));
+        boolean BLbool = isCellBlocked(xWorld - (width / 2), yWorld - (height / 2));
+        boolean BRbool = isCellBlocked(xWorld + (width / 2), yWorld - (height / 2));
 
         collisionWithMap = TLbool || TRbool || BLbool || BRbool;
 
@@ -501,135 +447,169 @@ public class Player {
     }
 
 
-
     //-------------------------loading textures and animations
     public void createAnimations() {
-        width = (int) walkUp.getWidth()/2;
-        height = walkUp.getHeight()/2;
-        coinSize = coinPick.getHeight()/2;
 
+        width = walkUp.getWidth() / 2;
+        height = walkUp.getHeight() / 2;
+        coinSize = coinPick.getHeight() / 2;
 
         frames = walkRight;
-        RightAnim = new AnimationTool(width,height,this,walkRight,true);
+        RightAnim = new AnimationTool(width, height, this, walkRight, true);
         RightAnim.create();
 
         frames = walkLeft;
-        LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
+        LeftAnim = new AnimationTool(width, height, this, walkLeft, true);
         LeftAnim.create();
 
         frames = walkUp;
-        UpAnim = new AnimationTool(width,height,this,walkUp,true);
+        UpAnim = new AnimationTool(width, height, this, walkUp, true);
         UpAnim.create();
 
         frames = walkDown;
-        DownAnim = new AnimationTool(width,height,this,walkDown,true);
+        DownAnim = new AnimationTool(width, height, this, walkDown, true);
         DownAnim.create();
 
         frames = playerDying;
-        DyingAnim = new AnimationTool(width,height,this,playerDying,false);
+        DyingAnim = new AnimationTool(width, height, this, playerDying, false);
         DyingAnim.create();
         //Create animations - make the frames but don't render them
 
         frames = swipeRight;
-        swordSwipeRight = new AnimationTool(100, 100, this ,swipeRight, false );
+        swordSwipeRight = new AnimationTool(100, 100, this, swipeRight, false);
         swordSwipeRight.xOffset = 70;
         swordSwipeRight.yOffset = 0;
 
         swordSwipeRight.create();
 
         frames = swipeLeft;
-        swordSwipeLeft = new AnimationTool(100, 100, this ,swipeLeft, false );
+        swordSwipeLeft = new AnimationTool(100, 100, this, swipeLeft, false);
         swordSwipeLeft.xOffset = -70;
         swordSwipeLeft.yOffset = 0;
         swordSwipeLeft.create();
+
         frames = swipeUp;
-        swordSwipeUp = new AnimationTool(100, 100, this ,swipeUp, false );
+        swordSwipeUp = new AnimationTool(100, 100, this, swipeUp, false);
         swordSwipeUp.xOffset = 0;
         swordSwipeUp.yOffset = 70;
         swordSwipeUp.create();
+
         frames = swipeDown;
-        swordSwipeDown = new AnimationTool(100, 100, this ,swipeDown, false );
+        swordSwipeDown = new AnimationTool(100, 100, this, swipeDown, false);
         swordSwipeDown.xOffset = 0;
         swordSwipeDown.yOffset = -70;
         swordSwipeDown.create();
 
-        swipeAnim= new AnimationTool(100, 100, this ,swipeDown, false );
+        swipeAnim = new AnimationTool(100, 100, this, swipeDown, false);
         swipeAnim.create();
 
-        animation = new AnimationTool(width, height, this, walkUp,true);
+        animation = new AnimationTool(width, height, this, walkUp, true);
 
         animation.create();
-        setAnimation( UpAnim);
+        setAnimation(UpAnim);
     }
 
-    public void loadPlayerTextures(){
+    public void loadPlayerTextures() {
 
         switch (colour) {
-        
-        case "blue":
-            walkRight = new Texture("Player\\walkRightBlue.png");
-            walkLeft = new Texture("Player\\walkLeftBlue.png");
-            walkUp = new Texture("Player\\walkUpBlue.png");
-            walkDown = new Texture("Player\\walkDownBlue.png");
-            break;
-        case "green":
-            walkRight = new Texture("Player\\walkRightGreen.png");
-            walkLeft = new Texture("Player\\walkLeftGreen.png");
-            walkUp = new Texture("Player\\walkUpGreen.png");
-            walkDown = new Texture("Player\\walkDownGreen.png");
-            break;
-        case "pink":
-            walkRight = new Texture("Player\\walkRightPink.png");
-            walkLeft = new Texture("Player\\walkLeftPink.png");
-            walkUp = new Texture("Player\\walkUpPink.png");
-            walkDown = new Texture("Player\\walkDownPink.png");
-            break;
-        case "orange":
-            walkRight = new Texture("Player\\walkRightOrange.png");
-            walkLeft = new Texture("Player\\walkLeftOrange.png");
-            walkUp = new Texture("Player\\walkUpOrange.png");
-            walkDown = new Texture("Player\\walkDownOrange.png");
-            break;
-        case "lilac":
-            walkRight = new Texture("Player\\walkRightLilac.png");
-            walkLeft = new Texture("Player\\walkLeftLilac.png");
-            walkUp = new Texture("Player\\walkUpLilac.png");
-            walkDown = new Texture("Player\\walkDownLilac.png");
-            break;
-        case "yellow":
-            walkRight = new Texture("Player\\walkRightYellow.png");
-            walkLeft = new Texture("Player\\walkLeftYellow.png");
-            walkUp = new Texture("Player\\walkUpYellow.png");
-            walkDown = new Texture("Player\\walkDownYellow.png");
-            break;
-        default:
-            walkRight = new Texture("Player\\walkRight.png");
-            walkLeft = new Texture("Player\\walkLeft.png");
-            walkUp = new Texture("Player\\walkUp.png");
-            walkDown = new Texture("Player\\walkDown.png");
+            case "blue":
+                walkRight = Assets.manager.get(Assets.walkRightBlue, Texture.class);
+                walkLeft = Assets.manager.get(Assets.walkLeftBlue, Texture.class);
+                walkUp = Assets.manager.get(Assets.walkUpBlue, Texture.class);
+                walkDown = Assets.manager.get(Assets.walkDownBlue, Texture.class);
+                break;
+            case "green":
+                walkRight = Assets.manager.get(Assets.walkRightGreen, Texture.class);
+                walkLeft = Assets.manager.get(Assets.walkLeftGreen, Texture.class);
+                walkUp = Assets.manager.get(Assets.walkUpGreen, Texture.class);
+                walkDown = Assets.manager.get(Assets.walkDownGreen, Texture.class);
+                break;
+            case "pink":
+                walkRight = Assets.manager.get(Assets.walkRightPink, Texture.class);
+                walkLeft = Assets.manager.get(Assets.walkLeftPink, Texture.class);
+                walkUp = Assets.manager.get(Assets.walkUpPink, Texture.class);
+                walkDown = Assets.manager.get(Assets.walkDownPink, Texture.class);
+                break;
+            case "orange":
+                walkRight = Assets.manager.get(Assets.walkRightOrange, Texture.class);
+                walkLeft = Assets.manager.get(Assets.walkLeftOrange, Texture.class);
+                walkUp = Assets.manager.get(Assets.walkUpOrange, Texture.class);
+                walkDown = Assets.manager.get(Assets.walkDownOrange, Texture.class);
+                break;
+            case "lilac":
+                walkRight = Assets.manager.get(Assets.walkRightLilac, Texture.class);
+                walkLeft = Assets.manager.get(Assets.walkLeftLilac, Texture.class);
+                walkUp = Assets.manager.get(Assets.walkUpLilac, Texture.class);
+                walkDown = Assets.manager.get(Assets.walkDownLilac, Texture.class);
+                break;
+            case "yellow":
+                walkRight = Assets.manager.get(Assets.walkRightYellow, Texture.class);
+                walkLeft = Assets.manager.get(Assets.walkLeftYellow, Texture.class);
+                walkUp = Assets.manager.get(Assets.walkUpYellow, Texture.class);
+                walkDown = Assets.manager.get(Assets.walkDownYellow, Texture.class);
+                break;
+            default:
+                walkRight = Assets.manager.get(Assets.walkRight, Texture.class);
+                walkLeft = Assets.manager.get(Assets.walkLeft, Texture.class);
+                walkUp = Assets.manager.get(Assets.walkUp, Texture.class);
+                walkDown = Assets.manager.get(Assets.walkDown, Texture.class);
+        }
 
-    }
-
-
-        coinPick = new Texture("Collectibles\\coinAnimation.png");
-
-        swordAttack = new Texture("Collectibles\\swordAttack.png");
-        swordNotAttack = new Texture("Collectibles\\sword2.png");
-        shield = new Texture("Collectibles\\shield.png");
-
-        swipeRight = new Texture ("Player\\swipeRight.png");
-        swipeLeft = new Texture ("Player\\swipeLeft.png");
-        swipeUp = new Texture ("Player\\swipeUp.png");
-        swipeDown = new Texture ("Player\\swipeDown.png");
-
-        playerDying = new Texture ("Player\\playerDying.png");
-
+        coinPick = Assets.manager.get(Assets.coinPick, Texture.class);
+        swordAttack = Assets.manager.get(Assets.swordAttack, Texture.class);
+        swordNotAttack = Assets.manager.get(Assets.swordNotAttack, Texture.class);
+        shield = Assets.manager.get(Assets.shield, Texture.class);
+        swipeRight = Assets.manager.get(Assets.swipeRight, Texture.class);
+        swipeLeft = Assets.manager.get(Assets.swipeLeft, Texture.class);
+        swipeUp = Assets.manager.get(Assets.swipeUp, Texture.class);
+        swipeDown = Assets.manager.get(Assets.swipeDown, Texture.class);
+        playerDying = Assets.manager.get(Assets.playerDying, Texture.class);
+        font = Assets.manager.get(Assets.font, BitmapFont.class);
 
         sword = swordNotAttack;
     }
 
-    public void dispose()
-    {
+    public void attackP(Player playerA, float time) {
+        if (playerAttackTime - time > 0.3 || !startPAttack) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+//              System.out.println("Player is attacking");
+                    isAttacking = true;
+                    sword = swordAttack;
+                    playerA.decreaseHealth(1);
+                    if (playerA.health == 0) {
+                        this.coins += playerA.coins;
+                        playerA.death();
+                    }
+
+                }
+            } else sword = swordNotAttack;
+        }
+        this.playerAttackTime = time;
+        startPAttack = true;
+    }
+
+    public void attackAI(AIPlayer playerA, float time) {
+        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                    System.out.println("Player as attacking me");
+                    isAttacking = true;
+                    sword = swordAttack;
+                    playerA.decreaseHealth(1);
+                    if (playerA.health == 0) {
+                        System.out.println("I am about to die");
+                        this.coins += playerA.coins;
+                        playerA.death();
+                    }
+                }
+            }
+        }
+        this.aiAttackTime = time;
+        startAIAttack = true;
+    }
+
+    public void dispose() {
         walkDown.dispose();
         walkLeft.dispose();
         walkRight.dispose();
@@ -729,27 +709,6 @@ public class Player {
        return this.position.same(item.getPosition());
     }
 
-    public float getSpeed() {
-    	return speed;
-    }
-    
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-    
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-    
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-    
     public float getSpeed() {
     	return speed;
     }

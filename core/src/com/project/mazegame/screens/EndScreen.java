@@ -17,10 +17,9 @@ import com.project.mazegame.tools.Variables;
 
 //import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class EndScreen implements Screen {
-	
+
     private static final int LB_WIDTH = 350;
     private static final int LB_HEIGHT = 200;
-
 
     private static final int MB_WIDTH = 250;
     private static final int MB_HEIGHT = 100;
@@ -68,7 +67,6 @@ public class EndScreen implements Screen {
 
     @Override
     public void show() {
-    	
     }
 
     @Override

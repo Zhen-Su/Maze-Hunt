@@ -25,7 +25,7 @@ public class ItemCreateMessage implements Message {
     private int x;
     private int y;
     private MultiPlayerGameScreen gameClient;
-    private boolean debug=true;
+    private boolean debug=false;
 
 
     public ItemCreateMessage(int id, String itemType, int x, int y) {
@@ -70,9 +70,13 @@ public class ItemCreateMessage implements Message {
         try {
             int id = dis.readInt();
 <<<<<<< HEAD
+<<<<<<< HEAD
             if (id == this.gameClient.getMultiPlayer().getID()) {
 =======
             if (id == this.gameClient.getMultiPlayer().getId()) {
+>>>>>>> origin/yueyi1
+=======
+            if (id == this.gameClient.getMultiPlayer().getID()) {
 >>>>>>> origin/yueyi1
                 return;
             }
@@ -89,9 +93,13 @@ public class ItemCreateMessage implements Message {
             if(debug) {
                 System.out.println("-------------------------------");
 <<<<<<< HEAD
+<<<<<<< HEAD
                 System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
 =======
                 System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+>>>>>>> origin/yueyi1
+=======
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
 >>>>>>> origin/yueyi1
                 System.out.println("This item generation message is from: id" + id);
                 System.out.println("This (id" + id + ") player collect: " + itemType);
@@ -107,5 +115,10 @@ public class ItemCreateMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

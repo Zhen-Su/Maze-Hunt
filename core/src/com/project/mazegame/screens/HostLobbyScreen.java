@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/yueyi1
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
@@ -13,6 +16,10 @@ import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.MultiPlayer;
+<<<<<<< HEAD
+=======
+import com.project.mazegame.objects.Player;
+>>>>>>> origin/yueyi1
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -40,8 +47,14 @@ public class HostLobbyScreen implements Screen {
         this.gameServer = gameServer;
         new Thread(gameServer).start();
         try {
+<<<<<<< HEAD
             MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress());
             this.gameClient=gameClient;
+=======
+            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress(),true);
+            this.gameClient=gameClient;
+            this.gameClient.setServer(gameServer);
+>>>>>>> origin/yueyi1
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
@@ -76,7 +89,11 @@ public class HostLobbyScreen implements Screen {
             font.draw(game.batch, "Ready Player:   ", 70, 850);
 
             int currY = 850;
+<<<<<<< HEAD
             for (MultiPlayer multiPlayer : gameClient.getPlayers()) {
+=======
+            for (Player multiPlayer : gameClient.getPlayers()) {
+>>>>>>> origin/yueyi1
                 font.draw(game.batch, multiPlayer.getName(), 230, currY);
                 currY -= 50;
             }
@@ -86,7 +103,11 @@ public class HostLobbyScreen implements Screen {
 
     private void handleInput(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+<<<<<<< HEAD
             StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getId());
+=======
+            StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getID());
+>>>>>>> origin/yueyi1
             gameClient.getNc().send(start);
             gameClient.setImHost(true);
             game.setScreen(gameClient);
@@ -132,4 +153,7 @@ public class HostLobbyScreen implements Screen {
     }
 
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/yueyi1

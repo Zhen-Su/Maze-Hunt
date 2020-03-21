@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/yueyi1
 package com.project.mazegame.networking.Messagess;
 
 
@@ -106,6 +109,7 @@ public class MoveMessage implements Message {
         }
     }
 
+<<<<<<< HEAD
 }
 =======
 package com.project.mazegame.networking.Messagess;
@@ -213,6 +217,14 @@ public class MoveMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+}
+>>>>>>> origin/yueyi1
+=======
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 
 }

@@ -1,6 +1,7 @@
 package com.project.mazegame.tools;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
+import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Variables.*;
 
 import com.project.mazegame.screens.GameScreen;
@@ -19,17 +20,21 @@ public class Collect {
 	public Coordinate position = new Coordinate();
 	public Item item = new Item(" ", position);
 
-	GameScreen test;
 	ArrayList<Item> mapItems;
 	ArrayList<String> items;
+	public int indexOfItem;
+
 	public ArrayList<Coordinate> positions;
-	public Collect (MazeGame game ,Player player) {
-		test = new GameScreen(game);
 
-		mapItems = GameScreen.mapItems;
+	public Collect (Player player, MultiPlayerGameScreen gameClient) {
+
+		if(player instanceof MultiPlayer){
+			mapItems =gameClient.mapItems;
+		}else {
+			mapItems = GameScreen.mapItems;
+		}
+
 		items = player.items;
-
-
 	}
 
 
@@ -43,8 +48,8 @@ public class Collect {
 	}
 
 	public Item nearestItem(Player player) {
-		Coordinate position = new Coordinate();
-		position = mapItems.get(0).getPosition();
+//		Coordinate position = new Coordinate();
+//		position = mapItems.get(0).getPosition();
 
 //		Item nearestItem = new Item(" ", position);
 		Item nearestItem = mapItems.get(0);
@@ -64,6 +69,7 @@ public class Collect {
 			if (tempDist < shortDist) {
 				nearestItem = mapItems.get(i);
 				//System.out.println("found shorter!");
+				indexOfItem=i;
 			}
 		}
 		//System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
@@ -72,6 +78,7 @@ public class Collect {
 
 	private int andinsEuclidian(int x1, int x2, int y1, int y2) {
 		int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
+//		System.out.println()
 		return sqrEucl;
 	}
 
@@ -84,9 +91,6 @@ public class Collect {
 		int startHealth = player1.health;
 
 		int time = 60000;
-		if (items.contains("gearEnchantment")) {
-			time += 30000;
-		}
 	}
 
 	public void coin(Player player1) {
@@ -94,12 +98,12 @@ public class Collect {
 		//ArrayList<String> items = player1.items;
 	}
 
-	public void sword(Item item, Player player1, Player player2) {
+	public void sword(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
-		int swordPower = 1;
-		if (gearEnchantment(item, player1)) {
-			swordPower += 1;
-		}
+		int swordPower = player1.getSwordXP();
+//		if (player1.items.contains("gearEnchantment")) {
+//			swordPower += 5;
+//		}
 
 //		if (player2.health == 0) { //going to come back to level
 //			swordPower += 1;
@@ -122,12 +126,10 @@ public class Collect {
 		items.remove("healingPotion");
 	}
 
-	public void damagingPotion(Item item, Player player1) {
+	public void damagingPotion(Player player1) {
 		ArrayList<String> items = player1.items;
 
-
-		player1.decreaseHealth(1);
-		player1.decreaseHealth(1);
+		player1.decreaseHealth(10);
 
 //		player1.playerPosioned();
 
@@ -135,12 +137,19 @@ public class Collect {
 		//player1.loadPlayerTextures();
 	}
 
-	public boolean gearEnchantment(Item item, Player player1) {
+	public void gearEnchantment(Item item, Player player1) {
 		ArrayList<String> items = player1.items;
-		boolean collected = true;
-		items.remove("gearEnchantment");
-		return collected;
+		//boolean collected = true;
+		player1.increaseSwordXP( 1);
+		player1.increaseShieldXP(1);
+		System.out.println("added xp" + player1.getShieldXP()  + " , " + player1.getSwordXP());
+
+
+
 	}
+
+
+
 
 }
 
