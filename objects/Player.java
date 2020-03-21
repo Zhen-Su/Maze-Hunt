@@ -244,6 +244,7 @@ public class Player {
 
             }
         }
+        // update the move to as they contantly get updated in the render method
         moveTo.setX(x);
         moveTo.setY(y);
 
@@ -369,17 +370,25 @@ public class Player {
     }
     
 
-    
+    // method for a player attacking antoher player
     public void attackP(Player playerA, float time) {
+        // first checks the time delay to stop spamming and the plaeyer hans't attacked before
         if (playerAttackTime - time > 0.3 || !startPAttack) {
+            // checks if the space key is pressed
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                // checks if the player has a swrod and the player its attacking doesn't have a shield
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
 //              System.out.println("Player is attacking");
+                    // sets is attacking to true
                     isAttacking = true;
+                    // animation for sowrd
                     sword = swordAttack;
+                    // decreases health by one plus any gearenchatnments
                     playerA.decreaseHealth(1 + getGearCount());
                     if (playerA.health == 0) {
+                        // adds the cons to the opposing player
                         this.coins += playerA.coins;
+                        // calls the death mehtod
                         playerA.death(time);
 
                     }
@@ -387,10 +396,11 @@ public class Player {
                 }
             } else sword = swordNotAttack;
         }
+        // sets the time again and gives tur to startattack
         this.playerAttackTime = time;
         startPAttack = true;
     }
-
+    // attacks an ai paleyr same method as above
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         if (aiAttackTime - time > 0.3 || !startAIAttack) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
@@ -416,6 +426,7 @@ public class Player {
 
         return playerA;
     }
+    // coutns the amoutn of gear enchatns and returns the number
     protected int getGearCount() {
         int count = 0;
         for (int i = 0; i < items.size(); i++) {
@@ -441,6 +452,7 @@ public class Player {
     public Coordinate getPosition() {
         return new Coordinate(this.x, this.y);
     }
+    // method is no longer being used
     public Player nearestPlayer(ArrayList<Player> players) {
         Coordinate position = new Coordinate();
         position = players.get(0).getPosition();
@@ -492,39 +504,27 @@ public class Player {
     }
 
     public void death(float time) {
-
+    // death method
 //        System.out.println("Player has died respawning now");
+        // resets helath and coins and initialpositon
         this.health = 5;
         this.coins = 0;
         this.initialPosition();
+        // logs the new moveto cooreinate had some problems with that before
         this.moveTo = new Coordinate(this.position.getX(), this.position.getY());
+        // clears the itmes
         this.items.clear();
+        // records the death time for respawn
         this.deathTime = time;
         this.haveyoudied = true;
 
-        //this.items = new ArrayList<>();
-    }
-
-    public void playerHitPlayer(Player hit) {
 
     }
 
 
 
-    public boolean isplayerSameSpace(ArrayList<Player> players) { return this.getPosition().getX() == nearestPlayer(players).getPosition().getX() && this.getPosition().getY() == nearestPlayer(players).getPosition().getY();}
-    /*
-    public void playerOnSameSpace(Player player1) {
-        // first thing is in event of key press
-        if (isplayerSameSpace(otherPlayers)) {
-            if (SPACE_TOUCHED && this.hasSword() && !player1.hasShield()) {
-                player1.decreaseHealth(1);
-                if (player1.health == 0) {
-                    player1.death();
-                }
-            }
-        }
-    }
-    */
+
+
 
     public boolean hasSword () {return this.items.contains("Sword"); }
     public boolean hasShield () {return this.items.contains("Shield"); }
@@ -546,64 +546,4 @@ public class Player {
     }
     protected int getID() {return this.ID;}
 
-   
-    /*
-    public void playerKillAI(AIPlayer AI) {
-        if (AI.health == 0) {
-        this.pickUpCoins(5);
-      } else {
-        AI.decreaseHealth(1);
-      }
-    }
-    
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-    
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-    
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-    
-    public float getSpeed() {
-    	return speed;
-    }
-    
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-    
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-    
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-    
-    public float getSpeed() {
-    	return speed;
-    }
-
-
-    public String toString() {
-        return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
-      }
-    
-   
-    
-*/
 }

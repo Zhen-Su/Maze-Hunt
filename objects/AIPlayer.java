@@ -85,6 +85,7 @@ public class AIPlayer extends Player {
     @Override
     public void update (float delta , int mode, ArrayList<Item> items, float time) {
 //        aiThread.run();
+        // operate the delay if dead
         if (super.haveyoudied) {
             System.out.println("I have gone here " + this.getID());
             if (deathTime - time > 5) {
@@ -95,7 +96,7 @@ public class AIPlayer extends Player {
         if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
             if (mode == 1) {
 
-
+            // takes random coorediante it can mvoe to
                 Coordinate old = super.position;
                 this.position.setX((int) x);
                 this.position.setY((int) y);
@@ -230,6 +231,7 @@ public class AIPlayer extends Player {
     @Override
     public void attackP(Player playerA, float time) {
         System.out.println("I am executing");
+        // only difference with this and the player methods is doens't need space to be pressed
         if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                 System.out.println("Going here");
@@ -246,6 +248,7 @@ public class AIPlayer extends Player {
         this.attackPStart = true;
     }
     @Override
+    // same as bove method jsut attackign another ai instead
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         System.out.println("I am executing");
         if (attackAITime - time > 0.3 || !attackAIStart) {
