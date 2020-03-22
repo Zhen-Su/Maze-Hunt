@@ -16,14 +16,13 @@ import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.AIGameClient;
-import com.project.mazegame.objects.AIPlayer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
+import com.project.mazegame.objects.MultiAIPlayer;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
-import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.OrthoCam;
 import com.project.mazegame.tools.Timer;
@@ -46,7 +45,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private boolean HostStartGame = false;
 
     //Item List List
-    public ArrayList<Item> mapItems = new ArrayList<Item>();
+    public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
     private MazeGame game;
     private OrthoCam cam;
@@ -56,8 +55,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private List<Player> players = new ArrayList<>();
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
     private boolean imHost;
-    private AIPlayer aiPlayer;
-    public ArrayList<AIPlayer> aiPlayers;
+    private MultiAIPlayer aiPlayer;
+    public ArrayList<MultiAIPlayer> aiPlayers = new ArrayList<>();
     public ArrayList<NetClient> aiNetClients = new ArrayList<>();
     public ArrayList<AIGameClient> aiGameClients = new ArrayList<>();
 
@@ -65,7 +64,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
     private int tempMapItemssize;
-    private ArrayList<Collect> aicos = new ArrayList<>();
     private MultiPlayer player2;
 
     public Texture player,coinPick;
@@ -89,9 +87,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public Texture enchantedGlow;
     private Texture mapTexture, minimapOutline, playerIcon;;
 
-
     private float timer;
-    public static float worldTimer = 30;
+    public static float worldTimer = 10;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -113,10 +110,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         timer = 0;
 
         tileMap = new TmxMapLoader().load("Map3.tmx");
-        mapTexture = Assets.manager.get(Assets.map3Icon, Texture.class);
         //TODO this 113 line should be changed after integrate with customize.
         mapTexture = new Texture("Maps\\Map3Icon.png");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
+
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         //TODO need to think about colour thing(customize)
@@ -125,7 +122,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         if (isHost) {
             //create AI players
-            createAIplayers(0);
+            createAIplayers(2);
             //Every AI player connect to GameServer
             for (int i = 0; i < aiGameClients.size(); i++) {
                 NetClient nc = aiGameClients.get(i).getNetClient();
@@ -200,21 +197,21 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     public void createAIplayers(int aiNum) {
         if (aiNum != 0) {
-            aiPlayer = new AIPlayer(this.collisionLayer, "AI" + aiNum, aiNum, "red",Direction.STOP);
-            aiPlayers = aiPlayer.AITakingOver(aiNum - 1);
-            aiPlayers.add(aiPlayer);
-
-            for (int i = 0; i < aiPlayers.size(); i++) {
+            for(int i=0; i<aiNum; i++) {
+                //create instance of ai player
+                MultiAIPlayer[] multiAIPlayers = new MultiAIPlayer[aiNum];
+                multiAIPlayers[i] = new MultiAIPlayer(this.collisionLayer,"AI" + i, i, this,"red",Direction.STOP);
+                //add this ai player to the list
+                aiPlayers.add(multiAIPlayers[i]);
+                //Create netclient and add netclient to list
                 aiNetClients.add(new NetClient(this));
-                aicos.add(new Collect(aiPlayers.get(i), null));
-                //create AIGameClients for every ai player
-                aiGameClients.add(new AIGameClient(aiPlayers.get(i), aicos.get(i), aiNetClients.get(i)));
+                //create aiGameClient and add it to list
+                aiGameClients.add(new AIGameClient(aiPlayers.get(i), aiNetClients.get(i)));
             }
         }
     }
 
     public void getAsset(){
-        // buttons
         exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
         exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive,Texture.class);
         audioButtonActive = Assets.manager.get(Assets.audioOn,Texture.class);
@@ -269,8 +266,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         delta = Gdx.graphics.getDeltaTime();
 
-        //comment out ai player line to run correctly
-//       aiPlayer.update(delta);
 
         //update other player
         for(Player otherPlayer : players){
@@ -306,8 +301,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             if(!(mapItems.size() == 0)){
                 for(int i=0; i<players.size();i++){
                     Player otherPlayer = players.get(i);
-                    if((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX())&& (otherPlayer.position.getX()<otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()+100) &&
-                            (otherPlayer.position.getY()>otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY()<otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()+100)){
+                    if((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX())&& (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()+100) &&
+                            (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY()<otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()+100)){
                         pickUpItem(otherPlayer);
                     }
                 }
@@ -325,6 +320,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             for (int i = 0; i < players.size(); i++) {
                 Player otherPlayer = players.get(i);
                 otherPlayer.render(game.batch);
+//                otherPlayer.attack();
             }
 
             //draw myself on my screen
@@ -344,9 +340,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
                 if ((worldTimer - time.currentTime()) < 0) {
                     this.dispose();
-                    writeCoinCSV();
                     //TODO when this game over, player want to start a new game again
                     //need to handle player exit
+                    writeCoinCSV();
                     game.setScreen(new EndScreen(this.game));
                     if (isHost) {
                         this.server.dispose(this);
@@ -364,7 +360,19 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     int coinSize = iconSize * 2;
 
+    private void writeCoinCSV() {
+        ArrayList<String> input = new ArrayList<>();
 
+
+
+
+        input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.coins);
+
+
+        System.out.println("in method " + input );
+
+        CSVStuff.writeCSV(input , "coinCSV");
+    }
     private void drawIcons(int iconSize, int buffer, Coordinate position) {
         //take player x and y into account
         int playerX = position.getX() - VIEWPORT_WIDTH / 2;
@@ -532,19 +540,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     }
 
 
-    private void writeCoinCSV() {
-        ArrayList<String> input = new ArrayList<>();
-
-
-
-
-        input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.getCoins());
-
-
-        System.out.println("in method " + input );
-
-        CSVStuff.writeCSV(input , "coinCSV");
-    }
     @Override
     public void resize(int width, int height) {
 

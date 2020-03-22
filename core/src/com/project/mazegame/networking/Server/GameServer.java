@@ -61,6 +61,7 @@ public class GameServer implements Runnable {
         while(isRunning) {
             Socket s =null;
             try {
+                printMsg("=======================Game-Server===========================");
                 printMsg("Waiting for a client");
                 Thread.currentThread().setName("Server TCP Thread");
                 s= serverSocket.accept();//Listens for a connection to be made to this socket and accepts it.
@@ -74,7 +75,7 @@ public class GameServer implements Runnable {
                 Client c = new Client(clientIP,clientUDPPort);//create a client object
                 clients.add(c);                   //add this client object to list
                 printMsg("A Client Connected! Address--" + s.getInetAddress()+":"+s.getPort()+" Client's UDP Port:"+clientUDPPort);
-
+                printMsg("===============================================================");
                 //Send ID and Server UDP_PORT to client.
                 OutputStream os = s.getOutputStream();
                 DataOutputStream dos = new DataOutputStream(os);
@@ -134,6 +135,7 @@ public class GameServer implements Runnable {
                 try {
                     ds.receive(dp);
                    // printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
+                    //TODO ConcurrentModificationException
                     for (Client c : clients){
                         if(c!=null) {
                             dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));

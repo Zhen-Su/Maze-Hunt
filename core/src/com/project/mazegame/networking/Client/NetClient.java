@@ -31,7 +31,7 @@ public class NetClient {
     private String serverIP;
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public int getClientUDPPort() {
         return clientUDPPort;
@@ -47,7 +47,7 @@ public class NetClient {
      *
      * @param ip server IP
      */
-    public void connect(String ip, boolean createAI, int index) {
+    public synchronized void connect(String ip, boolean createAI, int index) {
         serverIP = ip;
         try {
             try {
@@ -74,6 +74,7 @@ public class NetClient {
                 printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
                 gameClient.getMultiPlayer().setID(id);
             } else {
+                printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
                 gameClient.aiGameClients.get(index).getAiPlayer().setID(id); //change AI player's id
             }
         } catch (UnknownHostException e) {
@@ -117,10 +118,10 @@ public class NetClient {
 
         byte[] receiveBuf = new byte[1024];
         int aiIndex;
-        boolean isAImsg;
+        boolean isAI;
 
-        public ClientThread(boolean isAImsg, int aiIndex) {
-            this.isAImsg = isAImsg;
+        public ClientThread(boolean isAI, int aiIndex) {
+            this.isAI = isAI;
             this.aiIndex = aiIndex;
         }
 
@@ -144,7 +145,7 @@ public class NetClient {
          *
          * @param datagramPacket
          */
-        private void process(DatagramPacket datagramPacket) {
+        private synchronized void process(DatagramPacket datagramPacket) {
             ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf, 0, datagramPacket.getLength());
             DataInputStream dis = new DataInputStream(bais);
 
@@ -158,7 +159,7 @@ public class NetClient {
             Message msg = null;
             switch (msgType) {
                 case Message.PLAYER_NEW_MSG:
-                    if (isAImsg) {
+                    if (isAI) {
                         msg = new PlayerNewMessage(gameClient, gameClient.aiGameClients.get(aiIndex));
                         msg.process(dis, aiIndex);
                     } else {

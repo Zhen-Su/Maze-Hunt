@@ -23,36 +23,25 @@ public class MultiPlayer extends Player {
 
     //constructors=================================================================================
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir, String colour) {
-        super(collisionLayer, username);
+        super();
         if (debug) System.out.println("My Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
-        this.health = 5;
-        this.coins = 0;
         this.name = username;
-        this.items = new ArrayList<>();
-        this.position = new Coordinate(x, y);
-        this.swordDamage = 0;
         this.colour = colour;
-        swordXP = 0;
-        shieldXP = 0;
-        this.font = gameClient.bitmapFont;
-        time = new Timer();
-        this.co = new Collect(this, gameClient);
+        this.gameClient = gameClient;
+        this.dir = dir;
 
         initialPosition();
         this.x = this.position.getX();
         this.y = this.position.getY();
-
         loadPlayerTextures();
-        this.gameClient = gameClient;
-        this.dir = dir;
+
         createAnimations();
 
         if (debug) System.out.println("My Multiplayer instance construction done!");
     }
 
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour) {
-        super(collisionLayer, username, x, y, dir);
         if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.health = 5;
@@ -60,13 +49,11 @@ public class MultiPlayer extends Player {
         this.name = username;
         this.items = new ArrayList<>();
         this.colour = colour;
-        this.font = gameClient.bitmapFont;
+        swordXP = 0;
+        shieldXP = 0;
         time = new Timer();
-        co = new Collect(this, gameClient);
+        co = new Collect(this);
 
-//        this.position = new Coordinate(x, y);
-//        this.x = this.position.getX();
-//        this.y = this.position.getY();
         this.x = x;
         this.y = y;
         this.position = new Coordinate(x, y);
@@ -159,6 +146,8 @@ public class MultiPlayer extends Player {
             //After 3 second, then call death()
             if (time.currentTime() - respawnCounter == 3) {
                 this.death();
+                MoveMessage message = new MoveMessage(this.gameClient.getMultiPlayer().getID(), this.position.getX(), this.position.getY(), dir);
+                gameClient.getNc().send(message);
             }
             setAnimation(DyingAnim);
         }
@@ -399,10 +388,10 @@ public class MultiPlayer extends Player {
         }
         if ((time.currentTime()) - initialisedShieldTime == 10) {
             int indexOfItem = items.indexOf("shield");
-            System.out.println("Before remove: " + items);
-            System.out.println("Index of shield:" + indexOfItem);
+            if(debug) System.out.println("Before remove: " + items);
+            if(debug) System.out.println("Index of shield:" + indexOfItem);
             this.items.remove("shield");
-            System.out.println("After remove: " + items);
+            if(debug) System.out.println("After remove: " + items);
         }
     }
 
@@ -412,10 +401,10 @@ public class MultiPlayer extends Player {
         }
         if ((time.currentTime()) - initialisedEnchantmentTime == 10) {
             int indexOfItem = items.indexOf("gearEnchantment");
-            System.out.println("Before remove: " + items);
-            System.out.println("Index of gearEnchantment:" + indexOfItem);
+            if(debug) System.out.println("Before remove: " + items);
+            if(debug) System.out.println("Index of gearEnchantment:" + indexOfItem);
             this.items.remove("gearEnchantment");
-            System.out.println("After remove: " + items);
+            if(debug) System.out.println("After remove: " + items);
         }
     }
 

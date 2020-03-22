@@ -32,6 +32,7 @@ public class HostLobbyScreen implements Screen {
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
 
+
     public HostLobbyScreen(MazeGame game,String username) {
         this.game=game;
         this.hostUsername=username;

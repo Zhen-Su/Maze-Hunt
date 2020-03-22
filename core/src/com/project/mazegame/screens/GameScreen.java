@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
 
 	private Player player2;
 
-	private Collect co;
+//	private Collect co;
 
 	private final int EXIT_WIDTH = 50;
 	private final int EXIT_HEIGHT = 20;
@@ -81,9 +81,6 @@ public class GameScreen implements Screen {
 
 	private MazeGame game;
 	private OrthoCam cam;
-
-
-
 
 	private int numOfAI;
 	private String map;
@@ -98,16 +95,14 @@ public class GameScreen implements Screen {
 
 	Coordinate playerPos;
 
+	public GameScreen(){}
 	public GameScreen(MazeGame game) {
 		this.game = game;
-
-
 
 
 		inputHandler = new InputHandler();
 
 		worldTimer = 10;
-
 
 
 		// read csv file
@@ -145,12 +140,6 @@ public class GameScreen implements Screen {
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-
-
-
-
-
-
 		//coinAnimation = new AnimationTool(50,50,player,coinPick,true);
 		//coinAnimation.create();
 	}
@@ -176,25 +165,8 @@ public class GameScreen implements Screen {
 		enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
 		playerIcon = Assets.manager.get(Assets.playerOnMap,Texture.class);
 
-
 		overlayWidth = overlay.getWidth() +300;
 		overlayHeight = overlay.getHeight() +300;
-
-
-	}
-
-	private void writeCoinCSV() {
-		ArrayList<String> input = new ArrayList<>();
-
-
-
-
-		input.add(player.getName() + " = " + player.coins);
-
-
-		System.out.println("in method " + input );
-
-		CSVStuff.writeCSV(input , "coinCSV");
 	}
 
 	@Override
@@ -204,7 +176,7 @@ public class GameScreen implements Screen {
 
 		//assuming it's a square map -> only need width of map and width of tile
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
-		co = new Collect(player,null);
+//		co = new Collect(player,null);
 		tempMapItemssize = mapItems.size();
 		//start timer
 		player.initialPosition();
@@ -217,9 +189,6 @@ public class GameScreen implements Screen {
 	public void render(float delta) { //method repeats a lot
 
 		updateTime(delta);
-//    	player.removeShield();
-//    	removeEnchantment();
-
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -246,8 +215,8 @@ public class GameScreen implements Screen {
 
 		//Collectibles pick up
 		if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-			if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) &&
-					(player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
+			if ((player.position.getX() > player.co.nearestItem(player).getPosition().getX()) && (player.position.getX() < player.co.nearestItem(player).getPosition().getX()+100) &&
+					(player.position.getY() > player.co.nearestItem(player).getPosition().getY()) && (player.position.getY() < player.co.nearestItem(player).getPosition().getY()+100)){
 				pickUpItem();
 
 			}
@@ -420,48 +389,60 @@ public class GameScreen implements Screen {
 	}
 	// -------------------------------------------------could move to collect class
 	private void pickUpItem() {
-		Item item =  co.nearestItem(player);
-
+		Item item =  player.co.nearestItem(player);
 
 
 		if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")&& !(item.getType() == "healingPotion")&& !(item.getType() == "damagingPotion")) {
-			item = co.pickedUp(co.nearestItem(player));
+			item = player.co.pickedUp(player.co.nearestItem(player));
 
 
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
 				player.initialisedShieldTime = time.currentTime();
-				co.sword(item, player);
+				player.co.shield(item, player);
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				}
 			}
 			if (item.getType() == "sword") {
-				co.sword(item, player);
+				player.co.sword(item, player);
 			}
 
 
 			if (item.getType() == "gearEnchantment") {
-				co.gearEnchantment(item , player);
+				player.co.gearEnchantment(item , player);
 				player.initialisedEnchantmentTime = time.currentTime();
 				if(player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
 			if(item.getType() == "minimap") {
-				co.minimap(item);
+				player.co.minimap(item);
 			}
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
 		}else if (item.getType() == "healingPotion") {
 			mapItems.remove(item);
-			co.healingPotion (player);
+			player.co.healingPotion (player);
 		}else if (item.getType() == "damagingPotion") {
 			mapItems.remove(item);
-			co.damagingPotion(player);
+			player.co.damagingPotion(player);
 		}
+		//System.out.println(player.items);
 	}
+	private void writeCoinCSV() {
+		ArrayList<String> input = new ArrayList<>();
 
+
+
+
+		input.add(player.getName() + " = " + player.coins);
+
+
+		System.out.println("in method " + input );
+
+		CSVStuff.writeCSV(input , "coinCSV");
+	}
 	private void animateCoin() {
 
 //    	TextureRegion[] region = coinAnimation.getFrames();

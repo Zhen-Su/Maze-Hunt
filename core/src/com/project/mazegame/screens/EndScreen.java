@@ -14,9 +14,7 @@ import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Database.AddData;
 import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
-import com.project.mazegame.tools.Variables;
 
-//import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class EndScreen implements Screen {
     private AddData add;
     private static final int LB_WIDTH = 350;
