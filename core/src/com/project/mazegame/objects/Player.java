@@ -1,12 +1,9 @@
 package com.project.mazegame.objects;
 
 import static com.project.mazegame.tools.Variables.*;
-
 import java.util.ArrayList;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,20 +14,20 @@ import com.project.mazegame.tools.*;
 public class Player {
 
     protected int x, y;
-    protected float speed = 6;
+    protected float speed;
     protected String colour;
     protected String name;
     public ArrayList<String> items;
     public Coordinate position;
     protected int width, height, coinSize;
     public int coins;
-    public int health = 5;
+    public int health;
     protected int ID;
     protected Direction dir;
     public int swordDamage;
     protected int swordXP;
     protected int shieldXP;
-    public int respawnCounter = 0;
+    public int respawnCounter;
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
 
@@ -52,8 +49,6 @@ public class Player {
     protected AnimationTool DyingAnim;
     protected AnimationTool coinAnimation, swordSwipeRight, swordSwipeLeft, swordSwipeUp, swordSwipeDown, swipeAnim;
     private SpriteBatch batch;
-
-    protected boolean isDying = false;
     protected Timer time;
 
     public float initialisedShieldTime;
@@ -63,31 +58,28 @@ public class Player {
     public static int shieldIconSize = 50;
 
 
-    public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour) {
-
+    public Player(){
         this.health = 5;
         this.coins = 0;
-        this.name = name;
         this.items = new ArrayList<>();
         this.position = new Coordinate(x, y);
         this.swordDamage = 0;
+        this.respawnCounter= 0;
+        this.speed = 6;
+        swordXP = 0;
+        shieldXP = 0;
+        this.co = new Collect(this);
+        time = new Timer();
+    }
+    public Player(TiledMapTileLayer collisionLayer,String name, int ID, String colour) {
+        this();
+        this.name = name;
         this.ID = ID;
         this.collisionLayer = collisionLayer;
         this.colour = colour;
-        swordXP = 0;
-        shieldXP = 0;
-
         initialPosition();
-
         loadPlayerTextures();
         createAnimations();
-        time = new Timer();
-    }
-
-    public Player(TiledMapTileLayer collisionLayer, String username) {
-    }
-
-    public Player(TiledMapTileLayer collisionLayer, String username, int x, int y, Direction dir) {
     }
 
     //Getter&Setter=================================================================================
@@ -178,6 +170,7 @@ public class Player {
     public AnimationTool getDyingAnim() {
         return DyingAnim;
     }
+
     public Collect getCo() {
         return co;
     }
@@ -363,7 +356,6 @@ public class Player {
                     setSwordAnimation(swordSwipeDown);
 
                 //do animation
-
                 swipeAnim.render();
                 isAttacking = true;
                 sword = swordAttack;

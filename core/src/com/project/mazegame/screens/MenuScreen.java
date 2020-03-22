@@ -130,7 +130,7 @@ public class MenuScreen implements Screen {
             if(Gdx.input.isTouched())
             {
                 bgm.stop();
-                game.setScreen(new CreateMazeScreen(game));
+                game.setScreen(new CreateMazeScreen(game,true));
             }
         } else {
             game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);

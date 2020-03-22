@@ -4,6 +4,7 @@ package com.project.mazegame.networking.Messagess;
 import com.project.mazegame.objects.AIGameClient;
 import com.project.mazegame.objects.AIPlayer;
 import com.project.mazegame.objects.Direction;
+import com.project.mazegame.objects.MultiAIPlayer;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
@@ -115,7 +116,7 @@ public class PlayerNewMessage implements Message {
                     gameClient.getPlayers().add(newPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
                 }else {
-                    AIPlayer newAIPlayer = new AIPlayer(gameClient.getCollisionLayer(),username,id,"red",dir);
+                    MultiAIPlayer newAIPlayer = new MultiAIPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir,colour);
                     newAIPlayer.setID(id);
                     gameClient.getPlayers().add(newAIPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newAIPlayer));
@@ -168,7 +169,8 @@ public class PlayerNewMessage implements Message {
                     aigameClient.getPlayers().add(newPlayer);
                     aigameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
                 }else {
-                    AIPlayer newAIPlayer = new AIPlayer(gameClient.getCollisionLayer(),username,id,"red",dir);
+                    //TODO this need to think
+                    MultiAIPlayer newAIPlayer = new MultiAIPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir,colour);
                     newAIPlayer.setID(id);
                     aigameClient.getPlayers().add(newAIPlayer);
                     aigameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newAIPlayer));

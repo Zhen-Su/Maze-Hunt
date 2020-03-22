@@ -1,12 +1,6 @@
 package com.project.mazegame.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.project.mazegame.networking.Client.NetClient;
-import com.project.mazegame.objects.Player;
-import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.PlayerThread;
 
@@ -14,35 +8,25 @@ import java.util.ArrayList;
 
 // each time ai moves needs to send message
 
-// In constructor can litterally just call AITakingOver and will genearate however many AIs wanted
+// In constructor can literally just call AITakingOver and will genearate however many AIs wanted
 public class AIPlayer extends Player {
-    public ArrayList<AIPlayer> ais;
-    private final int spawnNumber = 0;
-    private Collect co;
-    protected Direction dir;
-    private TiledMapTileLayer collisionLayer;
-    private Thread aiThread;
-    private float initialisedTime;
-    private boolean updateCount;
-    private float attackPlayerTime;
-    private float attackAITime;
-    private boolean attackPStart;
-    private boolean attackAIStart;
-    private String colour;
-    private AIGameClient aiGameClient;
 
+    protected Direction dir;
+    protected Thread aiThread;
+    protected float initialisedTime;
+    protected boolean updateCount;
+    protected float attackPlayerTime;
+    protected float attackAITime;
+    protected boolean attackPStart;
+    protected boolean attackAIStart;
 
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, String colour,Direction dir) {
         super(collisionLayer, name, ID, colour);
-        this.colour = colour;
-        this.collisionLayer = collisionLayer;
-        initialPosition();
         this.dir=dir;
-        aiThread = new Thread(new PlayerThread());
+        this.aiThread = new Thread(new PlayerThread());
         this.updateCount = false;
         this.attackAIStart = false;
         this.attackPStart = false;
-        System.out.println("An AI player construct done..");
     }
 
     public void setInitialisedTime(float time) {
@@ -54,15 +38,13 @@ public class AIPlayer extends Player {
         return this.dir;
     }
 
-    public void setAiGameClient(AIGameClient aiGameClient) { this.aiGameClient = aiGameClient; }
-
     public ArrayList<AIPlayer> AITakingOver(int number) {
         ArrayList<AIPlayer> players = new ArrayList<>();
 
-        for (int i = 0; i < number; i++) {
-            players.add(new AIPlayer(this.collisionLayer, "AI"+i, i, colour,Direction.STOP));
+            for (int i = 0; i < number; i++) {
+                players.add(new AIPlayer(this.collisionLayer, "AI" + i, i, colour, Direction.STOP));
+            }
 
-        }
         return players;
     }
 
