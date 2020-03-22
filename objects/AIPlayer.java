@@ -29,6 +29,8 @@ public class AIPlayer extends Player {
     private boolean attackAIStart;
     private ArrayList<Coordinate> visited;
     private static final int movenumber = 40;
+    public int logx;
+    public int logy;
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
         this.collisionLayer = collisionLayer;
@@ -102,14 +104,13 @@ public class AIPlayer extends Player {
 
             // takes random coorediante it can mvoe to
                 Coordinate old = super.position;
-                this.position.setX((int) x);
-                this.position.setY((int) y);
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 // will need to do something with the speed
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
         System.out.println("The ai player is moving "+ moveToTake.toString());
-                super.x = (int) moveToTake.getX();
-                super.y = (int) moveToTake.getY();
+                this.position.setX(x);
+                this.position.setY(y);
+
                 this.change(old, moveToTake);
 
 
@@ -128,8 +129,13 @@ public class AIPlayer extends Player {
                 super.y = bested.getY();
                 this.change(near, bested);
                 Coordinate secondMoveToTake = direction(avaibleMoves(x, y));
-                super.x = (int) secondMoveToTake.getX();
-                super.y = (int) secondMoveToTake.getY();
+                System.out.println("Move is moing here " + secondMoveToTake.toString());
+//                super.x = (int) secondMoveToTake.getX();
+//                super.y = (int) secondMoveToTake.getY();
+                this.position.setY(secondMoveToTake.getY());
+                this.position.setX(secondMoveToTake.getX());
+//                this.logx = super.x;
+//                this.logy = super.y;
                 this.change(bested, secondMoveToTake);
 
 
@@ -160,8 +166,8 @@ public class AIPlayer extends Player {
                     Coordinate newM = new Coordinate(super.x, super.y);
                 }
                 System.out.println("Player should be moving " + super.x + " " + super.y);
-                x = tempx;
-                y = tempy;
+                this.position.setX(tempx);
+                this.position.setY(tempy);
             }
             this.initialisedTime = time;
             updateCount = true;
