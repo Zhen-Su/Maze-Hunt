@@ -336,11 +336,11 @@ public class CreateMazeScreen implements Screen {
 
         
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            Gdx.app.log(TAG, "username = " + usernameTextField.getText());
-            Gdx.app.log(TAG, "number of AI players = " + numField.getText());
-            game.setScreen(new HostLobbyScreen(game,usernameTextField.getText()));
-        }
+        // if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        //     Gdx.app.log(TAG, "username = " + usernameTextField.getText());
+        //     Gdx.app.log(TAG, "number of AI players = " + numField.getText());
+        //     game.setScreen(new HostLobbyScreen(game,usernameTextField.getText()));
+        // }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();

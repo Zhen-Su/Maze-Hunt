@@ -22,6 +22,7 @@ import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.Assets;
+import com.project.mazegame.tools.CSVStuff;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.OrthoCam;
@@ -112,10 +113,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         timer = 0;
 
         tileMap = new TmxMapLoader().load("Map3.tmx");
+        mapTexture = Assets.manager.get(Assets.map3Icon, Texture.class);
         //TODO this 113 line should be changed after integrate with customize.
-        mapTexture = new Texture("Maps\\Map3Icon.png");
+        mapTexture = new Texture(Assets.map3Icon);
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         //TODO need to think about colour thing(customize)
@@ -343,9 +344,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
                 if ((worldTimer - time.currentTime()) < 0) {
                     this.dispose();
+                    writeCoinCSV();
                     //TODO when this game over, player want to start a new game again
                     //need to handle player exit
-                    writeCoinCSV();
                     game.setScreen(new EndScreen(this.game));
                     if (isHost) {
                         this.server.dispose(this);
@@ -542,6 +543,19 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     }
 
 
+    private void writeCoinCSV() {
+        ArrayList<String> input = new ArrayList<>();
+
+
+
+
+        input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.getCoins());
+
+
+        System.out.println("in method " + input );
+
+        CSVStuff.writeCSV(input , "coinCSV");
+    }
     @Override
     public void resize(int width, int height) {
 

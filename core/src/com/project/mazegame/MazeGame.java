@@ -9,9 +9,11 @@ import com.project.mazegame.screens.MenuScreen;
 import com.project.mazegame.screens.SplashScreen;
 import com.project.mazegame.tools.Assets;
 
+
 public class MazeGame extends Game {
 	public SpriteBatch batch;
-	public Assets assets;
+	public AssetManager assets;
+	public static AssetManager manager;
 	public OrthographicCamera camera;
 
 
@@ -22,12 +24,14 @@ public class MazeGame extends Game {
 	@Override
 	public void create () {
 		assets = new Assets();
-		System.out.println(assets.manager.getProgress());
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
 		//this.setScreen(new SplashScreen(this));
 
 		//Only for test
+		Assets.load();
+		Assets.manager.finishLoading();
+		System.out.println(Assets.manager.update());
 		this.setScreen(new MenuScreen(this));
 		batch = new SpriteBatch();
 	}

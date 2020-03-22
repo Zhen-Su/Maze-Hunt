@@ -31,7 +31,11 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+<<<<<<< HEAD
     <orderEntry type="module" module-name="core" exported="" />
+=======
+    <orderEntry type="module" module-name="anotherworld-core" exported="" />
+>>>>>>> origin/multiplayer
     <orderEntry type="library" exported="" name="Gradle: gdx-backend-lwjgl-1.9.10" level="project" />
     <orderEntry type="library" exported="" name="Gradle: gdx-platform-1.9.10-natives-desktop" level="project" />
     <orderEntry type="library" exported="" name="Gradle: gdx-box2d-platform-1.9.10-natives-desktop" level="project" />
@@ -46,11 +50,20 @@
     <orderEntry type="library" exported="" name="Gradle: lwjgl-platform-2.9.3-natives-osx" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jinput-2.0.5" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jutils-1.0.0" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="Gradle: jinput-platform-2.0.5-natives-linux" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="Gradle: jinput-platform-2.0.5-natives-windows" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="Gradle: jinput-platform-2.0.5-natives-osx" level="project" />
+    <orderEntry type="library" exported="" scope="RUNTIME" name="Gradle: postgresql-42.2.9" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: jinput-platform-2.0.5-natives-linux" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: jinput-platform-2.0.5-natives-windows" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: jinput-platform-2.0.5-natives-osx" level="project" />
+<<<<<<< HEAD
     <orderEntry type="module" module-name="core" exported="" />
     <orderEntry type="module" module-name="core" exported="" />
     <orderEntry type="module" module-name="core" exported="" />
+=======
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: postgresql-42.2.9" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: desktop.desktop-1.0" level="project" />
+>>>>>>> origin/multiplayer
   </component>
 </module>

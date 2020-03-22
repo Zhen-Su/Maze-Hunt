@@ -86,11 +86,14 @@ public class Collect {
 
 	public void shield(Item item, Player player1) {
 
+
 		final ArrayList<String> items = player1.items;
 		int seconds = 60;
 		int startHealth = player1.health;
 
 		int time = 60000;
+
+	
 	}
 
 	public void coin(Player player1) {

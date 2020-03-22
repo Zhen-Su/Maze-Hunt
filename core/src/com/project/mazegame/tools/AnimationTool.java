@@ -15,39 +15,39 @@ import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.Variables.*;
 public class AnimationTool extends ApplicationAdapter {
 
-   SpriteBatch batch;
-   
-   Texture img;
-   Animation animation;
-   public float elapsedTime;
-   String fileName;
-   int width,height;
-   TextureRegion[] animationFrames;
-   Player player;
-   boolean loop;
-   MultiPlayer multiPlayer;
-   
-   private MazeGame game;
-   public int xOffset;
-   public int yOffset;
-   
-   public AnimationTool(int width, int height, Player player , Texture img, boolean loop) {
-	   this.loop = loop;
-	   this.img = img;
-	   this.width = width;
-	   this.height = height;
-	   this.player = player;
-	   this.xOffset = 0;
-	   this.yOffset = 0;
-   }
-   public AnimationTool(int width, int height, MultiPlayer player, Texture img, boolean loop) {
-       this.loop = loop;
-       this.img = img;
-       this.width = width;
-       this.height = height;
-       this.multiPlayer = player;
-   }
-   
+
+    SpriteBatch batch;
+
+    Texture img;
+    Animation animation;
+    public float elapsedTime;
+    String fileName;
+    int width,height;
+    TextureRegion[] animationFrames;
+    Player player;
+    boolean loop;
+
+    private MazeGame game;
+    public int xOffset;
+    public int yOffset;
+
+    public AnimationTool(int width, int height, Player player , Texture img, boolean loop) {
+        this.loop = loop;
+        this.img = img;
+        this.width = width;
+        this.height = height;
+        this.player = player;
+        this.xOffset = 0;
+        this.yOffset = 0;
+    }
+
+    public void setFrames(TextureRegion[] frames) {
+        this.animationFrames = frames;
+    }
+
+    public TextureRegion[] getFrames() {
+        return animationFrames;
+    }
 
     @Override
     public void create (){
@@ -76,4 +76,3 @@ public class AnimationTool extends ApplicationAdapter {
 
 
 }
-

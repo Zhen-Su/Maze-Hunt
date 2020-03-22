@@ -41,7 +41,7 @@ public class Assets {
 	public static final String BackToMenuButton = "UI/MenuButtons/BackToMenuButton.png";
 	public static final String backToMenuButtonPressed = "UI/MenuButtons/backToMenuButtonPressed.png";
 	public static final String Leaderboard = "UI/Backgrounds/Leaderboard.png";
-//	public static final String GAMEOVER = "UI\\Titles\\GAMEOVER!.png";
+
 	public static final String walkRightBlue = "Player/walkRightBlue.png";
     public static final String walkLeftBlue ="Player/walkLeftBlue.png";
     public static final String walkUpBlue = "Player/walkUpBlue.png";

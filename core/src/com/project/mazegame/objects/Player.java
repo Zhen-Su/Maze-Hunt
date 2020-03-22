@@ -23,6 +23,10 @@ public class Player {
     public ArrayList<String> items;
     public Coordinate position;
     protected int width, height, coinSize;
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/multiplayer
     public int coins;
     public int health = 5;
     protected int ID;
@@ -184,6 +188,14 @@ public class Player {
     public void setCo(Collect co) {
         this.co = co;
     }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
     //==============================================================================================
 
 
@@ -331,6 +343,7 @@ public class Player {
         if (!this.items.contains("shield")) {
             return;
         }
+    
 
         if ((time.currentTime()) - initialisedShieldTime == 10) {
             this.items.remove("shield");
