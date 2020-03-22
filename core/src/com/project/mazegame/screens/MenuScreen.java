@@ -60,20 +60,12 @@ public class MenuScreen implements Screen {
     Texture createMazeActive;
     Texture createMazeInactive;
     Texture mazeGame;
-<<<<<<< HEAD
     
-=======
-
->>>>>>> origin/multiplayer
     Sprite playButtonActiveSprite;
 
     public MenuScreen(MazeGame game) {
         this.game = game;
-<<<<<<< HEAD
       
-=======
-
->>>>>>> origin/multiplayer
         playButtonActive = Assets.manager.get(Assets.playSoloButton,Texture.class);
         playButtonInactive = Assets.manager.get(Assets.playSoloButtonPressed,Texture.class);
         exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
@@ -88,11 +80,7 @@ public class MenuScreen implements Screen {
         backGround = Assets.manager.get(Assets.menuBackground,Texture.class);
         //audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
 
-<<<<<<< HEAD
         
-=======
-
->>>>>>> origin/multiplayer
 
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
@@ -211,7 +199,7 @@ public class MenuScreen implements Screen {
     public void pause() {
 
     }
-
+.
     @Override
     public void resume() {
 
