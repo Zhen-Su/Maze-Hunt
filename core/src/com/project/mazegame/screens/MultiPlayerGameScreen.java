@@ -363,11 +363,11 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private void writeCoinCSV() {
         ArrayList<String> input = new ArrayList<>();
 
-
-
+        for(Player player : players){
+            input.add(player.getName() + " = " + player.coins);
+        }
 
         input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.coins);
-
 
         System.out.println("in method " + input );
 

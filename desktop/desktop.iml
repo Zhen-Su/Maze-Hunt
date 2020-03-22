@@ -31,7 +31,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="anotherworld-core" exported="" />
+    <orderEntry type="module" module-name="core" exported="" />
     <orderEntry type="library" exported="" name="Gradle: gdx-backend-lwjgl-1.9.10" level="project" />
     <orderEntry type="library" exported="" name="Gradle: gdx-platform-1.9.10-natives-desktop" level="project" />
     <orderEntry type="library" exported="" name="Gradle: gdx-box2d-platform-1.9.10-natives-desktop" level="project" />
