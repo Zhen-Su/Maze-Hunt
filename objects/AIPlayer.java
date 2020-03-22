@@ -106,10 +106,11 @@ public class AIPlayer extends Player {
                 Coordinate old = super.position;
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 // will need to do something with the speed
+
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
         System.out.println("The ai player is moving "+ moveToTake.toString());
-                this.position.setX(x);
-                this.position.setY(y);
+                this.position.setX(moveToTake.getX());
+                this.position.setY(moveToTake.getY());
 
                 this.change(old, moveToTake);
 

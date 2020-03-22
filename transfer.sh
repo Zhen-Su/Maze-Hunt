@@ -7,3 +7,4 @@ cp -r /home/james/TeamProject/core/src/com/project/mazegame/networking/ /home/ja
 cp -r /home/james/TeamProject/core/src/com/project/mazegame/MazeGame.java /home/james/TeamProject/git/anotherworld/
 git add *
 git commit -m "$1" -m "$2"
+git push
