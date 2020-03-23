@@ -1,13 +1,11 @@
 package com.project.mazegame.networking.Client;
 
 import com.project.mazegame.networking.Messagess.AttackMessage;
-import com.project.mazegame.networking.Messagess.CollectMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Messagess.PlayerNewMessage;
-import com.project.mazegame.networking.Messagess.RemoveItemsMessage;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
@@ -33,7 +31,7 @@ public class NetClient {
     private String serverIP;
     private DatagramSocket datagramSocket = null;
     private Socket socket = null;
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public int getClientUDPPort() {
         return clientUDPPort;
@@ -49,7 +47,7 @@ public class NetClient {
      *
      * @param ip server IP
      */
-    public void connect(String ip, boolean createAI, int index) {
+    public synchronized void connect(String ip, boolean createAI, int index) {
         serverIP = ip;
         try {
             try {
@@ -76,6 +74,7 @@ public class NetClient {
                 printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
                 gameClient.getMultiPlayer().setID(id);
             } else {
+                printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
                 gameClient.aiGameClients.get(index).getAiPlayer().setID(id); //change AI player's id
             }
         } catch (UnknownHostException e) {
@@ -119,10 +118,10 @@ public class NetClient {
 
         byte[] receiveBuf = new byte[1024];
         int aiIndex;
-        boolean isAImsg;
+        boolean isAI;
 
-        public ClientThread(boolean isAImsg, int aiIndex) {
-            this.isAImsg = isAImsg;
+        public ClientThread(boolean isAI, int aiIndex) {
+            this.isAI = isAI;
             this.aiIndex = aiIndex;
         }
 
@@ -146,7 +145,7 @@ public class NetClient {
          *
          * @param datagramPacket
          */
-        private void process(DatagramPacket datagramPacket) {
+        private synchronized void process(DatagramPacket datagramPacket) {
             ByteArrayInputStream bais = new ByteArrayInputStream(receiveBuf, 0, datagramPacket.getLength());
             DataInputStream dis = new DataInputStream(bais);
 
@@ -160,7 +159,7 @@ public class NetClient {
             Message msg = null;
             switch (msgType) {
                 case Message.PLAYER_NEW_MSG:
-                    if (isAImsg) {
+                    if (isAI) {
                         msg = new PlayerNewMessage(gameClient, gameClient.aiGameClients.get(aiIndex));
                         msg.process(dis, aiIndex);
                     } else {
@@ -170,10 +169,6 @@ public class NetClient {
                     break;
                 case Message.PLAYER_MOVE_MSG:
                     msg = new MoveMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.PLAYER_COLLECT_MSG:
-                    msg = new CollectMessage(gameClient);
                     msg.process(dis);
                     break;
                 case Message.PLAYER_EXIT_MSG:
@@ -190,10 +185,6 @@ public class NetClient {
                     break;
                 case Message.ATTACK_MSG:
                     msg = new AttackMessage(gameClient);
-                    msg.process(dis);
-                    break;
-                case Message.REMOVE_MSG:
-                    msg = new RemoveItemsMessage(gameClient);
                     msg.process(dis);
                     break;
             }

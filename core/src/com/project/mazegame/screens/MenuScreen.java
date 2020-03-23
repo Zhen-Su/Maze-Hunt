@@ -10,7 +10,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.OrthoCam;
 
 
@@ -59,30 +61,30 @@ public class MenuScreen implements Screen {
     Texture createMazeInactive;
     Texture mazeGame;
 
+    Sprite playButtonActiveSprite;
+
     public MenuScreen(MazeGame game) {
         this.game = game;
 
-        playButtonActive = new Texture("UI\\MenuButtons\\playSoloButton.png");
-        playButtonInactive = new Texture ("UI\\MenuButtons\\playSoloButtonPressed.png");
+        playButtonActive = Assets.manager.get(Assets.playSoloButton,Texture.class);
+        playButtonInactive = Assets.manager.get(Assets.playSoloButtonPressed,Texture.class);
+        exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
+        exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive,Texture.class);
+        joinMazeButtonActive = Assets.manager.get(Assets.FindMazeButton,Texture.class);
+        joinMazeButtonInactive = Assets.manager.get(Assets.FindMazeButtonPressed,Texture.class);
+        createMazeActive = Assets.manager.get(Assets.StartNewMazeButton,Texture.class);
+        createMazeInactive = Assets.manager.get(Assets.StartNewMazeButtonPressed,Texture.class);
+        mazeGame = Assets.manager.get(Assets.MazeHunt,Texture.class);
+        audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
+        audioOff = Assets.manager.get(Assets.audioOff,Texture.class);
+        backGround = Assets.manager.get(Assets.menuBackground,Texture.class);
+        //audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
 
-        exitButtonActive = new Texture("UI\\MenuButtons\\exit_button_active.png");
-        exitButtonInactive = new Texture("UI\\MenuButtons\\exit_button_inactive.png");
 
-        joinMazeButtonActive = new Texture("UI\\MenuButtons\\FindMazeButton.png");
-        joinMazeButtonInactive = new Texture("UI\\MenuButtons\\FindMazeButtonPressed.png");
-
-        createMazeActive = new Texture("UI\\MenuButtons\\StartNewMazeButton.png");
-        createMazeInactive = new Texture("UI\\MenuButtons\\StartNewMazeButtonPressed.png");
-        mazeGame = new Texture("UI\\Titles\\MazeHunt.png");
-
-        audioOn = new Texture("UI\\MenuButtons\\audioOn.png");
-        audioOff = new Texture("UI\\MenuButtons\\audioOff.png");
-
-        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
 
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
-        bgm.play();
+//        bgm.play();
 
     }
 
@@ -106,7 +108,7 @@ public class MenuScreen implements Screen {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
                 bgm.stop();
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new CreateMazeScreen(game , false));
             }
         } else {
             game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
@@ -115,7 +117,7 @@ public class MenuScreen implements Screen {
 
         if (isHovering(drawX, JOIN_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
-            if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
                 System.out.println("mult2i");
                 bgm.stop();
                 this.dispose();
@@ -127,10 +129,10 @@ public class MenuScreen implements Screen {
 
         if (isHovering(drawX, CREATE_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
-            if(Gdx.input.isTouched())
+            if(Gdx.input.justTouched())
             {
                 bgm.stop();
-                game.setScreen(new CreateMazeScreen(game));
+                game.setScreen(new CreateMazeScreen(game , true));
             }
         } else {
             game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
@@ -139,7 +141,7 @@ public class MenuScreen implements Screen {
         drawX = xMid("SB");
         if (isHovering(drawX, EXIT_Y, SB_WIDTH, SB_HEIGHT)) {
             game.batch.draw(exitButtonActive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
-            if (Gdx.input.isTouched())
+            if (Gdx.input.justTouched())
                 Gdx.app.exit();
         }
         else {
@@ -148,7 +150,7 @@ public class MenuScreen implements Screen {
 
         drawX = xMid("AudioButton");
         if (isHovering(drawX, AUDIO_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {
-            if (Gdx.input.isTouched()) {
+            if (Gdx.input.justTouched()) {
                 if (bgm.isPlaying()) {
                     bgm.setLooping(false);
                     bgm.stop();

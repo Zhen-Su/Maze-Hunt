@@ -4,9 +4,11 @@ package com.project.mazegame.networking.Messagess;
 import com.project.mazegame.objects.AIGameClient;
 import com.project.mazegame.objects.AIPlayer;
 import com.project.mazegame.objects.Direction;
+import com.project.mazegame.objects.MultiAIPlayer;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
+import com.project.mazegame.tools.PlayersType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -109,13 +111,13 @@ public class PlayerNewMessage implements Message {
                 System.out.println("I'm a Real player: this player new message is from: id "+id);
 
                 if(!isAIPlayer) {
-                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour);
+                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour, PlayersType.multi);
                     newPlayer.setID(id);
                     System.out.println("id"+id+" 's position: ("+x+","+y+")");
                     gameClient.getPlayers().add(newPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
                 }else {
-                    AIPlayer newAIPlayer = new AIPlayer(gameClient.getCollisionLayer(),username,id,"red",dir);
+                    MultiAIPlayer newAIPlayer = new MultiAIPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir,colour,PlayersType.multi);
                     newAIPlayer.setID(id);
                     gameClient.getPlayers().add(newAIPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newAIPlayer));
@@ -163,12 +165,13 @@ public class PlayerNewMessage implements Message {
                 System.out.println("I'm an AI player: this player new message is from: id "+id);
 
                 if(!isAIPlayer) {
-                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour);
+                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour,PlayersType.multi);
                     newPlayer.setID(id);
                     aigameClient.getPlayers().add(newPlayer);
                     aigameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
                 }else {
-                    AIPlayer newAIPlayer = new AIPlayer(gameClient.getCollisionLayer(),username,id,"red",dir);
+                    //TODO this need to think
+                    MultiAIPlayer newAIPlayer = new MultiAIPlayer(gameClient.getCollisionLayer(),username,x,y,gameClient,dir,colour,PlayersType.multi);
                     newAIPlayer.setID(id);
                     aigameClient.getPlayers().add(newAIPlayer);
                     aigameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newAIPlayer));

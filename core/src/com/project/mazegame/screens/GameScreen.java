@@ -68,7 +68,7 @@ public class GameScreen implements Screen {
 
 	private Player player2;
 
-	private Collect co;
+//	private Collect co;
 
 	private final int EXIT_WIDTH = 50;
 	private final int EXIT_HEIGHT = 20;
@@ -95,21 +95,24 @@ public class GameScreen implements Screen {
 
 	Coordinate playerPos;
 
+	public GameScreen(){}
 	public GameScreen(MazeGame game) {
 		this.game = game;
 
 
 		inputHandler = new InputHandler();
 
-		worldTimer = 60;
+		worldTimer = 10;
+
 
 		// read csv file
-		ArrayList<String> output = CSVStuff.readCSVFile();
+		ArrayList<String> output = CSVStuff.readCSVFile("csvFile");
 
 		this.map = output.get(0);
 		this.playerSkin = output.get(1);
 		this.AIDifficulty = output.get(2);
 		this.numOfAI = Integer.parseInt(output.get(3));
+		String name = output.get(4);
 
 
 		if(this.map.equals( "map1")) {
@@ -129,7 +132,7 @@ public class GameScreen implements Screen {
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-		player = new Player(this.collisionLayer,"james",123 , this.playerSkin);
+		player = new Player(this.collisionLayer,name,123 , this.playerSkin,PlayersType.single);
 
 //       player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
@@ -173,7 +176,7 @@ public class GameScreen implements Screen {
 
 		//assuming it's a square map -> only need width of map and width of tile
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
-		co = new Collect(game, player,null);
+//		co = new Collect(player,null);
 		tempMapItemssize = mapItems.size();
 		//start timer
 		player.initialPosition();
@@ -194,7 +197,8 @@ public class GameScreen implements Screen {
 
 		//updates - player position
 		inputHandler.update();
-		player.update(delta);
+		ArrayList<Item> empty = new ArrayList<>();
+		player.update(delta, 0, empty, 0);
 		//camera
 		cam.update(player.position.getX(),player.position.getY(),game);
 
@@ -212,8 +216,8 @@ public class GameScreen implements Screen {
 
 		//Collectibles pick up
 		if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-			if ((player.position.getX() > co.nearestItem(player).getPosition().getX()) && (player.position.getX() < co.nearestItem(player).getPosition().getX()+100) &&
-					(player.position.getY() > co.nearestItem(player).getPosition().getY()) && (player.position.getY() < co.nearestItem(player).getPosition().getY()+100)){
+			if ((player.position.getX() > player.co.nearestItem(player).getPosition().getX()) && (player.position.getX() < player.co.nearestItem(player).getPosition().getX()+100) &&
+					(player.position.getY() > player.co.nearestItem(player).getPosition().getY()) && (player.position.getY() < player.co.nearestItem(player).getPosition().getY()+100)){
 				pickUpItem();
 
 			}
@@ -246,6 +250,7 @@ public class GameScreen implements Screen {
 
 			if((worldTimer - time.currentTime()) < 0) {
 				this.dispose();
+				writeCoinCSV();
 				game.setScreen(new EndScreen(this.game));
 
 			}
@@ -385,48 +390,60 @@ public class GameScreen implements Screen {
 	}
 	// -------------------------------------------------could move to collect class
 	private void pickUpItem() {
-		Item item =  co.nearestItem(player);
+		Item item =  player.co.nearestItem(player);
 
 
 		if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")&& !(item.getType() == "healingPotion")&& !(item.getType() == "damagingPotion")) {
-			item = co.pickedUp(co.nearestItem(player));
+			item = player.co.pickedUp(player.co.nearestItem(player));
 
 
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
 				player.initialisedShieldTime = time.currentTime();
-				co.shield(item, player);
+				player.co.shield(item, player);
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				}
 			}
 			if (item.getType() == "sword") {
-				co.sword(item, player, player2);
+				player.co.sword(item, player);
 			}
 
 
 			if (item.getType() == "gearEnchantment") {
-				co.gearEnchantment(item , player);
+				player.co.gearEnchantment(item , player);
 				player.initialisedEnchantmentTime = time.currentTime();
 				if(player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
 			if(item.getType() == "minimap") {
-				co.minimap(item);
+				player.co.minimap(item);
 			}
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
 		}else if (item.getType() == "healingPotion") {
 			mapItems.remove(item);
-			co.healingPotion (player);
+			player.co.healingPotion (player);
 		}else if (item.getType() == "damagingPotion") {
 			mapItems.remove(item);
-			co.damagingPotion(item, player);
+			player.co.damagingPotion(player);
 		}
 		//System.out.println(player.items);
 	}
+	private void writeCoinCSV() {
+		ArrayList<String> input = new ArrayList<>();
 
+
+
+
+		input.add(player.getName() + " = " + player.coins);
+
+
+		System.out.println("in method " + input );
+
+		CSVStuff.writeCSV(input , "coinCSV");
+	}
 	private void animateCoin() {
 
 //    	TextureRegion[] region = coinAnimation.getFrames();
