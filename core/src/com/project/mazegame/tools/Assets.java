@@ -16,6 +16,7 @@ public class Assets {
 	public static final String StartNewMazeButton = "UI/MenuButtons/StartNewMazeButton.png";
 	public static final String StartNewMazeButtonPressed = "UI/MenuButtons/StartNewMazeButtonPressed.png";
 	public static final String MazeHunt = "UI/Titles/MazeHunt.png";
+	public static final String JoinMaze = "UI/Titles/JoinMaze.png";
 	public static final String audioOn = "UI/MenuButtons/audioOn.png";
 	public static final String audioOff = "UI/MenuButtons/audioOff.png";
 	public static final String menuBackground = "UI/Backgrounds/menuBackground.png";
@@ -80,6 +81,7 @@ public class Assets {
     public static final String swipeDown="Player/swipeDown.png";
     public static final String playerDying="Player/playerDying.png";
     public static final String font = "myFont.fnt";
+    public static final String enterBox = "UI/EnterBox.png";
 
 	public Assets (){
 		load();
@@ -98,6 +100,8 @@ public class Assets {
 
 	         manager.load(FindMazeButton,Texture.class);
 	         manager.load(FindMazeButtonPressed,Texture.class);
+	         
+	         manager.load(JoinMaze, Texture.class);
 
 	         manager.load(StartNewMazeButton,Texture.class);
 	         manager.load(StartNewMazeButtonPressed,Texture.class);
@@ -107,6 +111,7 @@ public class Assets {
 	         manager.load(audioOff,Texture.class);
 
 	         manager.load(menuBackground,Texture.class);
+	         manager.load(enterBox,Texture.class);
 	         
 	         
 //	         manager.load(exit_button_active, Texture.class);

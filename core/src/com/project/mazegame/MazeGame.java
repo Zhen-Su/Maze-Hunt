@@ -12,7 +12,7 @@ import com.project.mazegame.tools.Assets;
 
 public class MazeGame extends Game {
 	public SpriteBatch batch;
-	public AssetManager assets;
+	public Assets assets;
 	public static AssetManager manager;
 	public OrthographicCamera camera;
 

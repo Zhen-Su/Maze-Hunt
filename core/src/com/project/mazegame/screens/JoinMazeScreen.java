@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.Assets;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,10 +28,12 @@ public class JoinMazeScreen implements Screen {
 
 
     MazeGame game;
-
+    public Texture joinMaze , enterBox;
     public JoinMazeScreen(MazeGame game) {
         this.game = game;
-
+        
+        joinMaze = Assets.manager.get(Assets.JoinMaze,Texture.class);
+        enterBox = Assets.manager.get(Assets.enterBox,Texture.class);
     }
     private static final String TAG = JoinMazeScreen.class.getSimpleName();
 
@@ -38,7 +41,7 @@ public class JoinMazeScreen implements Screen {
     public static final float WORLD_HEIGHT = 800;
 
     public static final int TEXT_FIELD_WIDTH = 300;
-    public static final int TEXT_FIELD_HEIGHT = 50;
+    public static final int TEXT_FIELD_HEIGHT = 70;
 
     private Stage stage;
     private Texture bgTexture;
@@ -70,18 +73,19 @@ public class JoinMazeScreen implements Screen {
         cursorTexture = createCursorTexture();
 
         bitmapFont = new BitmapFont();
-        bitmapFont.getData().setScale(2.0F);
+        bitmapFont.getData().setScale(1.5F);
 
         TextField.TextFieldStyle style = new TextField.TextFieldStyle();
-        style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
+        style.background = new TextureRegionDrawable(new TextureRegion(enterBox));
         style.cursor = new TextureRegionDrawable(new TextureRegion(cursorTexture));
         style.font = bitmapFont;
         style.fontColor = new Color(1, 1, 1, 1);
 
         BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
-        font = new BitmapFont();
-        font.setColor(Color.RED);
-        font.getData().setScale(2f);
+        font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
+        
+        font.setColor(Color.WHITE);
+        font.getData().setScale(1f);
 
         usernameTextField = new TextField("Player2", style);
         ipAddressTextField = new TextField("127.0.0.1", style);
@@ -90,7 +94,7 @@ public class JoinMazeScreen implements Screen {
         ipAddressTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
 
         usernameTextField.setPosition(90, 500);
-        ipAddressTextField.setPosition(90, 430);
+        ipAddressTextField.setPosition(90, 400);
 
         usernameTextField.setAlignment(Align.center);
         ipAddressTextField.setAlignment(Align.center);
@@ -101,7 +105,7 @@ public class JoinMazeScreen implements Screen {
 
     private Texture createBackgroundTexture() {
         Pixmap pixmap = new Pixmap(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT, Pixmap.Format.RGBA8888);
-        pixmap.setColor(1, 0, 0, 1);
+        pixmap.setColor(0.5f, 1, 0, 1);
         pixmap.drawRectangle(0, 0, pixmap.getWidth(), pixmap.getHeight());
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
@@ -126,6 +130,13 @@ public class JoinMazeScreen implements Screen {
         game.batch.begin();
         {
             game.batch.draw(backGround, 0, 0, 1000, 1000);
+            
+            game.batch.draw(joinMaze, 150, 800, 700, 200);
+            
+            String message = "Enter name";
+        	font.draw(game.batch, message, MazeGame.WIDTH/2 -100, 730 );
+        	message = "Enter IP address";
+         	font.draw(game.batch, message, MazeGame.WIDTH/2 -150, 600);
             handleInput();
             checkIp();
             stage.act();

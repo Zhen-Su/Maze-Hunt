@@ -199,7 +199,7 @@ public class MenuScreen implements Screen {
     public void pause() {
 
     }
-.
+
     @Override
     public void resume() {
 

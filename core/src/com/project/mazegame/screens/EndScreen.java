@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.networking.Database.AddData;
 import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
 import com.project.mazegame.tools.Variables;
@@ -18,24 +19,13 @@ import com.project.mazegame.tools.Variables;
 //import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class EndScreen implements Screen {
     private AddData add;
-    private static final int LB_WIDTH = 350;
-    private static final int LB_HEIGHT = 200;
 
-
-    private static final int MB_WIDTH = 250;
-    private static final int MB_HEIGHT = 100;
-
-    private static final int SB_HEIGHT = 80;
-    private static final int SB_WIDTH = 50;
-    private static final int PLAY_Y = 100;
-
-    private BitmapFont font;
 
     private static final int LB_WIDTH = 350;
     private static final int LB_HEIGHT = 200;
 
-    private static final int MB_WIDTH = 250;
-    private static final int MB_HEIGHT = 100;
+    private static final int MB_WIDTH = 220;
+    private static final int MB_HEIGHT = 70;
 
     private static final int SB_HEIGHT = 80;
     private static final int SB_WIDTH = 50;
@@ -91,7 +81,7 @@ public class EndScreen implements Screen {
 
         game.batch.draw(backGround,0,0,1000,1000);
         game.batch.draw(title,0,700,1000 , 300);
-        game.batch.draw(leaderboard,250,200, 500 , 500);
+        game.batch.draw(leaderboard,150,100, 800 , 600);
         
         for(int i = 0 ;  i < output.size(); i ++) {
         	
@@ -102,13 +92,13 @@ public class EndScreen implements Screen {
 
         int drawX = xMid("MB");
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
-            game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
+            game.batch.draw(playButtonActive, drawX, PLAY_Y - 50 ,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
                 bgm.stop();
                 game.setScreen(new MenuScreen(game));
             }
         } else {
-            game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
+            game.batch.draw(playButtonInactive, drawX, PLAY_Y -50,MB_WIDTH, MB_HEIGHT);
         }
 
         game.batch.end();

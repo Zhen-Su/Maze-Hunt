@@ -154,6 +154,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public List<Player> getPlayers() {
         return players;
     }
+    public List<AIPlayer> getAIPlayers() {
+        return aiPlayers;
+    }
 
     public void setPlayers(List<Player> players) {
         this.players = players;
@@ -533,29 +536,24 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private void writeCoinCSV() {
     	ArrayList<String> input = new ArrayList<>();
     	
-    	List<MultiPlayer> players = getPlayers();
+    	List<Player> players = getPlayers();
     	
     	for (int i = 0 ; i < players.size(); i ++) {
     		input.add(players.get(i).getName() + " = " + players.get(i).coins);
     	}
     	
+    	List<AIPlayer> aiPlayers = getAIPlayers();
+    	
+    	for (int i = 0 ; i < aiPlayers.size(); i ++) {
+    		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).coins);
+    	}
+    	
+    	input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.getCoins());
+    	
     	CSVStuff.writeCSV(input , "coinCSV");
     }
 
 
-    private void writeCoinCSV() {
-        ArrayList<String> input = new ArrayList<>();
-
-
-
-
-        input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.getCoins());
-
-
-        System.out.println("in method " + input );
-
-        CSVStuff.writeCSV(input , "coinCSV");
-    }
     @Override
     public void resize(int width, int height) {
 
