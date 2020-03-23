@@ -17,8 +17,6 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.utils.IntIntMap;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.objects.Item;
-import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.*;
 
 import java.awt.Font;
@@ -35,6 +33,10 @@ import static com.project.mazegame.tools.Variables.*;
 public class GameScreen implements Screen {
 	private Player player;
 	//private AIPlayer aiPlayer;// ---------need to be implemented
+	
+	public ArrayList<AIPlayer> aiPlayers;
+	
+	
 	private InputHandler inputHandler;
 	private float delta;
 
@@ -190,6 +192,10 @@ public class GameScreen implements Screen {
     	
     	
     	input.add(player.getName() + " = " + player.coins);
+    	
+    	for(int i = 0; i < numOfAI; i ++) {
+    		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).getCoins());
+    	}
     	
     	
     	System.out.println("in method " + input );
