@@ -96,6 +96,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 2.0.4 add Ai animation in multiplayer
   * 2.0.5 AI player can move at the same position in the different player's screen.
   * 2.0.6 synchornize attack animation in multiplayer
+  * 2.0.7 fix attack animation bugs. use the same mechanism as player move to monitor press and relase space. 
   
   
   

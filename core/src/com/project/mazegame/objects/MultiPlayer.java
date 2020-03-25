@@ -154,10 +154,8 @@ public class MultiPlayer extends Player {
         }
     }
 
-    public void attack() {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            isAttacking=true;
-
+    public void attackMessage() {
+        if (isAttacking) {
             AttackMessage attackMessage = new AttackMessage(ID);
             this.gameClient.getNc().send(attackMessage);
         }
@@ -208,6 +206,10 @@ public class MultiPlayer extends Player {
             case Input.Keys.DOWN:
                 bD = true;
                 break;
+            case Input.Keys.SPACE:
+                isAttacking=true;
+                attackMessage();
+                break;
         }
         locateDirection();
         return true;
@@ -232,6 +234,10 @@ public class MultiPlayer extends Player {
                 break;
             case Input.Keys.DOWN:
                 bD = false;
+                break;
+            case Input.Keys.SPACE:
+                isAttacking=false;
+                attackMessage();
                 break;
         }
         locateDirection();
@@ -339,6 +345,7 @@ public class MultiPlayer extends Player {
 
         this.x = this.position.getX();
         this.y = this.position.getY();
+
     }
 
     public boolean checkCollisionMap(float possibleX, float possibleY) { // true = good to move | false = can't move there

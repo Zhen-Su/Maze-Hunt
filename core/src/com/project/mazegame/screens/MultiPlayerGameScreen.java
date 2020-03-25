@@ -265,11 +265,13 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
 
-        System.out.println("mapItems: ");
-        for (int i = 0; i < mapItems.size(); i++) {
-            System.out.print("(" + mapItems.get(i).getPosition().getX() + "," + mapItems.get(i).getPosition().getY() + ")");
+        if(debug) {
+            System.out.println("mapItems: ");
+            for (int i = 0; i < mapItems.size(); i++) {
+                System.out.print("(" + mapItems.get(i).getPosition().getX() + "," + mapItems.get(i).getPosition().getY() + ")");
+            }
+            System.out.println();
         }
-        System.out.println();
     }
 
     int iconSize = 30;
@@ -864,7 +866,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     private void sendItemGenMsg(Coordinate position, Item item) {
         ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getID(), item.getType(), position.getX(), position.getY());
-        System.out.println(position.toString());
+//        System.out.println(position.toString());
         netClient.send(message);
     }
 
