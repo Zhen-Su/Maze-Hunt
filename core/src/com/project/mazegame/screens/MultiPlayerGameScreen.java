@@ -132,7 +132,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         if (isHost) {
             //create AI players
-            createAIplayers(1);
+            createAIplayers(0);
             //Every AI player connect to GameServer
             for (int i = 0; i < aiGameClients.size(); i++) {
                 NetClient nc = aiGameClients.get(i).getNetClient();

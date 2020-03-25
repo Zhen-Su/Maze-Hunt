@@ -39,7 +39,7 @@ public class Player {
     private float playerAttackTime;
     private boolean startPAttack;
     private boolean startAIAttack;
-    protected boolean isAttacking = false;
+    public boolean isAttacking = false;
 
     protected BitmapFont font;
     protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;

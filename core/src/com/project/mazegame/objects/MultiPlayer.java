@@ -1,10 +1,12 @@
 package com.project.mazegame.objects;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.project.mazegame.networking.Messagess.AttackMessage;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Collect;
@@ -31,7 +33,7 @@ public class MultiPlayer extends Player {
         this.colour = colour;
         this.gameClient = gameClient;
         this.dir = dir;
-        this.playersType=playersType;
+        this.playersType = playersType;
         this.co = new Collect(this);
 
         initialPosition();
@@ -44,13 +46,13 @@ public class MultiPlayer extends Player {
         if (debug) System.out.println("My Multiplayer instance construction done!");
     }
 
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour,PlayersType playersType) {
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
         super();
         if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
         this.name = username;
         this.colour = colour;
-        this.playersType=playersType;
+        this.playersType = playersType;
         co = new Collect(this);
 
         this.x = x;
@@ -126,6 +128,38 @@ public class MultiPlayer extends Player {
             //draw player's name
             font.getData().setScale(0.5f, 0.5f);
             font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
+
+            //draw attack animation
+            if (this.items.contains("sword") && !this.isDead() && isAttacking) {
+                if (animation.toString().equals(RightAnim.toString()))
+                    setSwordAnimation(swordSwipeRight);
+                else if (animation.toString().equals(LeftAnim.toString()))
+                    setSwordAnimation(swordSwipeLeft);
+                else if (animation.toString().equals(UpAnim.toString()))
+                    setSwordAnimation(swordSwipeUp);
+                else if (animation.toString().equals(DownAnim.toString()))
+                    setSwordAnimation(swordSwipeDown);
+
+                swipeAnim.render();
+                sword = swordAttack;
+                isAttacking=false;
+            } else {
+                sword = swordNotAttack;
+                swordSwipeRight.elapsedTime = 0;
+                swordSwipeLeft.elapsedTime = 0;
+                swordSwipeUp.elapsedTime = 0;
+                swordSwipeDown.elapsedTime = 0;
+            }
+
+        }
+    }
+
+    public void attack() {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            isAttacking=true;
+
+            AttackMessage attackMessage = new AttackMessage(ID);
+            this.gameClient.getNc().send(attackMessage);
         }
     }
 
@@ -397,10 +431,10 @@ public class MultiPlayer extends Player {
         }
         if ((time.currentTime()) - initialisedShieldTime == 10) {
             int indexOfItem = items.indexOf("shield");
-            if(debug) System.out.println("Before remove: " + items);
-            if(debug) System.out.println("Index of shield:" + indexOfItem);
+            if (debug) System.out.println("Before remove: " + items);
+            if (debug) System.out.println("Index of shield:" + indexOfItem);
             this.items.remove("shield");
-            if(debug) System.out.println("After remove: " + items);
+            if (debug) System.out.println("After remove: " + items);
         }
     }
 
@@ -410,10 +444,10 @@ public class MultiPlayer extends Player {
         }
         if ((time.currentTime()) - initialisedEnchantmentTime == 10) {
             int indexOfItem = items.indexOf("gearEnchantment");
-            if(debug) System.out.println("Before remove: " + items);
-            if(debug) System.out.println("Index of gearEnchantment:" + indexOfItem);
+            if (debug) System.out.println("Before remove: " + items);
+            if (debug) System.out.println("Index of gearEnchantment:" + indexOfItem);
             this.items.remove("gearEnchantment");
-            if(debug) System.out.println("After remove: " + items);
+            if (debug) System.out.println("After remove: " + items);
         }
     }
 

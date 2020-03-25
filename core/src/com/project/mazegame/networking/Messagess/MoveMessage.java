@@ -20,7 +20,7 @@ public class MoveMessage implements Message {
     private int pX, pY;
     private Direction dir;
     private MultiPlayerGameScreen gameClient;
-    private boolean debug =true;
+    private boolean debug =false;
 
     public MoveMessage(int id, int pX, int pY, Direction dir) {
         this.id=id;
