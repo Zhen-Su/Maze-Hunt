@@ -13,7 +13,6 @@ import java.util.ArrayList;
 // In constructor can literally just call AITakingOver and will genearate however many AIs wanted
 public class AIPlayer extends Player {
 
-    protected Direction dir;
     protected Thread aiThread;
     protected float initialisedTime;
     protected boolean updateCount;

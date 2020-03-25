@@ -35,8 +35,8 @@ public class MultiPlayer extends Player {
         this.co = new Collect(this);
 
         initialPosition();
-        this.x = this.position.getX();
-        this.y = this.position.getY();
+//        this.x = this.position.getX();
+//        this.y = this.position.getY();
         loadPlayerTextures();
 
         createAnimations();
@@ -212,6 +212,10 @@ public class MultiPlayer extends Player {
         this.position.setX(x);
         this.position.setY(y);
 
+//        // update the move to as they contantly get updated in the render method
+//        moveTo.setX(x);
+//        moveTo.setY(y);
+
         switch (dir) {
             case R:
                 if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) {
@@ -254,6 +258,10 @@ public class MultiPlayer extends Player {
                 break;
         }
 
+//        // update the move to as they contantly get updated in the render method
+//        moveTo.setX(x);
+//        moveTo.setY(y);
+
     }
 
     /**
@@ -295,8 +303,8 @@ public class MultiPlayer extends Player {
             initialPosition();
         }
 
-//        this.x = this.position.getX();
-//        this.y = this.position.getY();
+        this.x = this.position.getX();
+        this.y = this.position.getY();
     }
 
     public boolean checkCollisionMap(float possibleX, float possibleY) { // true = good to move | false = can't move there

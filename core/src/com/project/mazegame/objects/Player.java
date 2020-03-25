@@ -1,7 +1,9 @@
 package com.project.mazegame.objects;
 
 import static com.project.mazegame.tools.Variables.*;
+
 import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -62,13 +64,13 @@ public class Player {
 
     public static int shieldIconSize = 50;
 
-    public Player(){
+    public Player() {
         this.health = 5;
         this.coins = 0;
         this.items = new ArrayList<>();
         this.position = new Coordinate(x, y);
         this.swordDamage = 0;
-        this.respawnCounter= 0;
+        this.respawnCounter = 0;
         this.haveyoudied = false;
         this.speed = 6;
         swordXP = 0;
@@ -78,15 +80,18 @@ public class Player {
         this.startPAttack = false;
         this.startAIAttack = false;
     }
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID, String colour,PlayersType playersType) {
+
+    public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour, PlayersType playersType) {
         this();
         this.name = name;
         this.ID = ID;
         this.collisionLayer = collisionLayer;
         this.colour = colour;
-        this.playersType=playersType;
+        this.playersType = playersType;
         this.co = new Collect(this);
         initialPosition();
+//        x = this.position.getX();
+//        y = this.position.getY();
         loadPlayerTextures();
         createAnimations();
     }
@@ -225,6 +230,7 @@ public class Player {
             setAnimation(DyingAnim);
         } else {
 
+
             if (RIGHT_TOUCHED) {
                 if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
                     //try move player right
@@ -287,16 +293,34 @@ public class Player {
     public void render(SpriteBatch sb) {
 
         setBatch(sb);
+        //need to change AI animation here
+        if (playersType.equals(PlayersType.multi)) {
+            switch (this.dir) {
+                case U:
+                    setAnimation(UpAnim);
+                    break;
+                case D:
+                    setAnimation(DownAnim);
+                    break;
+                case R:
+                    setAnimation(RightAnim);
+                    break;
+                case L:
+                    setAnimation(LeftAnim);
+                    break;
+                case STOP:
+                    setAnimation(DownAnim);
+                    break;
+            }
+        }
+
         animation.render();
 
-        //draw items held by player
-//        if(this.items.contains("sword")) {
-//            sb.draw(sword,(float)(x),y - (height/4),50,50);
-//        }
-        if (this.items.contains("shield")) {
+        if (this.items.contains("sword"))
+            sb.draw(sword, (float) (x), y - (height / 4), 50, 50);
 
+        if (this.items.contains("shield"))
             sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
-        }
 
 
         font.getData().setScale(0.5f, 0.5f);
@@ -380,7 +404,7 @@ public class Player {
 
     public boolean isDead() {
         if (this.health <= 0) {
-            haveyoudied=true;
+            haveyoudied = true;
             return true;
         } else
             return false;
@@ -392,6 +416,7 @@ public class Player {
         this.coins = 0;
         this.health = 5;
         this.items.clear();
+        this.moveTo = new Coordinate(this.position.getX(), this.position.getY());
         this.respawnCounter = 0;
         this.deathTime = time;
         this.haveyoudied = true;
@@ -417,7 +442,7 @@ public class Player {
                     if (playerA.health == 0) {
                         // adds the cons to the opposing player
                         this.coins += playerA.coins;
-                        // calls the death mehtod
+                        // calls the death method
                         playerA.death(time);
 
                     }
@@ -429,6 +454,7 @@ public class Player {
         this.playerAttackTime = time;
         startPAttack = true;
     }
+
     // attacks an ai paleyr same method as above
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         if (aiAttackTime - time > 0.3 || !startAIAttack) {
@@ -455,6 +481,7 @@ public class Player {
 
         return playerA;
     }
+
     // coutns the amoutn of gear enchatns and returns the number
     protected int getGearCount() {
         int count = 0;
@@ -620,8 +647,6 @@ public class Player {
 
         sword = swordNotAttack;
     }
-
-
 
 
     public void dispose() {

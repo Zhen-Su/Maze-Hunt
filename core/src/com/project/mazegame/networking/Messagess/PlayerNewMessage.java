@@ -59,6 +59,7 @@ public class PlayerNewMessage implements Message {
             dos.writeInt(player.position.getY());
             dos.writeInt(player.getDir().ordinal());
             dos.writeUTF(player.getName());
+            //MultiAIPlayer is the type of AIplayer or Player, so it works here
             if(player instanceof AIPlayer){
                 dos.writeBoolean(true);
             }else{

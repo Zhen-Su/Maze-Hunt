@@ -3,6 +3,7 @@ package com.project.mazegame.objects;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.networking.Client.NetClient;
+import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
@@ -24,14 +25,14 @@ public class MultiAIPlayer extends AIPlayer {
     public static boolean debug = true;
 
     public MultiAIPlayer(TiledMapTileLayer collisionLayer, String username, int ID, MultiPlayerGameScreen gameClient, String colour, Direction dir, PlayersType playersType) {
-        super(collisionLayer,username, ID, colour,dir,playersType);
-        this.gameClient=gameClient;
-        if(debug) System.out.println("AI Multilayer construction done! ");
+        super(collisionLayer, username, ID, colour, dir, playersType);
+        this.gameClient = gameClient;
+        if (debug) System.out.println("AI Multilayer construction done! ");
     }
 
-    public MultiAIPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour,PlayersType playersType) {
+    public MultiAIPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
         super();
-        this.dir=dir;
+        this.dir = dir;
         this.aiThread = new Thread(new PlayerThread());
         this.updateCount = false;
         this.attackAIStart = false;
@@ -39,7 +40,7 @@ public class MultiAIPlayer extends AIPlayer {
         this.collisionLayer = collisionLayer;
         this.name = username;
         this.colour = colour;
-        this.playersType=playersType;
+        this.playersType = playersType;
         co = new Collect(this);
         this.gameClient = gameClient;
         this.x = x;
@@ -52,9 +53,13 @@ public class MultiAIPlayer extends AIPlayer {
 
     //=====================================Setter&Getter=============================================
 
-    public NetClient getAiNetClient() { return aiNetClient; }
+    public NetClient getAiNetClient() {
+        return aiNetClient;
+    }
 
-    public void setAiNetClient(NetClient aiNetClient) { this.aiNetClient = aiNetClient; }
+    public void setAiNetClient(NetClient aiNetClient) {
+        this.aiNetClient = aiNetClient;
+    }
 
     //==============================================================================================
 
@@ -70,15 +75,27 @@ public class MultiAIPlayer extends AIPlayer {
         }
         if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
             if (mode == 1) {
+                if (debug) System.out.println("================================================");
+                if (debug) System.out.println("Before change x:" + x + " y:" + y);
+                if (debug) System.out.println("ID: " + this.getID());
                 // takes random coordinate it can move to
                 Coordinate old = super.position;
                 // contantsnatly throwing exception possibly because not linked to player
                 // will need to do something with the speed
+                this.position.setX((int) x);
+                this.position.setY((int) y);
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
-                System.out.println("The ai player is moving " + moveToTake.toString());
-                this.position.setX(moveToTake.getX());
-                this.position.setY(moveToTake.getY());
+                if (debug) System.out.println("The ai player is moving " + moveToTake.toString());
+
+                super.x = moveToTake.getX();
+                super.y = moveToTake.getY();
+
+                if (debug) System.out.println("position.setX:" + position.getX());
+                if (debug) System.out.println("position.setX:" + position.getY());
+
                 this.change(old, moveToTake);
+                if (debug) System.out.println("After change x:" + x + " y:" + y);
+                if (debug) System.out.println("================================================");
 
             } else if (mode == 2) {
 //                System.out.println(this);
@@ -194,26 +211,36 @@ public class MultiAIPlayer extends AIPlayer {
         return Math.abs(target.getX() - other.getX()) < Math.abs(target.getX() - compare.getX()) || Math.abs(target.getY() - other.getY()) < Math.abs(target.getY() - compare.getY());
     }
 
+    //TODO need to change animation for ai player here.
     private void change(Coordinate old, Coordinate update) {
+        Direction oldDir = this.dir;
+
         if (old.getX() < update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.R;
             super.frames = walkRight;
             super.animation.setFrames(RightAnim.getFrames());
+            System.out.println("R");
         } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.L;
             super.frames = walkLeft;
             super.animation.setFrames(LeftAnim.getFrames());
-
+            System.out.println("L");
         } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
             this.dir = Direction.U;
             super.frames = walkDown;
             super.animation.setFrames(DownAnim.getFrames());
+            System.out.println("U");
         } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
             this.dir = Direction.D;
             super.frames = walkUp;
             super.animation.setFrames(UpAnim.getFrames());
+            System.out.println("D");
         }
 
+//        if (dir != oldDir) {
+//            MoveMessage message = new MoveMessage(ID, this.position.getX(), this.position.getY(), dir);
+//            gameClient.getNc().send(message);
+//        }
     }
 
     private Coordinate direction(ArrayList<Coordinate> openDoor) {

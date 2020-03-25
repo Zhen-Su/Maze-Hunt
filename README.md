@@ -93,6 +93,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 2.0.2 integrate with timer and animations
   * 2.0.3 better inheritance, ready to intergrate with AI in mutiplayer 
   * 2.0.3 shield and glows can dispare at the same time in different screen
+  * 2.0.4 add Ai animation in multiplayer
   
   
   

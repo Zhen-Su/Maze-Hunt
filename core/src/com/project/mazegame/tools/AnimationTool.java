@@ -69,6 +69,7 @@ public class AnimationTool extends ApplicationAdapter {
         elapsedTime += Gdx.graphics.getDeltaTime();
         batch = this.player.getSpriteBatch();
         batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), player.position.getX() + this.xOffset - this.width/2,player.position.getY() - this.height/2 + this.yOffset);
+//        System.out.println("X:"+player.position.getX()+" Y:"+player.position.getY());
     }
 
 
