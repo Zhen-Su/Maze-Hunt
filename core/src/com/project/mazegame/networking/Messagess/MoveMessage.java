@@ -20,7 +20,7 @@ public class MoveMessage implements Message {
     private int pX, pY;
     private Direction dir;
     private MultiPlayerGameScreen gameClient;
-    private boolean debug =false;
+    private boolean debug =true;
 
     public MoveMessage(int id, int pX, int pY, Direction dir) {
         this.id=id;
@@ -70,11 +70,13 @@ public class MoveMessage implements Message {
             int newY = dis.readInt();
             for(Player t : gameClient.getPlayers()){
                 if(t.getID() == id){
-
                     //change coordinate and direction
                     t.setDir(dir);
+                    //TODO this need think, setX() and position.setX()
                     t.setX(newX);
                     t.setY(newY);
+                    t.position.setX(newX);
+                    t.position.setY(newY);
 
                     if(debug) {
                         System.out.println("****************************");

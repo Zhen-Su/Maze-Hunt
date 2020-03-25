@@ -22,7 +22,7 @@ public class MultiAIPlayer extends AIPlayer {
     private boolean updateCount;
     private float initialisedTime;
     private static final int movenumber = 40;
-    public static boolean debug = true;
+    public static boolean debug = false;
 
     public MultiAIPlayer(TiledMapTileLayer collisionLayer, String username, int ID, MultiPlayerGameScreen gameClient, String colour, Direction dir, PlayersType playersType) {
         super(collisionLayer, username, ID, colour, dir, playersType);
@@ -66,6 +66,7 @@ public class MultiAIPlayer extends AIPlayer {
     public void update(float delta, int mode, ArrayList<Item> items, float time) {
 //        aiThread.run();
         // operate the delay if dead
+
         if (super.haveyoudied) {
             System.out.println("I have gone here " + this.getID());
             if (deathTime - time > 5) {
@@ -82,8 +83,8 @@ public class MultiAIPlayer extends AIPlayer {
                 Coordinate old = super.position;
                 // contantsnatly throwing exception possibly because not linked to player
                 // will need to do something with the speed
-                this.position.setX((int) x);
-                this.position.setY((int) y);
+                this.position.setX(x);
+                this.position.setY(y);
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
                 if (debug) System.out.println("The ai player is moving " + moveToTake.toString());
 
@@ -154,8 +155,8 @@ public class MultiAIPlayer extends AIPlayer {
             }
             this.initialisedTime = time;
             updateCount = true;
-
         }
+
     }
 
     private float left() {
@@ -237,10 +238,10 @@ public class MultiAIPlayer extends AIPlayer {
             System.out.println("D");
         }
 
-//        if (dir != oldDir) {
-//            MoveMessage message = new MoveMessage(ID, this.position.getX(), this.position.getY(), dir);
-//            gameClient.getNc().send(message);
-//        }
+        if (dir != oldDir) {
+            MoveMessage message = new MoveMessage(ID, this.position.getX(), this.position.getY(), dir);
+            gameClient.getNc().send(message);
+        }
     }
 
     private Coordinate direction(ArrayList<Coordinate> openDoor) {

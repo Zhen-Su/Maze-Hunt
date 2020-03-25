@@ -392,16 +392,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 //                aiPlayers.add(i, playerTurn);
 //            }
 
-            //draw other players on my screen
+            //draw other players, including AI players on my screen
             for (Player otherPlayer : players) {
-                if (otherPlayer instanceof AIPlayer)
-                    otherPlayer.render(game.batch);
-            }
-
-            //TODO because AI player cannot send movemessage so we only draw ai player use aiPlayers list
-            //TODO After finish aiMoveMessage then we can draw it use players list
-            for (Player aiPlayer : aiPlayers) {
-                aiPlayer.render(game.batch);
+                otherPlayer.render(game.batch);
             }
 
             //draw myself on my screen
