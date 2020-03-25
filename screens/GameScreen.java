@@ -117,10 +117,10 @@ public class GameScreen implements Screen {
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
         
         this.collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
-		this.collisionLayer1 = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
+		this.collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
         player = new Player(this.collisionLayer,"james",123);
-        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124);
-        aiPlayers = aiPlayer.AITakingOver(3);
+        aiPlayer = new AIPlayer(this.collisionLayer, "Albert", 124);
+        aiPlayers = aiPlayer.AITakingOver(1);
         aicos = new ArrayList<Collect>();
 
 
@@ -189,7 +189,7 @@ public class GameScreen implements Screen {
 
 		ArrayList<Item> empty = new ArrayList<>();
 
-        player.update(delta, 0, empty, 0);
+        player.update(delta, 1, empty, 0);
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
