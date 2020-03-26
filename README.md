@@ -93,12 +93,10 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 2.0.2 integrate with timer and animations
   * 2.0.3 better inheritance, ready to intergrate with AI in mutiplayer 
   * 2.0.3 shield and glows can dispare at the same time in different screen
-  
-* Version3.0 IMPORTANT UPDATE. Change the mechanism of mutiplayer. Make code more simple and readable.
-  
-* Version4.0 add database, simplify code.
-  
-  
+  * 2.0.4 add Ai animation in multiplayer
+  * 2.0.5 AI player can move at the same position in the different player's screen.
+  * 2.0.6 synchornize attack animation in multiplayer
+  * 2.0.7 fix attack animation bugs. use the same mechanism as player move to monitor press and relase space. 
   
   
   

@@ -1,14 +1,17 @@
 package com.project.mazegame.objects;
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.project.mazegame.networking.Messagess.AttackMessage;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
+import com.project.mazegame.tools.PlayersType;
 import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ public class MultiPlayer extends Player {
     public static boolean debug = false;
 
     //constructors=================================================================================
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir, String colour) {
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
         super();
         if (debug) System.out.println("My Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
@@ -30,10 +33,12 @@ public class MultiPlayer extends Player {
         this.colour = colour;
         this.gameClient = gameClient;
         this.dir = dir;
+        this.playersType = playersType;
+        this.co = new Collect(this);
 
         initialPosition();
-        this.x = this.position.getX();
-        this.y = this.position.getY();
+//        this.x = this.position.getX();
+//        this.y = this.position.getY();
         loadPlayerTextures();
 
         createAnimations();
@@ -41,22 +46,20 @@ public class MultiPlayer extends Player {
         if (debug) System.out.println("My Multiplayer instance construction done!");
     }
 
-    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour) {
+    public MultiPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
+        super();
         if (debug) System.out.println("Other Multiplayer instance is constructing...");
         this.collisionLayer = collisionLayer;
-        this.health = 5;
-        this.coins = 0;
         this.name = username;
-        this.items = new ArrayList<>();
         this.colour = colour;
-        swordXP = 0;
-        shieldXP = 0;
-        time = new Timer();
+        this.playersType = playersType;
         co = new Collect(this);
 
         this.x = x;
         this.y = y;
         this.position = new Coordinate(x, y);
+        this.position.setX(x);
+        this.position.setX(y);
         System.out.println("other player's position: (" + this.position.getX() + "," + this.position.getY() + ")");
 
         loadPlayerTextures();
@@ -125,6 +128,36 @@ public class MultiPlayer extends Player {
             //draw player's name
             font.getData().setScale(0.5f, 0.5f);
             font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
+
+            //draw attack animation
+            if (this.items.contains("sword") && !this.isDead() && isAttacking) {
+                if (animation.toString().equals(RightAnim.toString()))
+                    setSwordAnimation(swordSwipeRight);
+                else if (animation.toString().equals(LeftAnim.toString()))
+                    setSwordAnimation(swordSwipeLeft);
+                else if (animation.toString().equals(UpAnim.toString()))
+                    setSwordAnimation(swordSwipeUp);
+                else if (animation.toString().equals(DownAnim.toString()))
+                    setSwordAnimation(swordSwipeDown);
+
+                swipeAnim.render();
+                sword = swordAttack;
+                isAttacking=false;
+            } else {
+                sword = swordNotAttack;
+                swordSwipeRight.elapsedTime = 0;
+                swordSwipeLeft.elapsedTime = 0;
+                swordSwipeUp.elapsedTime = 0;
+                swordSwipeDown.elapsedTime = 0;
+            }
+
+        }
+    }
+
+    public void attackMessage() {
+        if (isAttacking) {
+            AttackMessage attackMessage = new AttackMessage(ID);
+            this.gameClient.getNc().send(attackMessage);
         }
     }
 
@@ -133,7 +166,7 @@ public class MultiPlayer extends Player {
      *
      * @param delta
      */
-    public void update(float delta) {
+    public void update(float delta, int mode, ArrayList<Item> items, float worldTime) {
         removeShield();
         removeEnchantment();
         time.updateTimer(delta);
@@ -173,6 +206,10 @@ public class MultiPlayer extends Player {
             case Input.Keys.DOWN:
                 bD = true;
                 break;
+            case Input.Keys.SPACE:
+                isAttacking=true;
+                attackMessage();
+                break;
         }
         locateDirection();
         return true;
@@ -198,6 +235,10 @@ public class MultiPlayer extends Player {
             case Input.Keys.DOWN:
                 bD = false;
                 break;
+            case Input.Keys.SPACE:
+                isAttacking=false;
+                attackMessage();
+                break;
         }
         locateDirection();
         return true;
@@ -210,6 +251,10 @@ public class MultiPlayer extends Player {
 
         this.position.setX(x);
         this.position.setY(y);
+
+//        // update the move to as they contantly get updated in the render method
+//        moveTo.setX(x);
+//        moveTo.setY(y);
 
         switch (dir) {
             case R:
@@ -253,6 +298,10 @@ public class MultiPlayer extends Player {
                 break;
         }
 
+//        // update the move to as they contantly get updated in the render method
+//        moveTo.setX(x);
+//        moveTo.setY(y);
+
     }
 
     /**
@@ -294,8 +343,9 @@ public class MultiPlayer extends Player {
             initialPosition();
         }
 
-//        this.x = this.position.getX();
-//        this.y = this.position.getY();
+        this.x = this.position.getX();
+        this.y = this.position.getY();
+
     }
 
     public boolean checkCollisionMap(float possibleX, float possibleY) { // true = good to move | false = can't move there
@@ -365,22 +415,22 @@ public class MultiPlayer extends Player {
         this.respawnCounter = 0;
     }
 
-    public void playerHitPlayer(Player hit) {
-        // write boolean to check sword
-
-        if (this.items.contains("sword") && !hit.items.contains("shield")) {
-            // will need to do if have item then that can be called
-            // then decrease the helath based on that
-            // could have a damage do attribute and various attributes which change throught the generateMapItems
-            hit.decreaseHealth(this.swordDamage);
-            if (hit.health == 0) {
-                this.swordDamage++;
-                this.coins += hit.coins;
-                hit.death();
-            }
-        }
-        //need to add shield stuffr
-    }
+//    public void playerHitPlayer(Player hit) {
+//        // write boolean to check sword
+//
+//        if (this.items.contains("sword") && !hit.items.contains("shield")) {
+//            // will need to do if have item then that can be called
+//            // then decrease the helath based on that
+//            // could have a damage do attribute and various attributes which change throught the generateMapItems
+//            hit.decreaseHealth(this.swordDamage);
+//            if (hit.health == 0) {
+//                this.swordDamage++;
+//                this.coins += hit.coins;
+//                hit.death();
+//            }
+//        }
+//        //need to add shield stuffr
+//    }
 
     public void removeShield() {
         if (!this.items.contains("shield")) {
@@ -388,10 +438,10 @@ public class MultiPlayer extends Player {
         }
         if ((time.currentTime()) - initialisedShieldTime == 10) {
             int indexOfItem = items.indexOf("shield");
-            if(debug) System.out.println("Before remove: " + items);
-            if(debug) System.out.println("Index of shield:" + indexOfItem);
+            if (debug) System.out.println("Before remove: " + items);
+            if (debug) System.out.println("Index of shield:" + indexOfItem);
             this.items.remove("shield");
-            if(debug) System.out.println("After remove: " + items);
+            if (debug) System.out.println("After remove: " + items);
         }
     }
 
@@ -401,12 +451,14 @@ public class MultiPlayer extends Player {
         }
         if ((time.currentTime()) - initialisedEnchantmentTime == 10) {
             int indexOfItem = items.indexOf("gearEnchantment");
-            if(debug) System.out.println("Before remove: " + items);
-            if(debug) System.out.println("Index of gearEnchantment:" + indexOfItem);
+            if (debug) System.out.println("Before remove: " + items);
+            if (debug) System.out.println("Index of gearEnchantment:" + indexOfItem);
             this.items.remove("gearEnchantment");
-            if(debug) System.out.println("After remove: " + items);
+            if (debug) System.out.println("After remove: " + items);
         }
     }
+
+
 
     public int getHealth() {
         return health;

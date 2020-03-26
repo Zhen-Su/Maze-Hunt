@@ -26,7 +26,11 @@ public class CreateMazeScreen implements Screen {
     private MazeGame game;
     public String username;
     private boolean hasEnterUsername =false;
-
+    String difficulty= new String();
+    String player= new String();
+    String map = new String();
+    String numOfAI = new String();
+    String name = new String();
 
     private static final int LB_WIDTH = 350;
     private static final int LB_HEIGHT = 200;
@@ -171,12 +175,6 @@ public class CreateMazeScreen implements Screen {
         //String[] preferences = new String[3] ;
 
 
-        String difficulty= new String();
-        String player= new String();
-        String map = new String();
-        String numOfAI = new String();
-        String name = new String();
-
         difficulty = "3";
         player = "red";
         map = "map 1";
@@ -204,6 +202,8 @@ public class CreateMazeScreen implements Screen {
 
             }
         }
+
+
 
         name = usernameTextField.getText();
         numOfAI = numField.getText();
@@ -457,7 +457,7 @@ public class CreateMazeScreen implements Screen {
                         if(playerChosen && difficultyChosen && mapChosen) {
                             setPreferences();
                             if (multi)
-                                game.setScreen(new HostLobbyScreen(game, usernameTextField.getText()));
+                                game.setScreen(new HostLobbyScreen(game, usernameTextField.getText(),Integer.parseInt(numOfAI),map,player));
                             else
                                 game.setScreen(new GameScreen(game));
                         }

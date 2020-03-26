@@ -70,11 +70,13 @@ public class MoveMessage implements Message {
             int newY = dis.readInt();
             for(Player t : gameClient.getPlayers()){
                 if(t.getID() == id){
-
                     //change coordinate and direction
                     t.setDir(dir);
+                    //TODO this need think, setX() and position.setX()
                     t.setX(newX);
                     t.setY(newY);
+                    t.position.setX(newX);
+                    t.position.setY(newY);
 
                     if(debug) {
                         System.out.println("****************************");
@@ -84,20 +86,6 @@ public class MoveMessage implements Message {
                         System.out.println("This (id" + id + ") player's position y: " + newY);
                         System.out.println("****************************");
                     }
-
-                    //change player texture
-//                    if(t.bU ==true && t.bD == false){
-//                        t.setPlayerTexture(t.getPlayer_up());
-//                    }else if(t.bD==true&&t.bU==false){
-//                        t.setPlayerTexture(t.getPlayer_down());
-//                    }else if(t.bL==true&&t.bR==false){
-//                        t.setPlayerTexture(t.getPlayer_left());
-//                    }else if(t.bR==true&&t.bL==false){
-//                        t.setPlayerTexture(t.getPlayer_right());
-//                    }else {
-//                        t.setPlayerTexture(t.getPlayer_down());
-//                    }
-//                    break;
                 }
             }
         } catch (IOException e) {
@@ -109,5 +97,4 @@ public class MoveMessage implements Message {
     public void process(DataInputStream dis, int aiIndex) {
 
     }
-
 }

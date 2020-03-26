@@ -7,22 +7,22 @@ import java.util.List;
 
 public class AIGameClient {
 
-    private MultiAIPlayer aiPlayer;
+    private AIPlayer aiPlayer;
     private NetClient netClient;
     private List<Player> players = new ArrayList<>();
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
 
-    public AIGameClient(MultiAIPlayer aiPlayer, NetClient netClient){
+    public AIGameClient(AIPlayer aiPlayer, NetClient netClient){
         this.aiPlayer=aiPlayer;
         this.netClient=netClient;
     }
 
     //===================================Getter&Setter==============================================
-    public MultiAIPlayer getAiPlayer() {
+    public AIPlayer getAiPlayer() {
         return aiPlayer;
     }
 
-    public void setAiPlayer(MultiAIPlayer aiPlayer) {
+    public void setAiPlayer(AIPlayer aiPlayer) {
         this.aiPlayer = aiPlayer;
     }
 

@@ -1,8 +1,10 @@
 package com.project.mazegame.objects;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.PlayerThread;
+import com.project.mazegame.tools.PlayersType;
 
 import java.util.ArrayList;
 
@@ -11,7 +13,6 @@ import java.util.ArrayList;
 // In constructor can literally just call AITakingOver and will genearate however many AIs wanted
 public class AIPlayer extends Player {
 
-    protected Direction dir;
     protected Thread aiThread;
     protected float initialisedTime;
     protected boolean updateCount;
@@ -19,9 +20,12 @@ public class AIPlayer extends Player {
     protected float attackAITime;
     protected boolean attackPStart;
     protected boolean attackAIStart;
+    protected NetClient aiNetClient;
+    private static final int movenumber = 40;
 
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, String colour,Direction dir) {
-        super(collisionLayer, name, ID, colour);
+    public AIPlayer(){super();}
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, String colour, Direction dir, PlayersType playersType) {
+        super(collisionLayer, name, ID, colour,playersType);
         this.dir=dir;
         this.aiThread = new Thread(new PlayerThread());
         this.updateCount = false;
@@ -29,20 +33,27 @@ public class AIPlayer extends Player {
         this.attackPStart = false;
     }
 
+    //=====================================Setter&Getter=============================================
+
     public void setInitialisedTime(float time) {
         this.initialisedTime = time;
     }
-
 
     public Direction getDir() {
         return this.dir;
     }
 
+    public NetClient getAiNetClient() { return aiNetClient; }
+
+    public void setAiNetClient(NetClient aiNetClient) { this.aiNetClient = aiNetClient; }
+
+    //==============================================================================================
+
     public ArrayList<AIPlayer> AITakingOver(int number) {
         ArrayList<AIPlayer> players = new ArrayList<>();
 
             for (int i = 0; i < number; i++) {
-                players.add(new AIPlayer(this.collisionLayer, "AI" + i, i, colour, Direction.STOP));
+                players.add(new AIPlayer(this.collisionLayer, "AI" + i, i, colour, Direction.STOP,PlayersType.single));
             }
 
         return players;
@@ -68,20 +79,32 @@ public class AIPlayer extends Player {
         return null;
     }
 
+    @Override
     public void update(float delta, int mode, ArrayList<Item> items, float time) {
 //        aiThread.run();
-        if (initialisedTime - time > 0.3 || !updateCount) {
+
+        if (super.haveyoudied) {
+            System.out.println("I have gone here " + this.getID());
+            if (deathTime - time > 5) {
+                haveyoudied = false;
+                System.out.println(deathTime - time);
+            }
+        }
+        if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
             if (mode == 1) {
+
+                // takes random coordinate it can mvoe to
                 Coordinate old = super.position;
-                this.position.setX((int) x);
-                this.position.setY((int) y);
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 // will need to do something with the speed
+
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
-//        System.out.println("The ai player is moving "+ moveToTake.toString());
-                super.x = (int) moveToTake.getX();
-                super.y = (int) moveToTake.getY();
+                System.out.println("The ai player is moving " + moveToTake.toString());
+                this.position.setX(moveToTake.getX());
+                this.position.setY(moveToTake.getY());
+
                 this.change(old, moveToTake);
+
 
             } else if (mode == 2) {
 //                System.out.println(this);
@@ -98,26 +121,49 @@ public class AIPlayer extends Player {
                 super.y = bested.getY();
                 this.change(near, bested);
                 Coordinate secondMoveToTake = direction(avaibleMoves(x, y));
-                super.x = (int) secondMoveToTake.getX();
-                super.y = (int) secondMoveToTake.getY();
+                System.out.println("Move is moing here " + secondMoveToTake.toString());
+//                super.x = (int) secondMoveToTake.getX();
+//                super.y = (int) secondMoveToTake.getY();
+                this.position.setY(secondMoveToTake.getY());
+                this.position.setX(secondMoveToTake.getX());
+//                this.logx = super.x;
+//                this.logy = super.y;
                 this.change(bested, secondMoveToTake);
 
 
                 // ultimate goal is coins
-            } else {
-                try {
-                    throw new Exception();
-                } catch (Exception e) {
-                    e.printStackTrace();
+            } else if (mode == 3) {
+                int tempx = super.x;
+                int tempy = super.y;
+                Coordinate prevStore = new Coordinate(super.x, super.y);
+                if (checkCollisionMap(x, this.up())) {
+                    System.out.println("THe player should be doing something");
+
+                    tempy = (int) this.up();
+                    Coordinate newM = new Coordinate(super.x, super.y);
+                    this.change(prevStore, newM);
+                } else if (checkCollisionMap(this.left(), super.y)) {
+                    tempx = (int) this.left();
+
+                    Coordinate newM = new Coordinate(super.x, super.y);
+                    this.change(prevStore, newM);
+                } else if (checkCollisionMap(this.right(), super.y)) {
+                    tempx = (int) this.right();
+
+                    Coordinate newM = new Coordinate(super.x, super.y);
+                    this.change(prevStore, newM);
+                } else if (checkCollisionMap(super.x, this.down())) {
+
+                    tempy = (int) this.down();
+                    Coordinate newM = new Coordinate(super.x, super.y);
                 }
-            }
-            try {
-//            aiThread.sleep(200);
-            } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Player should be moving " + super.x + " " + super.y);
+                this.position.setX(tempx);
+                this.position.setY(tempy);
             }
             this.initialisedTime = time;
             updateCount = true;
+
         }
     }
 
@@ -167,7 +213,7 @@ public class AIPlayer extends Player {
     }
 
     private ArrayList<Coordinate> avaibleMoves(int x, int y) {
-        int move = 40;
+        int move = movenumber;
         ArrayList<Coordinate> moves = new ArrayList<>();
         if (checkCollisionMap((x + move), y)) {
             moves.add(new Coordinate((x + move), y));
@@ -205,20 +251,37 @@ public class AIPlayer extends Player {
 
     private Boolean targets(Coordinate target, Coordinate other, Coordinate compare) {
         return Math.abs(target.getX() - other.getX()) < Math.abs(target.getX() - compare.getX()) || Math.abs(target.getY() - other.getY()) < Math.abs(target.getY() - compare.getY());
+    }
 
+    private float left() {
+        return this.x -= movenumber;
+    }
 
+    private float right() {
+        return this.x += movenumber;
+    }
+
+    private float up() {
+        return this.y += movenumber;
+    }
+
+    private float down() {
+        return this.y -= movenumber;
     }
 
     @Override
     public void attackP(Player playerA, float time) {
+        System.out.println("I am executing");
+        // only difference with this and the player methods is doens't need space to be pressed
         if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                System.out.println("Going here");
                 super.isAttacking = true;
                 sword = swordAttack;
-                playerA.decreaseHealth(1);
+                playerA.decreaseHealth(1 + super.getGearCount());
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
-                    playerA.death();
+                    playerA.death(time);
                 }
             }
         }
@@ -227,20 +290,25 @@ public class AIPlayer extends Player {
     }
 
     @Override
-    public void attackAI(AIPlayer playerA, float time) {
+    // same as bove method jsut attackign another ai instead
+    public AIPlayer attackAI(AIPlayer playerA, float time) {
+        System.out.println("I am executing");
         if (attackAITime - time > 0.3 || !attackAIStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                System.out.println("Has gone here");
                 super.isAttacking = true;
                 sword = swordAttack;
-                playerA.decreaseHealth(1);
+                playerA.decreaseHealth(1 + super.getGearCount());
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
-                    playerA.death();
+                    playerA.death(time);
+                    return playerA;
                 }
             }
         }
         this.attackAITime = time;
         this.attackAIStart = true;
+        return playerA;
     }
 
     public void setDir(Direction d) {

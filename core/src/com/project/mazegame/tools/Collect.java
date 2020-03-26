@@ -30,12 +30,15 @@ public class Collect {
      * @param player
      */
     public Collect(Player player) {
-      if(player instanceof Player) {
-          this.mapItems = GameScreen.mapItems;
-      }
-      if(player instanceof MultiPlayer || player instanceof MultiAIPlayer) {
-          this.mapItems = MultiPlayerGameScreen.mapItems;
-      }
+
+        switch(player.playersType){
+            case single:
+                this.mapItems = GameScreen.mapItems;
+                break;
+            case multi:
+                this.mapItems = MultiPlayerGameScreen.mapItems;
+                break;
+        }
         this.items = player.items;
     }
 

@@ -16,6 +16,7 @@ import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.AIGameClient;
+import com.project.mazegame.objects.AIPlayer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
 import com.project.mazegame.objects.MultiAIPlayer;
@@ -25,6 +26,7 @@ import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.OrthoCam;
+import com.project.mazegame.tools.PlayersType;
 import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
@@ -44,11 +46,17 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private boolean isHost;
     private boolean HostStartGame = false;
 
+    private int NumOfAI;
+
     //Item List List
     public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
     private MazeGame game;
     private OrthoCam cam;
+    private int posAP;
+    private int posAAI;
+    private AIPlayer aiPlayerAttack;
+    private Player playerAttack;
 
     private MultiPlayer myMultiPlayer;
     private NetClient netClient = new NetClient(this);
@@ -56,7 +64,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
     private boolean imHost;
     private MultiAIPlayer aiPlayer;
-    public ArrayList<MultiAIPlayer> aiPlayers = new ArrayList<>();
+    public ArrayList<AIPlayer> aiPlayers = new ArrayList<>();
     public ArrayList<NetClient> aiNetClients = new ArrayList<>();
     public ArrayList<AIGameClient> aiGameClients = new ArrayList<>();
 
@@ -66,7 +74,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private int tempMapItemssize;
     private MultiPlayer player2;
 
-    public Texture player,coinPick;
+    public Texture player, coinPick;
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
     private Texture minimapTexture;
@@ -85,10 +93,12 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private BitmapFont font;
     public BitmapFont bitmapFont;
     public Texture enchantedGlow;
-    private Texture mapTexture, minimapOutline, playerIcon;;
+    private Texture mapTexture, minimapOutline, playerIcon;
+    private String map;
+    private String color;
 
     private float timer;
-    public static float worldTimer = 10;
+    public static float worldTimer = 360;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -101,15 +111,33 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private final int EXIT_Y = VIEWPORT_HEIGHT;
     Coordinate playerPos;
 
-
     //=====================================constructors=============================================
 
-    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost) {
+    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost,int NumOfAI,String map,String color) {
         this.game = game;
         this.isHost = isHost;
         timer = 0;
 
-        tileMap = new TmxMapLoader().load("Map3.tmx");
+        this.NumOfAI = NumOfAI;
+        this.map = map;
+        this.color = color;
+
+        aiPlayerAttack = null;
+        playerAttack = null;
+
+
+        if(this.map.equals( "map1")) {
+            tileMap = new TmxMapLoader().load("Map1.tmx");
+            mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class);
+        }
+        else if(this.map.equals("map2")) {
+            tileMap = new TmxMapLoader().load("Map2.tmx");
+            mapTexture = Assets.manager.get(Assets.map2Icon, Texture.class);
+        }
+        else {
+            tileMap = new TmxMapLoader().load("Map3.tmx");
+            mapTexture = Assets.manager.get(Assets.map3Icon, Texture.class);
+        }
         //TODO this 113 line should be changed after integrate with customize.
         mapTexture = new Texture("Maps\\Map3Icon.png");
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
@@ -117,12 +145,12 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
         //TODO need to think about colour thing(customize)
-        myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP,"orange");
-        netClient.connect(serverIP,false,0);
+        myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, "orange", PlayersType.multi);
+        netClient.connect(serverIP, false, 0);
 
         if (isHost) {
             //create AI players
-            createAIplayers(2);
+            createAIplayers(NumOfAI);
             //Every AI player connect to GameServer
             for (int i = 0; i < aiGameClients.size(); i++) {
                 NetClient nc = aiGameClients.get(i).getNetClient();
@@ -197,41 +225,48 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     public void createAIplayers(int aiNum) {
         if (aiNum != 0) {
-            for(int i=0; i<aiNum; i++) {
+            for (int i = 0; i < aiNum; i++) {
                 //create instance of ai player
-                MultiAIPlayer[] multiAIPlayers = new MultiAIPlayer[aiNum];
-                multiAIPlayers[i] = new MultiAIPlayer(this.collisionLayer,"AI" + i, i, this,"red",Direction.STOP);
+                AIPlayer[] multiAIPlayers = new MultiAIPlayer[aiNum];
+                multiAIPlayers[i] = new MultiAIPlayer(this.collisionLayer, "AI" + i, i, this, "red", Direction.STOP, PlayersType.multi);
                 //add this ai player to the list
                 aiPlayers.add(multiAIPlayers[i]);
                 //Create netclient and add netclient to list
                 aiNetClients.add(new NetClient(this));
                 //create aiGameClient and add it to list
                 aiGameClients.add(new AIGameClient(aiPlayers.get(i), aiNetClients.get(i)));
+
+            }
+            //set NetClient for every AI player
+            for (int i = 0; i < aiPlayers.size(); i++) {
+                AIPlayer multiAIPlayer = aiPlayers.get(i);
+                NetClient aiNetClient = aiNetClients.get(i);
+                multiAIPlayer.setAiNetClient(aiNetClient);
             }
         }
     }
 
-    public void getAsset(){
-        exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
-        exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive,Texture.class);
-        audioButtonActive = Assets.manager.get(Assets.audioOn,Texture.class);
-        audioButtonInactive= Assets.manager.get(Assets.audioOff,Texture.class);
-        heartTexture = Assets.manager.get(Assets.heart,Texture.class);
-        coinTexture = Assets.manager.get(Assets.coin,Texture.class);
-        swordTexture = Assets.manager.get(Assets.sword,Texture.class);
-        shieldTexture = Assets.manager.get(Assets.shield,Texture.class);
-        healingPotionTexture = Assets.manager.get(Assets.Potion,Texture.class);
-        gearEnchantmentTexture = Assets.manager.get(Assets.Potion2,Texture.class);
-        damagingPotionTexture = Assets.manager.get(Assets.Potion3,Texture.class);
-        minimapTexture = Assets.manager.get(Assets.RolledMap,Texture.class);
-        overlay = Assets.manager.get(Assets.circularOverlay,Texture.class);
-        coinPick= Assets.manager.get(Assets.coinAnimation,Texture.class);
-        minimapOutline = Assets.manager.get(Assets.minimapOutline,Texture.class);
-        enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
-        playerIcon = Assets.manager.get(Assets.playerOnMap,Texture.class);
+    public void getAsset() {
+        exitButtonActive = Assets.manager.get(Assets.exit_button_active, Texture.class);
+        exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive, Texture.class);
+        audioButtonActive = Assets.manager.get(Assets.audioOn, Texture.class);
+        audioButtonInactive = Assets.manager.get(Assets.audioOff, Texture.class);
+        heartTexture = Assets.manager.get(Assets.heart, Texture.class);
+        coinTexture = Assets.manager.get(Assets.coin, Texture.class);
+        swordTexture = Assets.manager.get(Assets.sword, Texture.class);
+        shieldTexture = Assets.manager.get(Assets.shield, Texture.class);
+        healingPotionTexture = Assets.manager.get(Assets.Potion, Texture.class);
+        gearEnchantmentTexture = Assets.manager.get(Assets.Potion2, Texture.class);
+        damagingPotionTexture = Assets.manager.get(Assets.Potion3, Texture.class);
+        minimapTexture = Assets.manager.get(Assets.RolledMap, Texture.class);
+        overlay = Assets.manager.get(Assets.circularOverlay, Texture.class);
+        coinPick = Assets.manager.get(Assets.coinAnimation, Texture.class);
+        minimapOutline = Assets.manager.get(Assets.minimapOutline, Texture.class);
+        enchantedGlow = Assets.manager.get(Assets.ENCHANTED, Texture.class);
+        playerIcon = Assets.manager.get(Assets.playerOnMap, Texture.class);
 
-        overlayWidth = overlay.getWidth() +300;
-        overlayHeight = overlay.getHeight() +300;
+        overlayWidth = overlay.getWidth() + 300;
+        overlayHeight = overlay.getHeight() + 300;
     }
 
     @Override
@@ -243,16 +278,18 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         tempMapItemssize = mapItems.size();
         //start timer
-        myMultiPlayer.initialPosition();
+
         font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
 
         playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
 
-        System.out.println("mapItems: ");
-        for (int i = 0; i < mapItems.size(); i++) {
-            System.out.print("(" + mapItems.get(i).getPosition().getX() + "," + mapItems.get(i).getPosition().getY() + ")");
+        if(debug) {
+            System.out.println("mapItems: ");
+            for (int i = 0; i < mapItems.size(); i++) {
+                System.out.print("(" + mapItems.get(i).getPosition().getX() + "," + mapItems.get(i).getPosition().getY() + ")");
+            }
+            System.out.println();
         }
-        System.out.println();
     }
 
     int iconSize = 30;
@@ -268,12 +305,24 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
         //update other player
-        for(Player otherPlayer : players){
-            otherPlayer.update(delta);
+        ArrayList<Item> empty = new ArrayList<>();
+
+        //TODO update method need to make more general.
+        for (Player otherPlayer : players) {
+            if (otherPlayer instanceof MultiPlayer)
+                otherPlayer.update(delta, 0, empty, 0);
+        }
+
+        //Only host player can update ai player
+        if (imHost) {
+            for (Player aiPlayer : aiPlayers) {
+                if (aiPlayer instanceof Player)
+                    aiPlayer.update(delta, 1, mapItems, worldTimer);
+            }
         }
 
         //update myself
-        myMultiPlayer.update(delta);
+        myMultiPlayer.update(delta, 0, empty, 0);
 
         //camera
         cam.update(myMultiPlayer.position.getX(), myMultiPlayer.position.getY(), game);
@@ -282,11 +331,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
 
-
         game.batch.begin();
         {
 
-           //draw collectibles
+            //draw collectibles
             drawCollectibles();
 
             //Collectibles pick up for me
@@ -298,11 +346,11 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             }
 
             //Collectibles pick up for other player
-            if(!(mapItems.size() == 0)){
-                for(int i=0; i<players.size();i++){
+            if (!(mapItems.size() == 0)) {
+                for (int i = 0; i < players.size(); i++) {
                     Player otherPlayer = players.get(i);
-                    if((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX())&& (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()+100) &&
-                            (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY()<otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()+100)){
+                    if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
+                            (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
                         pickUpItem(otherPlayer);
                     }
                 }
@@ -316,11 +364,57 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             drawIcons(iconSize, buffer, playerPos);
             drawExitButton(playerPos);
 
-            //draw other players on my screen
-            for (int i = 0; i < players.size(); i++) {
-                Player otherPlayer = players.get(i);
+//            // generate list of players at the moment empty but with networking will be changed
+//            ArrayList<Player> emptyattack = new ArrayList<>();
+//            //emptyattack.add(player);
+//            // first checks for the player to see if there is a player
+//            if (isPlayerOnSameP(myMultiPlayer, emptyattack, aiPlayers)) {
+//                //checks if the player is human or not
+//                if (isHuman1()) {
+//                    //if player is human removes the player from the list then calls attack
+//                    emptyattack.remove(0);
+//                    myMultiPlayer.attackP(emptyattack.get(posAP), worldTimer);
+//                    // earlier issue with not respawning so checks the move to and changes move to to coords generated by death
+//                    emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
+//                    emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
+//                    // adds player back to list
+//                    emptyattack.add(myMultiPlayer);
+//                } else {
+//                    // does same thing as above except with ai players
+//                    AIPlayer playerinsert = aiPlayers.remove(posAAI);
+//                    myMultiPlayer.attackAI(playerinsert, worldTimer);
+//                    playerinsert.x = playerinsert.moveTo.getX();
+//                    playerinsert.y = playerinsert.moveTo.getY();
+//                    aiPlayers.add(posAAI, playerinsert);
+//                }
+//            }
+//            // creates list of players and adds them so the ai can attack players
+//            ArrayList<Player> forAI = new ArrayList<>();
+//            forAI.add(myMultiPlayer);
+//            // goes throught the list of ai players
+//            for (int i = 0; i < aiPlayers.size(); i++) {
+//                // takes one player to attack
+//                AIPlayer playerTurn = aiPlayers.remove(i);
+//                // does the same thing as the above lines of code just with ai
+//                if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
+//                    if (isHuman1()) {
+//                        System.out.println("An ai is about to attack me");
+//                        playerTurn.attackP(forAI.get(posAP), worldTimer);
+//                        forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
+//                        forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
+//                    } else {
+//                        myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
+//                        aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
+//                        aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
+//                    }
+//                }
+//                // adds the ai player back into the list so it is avaible to be attacked
+//                aiPlayers.add(i, playerTurn);
+//            }
+
+            //draw other players, including AI players on my screen
+            for (Player otherPlayer : players) {
                 otherPlayer.render(game.batch);
-//                otherPlayer.attack();
             }
 
             //draw myself on my screen
@@ -357,22 +451,127 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         game.batch.end();
     }
 
+    // method to check if the ai is human or not
+    private boolean isHuman1() {
+        if (aiPlayerAttack != null && playerAttack == null) {
+            // checks whetehr one or the other is null
+            return false;
+        } else if (aiPlayerAttack == null && playerAttack != null) {
+            return true;
+            // shouldn't return antying so will through exception
+        } else {
+            try {
+                throw new Exception();
+            } catch (Exception e) {
+                System.out.println("This should not be happening");
+            }
+        }
+        return true;
+    }
+
+    // method for checking if an ai player is on the same square as another player
+    private boolean isPlayerOnSameAI(AIPlayer current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+        // if one person on same square that is the player attack return true and set attackplayer
+        // starts by setting both to null
+
+        this.aiPlayerAttack = null;
+        this.playerAttack = null;
+        // gets the current coordiantes of the current player
+        Coordinate currentC = new Coordinate(current.x, current.y);
+        if (!playersA.isEmpty()) {
+            for (int i = 0; i < playersA.size(); i++) {
+                // cycles through the players checking if thecorroridnates are the same
+                Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    // sets the player to attack globally
+                    this.playerAttack = playersA.get(i);
+                    // makes usre ai is null
+                    this.aiPlayerAttack = null;
+                    // logs the index so it can be used later
+                    this.posAP = i;
+                    return true;
+                }
+            }
+        }
+        if (!aiPlayersA.isEmpty()) {
+            // does the same thing as the above method
+            for (int i = 0; i < aiPlayersA.size(); i++) {
+                Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    this.playerAttack = null;
+                    this.aiPlayerAttack = aiPlayersA.get(i);
+                    this.posAAI = i;
+                    return true;
+                }
+            }
+        }
+        // if the method doesn't return true throught it will return false
+        return false;
+
+    }
+
+    // same as above method just this time it is a human player checking for other laeyrs
+    private boolean isPlayerOnSameP(Player current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+        // first thing cycle through list checking and comparing coordinates
+        // if one person on same square that is the player attack return true and set attackplayer
+        this.aiPlayerAttack = null;
+        this.playerAttack = null;
+        Coordinate currentC = new Coordinate(current.x, current.y);
+        if (!playersA.isEmpty()) {
+            for (int i = 0; i < playersA.size(); i++) {
+                Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    this.playerAttack = playersA.get(i);
+                    this.aiPlayerAttack = null;
+                    this.posAP = i;
+                    return true;
+                }
+            }
+        }
+        if (!aiPlayersA.isEmpty()) {
+            for (int i = 0; i < aiPlayersA.size(); i++) {
+                Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    this.playerAttack = null;
+                    this.aiPlayerAttack = aiPlayersA.get(i);
+                    this.posAAI = i;
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    // method which compares and checks if the palyers are on the same space
+    private boolean sameSpace(Coordinate investigation, Coordinate check) {
+        // get  coordinates then abs and check difference
+        int xCorI = investigation.getX();
+        int xCorC = check.getX();
+        int yCorI = investigation.getY();
+        int yCorC = check.getY();
+        int xdist = Math.abs(xCorI - xCorC);
+        int ydist = Math.abs(yCorI - yCorC);
+        return (xdist <= 100 && ydist <= 100);
+    }
+
 
     int coinSize = iconSize * 2;
 
     private void writeCoinCSV() {
         ArrayList<String> input = new ArrayList<>();
 
-        for(Player player : players){
+        for (Player player : players) {
             input.add(player.getName() + " = " + player.coins);
         }
 
         input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.coins);
 
-        System.out.println("in method " + input );
+        System.out.println("in method " + input);
 
-        CSVStuff.writeCSV(input , "coinCSV");
+        CSVStuff.writeCSV(input, "coinCSV");
     }
+
     private void drawIcons(int iconSize, int buffer, Coordinate position) {
         //take player x and y into account
         int playerX = position.getX() - VIEWPORT_WIDTH / 2;
@@ -685,7 +884,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     private void sendItemGenMsg(Coordinate position, Item item) {
         ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getID(), item.getType(), position.getX(), position.getY());
-        System.out.println(position.toString());
+//        System.out.println(position.toString());
         netClient.send(message);
     }
 

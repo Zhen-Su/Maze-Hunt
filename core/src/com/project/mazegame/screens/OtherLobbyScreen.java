@@ -45,6 +45,9 @@ public class OtherLobbyScreen implements Screen {
     public boolean waitingStatus=false ;
 
 
+    private String map;
+
+
     private OrthographicCamera cam;
     private BitmapFont bitmapFont;
     private BitmapFont font;
@@ -77,6 +80,10 @@ public class OtherLobbyScreen implements Screen {
     public List<Player> getPlayers() { return players; }
 
     public void setPlayers(List<Player> players) { this.players = players; }
+
+    public void setMap(String map) {
+        this.map = map;
+    }
 
     @Override
     public void show() {
@@ -138,7 +145,7 @@ public class OtherLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
             if(hasReady) {
-                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false);
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false,0,map,"red");
                 setGameClient(gameClient);
                 //TODO Thread problem!!!!
                 try {

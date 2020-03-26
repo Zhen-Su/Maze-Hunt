@@ -1,7 +1,9 @@
 package com.project.mazegame.objects;
 
 import static com.project.mazegame.tools.Variables.*;
+
 import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,7 +15,8 @@ import com.project.mazegame.tools.*;
 
 public class Player {
 
-    protected int x, y;
+    public int x, y;
+    public PlayersType playersType;
     protected float speed;
     protected String colour;
     protected String name;
@@ -28,6 +31,7 @@ public class Player {
     protected int swordXP;
     protected int shieldXP;
     public int respawnCounter;
+    public Coordinate moveTo;
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
 
@@ -35,7 +39,7 @@ public class Player {
     private float playerAttackTime;
     private boolean startPAttack;
     private boolean startAIAttack;
-    protected boolean isAttacking = false;
+    public boolean isAttacking = false;
 
     protected BitmapFont font;
     protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
@@ -55,29 +59,39 @@ public class Player {
     public float initialisedPotionTime;
     public float initialisedEnchantmentTime;
 
+    protected boolean haveyoudied;
+    protected float deathTime;
+
     public static int shieldIconSize = 50;
 
-
-    public Player(){
+    public Player() {
         this.health = 5;
         this.coins = 0;
         this.items = new ArrayList<>();
         this.position = new Coordinate(x, y);
         this.swordDamage = 0;
-        this.respawnCounter= 0;
+        this.respawnCounter = 0;
+        this.haveyoudied = false;
         this.speed = 6;
         swordXP = 0;
         shieldXP = 0;
-        this.co = new Collect(this);
+        this.moveTo = new Coordinate(this.position.getX(), this.position.getY());
         time = new Timer();
+        this.startPAttack = false;
+        this.startAIAttack = false;
     }
-    public Player(TiledMapTileLayer collisionLayer,String name, int ID, String colour) {
+
+    public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour, PlayersType playersType) {
         this();
         this.name = name;
         this.ID = ID;
         this.collisionLayer = collisionLayer;
         this.colour = colour;
+        this.playersType = playersType;
+        this.co = new Collect(this);
         initialPosition();
+//        x = this.position.getX();
+//        y = this.position.getY();
         loadPlayerTextures();
         createAnimations();
     }
@@ -199,7 +213,7 @@ public class Player {
         y = this.position.getY();
     }
 
-    public void update(float delta) {
+    public void update(float delta, int mode, ArrayList<Item> items, float worldTime) {
         removeShield();
         removeEnchantment();
         time.updateTimer(delta);
@@ -209,16 +223,13 @@ public class Player {
         this.position.setY(y);
 
         if (this.isDead()) {
-            if (respawnCounter == 0) {
-                respawnCounter = time.currentTime();
-            }
+            if (respawnCounter == 0) respawnCounter = time.currentTime();
 
-            if (time.currentTime() - respawnCounter == 3) {
-                this.death();
-            }
+            if (time.currentTime() - respawnCounter == 3) this.death(worldTime);
+
             setAnimation(DyingAnim);
-
         } else {
+
 
             if (RIGHT_TOUCHED) {
                 if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
@@ -273,21 +284,43 @@ public class Player {
                 setAnimation(DownAnim);
             }
         }
+
+        // update the move to as they contantly get updated in the render method
+        moveTo.setX(x);
+        moveTo.setY(y);
     }
 
     public void render(SpriteBatch sb) {
 
         setBatch(sb);
+        //need to change AI animation here
+        if (playersType.equals(PlayersType.multi)) {
+            switch (this.dir) {
+                case U:
+                    setAnimation(UpAnim);
+                    break;
+                case D:
+                    setAnimation(DownAnim);
+                    break;
+                case R:
+                    setAnimation(RightAnim);
+                    break;
+                case L:
+                    setAnimation(LeftAnim);
+                    break;
+                case STOP:
+                    setAnimation(DownAnim);
+                    break;
+            }
+        }
+
         animation.render();
 
-        //draw items held by player
-//        if(this.items.contains("sword")) {
-//            sb.draw(sword,(float)(x),y - (height/4),50,50);
-//        }
-        if (this.items.contains("shield")) {
+        if (this.items.contains("sword"))
+            sb.draw(sword, (float) (x), y - (height / 4), 50, 50);
 
+        if (this.items.contains("shield"))
             sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
-        }
 
 
         font.getData().setScale(0.5f, 0.5f);
@@ -371,40 +404,92 @@ public class Player {
 
     public boolean isDead() {
         if (this.health <= 0) {
-
+            haveyoudied = true;
             return true;
         } else
             return false;
     }
 
-    public void death() {
+    public void death(float time) {
         this.initialPosition();
         setAnimation(DownAnim);
         this.coins = 0;
         this.health = 5;
         this.items.clear();
+        this.moveTo = new Coordinate(this.position.getX(), this.position.getY());
         this.respawnCounter = 0;
+        this.deathTime = time;
+        this.haveyoudied = true;
 
         //this.items = new ArrayList<>();
     }
 
-    public void playerHitPlayer(Player hit) {
-        // write boolean to check sword
+    // method for a player attacking antoher player
+    public void attackP(Player playerA, float time) {
+        // first checks the time delay to stop spamming and the plaeyer hans't attacked before
+        if (playerAttackTime - time > 0.3 || !startPAttack) {
+            // checks if the space key is pressed
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                // checks if the player has a swrod and the player its attacking doesn't have a shield
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+//              System.out.println("Player is attacking");
+                    // sets is attacking to true
+                    isAttacking = true;
+                    // animation for sowrd
+                    sword = swordAttack;
+                    // decreases health by one plus any gearenchatnments
+                    playerA.decreaseHealth(1 + getGearCount());
+                    if (playerA.health == 0) {
+                        // adds the cons to the opposing player
+                        this.coins += playerA.coins;
+                        // calls the death method
+                        playerA.death(time);
 
-        if (this.items.contains("sword") && !hit.items.contains("shield")) {
-            // will need to do if have item then that can be called
-            // then decrease the helath based on that
-            // could have a damage do attribute and various attributes which change throught the generateMapItems
-            hit.decreaseHealth(this.swordDamage);
-            if (hit.isDead()) {
-                this.swordDamage++;
-                this.coins += hit.coins;
+                    }
 
-//            respawnCounter = time
-                hit.death();
-            }
+                }
+            } else sword = swordNotAttack;
         }
-        //need to add shield stuffr
+        // sets the time again and gives tur to startattack
+        this.playerAttackTime = time;
+        startPAttack = true;
+    }
+
+    // attacks an ai paleyr same method as above
+    public AIPlayer attackAI(AIPlayer playerA, float time) {
+        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                    System.out.println("Player as attacking me");
+                    isAttacking = true;
+                    sword = swordAttack;
+                    int gearEnchantCount = 0;
+
+                    playerA.decreaseHealth(1 + getGearCount());
+                    this.coins += 1;
+                    if (playerA.health == 0) {
+                        System.out.println("I am about to die");
+                        this.coins += playerA.coins;
+                        playerA.death(time);
+
+                    }
+                }
+            }
+            this.aiAttackTime = time;
+            startAIAttack = true;
+        }
+
+        return playerA;
+    }
+
+    // coutns the amoutn of gear enchatns and returns the number
+    protected int getGearCount() {
+        int count = 0;
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).equals("gearEnchantment"))
+                count++;
+        }
+        return count;
     }
 
     //-------------------------check collisions
@@ -563,45 +648,6 @@ public class Player {
         sword = swordNotAttack;
     }
 
-    public void attackP(Player playerA, float time) {
-        if (playerAttackTime - time > 0.3 || !startPAttack) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-//              System.out.println("Player is attacking");
-                    isAttacking = true;
-                    sword = swordAttack;
-                    playerA.decreaseHealth(1);
-                    if (playerA.health == 0) {
-                        this.coins += playerA.coins;
-                        playerA.death();
-                    }
-
-                }
-            } else sword = swordNotAttack;
-        }
-        this.playerAttackTime = time;
-        startPAttack = true;
-    }
-
-    public void attackAI(AIPlayer playerA, float time) {
-        if (aiAttackTime - time > 0.3 || !startAIAttack) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                    System.out.println("Player as attacking me");
-                    isAttacking = true;
-                    sword = swordAttack;
-                    playerA.decreaseHealth(1);
-                    if (playerA.health == 0) {
-                        System.out.println("I am about to die");
-                        this.coins += playerA.coins;
-                        playerA.death();
-                    }
-                }
-            }
-        }
-        this.aiAttackTime = time;
-        startAIAttack = true;
-    }
 
     public void dispose() {
         walkDown.dispose();

@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\su180\\Desktop\\anotherworld\\android\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
+            "outputFile": "F:\\TeamProject\\anotherworld\\android\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values\\values.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\su180\\Desktop\\anotherworld\\android\\res\\values\\styles.xml",
+                    "source": "F:\\TeamProject\\anotherworld\\android\\res\\values\\styles.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\su180\\Desktop\\anotherworld\\android\\res\\values\\color.xml",
+                    "source": "F:\\TeamProject\\anotherworld\\android\\res\\values\\color.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -40,7 +40,7 @@
                     }
                 },
                 {
-                    "source": "C:\\Users\\su180\\Desktop\\anotherworld\\android\\res\\values\\strings.xml",
+                    "source": "F:\\TeamProject\\anotherworld\\android\\res\\values\\strings.xml",
                     "from": {
                         "startLines": "3",
                         "startColumns": "4",

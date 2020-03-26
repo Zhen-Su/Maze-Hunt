@@ -132,7 +132,7 @@ public class GameScreen implements Screen {
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-		player = new Player(this.collisionLayer,name,123 , this.playerSkin);
+		player = new Player(this.collisionLayer,name,123 , this.playerSkin,PlayersType.single);
 
 //       player.initialPosition();
 //        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
@@ -197,7 +197,8 @@ public class GameScreen implements Screen {
 
 		//updates - player position
 		inputHandler.update();
-		player.update(delta);
+		ArrayList<Item> empty = new ArrayList<>();
+		player.update(delta, 0, empty, 0);
 		//camera
 		cam.update(player.position.getX(),player.position.getY(),game);
 

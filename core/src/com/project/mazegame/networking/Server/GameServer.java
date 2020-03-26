@@ -15,13 +15,15 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameServer implements Runnable {
 
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
     public static final int SERVER_UDP_PORT=7777;
-    private static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
+    private static List<Client> clients = new CopyOnWriteArrayList<>(); // To store all client's IP and UDP_Port
     private boolean isRunning = false;
     private ServerSocket serverSocket;
     private Socket s;
@@ -135,7 +137,15 @@ public class GameServer implements Runnable {
                 try {
                     ds.receive(dp);
                    // printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
-                    //TODO ConcurrentModificationException
+
+                    //Use listIterator to prevent ConcurrentModificationException
+//                    ListIterator<Client> it=clients.listIterator();
+//                    while(it.hasNext()) {
+//                       Client c = it.next();
+//                        dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
+//                        ds.send(dp);
+//                    }
+
                     for (Client c : clients){
                         if(c!=null) {
                             dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
