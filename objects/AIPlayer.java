@@ -161,6 +161,7 @@ public class AIPlayer extends Player {
                 Coordinate old = super.position;
                 int tempx = x;
                 int tempy = y;
+                // refresh posion
                 this.position.setX((int) x);
                 this.position.setY((int) y);
                 // have previous move
@@ -170,6 +171,7 @@ public class AIPlayer extends Player {
                 boolean left = checkCollisionMap(x - movenumber, y);
                 boolean right = checkCollisionMap(x + movenumber, y);
                 // Then give priroy to direction
+                // checks the direcion the player was preivoulsy moving in and if it can move there
                 if (chosenMove(x, y, direct)) {
                     if (direct.equals("Up")) {
                         tempx = x;
@@ -188,6 +190,7 @@ public class AIPlayer extends Player {
                     tempy = y - movenumber;
                     this.direct = "Down";
                 }
+                    // this is the priory list of moves to take first lef then up the nright then down
                 } else if (left) {
                     tempx = x - movenumber;
                     tempy = y;
@@ -196,7 +199,7 @@ public class AIPlayer extends Player {
                     tempx = x ;
                     tempy = y + movenumber;
                     this.direct = "Up";
-                } else if (down) {
+                } else if (right) {
                     tempx = x + movenumber;
                     tempy = y;
                     this.direct = "Right";
@@ -210,6 +213,7 @@ public class AIPlayer extends Player {
 
                 Coordinate newt = new Coordinate(tempx, tempy);
                 System.out.println(newt.toString());
+                // sets the correct direciton
                 change(old, newt);
 
             }
@@ -228,6 +232,7 @@ public class AIPlayer extends Player {
         }
         return returno;
     }
+    // just a string checking method
     private boolean chosenMove(int xt, int yt, String direction) {
         if (direction.equals("Up")) {
             if (checkCollisionMap(xt, yt + movenumber)) {
