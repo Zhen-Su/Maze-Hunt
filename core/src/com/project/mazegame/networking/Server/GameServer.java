@@ -13,20 +13,21 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameServer implements Runnable {
 
     private static int ID= 0001;                    //every client has an unique ID.
     public static final int SERVER_TCP_PORT=9999;
     public static final int SERVER_UDP_PORT=7777;
-    private static List<Client> clients = new ArrayList<>(); // To store all client's IP and UDP_Port
+    private static List<Client> clients = new CopyOnWriteArrayList<>(); // To store all client's IP and UDP_Port
     private boolean isRunning = false;
     private ServerSocket serverSocket;
     private Socket s;
     private boolean debug =false;
+    private String map;
 
     public static List<Client> getClients() { return clients; }
 
@@ -80,8 +81,15 @@ public class GameServer implements Runnable {
                 //Send ID and Server UDP_PORT to client.
                 OutputStream os = s.getOutputStream();
                 DataOutputStream dos = new DataOutputStream(os);
-                dos.writeInt(ID++);
+                dos.writeInt(ID);
                 dos.writeInt(SERVER_UDP_PORT);
+                //if this player is a host player,the save the map info received from client
+                if(ID==1) {
+                    this.map = dis.readUTF();
+                }else{
+                    dos.writeUTF(map);
+                }
+                ID++;
             } catch (IOException e) {
                 e.printStackTrace();
             }finally {
@@ -137,21 +145,14 @@ public class GameServer implements Runnable {
                     ds.receive(dp);
                    // printMsg("I received a packet from a client, and i will broadcast to all clients!!!");
 
-                    //Use listIterator to prevent ConcurrentModificationException
-                    ListIterator<Client> it=clients.listIterator();
-                    while(it.hasNext()) {
-                       Client c = it.next();
-                        dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
-                        ds.send(dp);
+                    //Use CopyOnWriteArrayList to prevent ConcurrentModificationException
+                    for (Client c : clients){
+                        if(c!=null) {
+                            dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
+                            ds.send(dp);
+                            //printMsg("I've broadcasted to client");
+                        }
                     }
-
-//                    for (Client c : clients){
-//                        if(c!=null) {
-//                            dp.setSocketAddress(new InetSocketAddress(c.IP, c.udp_Port));
-//                            ds.send(dp);
-//                            //printMsg("I've broadcasted to client");
-//                        }
-//                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -181,7 +182,7 @@ public class GameServer implements Runnable {
         //Close TCP Server
         if(serverSocket!=null) {
             try {
-                serverSocket.close();
+                s.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

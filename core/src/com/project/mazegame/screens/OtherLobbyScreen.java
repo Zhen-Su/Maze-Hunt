@@ -41,10 +41,7 @@ public class OtherLobbyScreen implements Screen {
     private MazeGame game;
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
-
     public boolean waitingStatus=false ;
-
-
     private OrthographicCamera cam;
     private BitmapFont bitmapFont;
     private BitmapFont font;
@@ -53,7 +50,6 @@ public class OtherLobbyScreen implements Screen {
     private String hostPlayerName;
     private List<Player> players;
     private boolean hasReady = true;
-
     String username;
     String ip;
 
@@ -138,11 +134,12 @@ public class OtherLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
             if(hasReady) {
-                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false);
+                //TODO this need to pass playerskin, it's default by red
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false,"red");
                 setGameClient(gameClient);
-                //TODO Thread problem!!!!
+
                 try {
-                    Thread.currentThread().sleep(100);
+                    Thread.currentThread().sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

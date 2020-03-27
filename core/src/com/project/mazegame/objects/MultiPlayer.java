@@ -78,6 +78,8 @@ public class MultiPlayer extends Player {
     public void setDir(Direction dir) {
         this.dir = dir;
     }
+
+
     //==============================================================================================
 
     /**

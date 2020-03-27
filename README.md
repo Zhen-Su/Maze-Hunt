@@ -98,6 +98,10 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 2.0.6 synchornize attack animation in multiplayer
   * 2.0.7 fix attack animation bugs. use the same mechanism as player move to monitor press and relase space. 
   
+* Version 3.0: synchornize map , player can use the same map
+  
+  
+  
   
   
   

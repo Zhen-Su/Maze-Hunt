@@ -42,6 +42,12 @@ public class CreateMazeScreen implements Screen {
 
     private int size = 100;
 
+    String difficulty;
+    String player;
+    String map;
+    String numOfAI;
+    String name;
+
     private static final int CREATE_Y = MazeGame.HEIGHT / 2 - 200;
     private static final int PLAY_Y = MazeGame.HEIGHT / 2 + 50;
     private static final int EXIT_Y = MazeGame.HEIGHT / 2 - 300;
@@ -171,12 +177,6 @@ public class CreateMazeScreen implements Screen {
         //String[] preferences = new String[3] ;
 
 
-        String difficulty= new String();
-        String player= new String();
-        String map = new String();
-        String numOfAI = new String();
-        String name = new String();
-
         difficulty = "3";
         player = "red";
         map = "map 1";
@@ -301,7 +301,7 @@ public class CreateMazeScreen implements Screen {
 
         bgTexture = createBackgroundTexture(50, 50);
         style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
-        numField = new TextField("6", style);
+        numField = new TextField("2", style);
 
         usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
         numField.setSize(50,50);
@@ -457,7 +457,7 @@ public class CreateMazeScreen implements Screen {
                         if(playerChosen && difficultyChosen && mapChosen) {
                             setPreferences();
                             if (multi)
-                                game.setScreen(new HostLobbyScreen(game, usernameTextField.getText()));
+                                game.setScreen(new HostLobbyScreen(game, name,Integer.parseInt(numOfAI),map,player));
                             else
                                 game.setScreen(new GameScreen(game));
                         }

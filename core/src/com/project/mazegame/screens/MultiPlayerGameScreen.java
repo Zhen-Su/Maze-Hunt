@@ -66,6 +66,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public ArrayList<NetClient> aiNetClients = new ArrayList<>();
     public ArrayList<AIGameClient> aiGameClients = new ArrayList<>();
 
+
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
@@ -92,7 +93,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public BitmapFont bitmapFont;
     public Texture enchantedGlow;
     private Texture mapTexture, minimapOutline, playerIcon;
-    ;
+    public String map;
 
     private float timer;
     public static float worldTimer = 360;
@@ -107,36 +108,50 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
     Coordinate playerPos;
+    public String username;
+    public String serverIP;
+    public String playerSkin;
 
 
     //=====================================constructors=============================================
 
-    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost) {
+    //This construction for host Player
+    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, int NumOfAI, String map, String playerSkin) {
         this.game = game;
+        this.username=username;
+        this.serverIP=serverIP;
+        this.map=map;
+        this.playerSkin=playerSkin;
         this.isHost = isHost;
         timer = 0;
 
         aiPlayerAttack = null;
         playerAttack = null;
 
-        tileMap = new TmxMapLoader().load("Map3.tmx");
-        //TODO this 113 line should be changed after integrate with customize.
-        mapTexture = new Texture("Maps\\Map3Icon.png");
+        if (map.equals("map1")) {
+            tileMap = new TmxMapLoader().load("Map1.tmx");
+            mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class);
+        } else if (map.equals("map2")) {
+            tileMap = new TmxMapLoader().load("Map2.tmx");
+            mapTexture = Assets.manager.get(Assets.map2Icon, Texture.class);
+        } else {
+            tileMap = new TmxMapLoader().load("Map3.tmx");
+            mapTexture = Assets.manager.get(Assets.map3Icon, Texture.class);
+        }
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        //TODO need to think about colour thing(customize)
-        myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, "orange", PlayersType.multi);
-        netClient.connect(serverIP, false, 0);
+
+        myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, playerSkin, PlayersType.multi);
+        netClient.connect(serverIP, false, 0,true);
 
         if (isHost) {
             //create AI players
-            createAIplayers(0);
+            createAIplayers(NumOfAI);
             //Every AI player connect to GameServer
             for (int i = 0; i < aiGameClients.size(); i++) {
                 NetClient nc = aiGameClients.get(i).getNetClient();
-                nc.connect(serverIP, true, i);
+                nc.connect(serverIP, true, i,false);
             }
         }
 
@@ -146,6 +161,28 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         getAsset();
     }
+
+    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, String playerSkin) {
+        this.game = game;
+        this.username=username;
+        this.serverIP=serverIP;
+        this.playerSkin=playerSkin;
+        this.isHost = isHost;
+        timer = 0;
+
+        aiPlayerAttack = null;
+        playerAttack = null;
+
+        netClient.connect(serverIP, false, 0,false);
+
+        Gdx.input.setInputProcessor(this);
+
+        cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
+
+        getAsset();
+
+    }
+
 
 
     //===================================Getter&Setter==============================================
@@ -178,6 +215,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         return collisionLayer;
     }
 
+    public void setCollisionLayer(TiledMapTileLayer collisionLayer){
+        this.collisionLayer=collisionLayer;
+    }
+
     public boolean isHostStartGame() {
         return HostStartGame;
     }
@@ -200,6 +241,18 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     public void setServer(GameServer server) {
         this.server = server;
+    }
+
+    public void setMapTexture(Texture mapTexture) {
+        this.mapTexture = mapTexture;
+    }
+
+    public void setTileMap(TiledMap tileMap) {
+        this.tileMap = tileMap;
+    }
+
+    public void setTileMapRenderer(OrthogonalTiledMapRenderer tileMapRenderer) {
+        this.tileMapRenderer = tileMapRenderer;
     }
 
 
@@ -253,8 +306,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     @Override
     public void show() {
-        //assuming it's a square map -> only need width of map and width of tile
-        if (isImHost()) {
+
+        if (imHost) {
             generateMapItems(collisionLayer.getWidth(), 100);
         }
 
@@ -265,7 +318,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
 
-        if(debug) {
+        if (debug) {
             System.out.println("mapItems: ");
             for (int i = 0; i < mapItems.size(); i++) {
                 System.out.print("(" + mapItems.get(i).getPosition().getX() + "," + mapItems.get(i).getPosition().getY() + ")");

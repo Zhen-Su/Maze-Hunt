@@ -35,6 +35,7 @@ public class Player {
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
 
+
     private float aiAttackTime;
     private float playerAttackTime;
     private boolean startPAttack;
@@ -192,6 +193,15 @@ public class Player {
     public void setCo(Collect co) {
         this.co = co;
     }
+
+    public TiledMapTileLayer getCollisionLayer() {
+        return collisionLayer;
+    }
+
+    public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
+        this.collisionLayer = collisionLayer;
+    }
+
     //==============================================================================================
 
 
