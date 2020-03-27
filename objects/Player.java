@@ -335,27 +335,26 @@ public class Player {
     }
 
     public boolean checkCollisionMap(float possibleX , float possibleY){ // true = good to move | false = can't move there
-        //Overall x and y of player
+    	//Overall x and y of player
         float xWorld = possibleX ;
-        float yWorld = possibleY ;
-
+        float yWorld = possibleY ; 
+        
         boolean collisionWithMap = false;
-
+  
         //Check corners of player to check for collision
         //check corners T = top, B = bottom, R = right, L = left
         boolean TLbool= isCellBlocked(xWorld - (width/2) , yWorld + (height/2) );
         boolean TRbool= isCellBlocked(xWorld +( width/2) , yWorld + (height/2));
         boolean BLbool= isCellBlocked(xWorld -(width/2), yWorld - (height/2));
         boolean BRbool= isCellBlocked(xWorld + (width/2), yWorld - (height/2));
-
+   
         collisionWithMap = TLbool || TRbool || BLbool || BRbool;
-
+        
         //If there is a collision
         if (collisionWithMap) return false;
         else return true;
     }
-
-
+ 
     public boolean isCellBlocked(float x, float y) {
 
     	Cell cell = this.collisionLayer.getCell(
@@ -374,7 +373,7 @@ public class Player {
     // method for a player attacking antoher player
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
-//        if (playerAttackTime - time > 0.3) {
+        if (playerAttackTime - time > 0.3 || !startPAttack) {
             // checks if the space key is pressed
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 // checks if the player has a swrod and the player its attacking doesn't have a shield
@@ -396,14 +395,14 @@ public class Player {
 
                 }
             } else sword = swordNotAttack;
-//        }
+        }
         // sets the time again and gives tur to startattack
-//        this.playerAttackTime = time;
-//        startPAttack = true;
+        this.playerAttackTime = time;
+        startPAttack = true;
     }
     // attacks an ai paleyr same method as above
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-//        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+        if (aiAttackTime - time > 0.3 || !startAIAttack) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                     System.out.println("Player as attacking me");
@@ -412,7 +411,7 @@ public class Player {
                     int gearEnchantCount = 0;
 
                     playerA.decreaseHealth(1 + getGearCount());
-
+                    this.coins += 1;
                     if (playerA.health == 0) {
                         System.out.println("I am about to die");
                         this.coins += playerA.coins;
@@ -421,9 +420,9 @@ public class Player {
                     }
                 }
             }
-//            this.aiAttackTime = time;
-//            startAIAttack = true;
-//        }
+            this.aiAttackTime = time;
+            startAIAttack = true;
+        }
 
         return playerA;
     }

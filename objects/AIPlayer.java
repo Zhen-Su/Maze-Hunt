@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.objects.Player;
+import com.project.mazegame.screens.GameScreen;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.PlayerThread;
@@ -13,6 +14,9 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
+
+import jdk.nashorn.internal.objects.annotations.Where;
+import sun.awt.X11.XPropertyEvent;
 
 // each time ai moves needs to send message
 
@@ -32,13 +36,15 @@ public class AIPlayer extends Player {
     private boolean attackAIStart;
     private ArrayList<Coordinate> visited;
     private int trackindex;
-    private static final int movenumber = 40;
-    private String premov = "null";
+    private static final int movenumber = 30;
+    private String premov;
     public int logx;
     public int logy;
+    private int olditemcount;
+    private String direct = null;
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
-        super.loadPlayerTextures();
+//        super.loadPlayerTextures();
         this.collisionLayer = collisionLayer;
         initialPosition();
         aiThread = new Thread(new PlayerThread());
@@ -48,6 +54,8 @@ public class AIPlayer extends Player {
         this.visited = new ArrayList<>();
         this.visited.add(super.position);
         this.trackindex = 0;
+        this.olditemcount = 0;
+        this.direct = "Up";
 //        aiThread.start();
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
@@ -125,7 +133,7 @@ public class AIPlayer extends Player {
 //                System.out.println("The direction the player is moving in is " + this.dir);
 
 
-            } else if (mode == 2) {
+            } else if (mode == 3) {
                 Item nearestI = nearest(this, items);
                 System.out.println(nearestI.toString());
                 Coordinate near = new Coordinate(nearestI.getX(), nearestI.getY());
@@ -146,42 +154,63 @@ public class AIPlayer extends Player {
 
 
 
+
+
                 // ultimate goal is coins
-            } else if (mode == 3) {
-                int tempx = super.x;
-                int tempy = super.y;
-
-                Coordinate prevStore = new Coordinate(super.x, super.y);
-
-                if (checkCollisionMap(x, this.up()) && !premov.equals("Up")) {
-                    System.out.println("THe player should be doing something");
-
-                    tempy = (int) this.up();
-                    Coordinate newM = new Coordinate(super.x, super.y);
-                    premov = "Up";
-                    this.change(prevStore, newM);
-                } else if (checkCollisionMap(this.left(), y) && !premov.equals("Left")) {
-                    tempx = (int) this.left();
-
-                    Coordinate newM = new Coordinate(super.x, super.y);
-                    this.change(prevStore, newM);
-                    premov = "Left";
-                } else if (checkCollisionMap(this.right(), y) && !premov.equals("Right")) {
-                    tempx = (int) this.right();
-
-                    Coordinate newM = new Coordinate(super.x, super.y);
-                    this.change(prevStore, newM);
-                    premov = "Right";
-                }else if (checkCollisionMap(x, this.down()) && !premov.equals("Down")) {
-
-                    tempy = (int) this.down();
-                    Coordinate newM = new Coordinate(super.x, super.y);
-                    premov = "Down";
+            } else if (mode == 2) {
+                Coordinate old = super.position;
+                int tempx = x;
+                int tempy = y;
+                this.position.setX((int) x);
+                this.position.setY((int) y);
+                // have previous move
+                // first grab boolean to see where is possible to move
+                boolean up = checkCollisionMap(x, y+movenumber);
+                boolean down = checkCollisionMap(x, y-movenumber);
+                boolean left = checkCollisionMap(x - movenumber, y);
+                boolean right = checkCollisionMap(x + movenumber, y);
+                // Then give priroy to direction
+                if (chosenMove(x, y, direct)) {
+                    if (direct.equals("Up")) {
+                        tempx = x;
+                        tempy = y + movenumber;
+                        this.direct = "Up";
+                    } else if (direct.equals("Left")) {
+                        tempx = x - movenumber;
+                        tempy = y;
+                        this.direct = "Left";
+                    } else if (direct.equals("Right")) {
+                        tempx = x + movenumber;
+                        tempy = y;
+                        this.direct = "Right";
+                    } else if (direct.equals("Down")) {
+                    tempx = x;
+                    tempy = y - movenumber;
+                    this.direct = "Down";
                 }
-                System.out.println("Player should be moving " + tempx + " " + tempy);
-                this.position.setX(tempx);
-                this.position.setY(tempy);
+                } else if (left) {
+                    tempx = x - movenumber;
+                    tempy = y;
+                    this.direct = "Left";
+                } else if (up) {
+                    tempx = x ;
+                    tempy = y + movenumber;
+                    this.direct = "Up";
+                } else if (down) {
+                    tempx = x + movenumber;
+                    tempy = y;
+                    this.direct = "Right";
+                } else if (down) {
+                    tempx = x;
+                    tempy = y - movenumber;
+                    this.direct = "Down";
+                }
+                super.x = tempx;
+                super.y = tempy;
 
+                Coordinate newt = new Coordinate(tempx, tempy);
+                System.out.println(newt.toString());
+                change(old, newt);
 
             }
             this.initialisedTime = time;
@@ -189,6 +218,7 @@ public class AIPlayer extends Player {
 
         }
     }
+
     private Coordinate bestMoveTrace(ArrayList<Coordinate> listgood) {
         Coordinate returno = null;
         for (int i = 0; i < listgood.size(); i++) {
@@ -198,6 +228,41 @@ public class AIPlayer extends Player {
         }
         return returno;
     }
+    private boolean chosenMove(int xt, int yt, String direction) {
+        if (direction.equals("Up")) {
+            if (checkCollisionMap(xt, yt + movenumber)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (direction.equals("Down")) {
+            if (checkCollisionMap(xt, yt - movenumber)) {
+                return true;
+            } else {
+                return false;
+            }
+        }  else if (direction.equals("Left")) {
+            if (checkCollisionMap(xt - movenumber, yt)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (direction.equals("Right")) {
+            if (checkCollisionMap(xt + movenumber, yt)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            try {
+                throw new Exception("Not valid");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
     private double calcu(int px, int py, int ix, int iy) {
         double xdif = ix - px;
         double ydif = iy - py;
@@ -327,11 +392,15 @@ public class AIPlayer extends Player {
         return openDoor.get(randomTake);
     }
     private Coordinate bestMove(Coordinate target, ArrayList<Coordinate> onesToUse) {
+        int besteuclid = Collect.andinsEuclidian(target.getX(), onesToUse.get(0).getX(), target.getY(), onesToUse.get(0).getY());
         Coordinate best = onesToUse.get(0);
         for (int i = 0; i < onesToUse.size(); i++) {
-            if (targets(target, onesToUse.get(i), best)) {
+            int nextbest = Collect.andinsEuclidian(target.getX(), onesToUse.get(i).getX(), target.getY(), onesToUse.get(i).getY());
+            if (nextbest < besteuclid) {
+                besteuclid = nextbest;
                 best = onesToUse.get(i);
             }
+
         }
         return best;
     }
