@@ -14,6 +14,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.AIGameClient;
 import com.project.mazegame.objects.AIPlayer;
@@ -176,11 +177,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         netClient.connect(serverIP, false, 0,false);
 
         Gdx.input.setInputProcessor(this);
-
         cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
-
         getAsset();
-
     }
 
 
@@ -255,9 +253,13 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         this.tileMapRenderer = tileMapRenderer;
     }
 
-
     //==============================================================================================
 
+    /**
+     * This method for create AI player in multilayer
+     * Only host player can create AI player
+     * @param aiNum
+     */
     public void createAIplayers(int aiNum) {
         if (aiNum != 0) {
             for (int i = 0; i < aiNum; i++) {
@@ -281,6 +283,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         }
     }
 
+    /**
+     * Get game resources from Assets
+     */
     public void getAsset() {
         exitButtonActive = Assets.manager.get(Assets.exit_button_active, Texture.class);
         exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive, Texture.class);
@@ -312,7 +317,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         }
 
         tempMapItemssize = mapItems.size();
-        //start timer
 
         font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
 
@@ -338,12 +342,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         delta = Gdx.graphics.getDeltaTime();
 
-
         //update other player
         ArrayList<Item> empty = new ArrayList<>();
-
-        //TODO update method need to make more general.
         for (Player otherPlayer : players) {
+            //only update multiPlayer, not MultiAIPlayer
             if (otherPlayer instanceof MultiPlayer)
                 otherPlayer.update(delta, 0, empty, 0);
         }
@@ -366,6 +368,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
 
+        //begin to draw
         game.batch.begin();
         {
 
@@ -423,29 +426,30 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 //                    aiPlayers.add(posAAI, playerinsert);
 //                }
 //            }
+
 //            // creates list of players and adds them so the ai can attack players
-//            ArrayList<Player> forAI = new ArrayList<>();
-//            forAI.add(myMultiPlayer);
-//            // goes throught the list of ai players
-//            for (int i = 0; i < aiPlayers.size(); i++) {
-//                // takes one player to attack
-//                AIPlayer playerTurn = aiPlayers.remove(i);
-//                // does the same thing as the above lines of code just with ai
-//                if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
-//                    if (isHuman1()) {
-//                        System.out.println("An ai is about to attack me");
-//                        playerTurn.attackP(forAI.get(posAP), worldTimer);
-//                        forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
-//                        forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
-//                    } else {
-//                        myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
-//                        aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
-//                        aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
-//                    }
-//                }
-//                // adds the ai player back into the list so it is avaible to be attacked
-//                aiPlayers.add(i, playerTurn);
-//            }
+            ArrayList<Player> forAI = new ArrayList<>();
+            forAI.add(myMultiPlayer);
+            // goes through the list of ai players
+            for (int i = 0; i < aiPlayers.size(); i++) {
+                // takes one player to attack
+                AIPlayer playerTurn = aiPlayers.remove(i);
+                // does the same thing as the above lines of code just with ai
+                if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
+                    if (isHuman1()) {
+                        System.out.println("An ai is about to attack me");
+                        playerTurn.attackP(forAI.get(posAP), worldTimer);
+                        forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
+                        forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
+                    } else {
+                        myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
+                        aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
+                        aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
+                    }
+                }
+                // adds the ai player back into the list so it is available to be attacked
+                aiPlayers.add(i, playerTurn);
+            }
 
             //draw other players, including AI players on my screen
             for (Player otherPlayer : players) {
@@ -469,8 +473,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
                 if ((worldTimer - time.currentTime()) < 0) {
                     this.dispose();
-                    //TODO when this game over, player want to start a new game again
-                    //need to handle player exit
+                    //TODO when  game over, player want to start a new game again
                     writeCoinCSV();
                     game.setScreen(new EndScreen(this.game));
                     if (isHost) {
@@ -757,6 +760,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             this.dispose();
             game.setScreen(new MenuScreen(this.game));
+            PlayerExitMessage playerExitMessage = new PlayerExitMessage(this,getMultiPlayer().getID());
+            this.getNc().send(playerExitMessage);
+            this.getNc().sendClientDisconnectMsg();
         }
 
         if (Gdx.input.getX() < V_WIDTH && Gdx.input.getX() > V_WIDTH - EXIT_WIDTH && Gdx.input.getY() < EXIT_HEIGHT && Gdx.input.getY() > 0) {

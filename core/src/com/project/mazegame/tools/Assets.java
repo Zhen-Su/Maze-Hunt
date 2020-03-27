@@ -35,8 +35,8 @@ public class Assets {
     public static final String playerOnMap = "Player/playerOnMap.png";
 
     public static final String map1Icon = "Maps/Map1Icon.png";
-    public static final String map2Icon = "Maps/Map1Icon.png";
-    public static final String map3Icon = "Maps/Map1Icon.png";
+    public static final String map2Icon = "Maps/Map2Icon.png";
+    public static final String map3Icon = "Maps/Map3Icon.png";
     public static final String GAMEOVER = "UI/Titles/GAMEOVER!.png";
     public static final String BackToMenuButton = "UI/MenuButtons/BackToMenuButton.png";
     public static final String backToMenuButtonPressed = "UI/MenuButtons/backToMenuButtonPressed.png";

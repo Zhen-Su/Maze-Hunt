@@ -46,6 +46,7 @@ public class HostLobbyScreen implements Screen {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        gameServer.setGameClient(gameClient);
         cam = new OrthographicCamera(WIDTH, HEIGHT);
         cam.setToOrtho(false, WIDTH, HEIGHT);
     }

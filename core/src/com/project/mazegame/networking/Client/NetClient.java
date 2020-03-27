@@ -20,6 +20,7 @@ import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.PlayersType;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -44,6 +46,7 @@ public class NetClient {
     private String serverIP;
     private int serverUDPPort;
     private int clientUDPPort;
+    private int PLAYER_EXIT_UDP_PORT;
     private MultiPlayerGameScreen gameClient;
     private DatagramSocket datagramSocket = null;
     public static boolean debug = false;
@@ -81,6 +84,7 @@ public class NetClient {
             DataInputStream dis = new DataInputStream(is);
             int id = dis.readInt();
             this.serverUDPPort = dis.readInt();
+            this.PLAYER_EXIT_UDP_PORT=dis.readInt();
             if (id == 1) {
                 //if i'm host player then send map to server
                 dos.writeUTF(gameClient.map);
@@ -241,11 +245,47 @@ public class NetClient {
     }
 
     /**
+     * To send player exit message.
+     */
+    public void sendClientDisconnectMsg(){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(88);
+        DataOutputStream dos = new DataOutputStream(baos);
+        try {
+            dos.writeInt(gameClient.getMultiPlayer().getID());
+            dos.writeInt(clientUDPPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally {
+            if(null != dos){
+                try {
+                    dos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(null != baos){
+                try {
+                    baos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        byte[] buf = baos.toByteArray();
+        try{
+            DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(serverIP, PLAYER_EXIT_UDP_PORT));
+            datagramSocket.send(dp);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * * Randomly generate UDP port from 1024 to 5000
      *
      * @return
      */
-    private int getRandomUDPPort() {
+    public static int getRandomUDPPort() {
         Random random = new Random();
         return random.nextInt(3977) + 1024;
         //rand.nextInt(MAX - MIN + 1) + MIN

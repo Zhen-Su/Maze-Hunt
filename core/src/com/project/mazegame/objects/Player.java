@@ -437,62 +437,61 @@ public class Player {
     // method for a player attacking antoher player
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
-        if (playerAttackTime - time > 0.3 || !startPAttack) {
-            // checks if the space key is pressed
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                // checks if the player has a swrod and the player its attacking doesn't have a shield
-                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+//        if (playerAttackTime - time > 0.3) {
+        // checks if the space key is pressed
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            // checks if the player has a swrod and the player its attacking doesn't have a shield
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
 //              System.out.println("Player is attacking");
-                    // sets is attacking to true
-                    isAttacking = true;
-                    // animation for sowrd
-                    sword = swordAttack;
-                    // decreases health by one plus any gearenchatnments
-                    playerA.decreaseHealth(1 + getGearCount());
-                    if (playerA.health == 0) {
-                        // adds the cons to the opposing player
-                        this.coins += playerA.coins;
-                        // calls the death method
-                        playerA.death(time);
-
-                    }
+                // sets is attacking to true
+                isAttacking = true;
+                // animation for sowrd
+                sword = swordAttack;
+                // decreases health by one plus any gearenchatnments
+                playerA.decreaseHealth(1 + getGearCount());
+                if (playerA.health == 0) {
+                    // adds the cons to the opposing player
+                    this.coins += playerA.coins;
+                    // calls the death mehtod
+                    playerA.death(time);
 
                 }
-            } else sword = swordNotAttack;
-        }
-        // sets the time again and gives tur to startattack
-        this.playerAttackTime = time;
-        startPAttack = true;
-    }
 
+            }
+        } else sword = swordNotAttack;
+//        }
+        // sets the time again and gives tur to startattack
+//        this.playerAttackTime = time;
+//        startPAttack = true;
+    }
     // attacks an ai paleyr same method as above
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-        if (aiAttackTime - time > 0.3 || !startAIAttack) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                    System.out.println("Player as attacking me");
-                    isAttacking = true;
-                    sword = swordAttack;
-                    int gearEnchantCount = 0;
+//        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                System.out.println("Player as attacking me");
+                isAttacking = true;
+                sword = swordAttack;
+                int gearEnchantCount = 0;
 
-                    playerA.decreaseHealth(1 + getGearCount());
-                    this.coins += 1;
-                    if (playerA.health == 0) {
-                        System.out.println("I am about to die");
-                        this.coins += playerA.coins;
-                        playerA.death(time);
+                playerA.decreaseHealth(1 + getGearCount());
 
-                    }
+                if (playerA.health == 0) {
+                    System.out.println("I am about to die");
+                    this.coins += playerA.coins;
+                    playerA.death(time);
+
                 }
             }
-            this.aiAttackTime = time;
-            startAIAttack = true;
         }
+//            this.aiAttackTime = time;
+//            startAIAttack = true;
+//        }
 
         return playerA;
     }
 
-    // coutns the amoutn of gear enchatns and returns the number
+    // counts the amount of gear enchatns and returns the number
     protected int getGearCount() {
         int count = 0;
         for (int i = 0; i < items.size(); i++) {

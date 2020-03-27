@@ -155,6 +155,7 @@ public class OtherLobbyScreen implements Screen {
             backToMenuScreen();
             PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(message);
+            gameClient.getNc().sendClientDisconnectMsg();
         }
     }
 

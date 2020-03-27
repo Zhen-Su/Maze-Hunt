@@ -271,7 +271,7 @@ public class AIPlayer extends Player {
 
     @Override
     public void attackP(Player playerA, float time) {
-        System.out.println("I am executing");
+//        System.out.println("I am executing");
         // only difference with this and the player methods is doens't need space to be pressed
         if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
@@ -288,7 +288,6 @@ public class AIPlayer extends Player {
         this.attackPlayerTime = time;
         this.attackPStart = true;
     }
-
     @Override
     // same as bove method jsut attackign another ai instead
     public AIPlayer attackAI(AIPlayer playerA, float time) {
