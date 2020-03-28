@@ -41,6 +41,10 @@ public class AIPlayer extends Player {
     public int logx;
     public int logy;
     private int olditemcount;
+    private int colog1;
+    private int colog2;
+    private Coordinate lastp;
+    private Coordinate preve;
     private String direct = null;
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
@@ -56,6 +60,8 @@ public class AIPlayer extends Player {
         this.trackindex = 0;
         this.olditemcount = 0;
         this.direct = "Up";
+        this.preve = null;
+        this.lastp = null;
 //        aiThread.start();
 //        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
@@ -119,7 +125,7 @@ public class AIPlayer extends Player {
             if (mode == 1) {
 
             // takes random coorediante it can mvoe to
-                Coordinate old = super.position;
+                Coordinate old = new Coordinate(position.getX(), position.getY());
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 // will need to do something with the speed
                 this.position.setX((int) x);
@@ -134,23 +140,95 @@ public class AIPlayer extends Player {
 
 
             } else if (mode == 3) {
-                Item nearestI = nearest(this, items);
-                System.out.println(nearestI.toString());
-                Coordinate near = new Coordinate(nearestI.getX(), nearestI.getY());
-                ArrayList<Coordinate> moves = avaibleMoves(super.x, super.y);
-                Coordinate bested = bestMove(near, moves);
-                super.x = bested.getX();
-                super.y = bested.getY();
-                this.change(near, bested);
-                Coordinate secondMoveToTake = direction(avaibleMoves(x, y));
-                System.out.println("Move is moing here " + secondMoveToTake.toString());
-//                super.x = (int) secondMoveToTake.getX();
-//                super.y = (int) secondMoveToTake.getY();
-                this.position.setY(secondMoveToTake.getY());
-                this.position.setX(secondMoveToTake.getX());
-//                this.logx = super.x;
-//                this.logy = super.y;
-                this.change(bested, secondMoveToTake);
+                // this algorithm has focused movemnt.
+                // What it does is it looks at how many junctions there are. If there is one junction it goes back the same way
+                // if there are two junctions it picks the junction it hasn't comefrom
+                // if there are three junctions pciks a random junction that it hasn't been down
+                // if there are four junctions picks random junction otu of the ones it hasn't been dwon
+                Coordinate old = super.getPosition();
+
+                int tempx = x;
+                int tempy = y;
+                this.position.setX(x);
+                this.position.setY(y);
+
+                ArrayList<Coordinate> junctions = avaibleMoves(x, y);
+                System.out.println(junctions);
+                int randSize = junctions.size() - 1;
+
+                if (junctions.size() == 1) {
+                    System.out.println("Number of juntions " + 1);
+                    tempx = junctions.get(0).getX();
+                    tempy = junctions.get(0).getY();
+//                    this.preve = junctions.get(0);
+                } else if (junctions.size() == 2) {
+                    if (preve != null && lastp != null) {
+//                        System.out.println("Prev is not null");
+                        System.out.println("Number of juntions " + 2);
+                        System.out.println("List before "  + junctions);
+                        ArrayList<Coordinate> rem = customRemove(lastp, junctions);
+                        System.out.println("Preve is " + lastp.toString());
+
+                        System.out.println("List after " + rem);
+                        int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
+                        tempx = rem.get(index).getX();
+                        tempy = rem.get(index).getY();
+//                        this.preve = junctions.get(0);
+                    } else {
+
+                        int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
+                        tempx = junctions.get(index).getX();
+                        tempy = junctions.get(index).getY();
+//                        preve = junctions.get(index);
+                    }
+                } else if (junctions.size() == 3) {
+                    if (preve != null && lastp != null) {
+//                        System.out.println("Prev is not null");
+                        System.out.println("Number of juntions " + 3);
+                        System.out.println("List before "  + junctions);
+                        System.out.println("Preve is " + lastp.toString());
+                        ArrayList<Coordinate> rem = customRemove(lastp, junctions);
+                        System.out.println("List after " + rem);
+                        int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
+                        tempx = rem.get(index).getX();
+                        tempy = rem.get(index).getY();
+//                        preve = junctions.get(index);
+
+                    } else {
+                        int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
+                        tempx = junctions.get(index).getX();
+                        tempy = junctions.get(index).getY();
+//                        preve = junctions.get(index);
+                    }
+
+                } else if (junctions.size() == 4) {
+                    if (preve != null && lastp != null) {
+                        System.out.println("Prev is not null");
+                        System.out.println("Number of juntions " + 4);
+                        System.out.println("Preve is " + lastp.toString());
+                        System.out.println("List before "  + junctions);
+                        ArrayList<Coordinate> rem = customRemove(lastp, junctions);
+                        System.out.println("List after " + rem);
+                        int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
+                        tempx = rem.get(index).getX();
+                        tempy = rem.get(index).getY();
+//                        preve = junctions.get(index);
+
+                    } else {
+                        int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
+                        tempx = junctions.get(index).getX();
+                        tempy = junctions.get(index).getY();
+//                        preve = junctions.get(index);
+                    }
+                }
+                Coordinate nextMove = new Coordinate(tempx, tempy);
+                System.out.println(nextMove.toString());
+                super.x = tempx;
+                super.y = tempy;
+                this.change(old, nextMove);
+                this.lastp = this.preve;
+                this.preve = nextMove;
+
 
 
 
@@ -214,7 +292,7 @@ public class AIPlayer extends Player {
                 Coordinate newt = new Coordinate(tempx, tempy);
                 System.out.println(newt.toString());
                 // sets the correct direciton
-                change(old, newt);
+                this.change(old, newt);
 
             }
             this.initialisedTime = time;
@@ -231,6 +309,26 @@ public class AIPlayer extends Player {
             }
         }
         return returno;
+    }
+    private ArrayList<Coordinate> customRemove(Coordinate rem, ArrayList<Coordinate> list) {
+        ArrayList<Coordinate> outputlist = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (!rem.same(list.get(i))) {
+                outputlist.add(list.get(i));
+            }
+        }
+        return outputlist;
+    }
+    private ArrayList<Coordinate> workoutPath(Coordinate currentPos, Coordinate itemPos) {
+        ArrayList<Coordinate> howtoget = new ArrayList<>();
+        while(!currentPos.same(itemPos)) {
+            // method for working out path
+            // know always moves up in in 40s
+            // try and get to x first
+            // then y
+
+        }
+        return howtoget;
     }
     // just a string checking method
     private boolean chosenMove(int xt, int yt, String direction) {
@@ -267,7 +365,20 @@ public class AIPlayer extends Player {
         }
         return false;
     }
-
+    private String juntionType(ArrayList<Coordinate> moves) {
+        if (moves.size() == 1) {
+            return "Deadend";
+        } else if (moves.size() == 2) {
+            // always have previous cooridnates in line and junction remove prev from sysem
+            return "Line";
+        } else if (moves.size() == 3) {
+            return "Junction";
+        } else if (moves.size() == 4) {
+            return "freeforall";
+        } else {
+            return "help";
+        }
+    }
     private double calcu(int px, int py, int ix, int iy) {
         double xdif = ix - px;
         double ydif = iy - py;
@@ -284,22 +395,19 @@ public class AIPlayer extends Player {
         }
         return false;
     }
-    private Item nearest(AIPlayer player, ArrayList<Item> items) {
-        int px = player.position.getX();
-        int py = player.position.getY();
-        int shortdist = Collect.andinsEuclidian(px, items.get(0).getX(), py, items.get(0).getY());
-        Item target = items.get(0);
-        for (int i =0; i < items.size(); i++) {
-            Item potItem = items.get(i);
-            int ix = potItem.getX();
-            int iy = potItem.getY();
-            int newDist = Collect.andinsEuclidian(px, ix, py, iy);
-            if (newDist < shortdist) {
-                target = potItem;
-                shortdist = newDist;
+    private Coordinate nearest(AIPlayer player, ArrayList<Item> items) {
+        int px = player.getPosition().getX();
+        int py = player.getPosition().getY();
+        int bestlength = Collect.andinsEuclidian(px, items.get(0).getX(), py, items.get(0).getY());
+        Coordinate bestCoord = items.get(0).getPosition();
+        for (int i = 0; i < items.size(); i++) {
+            int secondbest = Collect.andinsEuclidian(px, items.get(i).getX(), py, items.get(i).getY());
+            if (secondbest < bestlength) {
+                bestlength = secondbest;
+                bestCoord = items.get(i).getPosition();
             }
         }
-        return target;
+        return position;
     }
 
     private ArrayList<Coordinate> sortForBest(Coordinate target, ArrayList<Coordinate> potMove) {
@@ -397,17 +505,18 @@ public class AIPlayer extends Player {
         return openDoor.get(randomTake);
     }
     private Coordinate bestMove(Coordinate target, ArrayList<Coordinate> onesToUse) {
-        int besteuclid = Collect.andinsEuclidian(target.getX(), onesToUse.get(0).getX(), target.getY(), onesToUse.get(0).getY());
-        Coordinate best = onesToUse.get(0);
+        int bestCurrent = Collect.andinsEuclidian(target.getX(), onesToUse.get(0).getX(), target.getY(), onesToUse.get(0).getY());
+        Coordinate take = onesToUse.get(0);
         for (int i = 0; i < onesToUse.size(); i++) {
-            int nextbest = Collect.andinsEuclidian(target.getX(), onesToUse.get(i).getX(), target.getY(), onesToUse.get(i).getY());
-            if (nextbest < besteuclid) {
-                besteuclid = nextbest;
-                best = onesToUse.get(i);
+            int current = Collect.andinsEuclidian(target.getX(), onesToUse.get(i).getX(), target.getY(), onesToUse.get(i).getY());
+            if (current < bestCurrent) {
+                bestCurrent = current;
+                take = onesToUse.get(i);
+
             }
 
         }
-        return best;
+        return take;
     }
     private Boolean targets(Coordinate target, Coordinate other, Coordinate compare) {
         return Math.abs(target.getX() - other.getX()) < Math.abs(target.getX() - compare.getX()) || Math.abs(target.getY() - other.getY()) < Math.abs(target.getY() - compare.getY());
