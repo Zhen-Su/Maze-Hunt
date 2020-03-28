@@ -100,7 +100,8 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
 * Version 3.0: synchornize map , player can use the same map
   
-  * Add a new UDP thread for listen player exiting.
+  * 3.0.1Add a new UDP thread for listen player exiting.
+  * 3.0.2 integrate with AI player in single
   
   
   

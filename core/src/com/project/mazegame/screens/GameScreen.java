@@ -34,8 +34,13 @@ import static com.project.mazegame.tools.Variables.*;
 
 public class GameScreen implements Screen {
 	private Player player;
-	//private AIPlayer aiPlayer;// ---------need to be implemented
+	private AIPlayer aiPlayer;// ---------need to be implemented
+	private ArrayList<AIPlayer> aiPlayers;
 	private InputHandler inputHandler;
+	private AIPlayer aiPlayerAttack;
+	private Player playerAttack;
+	private int posAP;
+	private int posAAI;
 	private float delta;
 
 	private TiledMap tileMap;//
@@ -43,7 +48,6 @@ public class GameScreen implements Screen {
 	private TiledMapTileLayer collisionLayer;
 
 	private Texture exitButtonActive,exitButtonInactive;
-
 	private Texture heartTexture;
 	private Texture coinTexture;
 	private Texture swordTexture;
@@ -59,16 +63,8 @@ public class GameScreen implements Screen {
 	private BitmapFont font;
 	private Texture mapTexture, minimapOutline, playerIcon;
 
-	private Texture enchantedGlow;
-
-	//    private float timer;
 	public static float worldTimer;
-
 	Timer time = new Timer();
-
-	private Player player2;
-
-//	private Collect co;
 
 	private final int EXIT_WIDTH = 50;
 	private final int EXIT_HEIGHT = 20;
@@ -102,7 +98,7 @@ public class GameScreen implements Screen {
 
 		inputHandler = new InputHandler();
 
-		worldTimer = 10;
+		worldTimer = 250;
 
 
 		// read csv file
@@ -134,8 +130,9 @@ public class GameScreen implements Screen {
 
 		player = new Player(this.collisionLayer,name,123 , this.playerSkin,PlayersType.single);
 
-//       player.initialPosition();
-//        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
+		aiPlayer = new AIPlayer(this.collisionLayer, "Albert", 124,"pink",Direction.STOP,PlayersType.single);
+		aiPlayers = aiPlayer.AITakingOver(2);
+
 		cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
@@ -162,7 +159,6 @@ public class GameScreen implements Screen {
 		overlay = Assets.manager.get(Assets.circularOverlay,Texture.class);
 		coinPick= Assets.manager.get(Assets.coinAnimation,Texture.class);
 		minimapOutline = Assets.manager.get(Assets.minimapOutline,Texture.class);
-		enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
 		playerIcon = Assets.manager.get(Assets.playerOnMap,Texture.class);
 
 		overlayWidth = overlay.getWidth() +300;
@@ -171,23 +167,16 @@ public class GameScreen implements Screen {
 
 	@Override
 	public void show() {
-
 		getAsset();
-
-		//assuming it's a square map -> only need width of map and width of tile
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
-//		co = new Collect(player,null);
 		tempMapItemssize = mapItems.size();
-		//start timer
-		player.initialPosition();
 		font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-
 		playerPos = new Coordinate(player.position.getX(), player.position.getY());
 	}
+
 	int iconSize = 30;
 	@Override
 	public void render(float delta) { //method repeats a lot
-
 		updateTime(delta);
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -199,6 +188,13 @@ public class GameScreen implements Screen {
 		inputHandler.update();
 		ArrayList<Item> empty = new ArrayList<>();
 		player.update(delta, 0, empty, 0);
+
+		// cycles through the players and updates thier positions
+		for (int i = 0; i < aiPlayers.size(); i++) {
+			aiPlayers.get(i).update(delta, 1, mapItems, worldTimer);
+
+		}
+
 		//camera
 		cam.update(player.position.getX(),player.position.getY(),game);
 
@@ -218,13 +214,15 @@ public class GameScreen implements Screen {
 		if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
 			if ((player.position.getX() > player.co.nearestItem(player).getPosition().getX()) && (player.position.getX() < player.co.nearestItem(player).getPosition().getX()+100) &&
 					(player.position.getY() > player.co.nearestItem(player).getPosition().getY()) && (player.position.getY() < player.co.nearestItem(player).getPosition().getY()+100)){
-				pickUpItem();
+				pickUpItem(player);
 
 			}
 		}
 
-		game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
+		// handles the ai picking up items
+		aiMultiPickUp();
 
+		game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
 
 		int buffer = 10;
 		playerPos.setX(player.position.getX());
@@ -232,11 +230,66 @@ public class GameScreen implements Screen {
 		drawIcons(iconSize,buffer,playerPos);
 		drawExitButton(playerPos);
 
-		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
+		// genereates list of players at the moment empty but with networking will be changed
+		ArrayList<Player> emptyattack = new ArrayList<>();
+//		emptyattack.add(player);
+		// first checks for the player to see if there is a player
+		if(isPlayerOnSameP(player, emptyattack, aiPlayers)) {
+			//checks if the player is human or not
+			if(isHuman1()) {
+				//if player is human removes the player from the list then calls attack
+				emptyattack.remove(0);
+				player.attackP(emptyattack.get(posAP), worldTimer);
+				// earlier issue with not respawning so checks the move to and changes move to to coords generated by death
+				// posAP collects the right player from the list and changes the coordinates
+				emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
+				emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
+				// adds player back to list
+				emptyattack.add(player);
+			} else {
+				// does same thing as above except with ai players
+				AIPlayer playerinsert = aiPlayers.remove(posAAI);
+				player.attackAI(playerinsert, worldTimer);
+				// refreshes movements and changes it
+				playerinsert.x = playerinsert.moveTo.getX();
+				playerinsert.y = playerinsert.moveTo.getY();
+				// adds the player it has previously taken out
+				aiPlayers.add(posAAI, playerinsert);
+			}
+		}
+		// creates list of players and adds them so the ai can attack players
+		ArrayList<Player> forAI = new ArrayList<>();
+		forAI.add(player);
+		// goes throught the list of ai players
+		for (int i = 0; i < aiPlayers.size(); i++) {
+			// takes one player to attack
+			AIPlayer playerTurn = aiPlayers.remove(i);
+			// does the same thing as the above lines of code just with ai
+			if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
+				if(isHuman1()) {
+					// checks if the player is human or not
+					System.out.println("An ai is about to attack me");
+					playerTurn.attackP(forAI.get(posAP), worldTimer);
+					forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
+					forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
+				} else {
+					player.attackAI(aiPlayers.get(posAAI), worldTimer);
+					aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
+					aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
+				}
+			}
+			// adds the ai plaeyr back into the list so it is avaible to be attacked
+			aiPlayers.add(i, playerTurn);
+		}
 
-
+		//render myself
 		player.render(game.batch);
 		player.attack();
+
+		// renders players
+		for (int i = 0; i < aiPlayers.size(); i++) {
+			aiPlayers.get(i).render(game.batch);
+		}
 
 		String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
 
@@ -258,10 +311,166 @@ public class GameScreen implements Screen {
 		game.batch.end();
 	}
 
+	/**
+	 *method which compares and checks if the palyers are on the same space
+	 * @param investigation
+	 * @param check
+	 * @return
+	 */
+	private boolean sameSpace(Coordinate investigation, Coordinate check) {
+		// get  coordinates then abs and check difference
+		int xCorI = investigation.getX();
+		int xCorC = check.getX();
+		int yCorI = investigation.getY();
+		int yCorC = check.getY();
+		int xdist = Math.abs(xCorI - xCorC);
+		int ydist = Math.abs(yCorI - yCorC);
+		return (xdist <= 100 && ydist <= 100);
+	}
+
+	/**
+	 * same as above method just this time it is a human player checking for other player
+	 * @param current
+	 * @param playersA
+	 * @param aiPlayersA
+	 * @return
+	 */
+	private boolean isPlayerOnSameP(Player current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+		// first thing cycle through list checking and comparing coordinates
+		// if one person on same square that is the player attack return true and set attackplayer
+		this.aiPlayerAttack = null;
+		this.playerAttack = null;
+		Coordinate currentC = new Coordinate(current.x, current.y);
+		if (!playersA.isEmpty()) {
+			for (int i = 0; i < playersA.size(); i++) {
+				// gathers the coordinate so ti chan be checked later
+				Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					// sets the correct player to being attacked
+					this.playerAttack = playersA.get(i);
+					this.aiPlayerAttack = null;
+					// this.posap logs the index of the player in the list which is being attacked
+					this.posAP = i;
+					return true;
+				}
+			}
+		}
+
+		if (!aiPlayersA.isEmpty()) {
+			for (int i = 0; i < aiPlayersA.size(); i++) {
+				// gathers the coordainte to check
+				Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					// sets the correct player attack
+					this.playerAttack = null;
+					this.aiPlayerAttack = aiPlayersA.get(i);
+					// records the index so it can be gathered for later use
+					this.posAAI = i;
+					return true;
+				}
+			}
+		}
+		return false;
+
+	}
+
+	/**
+	 * method for checking if an ai player is on the same square as another player
+	 * @param current
+	 * @param playersA
+	 * @param aiPlayersA
+	 * @return
+	 */
+	private boolean isPlayerOnSameAI(AIPlayer current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+		// if one person on same square that is the player attack return true and set attackplayer
+		// starts by setting both to null
+
+		this.aiPlayerAttack = null;
+		this.playerAttack = null;
+		// gets the current coordiantes of the current player
+		Coordinate currentC = new Coordinate(current.x, current.y);
+		if (!playersA.isEmpty()) {
+			for (int i = 0; i < playersA.size(); i++) {
+				// cycles through the players checking if thecorroridnates are the same
+				Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					// sets the player to attack globally
+					this.playerAttack = playersA.get(i);
+					// makes usre ai is null
+					this.aiPlayerAttack = null;
+					// logs the index so it can be used later to retrieve player form list
+					this.posAP = i;
+					// treturns true to confirm a palyer is being attacked
+					return true;
+				}
+			}
+		}
+		if (!aiPlayersA.isEmpty()) {
+			// does the same thing as the above method
+			for (int i = 0; i < aiPlayersA.size(); i++) {
+				Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+				if (sameSpace(currentC, currentA)) {
+					// works out whether it is a player or ai being attacked
+					this.playerAttack = null;
+					this.aiPlayerAttack = aiPlayersA.get(i);
+					// records the index of the player so that it can be used later
+					this.posAAI = i;
+					return true;
+				}
+			}
+		}
+		// if the method doesn't return true throught it will return false
+		return false;
+
+	}
+
+	/*
+	 * method to check if the ai is human or not
+	 */
+	private boolean isHuman1() {
+		if (aiPlayerAttack != null && playerAttack == null) {
+			// checks whether one or the other is null
+			return false;
+		} else if (aiPlayerAttack == null && playerAttack != null) {
+			return true;
+			// shouldn't return anything so will through exception
+		} else {
+			try {
+				throw new Exception();
+			} catch (Exception e) {
+				System.out.println("This should not be happening");
+			}
+		}
+		return true;
+	}
+
+
+	/**
+	 *  method to do the same thing as player pick up just for multiple people
+	 */
+	private void aiMultiPickUp() {
+		for (AIPlayer aiPlayer : aiPlayers) {
+			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+				if ((aiPlayer.position.getX() > aiPlayer.co.nearestItem(aiPlayer).getPosition().getX()) && (aiPlayer.position.getX() < aiPlayer.co.nearestItem(aiPlayer).getPosition().getX() + 100) &&
+						(aiPlayer.getY() > aiPlayer.co.nearestItem(aiPlayer).getPosition().getY()) && (aiPlayer.getY() < aiPlayer.co.nearestItem(aiPlayer).getPosition().getY() + 100)) {
+
+					pickUpItem(aiPlayer);
+
+				}
+			}
+		}
+	}
+
 
 	int coinSize = iconSize*2;
 
 
+	/**
+	 * draw Icons on the screen
+	 * @param iconSize
+	 * @param buffer
+	 * @param position
+	 */
 	private void drawIcons(int iconSize, int buffer, Coordinate position) {
 		//take player x and y into account
 		int playerX = position.getX() - VIEWPORT_WIDTH/2;
@@ -300,8 +509,6 @@ public class GameScreen implements Screen {
 			font.getData().setScale(0.5f,0.5f);
 			font.draw(game.batch,message, xSword ,ySword  );
 		}
-
-
 
 		//draws coin icon
 		for ( int i = 0; i < player.coins; i ++ ) {
@@ -388,49 +595,54 @@ public class GameScreen implements Screen {
 		}
 
 	}
-	// -------------------------------------------------could move to collect class
-	private void pickUpItem() {
-		Item item =  player.co.nearestItem(player);
 
+	/**
+	 * this pick up method for all player
+	 */
+	public void pickUpItem(Player player) {
+		Item item = player.getCo().nearestItem(player);
 
-		if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")&& !(item.getType() == "healingPotion")&& !(item.getType() == "damagingPotion")) {
-			item = player.co.pickedUp(player.co.nearestItem(player));
+		boolean containItems = player.items.contains(item.getType());
+		boolean isCoin = item.getType().equals("coin");
+		boolean isHealingPotion = item.getType().equals("healingPotion");
+		boolean isDamagingPotion = item.getType().equals("damagingPotion");
 
+		if (!containItems && !isCoin && !isHealingPotion && !isDamagingPotion) {
+			//Only shield, gearEnchantment, sword ,minimap can add to items list.
+			item = player.getCo().pickedUp(player.getCo().nearestItem(player));
 
-			if (item.getType() == "shield") {
-				item.setInitialisedTime((time.currentTime()));
+			if (item.getType().equals("shield")) {
+				item.setInitialisedTime(time.currentTime());
 				player.initialisedShieldTime = time.currentTime();
-				player.co.shield(item, player);
-				if(player.items.contains("gearEnchantment")) {
+				player.getCo().shield(item, player);
+				if (player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				}
 			}
-			if (item.getType() == "sword") {
-				player.co.sword(item, player);
+			if (item.getType().equals("sword")) {
+				player.getCo().sword(item, player);
 			}
-
-
-			if (item.getType() == "gearEnchantment") {
-				player.co.gearEnchantment(item , player);
+			if (item.getType().equals("gearEnchantment")) {
+				player.getCo().gearEnchantment(item, player);
 				player.initialisedEnchantmentTime = time.currentTime();
-				if(player.items.contains("shield"))
+				if (player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
-			if(item.getType() == "minimap") {
-				player.co.minimap(item);
+			if (item.getType().equals("minimap")) {
+				player.getCo().minimap(item);
 			}
-		} else if (item.getType() == "coin") {
+		} else if (isCoin) {
 			mapItems.remove(item);
 			player.coins++;
-		}else if (item.getType() == "healingPotion") {
+		} else if (isHealingPotion) {
 			mapItems.remove(item);
-			player.co.healingPotion (player);
-		}else if (item.getType() == "damagingPotion") {
+			player.getCo().healingPotion(player);
+		} else if (isDamagingPotion) {
 			mapItems.remove(item);
-			player.co.damagingPotion(player);
+			player.getCo().damagingPotion(player);
 		}
-		//System.out.println(player.items);
 	}
+
 	private void writeCoinCSV() {
 		ArrayList<String> input = new ArrayList<>();
 

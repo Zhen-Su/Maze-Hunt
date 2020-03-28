@@ -35,7 +35,6 @@ public class Player {
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
 
-
     private float aiAttackTime;
     private float playerAttackTime;
     private boolean startPAttack;
@@ -45,6 +44,7 @@ public class Player {
     protected BitmapFont font;
     protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
     protected Texture player, sword, swordAttack, swordNotAttack, shield;
+    private Texture enchantedGlow;
 
     protected AnimationTool RightAnim;
     protected AnimationTool LeftAnim;
@@ -80,6 +80,7 @@ public class Player {
         time = new Timer();
         this.startPAttack = false;
         this.startAIAttack = false;
+        this.dir = Direction.STOP;
     }
 
     public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour, PlayersType playersType) {
@@ -236,10 +237,7 @@ public class Player {
             if (respawnCounter == 0) respawnCounter = time.currentTime();
 
             if (time.currentTime() - respawnCounter == 3) this.death(worldTime);
-
-            setAnimation(DyingAnim);
         } else {
-
 
             if (RIGHT_TOUCHED) {
                 if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
@@ -251,6 +249,7 @@ public class Player {
                     else
                         this.position.setX(x);
                 }
+                this.dir=Direction.R;
             }
             if (LEFT_TOUCHED) {
                 if (x > 0) {
@@ -260,6 +259,7 @@ public class Player {
                     else
                         this.position.setX(x);
                 }
+                this.dir=Direction.L;
             }
             if (UP_TOUCHED) {
                 if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
@@ -269,6 +269,7 @@ public class Player {
                     else
                         this.position.setY(y);
                 }
+                this.dir=Direction.U;
             }
             if (DOWN_TOUCHED) {
                 if (y > 0) {
@@ -279,19 +280,7 @@ public class Player {
                         this.position.setY(y);
 
                 }
-            }
-
-            //change player texture
-            if (UP_TOUCHED && !DOWN_TOUCHED) {
-                setAnimation(UpAnim);
-            } else if (DOWN_TOUCHED && !UP_TOUCHED) {
-                setAnimation(DownAnim);
-            } else if (LEFT_TOUCHED && !RIGHT_TOUCHED) {
-                setAnimation(LeftAnim);
-            } else if (RIGHT_TOUCHED && !LEFT_TOUCHED) {
-                setAnimation(RightAnim);
-            } else {
-                setAnimation(DownAnim);
+                this.dir=Direction.D;
             }
         }
 
@@ -301,26 +290,34 @@ public class Player {
     }
 
     public void render(SpriteBatch sb) {
-
         setBatch(sb);
-        //need to change AI animation here
-        if (playersType.equals(PlayersType.multi)) {
-            switch (this.dir) {
-                case U:
-                    setAnimation(UpAnim);
-                    break;
-                case D:
-                    setAnimation(DownAnim);
-                    break;
-                case R:
-                    setAnimation(RightAnim);
-                    break;
-                case L:
-                    setAnimation(LeftAnim);
-                    break;
-                case STOP:
-                    setAnimation(DownAnim);
-                    break;
+
+        if (this.isDead()) {
+            setAnimation(DyingAnim);
+            font.getData().setScale(1f, 1f);
+            String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
+            font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
+            animation.render();
+        }else{
+            //need to change AI animation here
+            if (playersType.equals(PlayersType.multi)||playersType.equals(PlayersType.single)) {
+                switch (this.dir) {
+                    case U:
+                        setAnimation(UpAnim);
+                        break;
+                    case D:
+                        setAnimation(DownAnim);
+                        break;
+                    case R:
+                        setAnimation(RightAnim);
+                        break;
+                    case L:
+                        setAnimation(LeftAnim);
+                        break;
+                    case STOP:
+                        setAnimation(DownAnim);
+                        break;
+                }
             }
         }
 
@@ -332,16 +329,12 @@ public class Player {
         if (this.items.contains("shield"))
             sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
 
+        if(this.items.contains("gearEnchantment"))
+           sb.draw(enchantedGlow ,this.position.getX() -enchantedGlow.getWidth()/2 ,this.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
 
         font.getData().setScale(0.5f, 0.5f);
         font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
 
-        if (this.isDead()) {
-            font.getData().setScale(1f, 1f);
-            String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
-            font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
-            animation.render();
-        }
     }
 
     //-----------------functions
@@ -653,6 +646,7 @@ public class Player {
         swipeDown = Assets.manager.get(Assets.swipeDown, Texture.class);
         playerDying = Assets.manager.get(Assets.playerDying, Texture.class);
         font = Assets.manager.get(Assets.font, BitmapFont.class);
+        enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
 
         sword = swordNotAttack;
     }

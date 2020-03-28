@@ -41,7 +41,7 @@ public class Coordinate {
 	public boolean same(Coordinate p) {
 		return this.x == p.x && this.y == p.y;
 	}
-	public boolean same(Coordinate p, Coordinate x) {
+	public static boolean same(Coordinate p, Coordinate x) {
 		return x.x == p.x && x.y == p.y;
 	}
 }
