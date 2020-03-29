@@ -1,8 +1,5 @@
 package com.project.mazegame.networking.Messagess;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 
@@ -14,19 +11,22 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
-public class AttackMessage implements Message{
-    private int msgType = Message.ATTACK_MSG;
-    private int id;
+public class DecreaseHealthMessage implements Message {
+    private int msgType = Message.DESCREASE_HP;
+    private int beAttackedID;
+    private int numOfHealth;
     private boolean debug = true;
 
     private MultiPlayerGameScreen gameClient;
 
-    public AttackMessage(int id)
-    {
-        this.id = id;
+    public DecreaseHealthMessage(int beAttackedID,int numOfHealth) {
+        this.beAttackedID = beAttackedID;
+        this.numOfHealth=numOfHealth;
     }
 
-    public AttackMessage(MultiPlayerGameScreen gameClient){this.gameClient = gameClient;}
+    public DecreaseHealthMessage(MultiPlayerGameScreen gameClient){
+        this.gameClient = gameClient;
+    }
 
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
@@ -34,7 +34,8 @@ public class AttackMessage implements Message{
         DataOutputStream dos = new DataOutputStream(baos);
         try{
             dos.writeInt(msgType);
-            dos.writeInt(id);
+            dos.writeInt(beAttackedID);
+            dos.writeInt(numOfHealth);
 
         }catch (IOException e) {
             e.printStackTrace();
@@ -42,7 +43,7 @@ public class AttackMessage implements Message{
         byte[] buf = baos.toByteArray();
         try {
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, new InetSocketAddress(serverIP, serverUDPPort));
-            if(debug) System.out.println("I'm id" + id + ", I'll send an Attack message");
+            if(debug) System.out.println("I attack a player, I'll send an Decrease message");
             ds.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,24 +53,20 @@ public class AttackMessage implements Message{
     @Override
     public void process(DataInputStream dis) {
         try {
-            int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getID()){
+            int beAttackedID = dis.readInt();
+            int numOfHealth = dis.readInt();
+            if(beAttackedID != this.gameClient.getMultiPlayer().getID()){
                 return;
-            }
+            }else{
+                this.gameClient.getMultiPlayer().decreaseHealth(numOfHealth);
 
-            for(Player t : gameClient.getPlayers())
-            {
-                if(t.getID() == id)
-                {
-                    t.isAttacking=true;
+
+                if(debug) {
+                    System.out.println("-------------------------------");
+                    System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
+                    System.out.println("I will decrease health by "+numOfHealth);
+                    System.out.println("-------------------------------");
                 }
-            }
-
-            if(debug) {
-                System.out.println("-------------------------------");
-                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
-                System.out.println("I received this attack message from ID:"+id+" player");
-                System.out.println("-------------------------------");
             }
 
         } catch (IOException e){

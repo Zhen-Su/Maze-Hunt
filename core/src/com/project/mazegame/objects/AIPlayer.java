@@ -347,7 +347,7 @@ public class AIPlayer extends Player {
         this.attackPStart = true;
     }
     @Override
-    // same as bove method jsut attackign another ai instead
+    // same as above method just attacking another ai instead
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         System.out.println("I am executing");
         if (attackAITime - time > 0.3 || !attackAIStart) {

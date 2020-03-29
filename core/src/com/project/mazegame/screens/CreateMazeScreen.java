@@ -457,7 +457,7 @@ public class CreateMazeScreen implements Screen {
                         if(playerChosen && difficultyChosen && mapChosen) {
                             setPreferences();
                             if (multi)
-                                game.setScreen(new HostLobbyScreen(game, name,Integer.parseInt(numOfAI),map,player));
+                                game.setScreen(new HostLobbyScreen(game, usernameTextField.getText(),Integer.parseInt(numOfAI),map,player));
                             else
                                 game.setScreen(new GameScreen(game));
                         }
