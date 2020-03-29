@@ -4,77 +4,82 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Client.NetClient;
-import com.project.mazegame.networking.Messagess.CollectMessage;
-import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
-import com.project.mazegame.networking.Messagess.PlayerNewMessage;
-import com.project.mazegame.networking.Messagess.CollectMessage;
-import com.project.mazegame.networking.Messagess.ItemCollectedMessage;
-import com.project.mazegame.networking.Messagess.ItemCreateMessage;
+import com.project.mazegame.networking.Messagess.PlayerExitMessage;
 import com.project.mazegame.networking.Server.GameServer;
+import com.project.mazegame.objects.AIGameClient;
+import com.project.mazegame.objects.AIPlayer;
 import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Item;
+import com.project.mazegame.objects.MultiAIPlayer;
 import com.project.mazegame.objects.MultiPlayer;
-import com.project.mazegame.objects.MultiPlayerAI;
-import com.project.mazegame.tools.Collect;
+import com.project.mazegame.objects.Player;
+import com.project.mazegame.tools.Assets;
+import com.project.mazegame.tools.CSVStuff;
 import com.project.mazegame.tools.Coordinate;
-import com.project.mazegame.tools.MultiCollect;
 import com.project.mazegame.tools.OrthoCam;
+import com.project.mazegame.tools.PlayersType;
+import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-//import static com.project.mazegame.screens.GameScreen.mapItems;
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 
-public class MultiPlayerGameScreen implements Screen,InputProcessor {
-
+public class MultiPlayerGameScreen implements Screen, InputProcessor {
+    private boolean debug = true;
+    //Use for Host player
+    private GameServer server;
+    private boolean isHost;
     private boolean HostStartGame = false;
 
     //Item List List
-    public ArrayList<Item> mapItems = new ArrayList<Item>();
-
-    //Items position Set
-    public static HashSet<String> positions = new HashSet<String>();
+    public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
     private MazeGame game;
     private OrthoCam cam;
-    private Collect coed;
+    private int posAP;
+    private int posAAI;
+    private AIPlayer aiPlayerAttack;
+    private Player playerAttack;
 
+    private boolean imHost;
     private MultiPlayer myMultiPlayer;
-    private MultiPlayerAI myAIPlayer;
     private NetClient netClient = new NetClient(this);
-    private List<MultiPlayer> players = new ArrayList<MultiPlayer>();
-    private List<MultiPlayerAI> aiPlayers = new ArrayList<>();
+
+    private List<Player> players = new ArrayList<>();
+    public ArrayList<AIPlayer> aiPlayers = new ArrayList<>();
+    private List<Player> humanPlayers = new ArrayList<>();
     public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
-    public HashMap<Integer, Integer> aiPlayersIdIndexList = new HashMap<>();
+
+    public ArrayList<NetClient> aiNetClients = new ArrayList<>();
+    public ArrayList<AIGameClient> aiGameClients = new ArrayList<>();
+
 
     private TiledMap tileMap;//
     private OrthogonalTiledMapRenderer tileMapRenderer;//
     private TiledMapTileLayer collisionLayer;
     private int tempMapItemssize;
-    private MultiCollect co;
     private MultiPlayer player2;
 
-    private AssetManager manager;
-    public Texture player_up, player_right, player_left, player_down, sword,shield;
-    public Texture player_up1, player_right1, player_left1, player_down1; // player been poisoned.
+    public Texture player, coinPick;
     private Texture exitButtonActive;
     private Texture exitButtonInactive;
+    private Texture minimapTexture;
     private Texture heartTexture;
     private Texture coinTexture;
     private Texture swordTexture;
@@ -84,292 +89,610 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
     private Texture compassTexture;
     private Texture healingPotionTexture;
     private Texture damagingPotionTexture;
+    private Texture gearEnchantmentTexture;
     private Texture overlay;
+    //private Texture coinPick;
+    private BitmapFont font;
+    public BitmapFont bitmapFont;
+    public Texture enchantedGlow;
+    private Texture mapTexture, minimapOutline, playerIcon;
+    public String map;
 
     private float timer;
-    public float worldTimer;
+    public static float worldTimer = 360;
+    public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
+    private float initialisedEnchantmentTime;
     int overlayWidth;
     int overlayHeight;
 
     private final int EXIT_WIDTH = 50;
     private final int EXIT_HEIGHT = 20;
     private final int EXIT_Y = VIEWPORT_HEIGHT;
+    Coordinate playerPos;
+    public String username;
+    public String serverIP;
+    public String playerSkin;
 
 
     //=====================================constructors=============================================
 
-    public MultiPlayerGameScreen(MazeGame game,String username,String serverIP) {
+    //This construction for host Player
+    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, int NumOfAI, String map, String playerSkin) {
         this.game = game;
-
+        this.username = username;
+        this.serverIP = serverIP;
+        this.map = map;
+        this.playerSkin = playerSkin;
+        this.isHost = isHost;
         timer = 0;
-        worldTimer = 60;
 
-        tileMap = new TmxMapLoader().load("prototypeMap.tmx");
+        aiPlayerAttack = null;
+        playerAttack = null;
+
+        if (map.equals("map1")) {
+            tileMap = new TmxMapLoader().load("Map1.tmx");
+            mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class);
+        } else if (map.equals("map2")) {
+            tileMap = new TmxMapLoader().load("Map2.tmx");
+            mapTexture = Assets.manager.get(Assets.map2Icon, Texture.class);
+        } else {
+            tileMap = new TmxMapLoader().load("Map3.tmx");
+            mapTexture = Assets.manager.get(Assets.map3Icon, Texture.class);
+        }
         tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-
         collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-        manager = new AssetManager();
-        loadAsset();
 
-        myMultiPlayer=new MultiPlayer(this.collisionLayer,username,this, Direction.STOP);
-        myAIPlayer = new MultiPlayerAI(this.collisionLayer, username, 123,this, coed, Direction.STOP);
-        netClient.connect(serverIP,GameServer.SERVER_TCP_PORT);
+        myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, playerSkin, PlayersType.multi);
+        netClient.connect(serverIP, false, 0, true);
+
+        if (isHost) {
+            //create AI players
+            createAIplayers(NumOfAI);
+            //Every AI player connect to GameServer
+            for (int i = 0; i < aiGameClients.size(); i++) {
+                NetClient nc = aiGameClients.get(i).getNetClient();
+                nc.connect(serverIP, true, i, false);
+            }
+        }
 
         Gdx.input.setInputProcessor(this);
 
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(),myMultiPlayer.position.getY());
+        cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
 
-        // buttons
-        exitButtonActive = new Texture("exit_button_active.png");
-        exitButtonInactive = new Texture("exit_button_inactive.png");
-        audioButtonActive = new Texture("audioOn.png");
-        audioButtonInactive = new Texture("audioOff.png");
+        getAsset();
+    }
 
-        heartTexture = new Texture("heart.png");
-        coinTexture = new Texture("coin.png");
-        swordTexture = new Texture("sword2.png");
-        shieldTexture = new Texture("shield.png");
-        healingPotionTexture = new Texture("Potion2.png");
-        compassTexture = new Texture("RolledMap.png");
-        damagingPotionTexture = new Texture("Potion3.png");
-        overlay = new Texture("circularOverlay.png");
+    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, String playerSkin) {
+        this.game = game;
+        this.username = username;
+        this.serverIP = serverIP;
+        this.playerSkin = playerSkin;
+        this.isHost = isHost;
+        timer = 0;
 
-        overlayWidth = overlay.getWidth();
-        overlayHeight = overlay.getHeight();
+        aiPlayerAttack = null;
+        playerAttack = null;
+
+        netClient.connect(serverIP, false, 0, false);
+
+        Gdx.input.setInputProcessor(this);
+        cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
+        getAsset();
     }
 
 
     //===================================Getter&Setter==============================================
 
-    public MultiPlayer getMultiPlayer() { return myMultiPlayer; }
+    public MultiPlayer getMultiPlayer() {
+        return myMultiPlayer;
+    }
 
+    public void setMultiPlayer(MultiPlayer multiPlayer) {
+        this.myMultiPlayer = multiPlayer;
+    }
 
-    public void setMultiPlayer(MultiPlayer multiPlayer) { this.myMultiPlayer = multiPlayer; }
+    public List<Player> getPlayers() {
+        return players;
+    }
 
-    public MultiPlayerAI getMultiPlayerAI() {return myAIPlayer;}
-    public List<MultiPlayer> getPlayers() { return players; }
-    public List<MultiPlayerAI> getAiPlayers() { return aiPlayers;}
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
 
+    public NetClient getNc() {
+        return netClient;
+    }
 
-    public void setPlayers(List<MultiPlayer> players) { this.players = players; }
+    public void setNc(NetClient netClient) {
+        this.netClient = netClient;
+    }
 
-    public void setAIPlayers(List<MultiPlayerAI> aiPlayers) {this.aiPlayers = aiPlayers;}
-    public NetClient getNc() { return netClient; }
+    public TiledMapTileLayer getCollisionLayer() {
+        return collisionLayer;
+    }
 
-    public void setNc(NetClient netClient) { this.netClient = netClient; }
+    public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
+        this.collisionLayer = collisionLayer;
+    }
 
-    public TiledMapTileLayer getCollisionLayer() { return collisionLayer; }
+    public boolean isHostStartGame() {
+        return HostStartGame;
+    }
 
-    public boolean isHostStartGame() { return HostStartGame; }
+    public void setHostStartGame(boolean hostStartGame) {
+        HostStartGame = hostStartGame;
+    }
 
-    public void setHostStartGame(boolean hostStartGame) { HostStartGame = hostStartGame; }
+    public boolean isImHost() {
+        return imHost;
+    }
+
+    public void setImHost(boolean imHost) {
+        this.imHost = imHost;
+    }
+
+    public GameServer getServer() {
+        return server;
+    }
+
+    public void setServer(GameServer server) {
+        this.server = server;
+    }
+
+    public void setMapTexture(Texture mapTexture) {
+        this.mapTexture = mapTexture;
+    }
+
+    public void setTileMap(TiledMap tileMap) {
+        this.tileMap = tileMap;
+    }
+
+    public void setTileMapRenderer(OrthogonalTiledMapRenderer tileMapRenderer) {
+        this.tileMapRenderer = tileMapRenderer;
+    }
+
+    public List<Player> getHumanPlayers() {
+        return humanPlayers;
+    }
+
+    public void setHumanPlayers(List<Player> humanPlayers) {
+        this.humanPlayers = humanPlayers;
+    }
 
     //==============================================================================================
 
-    public void loadAsset(){
-        manager.load("playerRedBackCrop.png", Texture.class);
-        manager.load("playerRedRightCrop.png", Texture.class);
-        manager.load("playerRedLeftCrop.png", Texture.class);
-        manager.load("playerRedFrontCrop.png", Texture.class);
-        manager.load("sword2.png", Texture.class);
-        manager.load("shield.png", Texture.class);
-        manager.load("heart.png",Texture.class);
-        manager.load("coin.png",Texture.class);
-        manager.load("sword2.png",Texture.class);
-        manager.load("shield.png",Texture.class);
-        manager.load("Potion2.png",Texture.class);
-        manager.load("RolledMap.png",Texture.class);
-        manager.load("Potion3.png",Texture.class);
-//        manager.load("playerRedBackIll.png", Texture.class);
-//        manager.load("playerRedRightIll", Texture.class);
-//        manager.load("playerRedLeftIll.png", Texture.class);
-//        manager.load("playerRedFrontIll.png", Texture.class);
+    /**
+     * This method for create AI player in multilayer
+     * Only host player can create AI player
+     *
+     * @param aiNum
+     */
+    public void createAIplayers(int aiNum) {
+        if (aiNum != 0) {
+            for (int i = 0; i < aiNum; i++) {
+                //create instance of ai player
+                AIPlayer[] multiAIPlayers = new MultiAIPlayer[aiNum];
+                multiAIPlayers[i] = new MultiAIPlayer(this.collisionLayer, "AI" + i, i, this, "red", Direction.STOP, PlayersType.multi);
+                //add this ai player to the list
+                aiPlayers.add(multiAIPlayers[i]);
+                //Create netclient and add netclient to list
+                aiNetClients.add(new NetClient(this));
+                //create aiGameClient and add it to list
+                aiGameClients.add(new AIGameClient(aiPlayers.get(i), aiNetClients.get(i)));
 
-        manager.finishLoading();// waiting for all assets load.
-
-        player_up = manager.get("playerRedBackCrop.png", Texture.class);
-        player_right = manager.get("playerRedRightCrop.png", Texture.class);
-        player_left = manager.get("playerRedLeftCrop.png", Texture.class);
-        player_down = manager.get("playerRedFrontCrop.png", Texture.class);
-        sword = manager.get("sword2.png", Texture.class);
-        shield = manager.get("shield.png", Texture.class);
-
-//        heartTexture = manager.get("heart.png", Texture.class);
-//        coinTexture = manager.get("coin.png", Texture.class);
-//        swordTexture = manager.get("sword2.png", Texture.class);
-//        shieldTexture = manager.get("shield.png", Texture.class);
-//        healingPotionTexture = manager.get("Potion2.png", Texture.class);
-//        compassTexture = manager.get("RolledMap.png", Texture.class);
-//        damagingPotionTexture = manager.get("Potion3.png", Texture.class);
-
-//        player_up1 = manager.get("playerRedBackIll.png", Texture.class);
-//        player_right1 = manager.get("playerRedRightIll.png", Texture.class);
-//        player_left1 = manager.get("playerRedLeftIll.png", Texture.class);
-//        player_down1 = manager.get("playerRedFrontIll.png", Texture.class);
+            }
+            //set NetClient for every AI player
+            for (int i = 0; i < aiPlayers.size(); i++) {
+                AIPlayer multiAIPlayer = aiPlayers.get(i);
+                NetClient aiNetClient = aiNetClients.get(i);
+                multiAIPlayer.setAiNetClient(aiNetClient);
+            }
+        }
     }
 
-    public void unloadAsset(){
-        manager.unload("playerRedBackCrop.png");
-        manager.unload("playerRedRightCrop.png");
-        manager.unload("playerRedLeftCrop.png");
-        manager.unload("playerRedFrontCrop.png");
-        manager.unload("sword2.png");
-        manager.unload("shield.png");
-//        manager.unload("playerRedBackIll.png");
-//        manager.unload("playerRedRightIll.png");
-//        manager.unload("playerRedLeftIll.png");
-//        manager.unload("playerRedFrontIll.png");
+    /**
+     * Get game resources from Assets
+     */
+    public void getAsset() {
+        exitButtonActive = Assets.manager.get(Assets.exit_button_active, Texture.class);
+        exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive, Texture.class);
+        audioButtonActive = Assets.manager.get(Assets.audioOn, Texture.class);
+        audioButtonInactive = Assets.manager.get(Assets.audioOff, Texture.class);
+        heartTexture = Assets.manager.get(Assets.heart, Texture.class);
+        coinTexture = Assets.manager.get(Assets.coin, Texture.class);
+        swordTexture = Assets.manager.get(Assets.sword, Texture.class);
+        shieldTexture = Assets.manager.get(Assets.shield, Texture.class);
+        healingPotionTexture = Assets.manager.get(Assets.Potion, Texture.class);
+        gearEnchantmentTexture = Assets.manager.get(Assets.Potion2, Texture.class);
+        damagingPotionTexture = Assets.manager.get(Assets.Potion3, Texture.class);
+        minimapTexture = Assets.manager.get(Assets.RolledMap, Texture.class);
+        overlay = Assets.manager.get(Assets.circularOverlay, Texture.class);
+        coinPick = Assets.manager.get(Assets.coinAnimation, Texture.class);
+        minimapOutline = Assets.manager.get(Assets.minimapOutline, Texture.class);
+        enchantedGlow = Assets.manager.get(Assets.ENCHANTED, Texture.class);
+        playerIcon = Assets.manager.get(Assets.playerOnMap, Texture.class);
+
+        overlayWidth = overlay.getWidth() + 300;
+        overlayHeight = overlay.getHeight() + 300;
     }
 
     @Override
     public void show() {
-        //assuming it's a square map -> only need width of map and width of tile
-        //TODO need to make it more general
-        if(myMultiPlayer.getId() == 1) {
+
+        if (imHost) {
             generateMapItems(collisionLayer.getWidth(), 100);
         }
-        co = new MultiCollect(game, myMultiPlayer,this);
+
         tempMapItemssize = mapItems.size();
-        //start timer
-        myMultiPlayer.initialPosition();
 
-        System.out.println("mapItems: ");
-        for(int i=0; i<mapItems.size();i++){
-            System.out.print("("+mapItems.get(i).getPosition().getX()+","+mapItems.get(i).getPosition().getY()+")");
+        font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+
+        playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
+
+        if (debug) {
+            System.out.println("mapItems: ");
+            for (int i = 0; i < mapItems.size(); i++) {
+                System.out.print("(" + mapItems.get(i).getPosition().getX() + "," + mapItems.get(i).getPosition().getY() + ")");
+            }
+            System.out.println();
         }
-
     }
 
     int iconSize = 30;
+
     @Override
     public void render(float delta) { //method repeats a lot
         updateTime(delta);
-        removeShield();
-        playerDamaging();
-
-        //only draw mapItems if one gets picked up
-        if (!(mapItems.size() == tempMapItemssize)) {
-            tempMapItemssize = mapItems.size();
-        }
 
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         delta = Gdx.graphics.getDeltaTime();
 
-        //comment out ai player line to run correctly
-//       aiPlayer.update(delta);
+        //update other player
+        ArrayList<Item> empty = new ArrayList<>();
+        for (Player otherPlayer : players) {
+            //only update multiPlayer, not AIPlayer
+            if (otherPlayer instanceof MultiPlayer)
+                otherPlayer.update(delta, 0, empty, 0);
+        }
+
+        //Only host player can update ai player
+        if (imHost) {
+            for (Player aiPlayer : aiPlayers) {
+                if (aiPlayer instanceof Player)
+                    aiPlayer.update(delta, 2, mapItems, worldTimer);
+            }
+        }
+
+        //update myself
+        myMultiPlayer.update(delta, 0, empty, 0);
 
         //camera
-        cam.update(myMultiPlayer.position.getX(),myMultiPlayer.position.getY(),game);
+        cam.update(myMultiPlayer.position.getX(), myMultiPlayer.position.getY(), game);
 
         //draws tilemap
         tileMapRenderer.setView(cam.cam);
         tileMapRenderer.render();
 
-
+        //begin to draw
         game.batch.begin();
+        {
 
-//        draw collectibles
-        drawCollectibles();
+            //draw collectibles
+            drawCollectibles();
 
-        //Collectibles pick up
-        if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
-            if ((myMultiPlayer.position.getX() > co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < co.nearestItem(myMultiPlayer).getPosition().getX()+100) &&
-                    (myMultiPlayer.position.getY() > co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < co.nearestItem(myMultiPlayer).getPosition().getY()+100))
-            {
-                //System.out.println("Over items");
-                pickUpItem();
+            //Collectibles pick up for me
+            if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
+                if ((myMultiPlayer.position.getX() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX() + 100) &&
+                        (myMultiPlayer.position.getY() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY() + 100)) {
+                    pickUpItem(myMultiPlayer);
+                }
+            }
+
+            //Collectibles pick up for other player
+            if (!(mapItems.size() == 0)) {
+                for (int i = 0; i < players.size(); i++) {
+                    Player otherPlayer = players.get(i);
+                    if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
+                            (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
+                        pickUpItem(otherPlayer);
+                    }
+                }
+            }
+
+            game.batch.draw(overlay, myMultiPlayer.position.getX() - overlayWidth / 2, myMultiPlayer.position.getY() - overlayHeight / 2, overlayWidth, overlayHeight);
+
+            int buffer = 10;
+            playerPos.setX(myMultiPlayer.position.getX());
+            playerPos.setY(myMultiPlayer.position.getY());
+            drawIcons(iconSize, buffer, playerPos);
+            drawExitButton(playerPos);
+
+            // generate list of players at the moment empty but with networking will be changed
+
+            // first checks for the player to see if there is a player
+            if (isPlayerOnSameP(myMultiPlayer, (ArrayList<Player>) humanPlayers, aiPlayers)) {
+//                //checks if the player is human or not
+                if (isHuman1()) {
+//                    //if player is human removes the player from the list then calls attack
+//                    emptyattack.remove(0);
+                    System.out.println("Here is a human player by my side");
+                    myMultiPlayer.attackP(humanPlayers.get(posAP), worldTimer);
+//                    // earlier issue with not respawning so checks the move to and changes move to to coords generated by death
+//                    emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
+//                    emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
+//                    // adds player back to list
+//                    emptyattack.add(myMultiPlayer);
+                } else {
+//                    // does same thing as above except with ai players
+//                    AIPlayer playerinsert = aiPlayers.remove(posAAI);
+//                    System.out.println("Here is an AI by my side");
+                    myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
+//                    playerinsert.x = playerinsert.moveTo.getX();
+//                    playerinsert.y = playerinsert.moveTo.getY();
+//                    aiPlayers.add(posAAI, playerinsert);
+                }
+            }
+
+//            // creates list of players and adds them so the ai can attack players
+//            ArrayList<Player> forAI = new ArrayList<>();
+//            forAI.add(myMultiPlayer);
+//            // goes through the list of ai players
+//            for (int i = 0; i < aiPlayers.size(); i++) {
+//                // takes one player to attack
+//                AIPlayer playerTurn = aiPlayers.remove(i);
+//                // does the same thing as the above lines of code just with ai
+//                if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
+//                    if (isHuman1()) {
+//                        System.out.println("An ai is about to attack me");
+//                        playerTurn.attackP(forAI.get(posAP), worldTimer);
+//                        forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
+//                        forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
+//                    } else {
+//                        myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
+//                        aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
+//                        aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
+//                    }
+//                }
+//                // adds the ai player back into the list so it is available to be attacked
+//                aiPlayers.add(i, playerTurn);
+//            }
+
+
+            //if im host then use aiPlayers to render ai
+            if (imHost) {
+                for (Player aiPlayer : aiPlayers) {
+                    aiPlayer.render(game.batch);
+                }
+                //only draw otherplayer, no need to draw AI again.
+                for (Player otherPlayer : players) {
+                    if (otherPlayer instanceof MultiPlayer)
+                        otherPlayer.render(game.batch);
+                }
+            } else {
+                //if i'm not a host player, then only use players list to draw all players, include AI
+                for (Player otherPlayer : players) {
+                    otherPlayer.render(game.batch);
+                }
+            }
+
+            //draw myself on my screen
+            if (null != myMultiPlayer) {
+                myMultiPlayer.render(game.batch);
+            }
+
+            //draw timer
+            String message = "Time = " + (int) (worldTimer - (time.currentTime()));
+            font.draw(game.batch, message, myMultiPlayer.position.getX(), myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 10);
+
+            //if timer runs out
+            if ((worldTimer - time.currentTime()) < 3) {
+                overlayWidth -= 15;
+                overlayHeight -= 15;
+
+                if ((worldTimer - time.currentTime()) < 0) {
+                    this.dispose();
+                    //TODO when  game over, player want to start a new game again
+                    writeCoinCSV();
+                    game.setScreen(new EndScreen(this.game));
+                    if (isHost) {
+                        this.server.dispose(this);
+                        if (debug) {
+                            System.out.println("Server Close");
+                        }
+                    }
+                    //if gameover, then close server from hostplayer
+                }
             }
         }
-
-        game.batch.draw(overlay,myMultiPlayer.position.getX() - overlayWidth/2,myMultiPlayer.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
-
-
-        int iconSize = 30;
-        int buffer = 10;
-        Coordinate playerPos = new Coordinate(myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
-        drawIcons(iconSize,buffer,playerPos);
-        drawExitButton(playerPos);
-
-        //draw other players on my screen
-        for(int i=0;i<players.size();i++){
-            MultiPlayer otherPlayer = players.get(i);
-            otherPlayer.render(game.batch);
-        }
-
-        // draw ai on screen
-        for (int i = 0; i < aiPlayers.size(); i++) {
-            MultiPlayerAI nextPlayer = aiPlayers.get(i);
-            nextPlayer.render(game.batch);
-        }
-
-        //draw myself on my screen
-        if(null!=myMultiPlayer) {
-            myMultiPlayer.render(game.batch);
-        }
-
         game.batch.end();
+    }
 
-        //if timer runs out
-        if(worldTimer < 0) {
-            overlayWidth -= 15;
-            overlayHeight -= 15;
-
-            if(worldTimer < -3) {
-                this.dispose();
-                //System.out.println("cam " + cam.cam.position.x + " , " + cam.cam.position.y);
-                game.setScreen(new EndScreen(this.game));
-                //System.out.println("get here");
+    // method to check if the ai is human or not
+    private boolean isHuman1() {
+        if (aiPlayerAttack != null && playerAttack == null) {
+            // checks whetehr one or the other is null
+            return false;
+        } else if (aiPlayerAttack == null && playerAttack != null) {
+            return true;
+            // shouldn't return antying so will through exception
+        } else {
+            try {
+                throw new Exception();
+            } catch (Exception e) {
+                System.out.println("This should not be happening");
             }
         }
+        return true;
+    }
+
+    // method for checking if an ai player is on the same square as another player
+    private boolean isPlayerOnSameAI(AIPlayer current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+        // if one person on same square that is the player attack return true and set attackplayer
+        // starts by setting both to null
+
+        this.aiPlayerAttack = null;
+        this.playerAttack = null;
+        // gets the current coordiantes of the current player
+        Coordinate currentC = new Coordinate(current.x, current.y);
+        if (!playersA.isEmpty()) {
+            for (int i = 0; i < playersA.size(); i++) {
+                // cycles through the players checking if thecorroridnates are the same
+                Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    // sets the player to attack globally
+                    this.playerAttack = playersA.get(i);
+                    // makes usre ai is null
+                    this.aiPlayerAttack = null;
+                    // logs the index so it can be used later
+                    this.posAP = i;
+                    return true;
+                }
+            }
+        }
+        if (!aiPlayersA.isEmpty()) {
+            // does the same thing as the above method
+            for (int i = 0; i < aiPlayersA.size(); i++) {
+                Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    this.playerAttack = null;
+                    this.aiPlayerAttack = aiPlayersA.get(i);
+                    this.posAAI = i;
+                    return true;
+                }
+            }
+        }
+        // if the method doesn't return true throught it will return false
+        return false;
+
+    }
+
+    // same as above method just this time it is a human player checking for other laeyrs
+    private boolean isPlayerOnSameP(Player current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+        // first thing cycle through list checking and comparing coordinates
+        // if one person on same square that is the player attack return true and set attackplayer
+        this.aiPlayerAttack = null;
+        this.playerAttack = null;
+        Coordinate currentC = new Coordinate(current.x, current.y);
+        if (!playersA.isEmpty()) {
+            for (int i = 0; i < playersA.size(); i++) {
+                Coordinate currentA = new Coordinate(playersA.get(i).x, playersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    this.playerAttack = playersA.get(i);
+                    this.aiPlayerAttack = null;
+                    this.posAP = i;
+                    return true;
+                }
+            }
+        }
+        if (!aiPlayersA.isEmpty()) {
+            for (int i = 0; i < aiPlayersA.size(); i++) {
+                Coordinate currentA = new Coordinate(aiPlayersA.get(i).x, aiPlayersA.get(i).y);
+                if (sameSpace(currentC, currentA)) {
+                    this.playerAttack = null;
+                    this.aiPlayerAttack = aiPlayersA.get(i);
+                    this.posAAI = i;
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    // method which compares and checks if the palyers are on the same space
+    private boolean sameSpace(Coordinate investigation, Coordinate check) {
+        // get  coordinates then abs and check difference
+        int xCorI = investigation.getX();
+        int xCorC = check.getX();
+        int yCorI = investigation.getY();
+        int yCorC = check.getY();
+        int xdist = Math.abs(xCorI - xCorC);
+        int ydist = Math.abs(yCorI - yCorC);
+        return (xdist <= 100 && ydist <= 100);
     }
 
 
-    int coinSize = iconSize*2;
+    int coinSize = iconSize * 2;
 
+    private void writeCoinCSV() {
+        ArrayList<String> input = new ArrayList<>();
+
+        for (Player player : players) {
+            input.add(player.getName() + " = " + player.coins);
+        }
+
+        input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.coins);
+
+        System.out.println("in method " + input);
+
+        CSVStuff.writeCSV(input, "coinCSV");
+    }
 
     private void drawIcons(int iconSize, int buffer, Coordinate position) {
         //take player x and y into account
-        int playerX = position.getX() - VIEWPORT_WIDTH/2;
-        int playerY = position.getY() - VIEWPORT_HEIGHT/2;
+        int playerX = position.getX() - VIEWPORT_WIDTH / 2;
+        int playerY = position.getY() - VIEWPORT_HEIGHT / 2;
         //draw hearts in top left corner
 
         int xheart = buffer + playerX;
-        int yheart = VIEWPORT_HEIGHT - iconSize -buffer + playerY;
+        int yheart = VIEWPORT_HEIGHT - iconSize - buffer + playerY;
         int lives = myMultiPlayer.getHealth();
-        for(int i = 0; i < lives; i ++) {
-            game.batch.draw(heartTexture, xheart, yheart,iconSize , iconSize);
+        for (int i = 0; i < lives; i++) {
+            game.batch.draw(heartTexture, xheart, yheart, iconSize, iconSize);
             xheart += (iconSize + buffer);
         }
         if (myMultiPlayer.items.contains("shield")) {
             //draw shield icon
             float shieldSize = 50;
-            float xShield = VIEWPORT_WIDTH - shieldSize -buffer + playerX;
-            float yShield = VIEWPORT_HEIGHT - (shieldSize *3) + playerY;
-            game.batch.draw(shieldTexture, xShield, yShield,shieldSize , shieldSize);
+            float xShield = VIEWPORT_WIDTH - shieldSize - buffer + playerX;
+            float yShield = VIEWPORT_HEIGHT - (shieldSize * 3) + playerY - 50;
+            game.batch.draw(shieldTexture, xShield, yShield, shieldSize, shieldSize);
+
+            String message = "XP :" + myMultiPlayer.getShieldXP();
+            font.getData().setScale(0.5f, 0.5f);
+            font.draw(game.batch, message, xShield, yShield);
         }
         //sword icon
-        if ( myMultiPlayer.items.contains("sword")) {
+        if (myMultiPlayer.items.contains("sword")) {
             float swordSize = 50;
-            float xSword = VIEWPORT_WIDTH  - swordSize - buffer + playerX;
-            float ySword = VIEWPORT_HEIGHT - (swordSize *2) + playerY;
-            game.batch.draw(swordTexture, xSword, ySword,swordSize , swordSize);
+            float xSword = VIEWPORT_WIDTH - swordSize - buffer + playerX;
+            float ySword = VIEWPORT_HEIGHT - (swordSize * 2) + playerY;
+            game.batch.draw(swordTexture, xSword, ySword, swordSize, swordSize);
+            String message = "XP :" + myMultiPlayer.getSwordXP();
+            font.getData().setScale(0.5f, 0.5f);
+            font.draw(game.batch, message, xSword, ySword);
         }
         //draws coin icon
-        for ( int i = 0; i < myMultiPlayer.coins; i ++ ) {
+        for (int i = 0; i < myMultiPlayer.coins; i++) {
             float xCoin = buffer + playerX;
-            float yCoin = VIEWPORT_HEIGHT - ( iconSize*3) -buffer + playerY;
-            if ( coinSize != iconSize*2) coinSize -=5;
-            game.batch.draw(coinTexture, xCoin + (i*10), yCoin, coinSize,coinSize);
+            float yCoin = VIEWPORT_HEIGHT - (iconSize * 3) - buffer + playerY;
+            if (coinSize != iconSize * 2)
+                coinSize -= 5;
+            game.batch.draw(coinTexture, xCoin + (i * 10), yCoin, coinSize, coinSize);
+        }
+        float mapSize = 100;
+        float xMap = myMultiPlayer.getX() + VIEWPORT_WIDTH / 2 - mapSize - 50;
+        float yMap = myMultiPlayer.getY() - VIEWPORT_HEIGHT / 2 + 50;
+
+
+        if (myMultiPlayer.items.contains("minimap")) {
+            game.batch.draw(minimapOutline, xMap - 8, yMap - 9, mapSize + 17, mapSize + 17);
+            game.batch.draw(mapTexture, xMap, yMap, mapSize, mapSize);
+
+            //draw player position
+            int x = (myMultiPlayer.position.getX() - 500 + 60) / 20;
+            int y = (myMultiPlayer.position.getY() - 500 + 80) / 20;
+            game.batch.draw(playerIcon, xMap + x, yMap + y, 5, 5);
         }
     }
 
     private void drawCollectibles() {
-        for(int i = 0; i < mapItems.size(); i ++) {
+        for (int i = 0; i < mapItems.size(); i++) {
             Texture texture = heartTexture;
 
             if (mapItems.get(i).getType().equals("shield")) {
@@ -384,91 +707,99 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
             if (mapItems.get(i).getType().equals("healingPotion")) {
                 texture = healingPotionTexture;
             }
-
             if (mapItems.get(i).getType().equals("damagingPotion")) {
                 texture = damagingPotionTexture;
             }
             if (mapItems.get(i).getType().equals("gearEnchantment")) {
                 texture = healingPotionTexture;
             }
-            if (mapItems.get(i).getType().equals("compass")) {
-                texture = compassTexture;
+            if (mapItems.get(i).getType().equals("minimap")) {
+                texture = minimapTexture;
             }
 
             int x = mapItems.get(i).getPosition().getX();
             int y = mapItems.get(i).getPosition().getY();
-            game.batch.draw(texture,x, y ,100,100);
+            game.batch.draw(texture, x, y, 100, 100);
         }
 
     }
 
-    public void pickUpItem() {
-        Item item =  co.nearestItem(myMultiPlayer);
+    public void pickUpItem(Player player) {
+        Item item = player.getCo().nearestItem(player);
 
-        if (!(myMultiPlayer.items.contains(item.getType())) && !(item.getType().equals("coin"))) {
+        boolean containItems = player.items.contains(item.getType());
+        boolean isCoin = item.getType().equals("coin");
+        boolean isHealingPotion = item.getType().equals("healingPotion");
+        boolean isDamagingPotion = item.getType().equals("damagingPotion");
 
-            item = co.pickedUp(co.nearestItem(myMultiPlayer));
-
-            int indexOfItem = co.mapItems.indexOf(item);
-
-            CollectMessage collectMessage = new CollectMessage(this.getMultiPlayer().getId(),this,item.getType());
-            this.getNc().send(collectMessage);
-
-            ItemCollectedMessage itemCollected = new ItemCollectedMessage(this.getMultiPlayer().getId(),this,item.getType(),item.getPosition().getX(),item.getPosition().getY(),indexOfItem);
-            this.getNc().send(itemCollected);
-
+        if (!containItems && !isCoin && !isHealingPotion && !isDamagingPotion) {
+            //Only shield, gearEnchantment, sword ,minimap can add to items list.
+            item = player.getCo().pickedUp(player.getCo().nearestItem(player));
 
             if (item.getType().equals("shield")) {
-                item.setInitialisedTime(worldTimer);
-                initialisedShieldTime = worldTimer;
-                co.shield(item, myMultiPlayer);
+                item.setInitialisedTime(time.currentTime());
+                player.initialisedShieldTime = time.currentTime();
+                player.getCo().shield(item, player);
+                if (player.items.contains("gearEnchantment")) {
+                    player.initialisedShieldTime += 3;
+                }
             }
             if (item.getType().equals("sword")) {
-                co.sword(item, myMultiPlayer, player2);
-            }
-            if (item.getType().equals("healingPotion")) {
-                myMultiPlayer.loadPlayerTextures();
-                co.healingPotion (myMultiPlayer);
-            }
-            if (item.getType().equals("damagingPotion")) {
-                item.setInitialisedTime(worldTimer);
-                initialisedPotionTime = worldTimer;
-                co.damagingPotion(item, myMultiPlayer);
+                player.getCo().sword(item, player);
             }
             if (item.getType().equals("gearEnchantment")) {
-                co.gearEnchantment(item , myMultiPlayer);
+                player.getCo().gearEnchantment(item, player);
+                player.initialisedEnchantmentTime = time.currentTime();
+                if (player.items.contains("shield"))
+                    player.initialisedShieldTime += 3;
             }
-        } else if (item.getType().equals("coin")) {
+            if (item.getType().equals("minimap")) {
+                player.getCo().minimap(item);
+            }
+        } else if (isCoin) {
             mapItems.remove(item);
-            myMultiPlayer.coins++;
-            coinSize = 100;
+            player.coins++;
+        } else if (isHealingPotion) {
+            mapItems.remove(item);
+            player.getCo().healingPotion(player);
+        } else if (isDamagingPotion) {
+            mapItems.remove(item);
+            player.getCo().damagingPotion(player);
         }
     }
 
     private void drawExitButton(Coordinate position) {
 
         //take player x and y into account
-        int playerX = position.getX() - VIEWPORT_WIDTH/2;
-        int playerY = position.getY() - VIEWPORT_HEIGHT/2;
+        int playerX = position.getX() - VIEWPORT_WIDTH / 2;
+        int playerY = position.getY() - VIEWPORT_HEIGHT / 2;
 
-        float x = VIEWPORT_WIDTH  - EXIT_WIDTH + playerX;
-        float y = VIEWPORT_HEIGHT - EXIT_HEIGHT + playerY;
+        int x = VIEWPORT_WIDTH - EXIT_WIDTH + playerX;
+        int y = VIEWPORT_HEIGHT - EXIT_HEIGHT + playerY;
 
+        //origin of cursor is top left hand corner
         //exit button in top right corner
-        game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            //cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
             this.dispose();
             game.setScreen(new MenuScreen(this.game));
+            PlayerExitMessage playerExitMessage = new PlayerExitMessage(this, getMultiPlayer().getID());
+            this.getNc().send(playerExitMessage);
+            this.getNc().sendClientDisconnectMsg();
         }
-        if (Gdx.input.getX() < (x + EXIT_WIDTH) && Gdx.input.getX() > x && MazeGame.HEIGHT - Gdx.input.getY() > EXIT_Y && MazeGame.HEIGHT - Gdx.input.getY() < EXIT_Y + EXIT_HEIGHT) {
-            game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-            if (Gdx.input.isTouched())
-                Gdx.app.exit();
-        }
-        else {
-            game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
-        }
+
+        if (Gdx.input.getX() < V_WIDTH && Gdx.input.getX() > V_WIDTH - EXIT_WIDTH && Gdx.input.getY() < EXIT_HEIGHT && Gdx.input.getY() > 0) {
+            game.batch.draw(exitButtonActive, x, y, EXIT_WIDTH, EXIT_HEIGHT);
+            if (Gdx.input.justTouched()) {
+                this.dispose();
+                game.setScreen(new MenuScreen(this.game));
+                this.server.dispose(this);
+                if (debug) {
+                    System.out.println("Server close");
+                }
+
+            }
+        } else game.batch.draw(exitButtonInactive, x, y, EXIT_WIDTH, EXIT_HEIGHT);
     }
 
 
@@ -498,113 +829,95 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
         exitButtonActive.dispose();
         exitButtonInactive.dispose();
         myMultiPlayer.dispose();
-        for(int i=0;i<players.size();i++){
-            MultiPlayer otherMultiPlayer = players.get(i);
+        for (int i = 0; i < players.size(); i++) {
+            Player otherMultiPlayer = players.get(i);
             otherMultiPlayer.dispose();
         }
 
-        for (int i = 0; i < aiPlayers.size(); i++) {
-            aiPlayers.get(i).dispose();
-        }
-
         //TODO handle client and server exit game events here
-        unloadAsset();
-        manager.clear();
-        manager.dispose();
         mapItems.clear();
+        humanPlayers.clear();
+        players.clear();
+        playersIdIndexList.clear();
+        aiPlayers.clear();
+        aiGameClients.clear();
+        aiNetClients.clear();
         cam.cam.viewportHeight = 1000;
         cam.cam.viewportWidth = 1000;
-        cam.update(V_WIDTH/2, V_HEIGHT/2, game);
+        cam.update(V_WIDTH / 2, V_HEIGHT / 2, game);
         cam.cam.update();
     }
 
-    public void generateMapItems( int widthInTiles, int tileWidth ) {
-        int maxShields = 3;
-        int maxCoins = 10;
-        int maxSwords = 5;
-        int maxCompasses = 3;
-        int maxPotions = 10;
+    public void generateMapItems(int widthInTiles, int tileWidth) {
+        HashSet<String> positions = new HashSet<String>();
+
+        int maxShields = 15;
+        int maxCoins = 50;
+        int maxSwords = 25;
+        int maxMinimaps = 15;
+        int maxPotions = 50;
         int maxX = widthInTiles;
         int maxY = widthInTiles;
 
-
-        //Shield
         for (int i = 0; i <= maxShields; i++) {
             Coordinate position = new Coordinate(0, 0);
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
             position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
+
             Item item = new Item("shield", position);
-//            System.out.println("Shield positions: ");
-//            System.out.println(position);
+
             if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
-//                System.out.println("adding to positions");
                 positions.add(position.toString());
-
                 //Send Item message to server
-                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "shield", position.getX(), position.getY());
-                System.out.println(position.toString());
-                netClient.send(message);
+                sendItemGenMsg(position, item);
             }
         }
 
-        //Coin
         for (int i = 0; i < maxCoins; i++) {
             Coordinate position = new Coordinate(0, 0);
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
             position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
+
             Item item = new Item("coin", position);
-//            System.out.println("Coin positions: ");
-//            System.out.println(position);
+
             if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
-
                 //Send Item message to server
-                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "coin", position.getX(), position.getY());
-                System.out.println(position.toString());
-                netClient.send(message);
+                sendItemGenMsg(position, item);
             }
-
         }
 
-        //Sword
         for (int i = 0; i < maxSwords; i++) {
             Coordinate position = new Coordinate(0, 0);
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
             position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
+
             Item item = new Item("sword", position);
+
             if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
 
                 //Send Item message to server
-                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "sword", position.getX(), position.getY());
-                System.out.println(position.toString());
-                netClient.send(message);
+                sendItemGenMsg(position, item);
             }
-
         }
 
-        //Compass
-        for (int i = 0; i < maxCompasses; i++) {
+        for (int i = 0; i < maxMinimaps; i++) {
             Coordinate position = new Coordinate(0, 0);
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
             position.changeY((int) ((Math.random() * (maxY))) * tileWidth);
-            Item item = new Item("compass", position);
+            Item item = new Item("minimap", position);
             if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                 mapItems.add(item);
                 positions.add(position.toString());
-
                 //Send Item message to server
-                ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "compass", position.getX(), position.getY());
-                System.out.println(position.toString());
-                netClient.send(message);
+                sendItemGenMsg(position, item);
             }
-
         }
 
-        //Potions
         for (int i = 0; i < maxPotions; i++) {
             Coordinate position = new Coordinate(0, 0);
             position.changeX((int) ((Math.random() * (maxX))) * tileWidth);
@@ -616,77 +929,54 @@ public class MultiPlayerGameScreen implements Screen,InputProcessor {
                 if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                     mapItems.add(item);
                     positions.add(position.toString());
-
                     //Send Item message to server
-                    ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "healingPotion", position.getX(), position.getY());
-                    System.out.println(position.toString());
-                    netClient.send(message);
+                    sendItemGenMsg(position, item);
                 }
             } else if (whatPotion == 2) {
                 Item item = new Item("damagingPotion", position);
                 if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                     mapItems.add(item);
                     positions.add(position.toString());
-
                     //Send Item message to server
-                    ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "damagingPotion", position.getX(), position.getY());
-                    System.out.println(position.toString());
-                    netClient.send(message);
+                    sendItemGenMsg(position, item);
                 }
             } else {
                 Item item = new Item("gearEnchantment", position);
                 if (!(positions.contains(position.toString())) && !(myMultiPlayer.isCellBlocked((float) position.getX(), (float) position.getY()))) {
                     mapItems.add(item);
                     positions.add(position.toString());
-
                     //Send Item message to server
-                    ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getId(), "gearEnchantment", position.getX(), position.getY());
-                    System.out.println(position.toString());
-                    netClient.send(message);
+                    sendItemGenMsg(position, item);
                 }
             }
         }
-
-        //System.out.println(positions);
     }
 
-    private void playerDamaging() {
-        if(!myMultiPlayer.items.contains("damagingPotion")) {
-            return;
-        }
-        if (initialisedPotionTime - worldTimer == 2) {
-            myMultiPlayer.loadPlayerTextures();
-            myMultiPlayer.items.remove("damagingPotion");
-        }
+    private void sendItemGenMsg(Coordinate position, Item item) {
+        ItemCreateMessage message = new ItemCreateMessage(myMultiPlayer.getID(), item.getType(), position.getX(), position.getY());
+//        System.out.println(position.toString());
+        netClient.send(message);
     }
 
-    private void removeShield() {
-        if(!myMultiPlayer.items.contains("shield")) {
-            return;
-        }
-        if (initialisedShieldTime - worldTimer == 10) {
-            myMultiPlayer.items.remove("shield");
-        }
-    }
 
     private void updateTime(float dt) {
-        timer += dt;
-        if (timer >= 1) {
+        float initial = time.currentTime();
+        time.updateTimer(dt);
+
+        if (!(time.currentTime() == initial)) {
             worldTimer--;
-//    		System.out.println("World Timer: " + worldTimer);
-            timer = 0;
         }
     }
 
     //------------------------------------InputProcessor--------------------------------------------
     //----------------------------------------------------------------------------------------------
     @Override
-    public boolean keyUp(int keycode){
+    public boolean keyUp(int keycode) {
         return myMultiPlayer.keyUp(keycode);
     }
 
     @Override
-    public boolean keyDown(int keycode){
+    public boolean keyDown(int keycode) {
         return myMultiPlayer.keyDown(keycode);
     }
 

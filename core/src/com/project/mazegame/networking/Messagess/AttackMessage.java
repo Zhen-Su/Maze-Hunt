@@ -1,10 +1,10 @@
 package com.project.mazegame.networking.Messagess;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.project.mazegame.objects.MultiPlayer;
-import com.project.mazegame.screens.HostLobbyScreen;
+import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
-import com.project.mazegame.screens.OtherLobbyScreen;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -14,28 +14,19 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
-/**
- * When host player "enter", and then tell everyone he wanna start
- */
-public class StartGameMessage implements Message{
-    public int msgType = Message.HOST_START;
-    public boolean HostStartGame;
+public class AttackMessage implements Message{
+    private int msgType = Message.ATTACK_MSG;
     private int id;
+    private boolean debug = false;
+
     private MultiPlayerGameScreen gameClient;
-    private boolean debug =false;
 
-    public StartGameMessage(MultiPlayerGameScreen gameClient) { this.gameClient = gameClient;}
-
-    public StartGameMessage(MultiPlayerGameScreen gameClient,boolean HostStartGame,int id)
+    public AttackMessage(int id)
     {
-        this(gameClient);
-        this.id=id;
-        this.HostStartGame = HostStartGame;
+        this.id = id;
     }
 
-
-
-
+    public AttackMessage(MultiPlayerGameScreen gameClient){this.gameClient = gameClient;}
 
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
@@ -44,14 +35,14 @@ public class StartGameMessage implements Message{
         try{
             dos.writeInt(msgType);
             dos.writeInt(id);
-            dos.writeBoolean(HostStartGame);
-        } catch (IOException e) {
+
+        }catch (IOException e) {
             e.printStackTrace();
         }
         byte[] buf = baos.toByteArray();
         try {
             DatagramPacket datagramPacket = new DatagramPacket(buf, buf.length, new InetSocketAddress(serverIP, serverUDPPort));
-            System.out.println("I'm id:"+id+"I'll send a start game message.");
+            if(debug) System.out.println("I'm id" + id + ", I'll send an Attack message");
             ds.send(datagramPacket);
         } catch (IOException e) {
             e.printStackTrace();
@@ -60,26 +51,28 @@ public class StartGameMessage implements Message{
 
     @Override
     public void process(DataInputStream dis) {
-        try{
-
+        try {
             int id = dis.readInt();
             if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
 
-            boolean start = dis.readBoolean();
-            //set my HostStartGame true
-            gameClient.setHostStartGame(start);
-
-            if(debug) {
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
-                System.out.println("This start game message is from: id" + id);
-                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            for(Player t : gameClient.getPlayers())
+            {
+                if(t.getID() == id)
+                {
+                    t.isAttacking=true;
+                }
             }
 
-        }catch (IOException e)
-        {
+            if(debug) {
+                System.out.println("-------------------------------");
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
+                System.out.println("I received this attack message from ID:"+id+" player");
+                System.out.println("-------------------------------");
+            }
+
+        } catch (IOException e){
             e.printStackTrace();
         }
     }

@@ -11,6 +11,10 @@ public class AudioHandler {
     private Sound hitSound;
     private Sound shieldSound;
     private Sound stepSound;
+    private Sound pickupCoinSound;
+    private Sound addHealthSound;
+
+
     private String theScreen;
 
     private boolean musicOn;
@@ -27,16 +31,21 @@ public class AudioHandler {
          * BGM made by Andin
          */
         menuBGM = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
-//        gameBGM = Gdx.audio.newMusic(Gdx.files.internal("sounds\\gameBgm.mp3"));
+        gameBGM = Gdx.audio.newMusic(Gdx.files.internal("sounds\\mainbgm.mp3"));
 
+        attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\atk.mp3"));
+        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\hit.mp3"));
+        shieldSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\shield.mp3"));
+        stepSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\step.mp3"));
+        pickupCoinSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\pickupCoin.mp3"));
+        addHealthSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\addHealth.mp3"));
 
-        /**
-         * SFX made by Andin
-         */
-//        attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\atk.mp3"));
-//        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\hit.mp3"));
-//        shieldSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\shield.mp3"));
-//        stepSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\step.mp3"));
+        //atk sound
+        //hit sound
+        //shield sound
+        //step sound
+        //pickup coin sound
+        //add health sound
     }
 
     public void setMusicOff() {

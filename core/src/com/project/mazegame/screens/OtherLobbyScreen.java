@@ -28,6 +28,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.project.mazegame.objects.Player;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -40,19 +41,15 @@ public class OtherLobbyScreen implements Screen {
     private MazeGame game;
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
-
     public boolean waitingStatus=false ;
-
-
     private OrthographicCamera cam;
     private BitmapFont bitmapFont;
     private BitmapFont font;
     private MultiPlayerGameScreen gameClient;
     private Texture backGround;
     private String hostPlayerName;
-    private List<MultiPlayer> players;
+    private List<Player> players;
     private boolean hasReady = true;
-
     String username;
     String ip;
 
@@ -73,13 +70,13 @@ public class OtherLobbyScreen implements Screen {
 
     public void setHostPlayerName(String hostPlayerName) { this.hostPlayerName = hostPlayerName; }
 
-    public List<MultiPlayer> getPlayers() { return players; }
+    public List<Player> getPlayers() { return players; }
 
-    public void setPlayers(List<MultiPlayer> players) { this.players = players; }
+    public void setPlayers(List<Player> players) { this.players = players; }
 
     @Override
     public void show() {
-        backGround = new Texture("UI\\menuBackground.png");
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
         bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont();
         font.setColor(Color.RED);
@@ -106,7 +103,7 @@ public class OtherLobbyScreen implements Screen {
                 //draw the ready players on the screen
                 int currY = 800;
                 font.draw(game.batch, username, 230, 850);
-                for (MultiPlayer multiPlayer : players) {
+                for (Player multiPlayer : players) {
                     font.draw(game.batch, multiPlayer.getName(), 230, currY);
                     currY -= 50;
                 }
@@ -137,8 +134,17 @@ public class OtherLobbyScreen implements Screen {
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER))
         {
             if(hasReady) {
-                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip);
+                //TODO this need to pass playerskin, it's default by red
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false,"red");
                 setGameClient(gameClient);
+
+                try {
+                    Thread.currentThread().sleep(200);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                //TODO this need make more general, if second create maze, then host player is not the first in List
+                //TODO if host player not ready, then will show an EXCEPTION!!!!!!
                 setHostPlayerName(gameClient.getPlayers().get(0).getName());
                 setPlayers(gameClient.getPlayers());
                 hasReady = false;
@@ -147,8 +153,9 @@ public class OtherLobbyScreen implements Screen {
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();
-            PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getId());
+            PlayerExitMessage message = new PlayerExitMessage(gameClient,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(message);
+            gameClient.getNc().sendClientDisconnectMsg();
         }
     }
 

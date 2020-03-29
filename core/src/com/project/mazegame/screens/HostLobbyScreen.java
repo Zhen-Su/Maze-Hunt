@@ -12,6 +12,7 @@ import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.MultiPlayer;
+import com.project.mazegame.objects.Player;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -32,25 +33,27 @@ public class HostLobbyScreen implements Screen {
     public static final int HEIGHT = 1000;
 
 
-    public HostLobbyScreen(MazeGame game,String username) {
+    public HostLobbyScreen(MazeGame game,String username,int NumOfAI, String map, String color) {
         this.game=game;
         this.hostUsername=username;
         GameServer gameServer=new GameServer();
         this.gameServer = gameServer;
         new Thread(gameServer).start();
         try {
-            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress());
+            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress(),true,NumOfAI,map,color);
             this.gameClient=gameClient;
+            this.gameClient.setServer(gameServer);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        gameServer.setGameClient(gameClient);
         cam = new OrthographicCamera(WIDTH, HEIGHT);
         cam.setToOrtho(false, WIDTH, HEIGHT);
     }
 
     @Override
     public void show() {
-        backGround = new Texture("UI\\menuBackground.png");
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
         bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont();
         font.setColor(Color.RED);
@@ -75,7 +78,7 @@ public class HostLobbyScreen implements Screen {
             font.draw(game.batch, "Ready Player:   ", 70, 850);
 
             int currY = 850;
-            for (MultiPlayer multiPlayer : gameClient.getPlayers()) {
+            for (Player multiPlayer : gameClient.getPlayers()) {
                 font.draw(game.batch, multiPlayer.getName(), 230, currY);
                 currY -= 50;
             }
@@ -85,9 +88,9 @@ public class HostLobbyScreen implements Screen {
 
     private void handleInput(){
         if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getId());
+            StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(start);
-            gameClient.generateMapItems(gameClient.getCollisionLayer().getWidth(),100 );
+            gameClient.setImHost(true);
             game.setScreen(gameClient);
         }else if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             backToMenuScreen();
@@ -96,7 +99,7 @@ public class HostLobbyScreen implements Screen {
     }
 
     private void backToMenuScreen(){
-//        System.out.println("back to menu screen");
+        System.out.println("back to menu screen");
         game.setScreen(new MenuScreen(this.game));
     }
 

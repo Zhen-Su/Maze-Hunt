@@ -18,11 +18,11 @@ public class Variables {
 	public static boolean RIGHT_TOUCHED;
 	public static boolean SPACE_TOUCHED;
 
-	  
-	  
-	  
-	  
-	  
+
+
+
+
+
 
 	//  public static float SCROLLTRACKER_X;
 //	  public static float SCROLLTRACKER_Y;
