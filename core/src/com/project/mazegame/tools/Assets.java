@@ -94,7 +94,9 @@ public class Assets {
     public static final String waitingForPlayers = "UI/Titles/Waitingforplayers....png";
     public static final String endAnimation =  "Player/endAnimation.png";
    
-
+    public static final String playButton =  "UI/MenuButtons/playButton.png";
+    public static final String playButtonPressed =  "UI/MenuButtons/playButtonPressed.png";
+    
 	public Assets (){
 		load();
 	}
@@ -203,6 +205,8 @@ public class Assets {
 		         manager.load(playerOrange , Texture.class);
 		         manager.load(playerPink , Texture.class);
 		         manager.load(playerYellow , Texture.class);
+		         manager.load(playButton , Texture.class);
+		         manager.load(playButtonPressed , Texture.class);
 		         
 		         manager.load(endAnimation , Texture.class);
 		         

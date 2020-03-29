@@ -135,7 +135,7 @@ public class EndScreen implements Screen {
         
 
         int drawX = xMid("MB");
-        if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
+        if (isHovering(drawX, PLAY_Y- 50, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y - 50 ,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
                 bgm.stop();

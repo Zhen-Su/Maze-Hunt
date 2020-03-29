@@ -29,13 +29,14 @@ public class HostLobbyScreen implements Screen {
     private String hostUsername;
     private MultiPlayerGameScreen gameClient;
     private BitmapFont font ;
-    private Texture backGround;
+    private Texture backGround ,startMazeButtonActive,startMazeButtonInactive;
     public Texture playerRed,playerBlue,playerGreen,playerLilac,playerOrange,playerPink,playerYellow;
     private OrthographicCamera cam;
 
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
     private String hostColour;
+    private boolean StartPressed = false;
 
     public HostLobbyScreen(MazeGame game,String username) {
         this.game=game;
@@ -66,6 +67,9 @@ public class HostLobbyScreen implements Screen {
         ArrayList<String> output = CSVStuff.readCSVFile("csvFile");
         
         this.hostColour = output.get(1);
+        
+        startMazeButtonActive = Assets.manager.get(Assets.StartNewMazeButtonPressed,Texture.class);
+        startMazeButtonInactive = Assets.manager.get(Assets.StartNewMazeButton,Texture.class);
     }
 
     @Override
@@ -116,7 +120,24 @@ public class HostLobbyScreen implements Screen {
                 currY -= 50;
         }
         
+        
+        
+        if (isHovering(300,150, 400, 100)) {
+            game.batch.draw(startMazeButtonActive,300,150, 400, 100);
+            if (Gdx.input.justTouched())
+                StartPressed = true;
+        }
+        else {
+            game.batch.draw(startMazeButtonInactive,300,150, 400, 100);
+        }
+        
         game.batch.end();
+    }
+    
+    private boolean isHovering(int X, int  Y, int WIDTH, int HEIGHT) {
+        if (Gdx.input.getX() < (X + WIDTH) && Gdx.input.getX() > X && MazeGame.HEIGHT - Gdx.input.getY() > Y && MazeGame.HEIGHT - Gdx.input.getY() < Y + HEIGHT)
+            return true;
+        return false;
     }
     
     private Texture getColour(String colour) {
@@ -145,7 +166,7 @@ public class HostLobbyScreen implements Screen {
     }
 
     private void handleInput(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        if(StartPressed) {
             StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(start);
             gameClient.setImHost(true);
