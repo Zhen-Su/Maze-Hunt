@@ -114,10 +114,10 @@ public class HostLobbyScreen implements Screen {
                 
                 // Trying to display what colour each player has chosen next to their name
                 game.batch.draw(getColour(multiPlayer.getColour()), 850, currY - 50 , 120,160);
-                
+                currY -= 50;
             }
                 
-                currY -= 50;
+               
         }
         
         
