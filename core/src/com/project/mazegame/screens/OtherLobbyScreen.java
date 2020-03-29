@@ -143,8 +143,7 @@ public class OtherLobbyScreen implements Screen {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                //TODO this need make more general, if second create maze, then host player is not the first in List
-                //TODO if host player not ready, then will show an EXCEPTION!!!!!!
+
                 setHostPlayerName(gameClient.getPlayers().get(0).getName());
                 setPlayers(gameClient.getPlayers());
                 hasReady = false;

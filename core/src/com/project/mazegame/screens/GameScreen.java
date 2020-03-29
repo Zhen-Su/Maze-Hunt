@@ -274,7 +274,7 @@ public class GameScreen implements Screen {
 					forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
 					forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
 				} else {
-					player.attackAI(aiPlayers.get(posAAI), worldTimer);
+					playerTurn.attackAI(aiPlayers.get(posAAI), worldTimer);
 					aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
 					aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
 				}
@@ -285,14 +285,14 @@ public class GameScreen implements Screen {
 
 		//render myself
 		player.render(game.batch);
-		player.attack();
+//		player.attack();
 
 		// renders players
 		for (int i = 0; i < aiPlayers.size(); i++) {
 			aiPlayers.get(i).render(game.batch);
 		}
 
-		String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
+		String message = "Time = " + (int) (worldTimer) ;
 
 
 		font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);

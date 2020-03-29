@@ -62,6 +62,7 @@ public class PlayerExitMessage implements Message {
             }
             //delete this player from player list according to player's id.
             int indexOfExitPlayer = gameClient.playersIdIndexList.get(id);
+            gameClient.nameOfExitPlayer = gameClient.getPlayers().get(indexOfExitPlayer).getName();
             gameClient.getPlayers().remove(indexOfExitPlayer);
 
 

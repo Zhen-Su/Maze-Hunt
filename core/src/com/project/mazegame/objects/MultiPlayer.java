@@ -183,8 +183,8 @@ public class MultiPlayer extends Player {
             //After 3 second, then call death()
             if (time.currentTime() - respawnCounter == 3) {
                 this.death();
-                MoveMessage message = new MoveMessage(this.gameClient.getMultiPlayer().getID(), this.position.getX(), this.position.getY(), dir);
-                gameClient.getNc().send(message);
+//                MoveMessage message = new MoveMessage(this.gameClient.getMultiPlayer().getID(), this.position.getX(), this.position.getY(), dir);
+//                gameClient.getNc().send(message);
             }
             setAnimation(DyingAnim);
         }
@@ -216,6 +216,7 @@ public class MultiPlayer extends Player {
                 break;
             case Input.Keys.SPACE:
                 isAttacking = true;
+                pressSpace = true;
                 attackMessage();
                 break;
         }
@@ -245,6 +246,7 @@ public class MultiPlayer extends Player {
                 break;
             case Input.Keys.SPACE:
                 isAttacking = false;
+                pressSpace = false;
 //                attackMessage();
                 break;
         }
@@ -421,14 +423,17 @@ public class MultiPlayer extends Player {
         this.health = 5;
         this.items.clear();
         this.respawnCounter = 0;
+
+        MoveMessage message = new MoveMessage(this.gameClient.getMultiPlayer().getID(), this.position.getX(), this.position.getY(), dir);
+        gameClient.getNc().send(message);
     }
 
     // method for a player attacking another player
     public void attackP(Player playerA, float time) {
-        // first checks the time delay to stop spamming and the plaeyer hans't attacked before
-        if (playerAttackTime - time > 0.02) {
-            // checks if the space key is pressed
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        // checks if the space key is pressed
+        if (pressSpace) {
+            // first checks the time delay to stop spamming and the plaeyer hans't attacked before
+            if (playerAttackTime - time > 0.03) {
                 // checks if the player has a sword and the player its attacking doesn't have a shield
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
 //              System.out.println("Player is attacking");
@@ -440,7 +445,7 @@ public class MultiPlayer extends Player {
                     int numOfDecrease = 1 + getGearCount();
                     playerA.decreaseHealth(numOfDecrease);
 
-                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID,playerA.ID, numOfDecrease);
+                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
                     this.gameClient.getNc().send(decreaseHealthMessage);
 
                     if (playerA.health == 0) {
@@ -452,16 +457,16 @@ public class MultiPlayer extends Player {
 
                 }
             } else sword = swordNotAttack;
+            // sets the time again and gives tur to startattack
+            this.playerAttackTime = time;
         }
-        // sets the time again and gives tur to startattack
-        this.playerAttackTime = time;
     }
 
     // attacks an ai paleyr same method as above
 
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-//        if (aiAttackTime - time > 0.1 || !startAIAttack) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        if (pressSpace) {
+            if (aiAttackTime - time > 0.03 || !startAIAttack) {
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                     System.out.println("Player is attacking an AI");
                     isAttacking = true;
@@ -469,7 +474,7 @@ public class MultiPlayer extends Player {
 
                     int numOfDecrease = 1 + getGearCount();
                     playerA.decreaseHealth(1 + getGearCount());
-                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID,playerA.ID, numOfDecrease);
+                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
                     this.gameClient.getNc().send(decreaseHealthMessage);
 
                     if (playerA.health == 0) {
@@ -478,9 +483,9 @@ public class MultiPlayer extends Player {
                     }
                 }
             }
-//            this.aiAttackTime = time;
-//            startAIAttack = true;
-//        }
+            this.aiAttackTime = time;
+            startAIAttack = true;
+        }
 
         return playerA;
     }

@@ -35,11 +35,12 @@ public class Player {
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
 
-    private float aiAttackTime;
-    private float playerAttackTime;
-    private boolean startPAttack;
-    private boolean startAIAttack;
+    protected float aiAttackTime;
+    protected float playerAttackTime;
+    protected boolean startPAttack;
+    protected boolean startAIAttack;
     public boolean isAttacking = false;
+    protected boolean pressSpace;
 
     protected BitmapFont font;
     protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
@@ -376,8 +377,12 @@ public class Player {
         }
     }
 
+    public Coordinate getPosition() {
+        return new Coordinate(this.x, this.y);
+    }
+
     public void attack() {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        if (isAttacking) {
             if (this.items.contains("sword") && !this.isDead()) {
                 if (animation.toString().equals(RightAnim.toString()))
                     setSwordAnimation(swordSwipeRight);
@@ -390,7 +395,7 @@ public class Player {
 
                 //do animation
                 swipeAnim.render();
-                isAttacking = true;
+                isAttacking = false;
                 sword = swordAttack;
             }
         } else {
@@ -658,107 +663,4 @@ public class Player {
 
     }
 
-    // private MazeGame game;
-
-//    public void pickUpItem(Item itemPicked , Collect co) {
-//
-//        switch(itemPicked.getType()) {
-//          case "Coin":
-//            this.coins++;
-//            //remove from map
-////            co.pickedUp(itemPicked);
-//
-//            break;
-//          case "Shield":
-//
-//            //hasShield = true;
-//            co.shield(itemPicked, this);
-//            //hasShield = false;
-//            break;
-//          case "Sword":
-//            hasSword = true;
-//            //Player player2 = new Player(collisionLayer"Hi", 234);
-//            //co.sword(itemPicked, this, player2);
-//
-//            break;
-//          case "Compass":
-//            hasCompass = true;
-//            co.compass(itemPicked);
-//            break;
-//          case "Healing Potion":
-//            hasHealingPotion = true;
-//            co.healingPotion(this);
-//            hasDamagingPotion = false;
-//            break;
-//          case "Damaging Potion":
-//            hasDamagingPotion = true;
-//            co.damagingPotion(itemPicked, this);
-//            hasDamagingPotion = false;
-//            break;
-//          /*default:
-//            throw new Exception("Item does not exist yet");*/
-//        }
-//      }
-//
-
-
-    /*
-    public void playerKillAI(AIPlayer AI) {
-        if (AI.health == 0) {
-        this.pickUpCoins(5);
-      } else {
-        AI.decreaseHealth(1);
-      }
-    }
-
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-
-    public float getSpeed() {
-    	return speed;
-    }
-
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-
-    public float getSpeed() {
-    	return speed;
-    }
-
-
-    public String toString() {
-        return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
-      }
-
-
-
-*/
 }

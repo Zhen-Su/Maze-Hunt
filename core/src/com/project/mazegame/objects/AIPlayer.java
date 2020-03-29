@@ -28,6 +28,8 @@ public class AIPlayer extends Player {
     protected ArrayList<Coordinate> visited;
     protected String premov = "null";
     protected String direct = null;
+    protected Coordinate lastp;
+    protected Coordinate preve;
 
     public AIPlayer(){super();}
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, String colour, Direction dir, PlayersType playersType) {
@@ -40,6 +42,8 @@ public class AIPlayer extends Player {
         this.visited = new ArrayList<>();
         this.visited.add(super.position);
         this.direct = "Up";
+        this.preve = null;
+        this.lastp = null;
     }
 
     //=====================================Setter&Getter=============================================
@@ -381,10 +385,10 @@ public class AIPlayer extends Player {
                 System.out.println("Going here");
                 super.isAttacking = true;
                 sword = swordAttack;
+                attack();
                 playerA.decreaseHealth(1 + super.getGearCount());
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
-                    playerA.death(time);
                 }
             }
         }
@@ -400,10 +404,10 @@ public class AIPlayer extends Player {
                 System.out.println("Has gone here");
                 super.isAttacking = true;
                 sword = swordAttack;
+                attack();
                 playerA.decreaseHealth(1 + super.getGearCount());
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
-                    playerA.death(time);
                     return playerA;
                 }
             }

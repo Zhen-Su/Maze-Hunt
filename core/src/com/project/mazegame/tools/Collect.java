@@ -133,7 +133,7 @@ public class Collect {
     public void damagingPotion(Player player1) {
         ArrayList<String> items = player1.items;
 
-        player1.decreaseHealth(10);
+        player1.decreaseHealth(3);
 
 //		player1.playerPosioned();
 
