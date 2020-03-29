@@ -44,6 +44,7 @@ public class Player {
     protected BitmapFont font;
     protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
     protected Texture player, sword, swordAttack, swordNotAttack, shield;
+    private Texture enchantedGlow;
 
     protected AnimationTool RightAnim;
     protected AnimationTool LeftAnim;
@@ -79,6 +80,7 @@ public class Player {
         time = new Timer();
         this.startPAttack = false;
         this.startAIAttack = false;
+        this.dir = Direction.STOP;
     }
 
     public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour, PlayersType playersType) {
@@ -192,6 +194,15 @@ public class Player {
     public void setCo(Collect co) {
         this.co = co;
     }
+
+    public TiledMapTileLayer getCollisionLayer() {
+        return collisionLayer;
+    }
+
+    public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
+        this.collisionLayer = collisionLayer;
+    }
+
     //==============================================================================================
 
 
@@ -226,10 +237,7 @@ public class Player {
             if (respawnCounter == 0) respawnCounter = time.currentTime();
 
             if (time.currentTime() - respawnCounter == 3) this.death(worldTime);
-
-            setAnimation(DyingAnim);
         } else {
-
 
             if (RIGHT_TOUCHED) {
                 if (x < (collisionLayer.getWidth() * collisionLayer.getTileWidth()) - width) { // if its on map
@@ -241,6 +249,7 @@ public class Player {
                     else
                         this.position.setX(x);
                 }
+                this.dir=Direction.R;
             }
             if (LEFT_TOUCHED) {
                 if (x > 0) {
@@ -250,6 +259,7 @@ public class Player {
                     else
                         this.position.setX(x);
                 }
+                this.dir=Direction.L;
             }
             if (UP_TOUCHED) {
                 if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
@@ -259,6 +269,7 @@ public class Player {
                     else
                         this.position.setY(y);
                 }
+                this.dir=Direction.U;
             }
             if (DOWN_TOUCHED) {
                 if (y > 0) {
@@ -269,19 +280,7 @@ public class Player {
                         this.position.setY(y);
 
                 }
-            }
-
-            //change player texture
-            if (UP_TOUCHED && !DOWN_TOUCHED) {
-                setAnimation(UpAnim);
-            } else if (DOWN_TOUCHED && !UP_TOUCHED) {
-                setAnimation(DownAnim);
-            } else if (LEFT_TOUCHED && !RIGHT_TOUCHED) {
-                setAnimation(LeftAnim);
-            } else if (RIGHT_TOUCHED && !LEFT_TOUCHED) {
-                setAnimation(RightAnim);
-            } else {
-                setAnimation(DownAnim);
+                this.dir=Direction.D;
             }
         }
 
@@ -291,26 +290,34 @@ public class Player {
     }
 
     public void render(SpriteBatch sb) {
-
         setBatch(sb);
-        //need to change AI animation here
-        if (playersType.equals(PlayersType.multi)) {
-            switch (this.dir) {
-                case U:
-                    setAnimation(UpAnim);
-                    break;
-                case D:
-                    setAnimation(DownAnim);
-                    break;
-                case R:
-                    setAnimation(RightAnim);
-                    break;
-                case L:
-                    setAnimation(LeftAnim);
-                    break;
-                case STOP:
-                    setAnimation(DownAnim);
-                    break;
+
+        if (this.isDead()) {
+            setAnimation(DyingAnim);
+            font.getData().setScale(1f, 1f);
+            String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
+            font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
+            animation.render();
+        }else{
+            //need to change AI animation here
+            if (playersType.equals(PlayersType.multi)||playersType.equals(PlayersType.single)) {
+                switch (this.dir) {
+                    case U:
+                        setAnimation(UpAnim);
+                        break;
+                    case D:
+                        setAnimation(DownAnim);
+                        break;
+                    case R:
+                        setAnimation(RightAnim);
+                        break;
+                    case L:
+                        setAnimation(LeftAnim);
+                        break;
+                    case STOP:
+                        setAnimation(DownAnim);
+                        break;
+                }
             }
         }
 
@@ -322,16 +329,12 @@ public class Player {
         if (this.items.contains("shield"))
             sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
 
+        if(this.items.contains("gearEnchantment"))
+           sb.draw(enchantedGlow ,this.position.getX() -enchantedGlow.getWidth()/2 ,this.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
 
         font.getData().setScale(0.5f, 0.5f);
         font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
 
-        if (this.isDead()) {
-            font.getData().setScale(1f, 1f);
-            String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
-            font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
-            animation.render();
-        }
     }
 
     //-----------------functions
@@ -427,62 +430,61 @@ public class Player {
     // method for a player attacking antoher player
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
-        if (playerAttackTime - time > 0.3 || !startPAttack) {
-            // checks if the space key is pressed
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                // checks if the player has a swrod and the player its attacking doesn't have a shield
-                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+//        if (playerAttackTime - time > 0.3) {
+        // checks if the space key is pressed
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            // checks if the player has a swrod and the player its attacking doesn't have a shield
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
 //              System.out.println("Player is attacking");
-                    // sets is attacking to true
-                    isAttacking = true;
-                    // animation for sowrd
-                    sword = swordAttack;
-                    // decreases health by one plus any gearenchatnments
-                    playerA.decreaseHealth(1 + getGearCount());
-                    if (playerA.health == 0) {
-                        // adds the cons to the opposing player
-                        this.coins += playerA.coins;
-                        // calls the death method
-                        playerA.death(time);
-
-                    }
+                // sets is attacking to true
+                isAttacking = true;
+                // animation for sowrd
+                sword = swordAttack;
+                // decreases health by one plus any gearenchatnments
+                playerA.decreaseHealth(1 + getGearCount());
+                if (playerA.health == 0) {
+                    // adds the cons to the opposing player
+                    this.coins += playerA.coins;
+                    // calls the death mehtod
+                    playerA.death(time);
 
                 }
-            } else sword = swordNotAttack;
-        }
-        // sets the time again and gives tur to startattack
-        this.playerAttackTime = time;
-        startPAttack = true;
-    }
 
+            }
+        } else sword = swordNotAttack;
+//        }
+        // sets the time again and gives tur to startattack
+//        this.playerAttackTime = time;
+//        startPAttack = true;
+    }
     // attacks an ai paleyr same method as above
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-        if (aiAttackTime - time > 0.3 || !startAIAttack) {
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                    System.out.println("Player as attacking me");
-                    isAttacking = true;
-                    sword = swordAttack;
-                    int gearEnchantCount = 0;
+//        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                System.out.println("Player as attacking me");
+                isAttacking = true;
+                sword = swordAttack;
+                int gearEnchantCount = 0;
 
-                    playerA.decreaseHealth(1 + getGearCount());
-                    this.coins += 1;
-                    if (playerA.health == 0) {
-                        System.out.println("I am about to die");
-                        this.coins += playerA.coins;
-                        playerA.death(time);
+                playerA.decreaseHealth(1 + getGearCount());
 
-                    }
+                if (playerA.health == 0) {
+                    System.out.println("I am about to die");
+                    this.coins += playerA.coins;
+                    playerA.death(time);
+
                 }
             }
-            this.aiAttackTime = time;
-            startAIAttack = true;
         }
+//            this.aiAttackTime = time;
+//            startAIAttack = true;
+//        }
 
         return playerA;
     }
 
-    // coutns the amoutn of gear enchatns and returns the number
+    // counts the amount of gear enchatns and returns the number
     protected int getGearCount() {
         int count = 0;
         for (int i = 0; i < items.size(); i++) {
@@ -644,6 +646,7 @@ public class Player {
         swipeDown = Assets.manager.get(Assets.swipeDown, Texture.class);
         playerDying = Assets.manager.get(Assets.playerDying, Texture.class);
         font = Assets.manager.get(Assets.font, BitmapFont.class);
+        enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
 
         sword = swordNotAttack;
     }

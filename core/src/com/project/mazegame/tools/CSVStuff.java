@@ -13,7 +13,7 @@ public class CSVStuff {
 
 
 
-        String fileRead ="F:\\Project\\anotherworld\\android\\"+ filename + ".csv";
+        String fileRead ="F:\\TeamProject\\anotherworld\\android\\"+ filename + ".csv";
 //        String fileRead ="/Users/kevin/mazeHunt/android/"+ filename + ".csv";
 
 
@@ -42,7 +42,7 @@ public class CSVStuff {
         try {
 
 
-            String outPutCSV = "F:\\Project\\anotherworld\\android\\"+ filename + ".csv";
+            String outPutCSV = "F:\\TeamProject\\anotherworld\\android\\"+ filename + ".csv";
             FileWriter writer = new FileWriter(outPutCSV);
             for (int i = 0; i < list.size(); i++) {
                 writer.append(list.get(i));

@@ -26,11 +26,7 @@ public class CreateMazeScreen implements Screen {
     private MazeGame game;
     public String username;
     private boolean hasEnterUsername =false;
-    String difficulty= new String();
-    String player= new String();
-    String map = new String();
-    String numOfAI = new String();
-    String name = new String();
+
 
     private static final int LB_WIDTH = 350;
     private static final int LB_HEIGHT = 200;
@@ -45,6 +41,12 @@ public class CreateMazeScreen implements Screen {
     private static final int CREATE_WIDTH = 100;
 
     private int size = 100;
+
+    String difficulty;
+    String player;
+    String map;
+    String numOfAI;
+    String name;
 
     private static final int CREATE_Y = MazeGame.HEIGHT / 2 - 200;
     private static final int PLAY_Y = MazeGame.HEIGHT / 2 + 50;
@@ -203,8 +205,6 @@ public class CreateMazeScreen implements Screen {
             }
         }
 
-
-
         name = usernameTextField.getText();
         numOfAI = numField.getText();
 
@@ -301,7 +301,7 @@ public class CreateMazeScreen implements Screen {
 
         bgTexture = createBackgroundTexture(50, 50);
         style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
-        numField = new TextField("6", style);
+        numField = new TextField("2", style);
 
         usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
         numField.setSize(50,50);

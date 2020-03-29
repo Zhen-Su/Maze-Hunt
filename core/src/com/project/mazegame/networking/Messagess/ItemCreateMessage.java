@@ -73,7 +73,6 @@ public class ItemCreateMessage implements Message {
                 return;
             }
 
-
             String itemType = dis.readUTF();
             int itemsX = dis.readInt();
             int itemsY = dis.readInt();

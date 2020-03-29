@@ -2,7 +2,6 @@ package com.project.mazegame.networking.Messagess;
 
 import com.badlogic.gdx.Game;
 import com.project.mazegame.objects.MultiPlayer;
-import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.HostLobbyScreen;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.screens.OtherLobbyScreen;
@@ -24,7 +23,6 @@ public class StartGameMessage implements Message{
     private int id;
     private MultiPlayerGameScreen gameClient;
     private boolean debug =false;
-    private String map;
 
     public StartGameMessage(MultiPlayerGameScreen gameClient) { this.gameClient = gameClient;}
 
@@ -46,7 +44,6 @@ public class StartGameMessage implements Message{
         try{
             dos.writeInt(msgType);
             dos.writeInt(id);
-            dos.writeUTF(map);
             dos.writeBoolean(HostStartGame);
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +70,6 @@ public class StartGameMessage implements Message{
             boolean start = dis.readBoolean();
             //set my HostStartGame true
             gameClient.setHostStartGame(start);
-
 
             if(debug) {
                 System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");

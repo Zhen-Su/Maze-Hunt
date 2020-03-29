@@ -24,26 +24,20 @@ public class HostLobbyScreen implements Screen {
     private MazeGame game;
     private GameServer gameServer;
     private String hostUsername;
-    private int NumOfAI;
     private MultiPlayerGameScreen gameClient;
     private BitmapFont font;
     private Texture backGround;
     private OrthographicCamera cam;
-    private String map;
-    private String color;
 
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
 
 
-    public HostLobbyScreen(MazeGame game,String username, int NumOfAI, String map, String color) {
+    public HostLobbyScreen(MazeGame game,String username,int NumOfAI, String map, String color) {
         this.game=game;
         this.hostUsername=username;
         GameServer gameServer=new GameServer();
         this.gameServer = gameServer;
-        this.NumOfAI = NumOfAI;
-        this.map = map;
-        this.color = color;
         new Thread(gameServer).start();
         try {
             MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress(),true,NumOfAI,map,color);
@@ -52,6 +46,7 @@ public class HostLobbyScreen implements Screen {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+        gameServer.setGameClient(gameClient);
         cam = new OrthographicCamera(WIDTH, HEIGHT);
         cam.setToOrtho(false, WIDTH, HEIGHT);
     }

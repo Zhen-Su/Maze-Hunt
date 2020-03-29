@@ -1,4 +1,0 @@
-#Thu Mar 26 03:57:14 GMT 2020
-base.0=F\:\\TeamProject\\anotherworld\\android\\build\\intermediates\\dex\\debug\\mergeDexDebug\\out
-path.0=classes.dex
-renamed.0=classes.dex

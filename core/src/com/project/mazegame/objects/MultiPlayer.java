@@ -78,6 +78,8 @@ public class MultiPlayer extends Player {
     public void setDir(Direction dir) {
         this.dir = dir;
     }
+
+
     //==============================================================================================
 
     /**
@@ -184,6 +186,10 @@ public class MultiPlayer extends Player {
             }
             setAnimation(DyingAnim);
         }
+
+        // update the move to as they contantly get updated in the render method
+//        moveTo.setX(x);
+//        moveTo.setY(y);
     }
 
     /**
@@ -252,9 +258,9 @@ public class MultiPlayer extends Player {
         this.position.setX(x);
         this.position.setY(y);
 
-//        // update the move to as they contantly get updated in the render method
-//        moveTo.setX(x);
-//        moveTo.setY(y);
+        // update the move to as they contantly get updated in the render method
+        moveTo.setX(x);
+        moveTo.setY(y);
 
         switch (dir) {
             case R:
@@ -457,8 +463,6 @@ public class MultiPlayer extends Player {
             if (debug) System.out.println("After remove: " + items);
         }
     }
-
-
 
     public int getHealth() {
         return health;
