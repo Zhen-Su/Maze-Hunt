@@ -117,6 +117,9 @@ public class Player {
     public int getY() {
         return y;
     }
+    public TiledMapTileLayer getCollisionLayer() {
+    	return this.collisionLayer;
+    }
 
     public void setY(int y) {
         this.y = y;
@@ -292,6 +295,7 @@ public class Player {
     public void render(SpriteBatch sb) {
 
         setBatch(sb);
+        System.out.println("rendering");
         animation.render();
 
         //draw items held by player

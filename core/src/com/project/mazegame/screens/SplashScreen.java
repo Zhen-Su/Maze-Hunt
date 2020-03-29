@@ -36,9 +36,9 @@ public class SplashScreen implements Screen {
             }
         };
 
-        game.assets.load("UI\\splash2.png", Texture.class);
-        game.assets.finishLoading();// waiting for all assets load.
-        splashTex = game.assets.get("UI\\splash2.png", Texture.class);
+        game.assets.manager.load("UI\\splash2.png", Texture.class);
+        game.assets.manager.finishLoading();// waiting for all assets load.
+        splashTex = game.assets.manager.get("UI\\splash2.png", Texture.class);
         splashImg = new Image(splashTex);
         splashImg.setOrigin(splashImg.getWidth() , splashImg.getHeight()/2);
         splashImg.setPosition(stage.getWidth() / 2 - 32, stage.getHeight() + 32);
@@ -89,7 +89,7 @@ public class SplashScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        game.assets.clear();
+//        game.assets.clear();
         game.assets.dispose();
     }
 }

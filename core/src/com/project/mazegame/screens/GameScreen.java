@@ -108,7 +108,7 @@ public class GameScreen implements Screen {
         
         inputHandler = new InputHandler();
       
-        worldTimer = 10;
+        worldTimer = 5;
         
      
         
@@ -124,7 +124,7 @@ public class GameScreen implements Screen {
         
         if(this.map.equals( "map1")) {
         	tileMap = new TmxMapLoader().load("Map1.tmx");
-        	mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class);
+        	mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class) ;
         }
         else if(this.map.equals("map2")) {
         	tileMap = new TmxMapLoader().load("Map2.tmx");
@@ -193,12 +193,10 @@ public class GameScreen implements Screen {
     	
     	input.add(player.getName() + " = " + player.coins);
     	
-    	for(int i = 0; i < numOfAI; i ++) {
-    		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).getCoins());
-    	}
+//    	for(int i = 0; i < numOfAI; i ++) {
+//    		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).getCoins());
+//    	}
     	
-    	
-    	System.out.println("in method " + input );
     	
     	CSVStuff.writeCSV(input , "coinCSV");
     }
@@ -286,8 +284,10 @@ public class GameScreen implements Screen {
     	  
     	   if((worldTimer - time.currentTime()) < 0) {
     		   this.dispose();
+    		   
     		   writeCoinCSV();
-    		   game.setScreen(new EndScreen(this.game));
+    		   
+    		   game.setScreen(new EndScreen(this.game , player));
     		  
     	   }
     	}

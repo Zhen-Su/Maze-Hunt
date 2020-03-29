@@ -36,8 +36,8 @@ public class Assets {
 	public static final String playerOnMap = "Player/playerOnMap.png";
 	
 	public static final String map1Icon = "Maps/Map1Icon.png";
-	public static final String map2Icon = "Maps/Map1Icon.png";
-	public static final String map3Icon = "Maps/Map1Icon.png";
+	public static final String map2Icon = "Maps/Map2Icon.png";
+	public static final String map3Icon = "Maps/Map3Icon.png";
 	public static final String GAMEOVER = "UI/Titles/GAMEOVER!.png";
 	public static final String BackToMenuButton = "UI/MenuButtons/BackToMenuButton.png";
 	public static final String backToMenuButtonPressed = "UI/MenuButtons/backToMenuButtonPressed.png";
@@ -82,6 +82,18 @@ public class Assets {
     public static final String playerDying="Player/playerDying.png";
     public static final String font = "myFont.fnt";
     public static final String enterBox = "UI/EnterBox.png";
+    
+    public static final String playerRed = ("Player/playerRed.png");
+    public static final String playerBlue = ("Player/playerBlue.png");
+    public static final String playerGreen = ("Player/playerGreen.png");
+    public static final String playerLilac = ("Player/playerLilac.png");
+    public static final String playerOrange = ("Player/playerOrange.png") ;
+    public static final String playerPink = ("Player/playerPink.png");
+    public static final String playerYellow = ("Player/playerYellow.png");
+    
+    public static final String waitingForPlayers = "UI/Titles/Waitingforplayers....png";
+    public static final String endAnimation =  "Player/endAnimation.png";
+   
 
 	public Assets (){
 		load();
@@ -182,9 +194,19 @@ public class Assets {
 		         manager.load(playerDying,Texture.class);
 
 		         manager.load(font, BitmapFont.class);
-
-
-//		         
+		         manager.load(waitingForPlayers , Texture.class);
+		         
+		         manager.load(playerRed , Texture.class);
+		         manager.load(playerBlue , Texture.class);
+		         manager.load(playerGreen , Texture.class);
+		         manager.load(playerLilac , Texture.class);
+		         manager.load(playerOrange , Texture.class);
+		         manager.load(playerPink , Texture.class);
+		         manager.load(playerYellow , Texture.class);
+		         
+		         manager.load(endAnimation , Texture.class);
+		         
+		       
 		         manager.finishLoading();
 	         
 	         System.out.println("added everything to queue");

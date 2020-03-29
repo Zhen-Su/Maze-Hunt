@@ -30,6 +30,8 @@ public class AnimationTool extends ApplicationAdapter {
     private MazeGame game;
     public int xOffset;
     public int yOffset;
+    public int rows;
+    public int columns;
 
     public AnimationTool(int width, int height, Player player , Texture img, boolean loop) {
         this.loop = loop;
@@ -39,8 +41,23 @@ public class AnimationTool extends ApplicationAdapter {
         this.player = player;
         this.xOffset = 0;
         this.yOffset = 0;
+        this.rows = 2;
+        this.columns = 2;
     }
-
+    
+    public AnimationTool(int width, int height, Texture img, boolean loop) {
+        this.loop = loop;
+        this.img = img;
+        this.width = width;
+        this.height = height;
+        this.player = null;
+        this.xOffset = 0;
+        this.yOffset = 0;
+        this.rows = 2;
+        this.columns = 2            ;
+    }
+    
+   
     public void setFrames(TextureRegion[] frames) {
         this.animationFrames = frames;
     }
@@ -48,17 +65,41 @@ public class AnimationTool extends ApplicationAdapter {
     public TextureRegion[] getFrames() {
         return animationFrames;
     }
+    public void setImg(Texture img) {
+        this.img = img;
+    }
+    public void setBatch(SpriteBatch sb) {
+        this.batch = sb;
+    }
+    
 
     @Override
     public void create (){
-        batch = player.getSpriteBatch();
-        this.img = player.getFrames();
-
-        TextureRegion[][] tmpFrames = TextureRegion.split(img,width,height);
-        animationFrames = new TextureRegion[4];
+    	TextureRegion[][] tmpFrames ;
+    	if(this.player != null) {
+    		batch = player.getSpriteBatch();
+    		this.img = player.getFrames();
+    		
+    		tmpFrames = TextureRegion.split(this.img,this.width,this.height);
+            animationFrames = new TextureRegion[4];
+    	}else {
+    		//need to set batch and img before calling render
+    		this.rows = 5;
+    	    this.columns = 5  ;
+    		System.out.println("here");
+    		System.out.println(this.width + " , --  " + this.height);
+    		System.out.println(this.rows + " , --  " + this.columns );
+    		tmpFrames = TextureRegion.split(this.img,this.width,this.height);
+            animationFrames = new TextureRegion[25];
+    	}
+        
         int index = 0;
-        for (int i = 0; i < 2; i++){
-            for(int j = 0; j < 2; j++) {
+        int r = this.rows;
+        int c = this.columns;
+        for (int i = 0; i < this.rows; i++){
+        	System.out.println("next row");
+            for(int j = 0; j < this.columns; j++) {
+            	System.out.println("next col");
                 animationFrames[index++] = tmpFrames[i][j];
             }
         }
@@ -69,9 +110,22 @@ public class AnimationTool extends ApplicationAdapter {
     @Override
     public void render () {
         //draws the animation based on the frames for this animation
+    	System.out.println("got to render");
         elapsedTime += Gdx.graphics.getDeltaTime();
-        batch = this.player.getSpriteBatch();
-        batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), player.position.getX() + this.xOffset - this.width/2,player.position.getY() - this.height/2 + this.yOffset);
+        System.out.println("get here11");
+        if (this.player != null) {
+        	System.out.println("get here");
+        	this.rows = 2;
+            this.columns = 2;
+	        batch = this.player.getSpriteBatch();
+	        System.out.println(this.width + " , " + this.height);
+	        batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), player.position.getX() + this.xOffset - this.width/2,player.position.getY() - this.height/2 + this.yOffset);
+        }
+        else {
+        	System.out.println(this.width + " , --  " + this.height);
+	        batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), 500 + this.xOffset - this.width/2,500 - this.height/2 + this.yOffset);
+        
+        }
     }
 
 

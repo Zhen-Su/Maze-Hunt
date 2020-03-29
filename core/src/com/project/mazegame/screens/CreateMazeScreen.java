@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
+import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
 
 
@@ -87,7 +88,7 @@ public class CreateMazeScreen implements Screen {
     Texture joinMazeButtonActive;
     Texture joinMazeButtonInactive;
     Texture diffButton1,diffButton1Selected,diffButton2,diffButton2Selected,diffButton3,diffButton3Selected;
-    Texture backGround;
+    Texture backGround , enterBox;
     Texture Map1,Map2,Map3, Map1Selected,Map2Selected,Map3Selected ;
     
     Texture player1, player2, player3, player4, player5, player6, playerSelected , player7;
@@ -115,7 +116,7 @@ public class CreateMazeScreen implements Screen {
        // this.playerEnterUsername();
         
         joinMazeButtonInactive = new Texture("UI\\MenuButtons\\button.png");
-        joinMazeButtonActive = new Texture("UI\\MenuButtons\\buttonPressed.png");
+        joinMazeButtonActive = new Texture("UI\\MenuButtons\\buttonPressed.png") ;
         backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
         playerSelected = new Texture("Player\\playerSelected.png");
         player1 = new Texture("Player\\playerRed.png");
@@ -147,6 +148,7 @@ public class CreateMazeScreen implements Screen {
         mapChosen = false;
         difficultyChosen = false;
         
+        enterBox = Assets.manager.get(Assets.enterBox,Texture.class);
         
     }
 
@@ -286,7 +288,7 @@ public class CreateMazeScreen implements Screen {
         font.getData().setScale(1.5F);
 
         TextField.TextFieldStyle style = new TextField.TextFieldStyle();
-        style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
+        style.background = new TextureRegionDrawable(new TextureRegion(enterBox));
         style.cursor = new TextureRegionDrawable(new TextureRegion(cursorTexture));
         style.font = font;
         style.fontColor = new Color(1,1,1, 1);
