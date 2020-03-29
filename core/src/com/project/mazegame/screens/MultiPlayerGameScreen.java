@@ -57,13 +57,15 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private AIPlayer aiPlayerAttack;
     private Player playerAttack;
 
+    private boolean imHost;
     private MultiPlayer myMultiPlayer;
     private NetClient netClient = new NetClient(this);
+
     private List<Player> players = new ArrayList<>();
-    public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
-    private boolean imHost;
-    private MultiAIPlayer aiPlayer;
     public ArrayList<AIPlayer> aiPlayers = new ArrayList<>();
+    private List<Player> humanPlayers = new ArrayList<>();
+    public HashMap<Integer, Integer> playersIdIndexList = new HashMap<>();
+
     public ArrayList<NetClient> aiNetClients = new ArrayList<>();
     public ArrayList<AIGameClient> aiGameClients = new ArrayList<>();
 
@@ -119,10 +121,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     //This construction for host Player
     public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, int NumOfAI, String map, String playerSkin) {
         this.game = game;
-        this.username=username;
-        this.serverIP=serverIP;
-        this.map=map;
-        this.playerSkin=playerSkin;
+        this.username = username;
+        this.serverIP = serverIP;
+        this.map = map;
+        this.playerSkin = playerSkin;
         this.isHost = isHost;
         timer = 0;
 
@@ -144,7 +146,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
         myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, playerSkin, PlayersType.multi);
-        netClient.connect(serverIP, false, 0,true);
+        netClient.connect(serverIP, false, 0, true);
 
         if (isHost) {
             //create AI players
@@ -152,7 +154,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             //Every AI player connect to GameServer
             for (int i = 0; i < aiGameClients.size(); i++) {
                 NetClient nc = aiGameClients.get(i).getNetClient();
-                nc.connect(serverIP, true, i,false);
+                nc.connect(serverIP, true, i, false);
             }
         }
 
@@ -165,22 +167,21 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, String playerSkin) {
         this.game = game;
-        this.username=username;
-        this.serverIP=serverIP;
-        this.playerSkin=playerSkin;
+        this.username = username;
+        this.serverIP = serverIP;
+        this.playerSkin = playerSkin;
         this.isHost = isHost;
         timer = 0;
 
         aiPlayerAttack = null;
         playerAttack = null;
 
-        netClient.connect(serverIP, false, 0,false);
+        netClient.connect(serverIP, false, 0, false);
 
         Gdx.input.setInputProcessor(this);
         cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
         getAsset();
     }
-
 
 
     //===================================Getter&Setter==============================================
@@ -213,8 +214,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         return collisionLayer;
     }
 
-    public void setCollisionLayer(TiledMapTileLayer collisionLayer){
-        this.collisionLayer=collisionLayer;
+    public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
+        this.collisionLayer = collisionLayer;
     }
 
     public boolean isHostStartGame() {
@@ -253,11 +254,20 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         this.tileMapRenderer = tileMapRenderer;
     }
 
+    public List<Player> getHumanPlayers() {
+        return humanPlayers;
+    }
+
+    public void setHumanPlayers(List<Player> humanPlayers) {
+        this.humanPlayers = humanPlayers;
+    }
+
     //==============================================================================================
 
     /**
      * This method for create AI player in multilayer
      * Only host player can create AI player
+     *
      * @param aiNum
      */
     public void createAIplayers(int aiNum) {
@@ -345,7 +355,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         //update other player
         ArrayList<Item> empty = new ArrayList<>();
         for (Player otherPlayer : players) {
-            //only update multiPlayer, not MultiAIPlayer
+            //only update multiPlayer, not AIPlayer
             if (otherPlayer instanceof MultiPlayer)
                 otherPlayer.update(delta, 0, empty, 0);
         }
@@ -403,17 +413,15 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             drawExitButton(playerPos);
 
             // generate list of players at the moment empty but with networking will be changed
-            ArrayList<Player> emptyattack = new ArrayList<>();
-            for(Player player:players){
-                emptyattack.add(player);
-            }
+
             // first checks for the player to see if there is a player
-            if (isPlayerOnSameP(myMultiPlayer, emptyattack, aiPlayers)) {
+            if (isPlayerOnSameP(myMultiPlayer, (ArrayList<Player>) humanPlayers, aiPlayers)) {
 //                //checks if the player is human or not
                 if (isHuman1()) {
 //                    //if player is human removes the player from the list then calls attack
 //                    emptyattack.remove(0);
-                    myMultiPlayer.attackP(emptyattack.get(posAP), worldTimer);
+                    System.out.println("Here is a human player by my side");
+                    myMultiPlayer.attackP(humanPlayers.get(posAP), worldTimer);
 //                    // earlier issue with not respawning so checks the move to and changes move to to coords generated by death
 //                    emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
 //                    emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
@@ -422,7 +430,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 } else {
 //                    // does same thing as above except with ai players
 //                    AIPlayer playerinsert = aiPlayers.remove(posAAI);
-//                    myMultiPlayer.attackAI(playerinsert, worldTimer);
+//                    System.out.println("Here is an AI by my side");
+                    myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
 //                    playerinsert.x = playerinsert.moveTo.getX();
 //                    playerinsert.y = playerinsert.moveTo.getY();
 //                    aiPlayers.add(posAAI, playerinsert);
@@ -430,38 +439,50 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             }
 
 //            // creates list of players and adds them so the ai can attack players
-            ArrayList<Player> forAI = new ArrayList<>();
-            forAI.add(myMultiPlayer);
-            // goes through the list of ai players
-            for (int i = 0; i < aiPlayers.size(); i++) {
-                // takes one player to attack
-                AIPlayer playerTurn = aiPlayers.remove(i);
-                // does the same thing as the above lines of code just with ai
-                if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
-                    if (isHuman1()) {
-                        System.out.println("An ai is about to attack me");
-                        playerTurn.attackP(forAI.get(posAP), worldTimer);
-                        forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
-                        forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
-                    } else {
-                        myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
-                        aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
-                        aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
-                    }
-                }
-                // adds the ai player back into the list so it is available to be attacked
-                aiPlayers.add(i, playerTurn);
-            }
+//            ArrayList<Player> forAI = new ArrayList<>();
+//            forAI.add(myMultiPlayer);
+//            // goes through the list of ai players
+//            for (int i = 0; i < aiPlayers.size(); i++) {
+//                // takes one player to attack
+//                AIPlayer playerTurn = aiPlayers.remove(i);
+//                // does the same thing as the above lines of code just with ai
+//                if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
+//                    if (isHuman1()) {
+//                        System.out.println("An ai is about to attack me");
+//                        playerTurn.attackP(forAI.get(posAP), worldTimer);
+//                        forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
+//                        forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
+//                    } else {
+//                        myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
+//                        aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
+//                        aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
+//                    }
+//                }
+//                // adds the ai player back into the list so it is available to be attacked
+//                aiPlayers.add(i, playerTurn);
+//            }
 
-            //draw other players, including AI players on my screen
-            for (Player otherPlayer : players) {
-                otherPlayer.render(game.batch);
+
+            //if im host then use aiPlayers to render ai
+            if (imHost) {
+                for (Player aiPlayer : aiPlayers) {
+                    aiPlayer.render(game.batch);
+                }
+                //only draw otherplayer, no need to draw AI again.
+                for (Player otherPlayer : players) {
+                    if (otherPlayer instanceof MultiPlayer)
+                        otherPlayer.render(game.batch);
+                }
+            } else {
+                //if i'm not a host player, then only use players list to draw all players, include AI
+                for (Player otherPlayer : players) {
+                    otherPlayer.render(game.batch);
+                }
             }
 
             //draw myself on my screen
             if (null != myMultiPlayer) {
                 myMultiPlayer.render(game.batch);
-//                myMultiPlayer.attack();
             }
 
             //draw timer
@@ -762,7 +783,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
             this.dispose();
             game.setScreen(new MenuScreen(this.game));
-            PlayerExitMessage playerExitMessage = new PlayerExitMessage(this,getMultiPlayer().getID());
+            PlayerExitMessage playerExitMessage = new PlayerExitMessage(this, getMultiPlayer().getID());
             this.getNc().send(playerExitMessage);
             this.getNc().sendClientDisconnectMsg();
         }
@@ -815,6 +836,12 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         //TODO handle client and server exit game events here
         mapItems.clear();
+        humanPlayers.clear();
+        players.clear();
+        playersIdIndexList.clear();
+        aiPlayers.clear();
+        aiGameClients.clear();
+        aiNetClients.clear();
         cam.cam.viewportHeight = 1000;
         cam.cam.viewportWidth = 1000;
         cam.update(V_WIDTH / 2, V_HEIGHT / 2, game);

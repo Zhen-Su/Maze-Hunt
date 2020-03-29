@@ -14,13 +14,15 @@ import java.net.InetSocketAddress;
 public class DecreaseHealthMessage implements Message {
     private int msgType = Message.DESCREASE_HP;
     private int beAttackedID;
+    private int myID;
     private int numOfHealth;
     private boolean debug = true;
 
     private MultiPlayerGameScreen gameClient;
 
-    public DecreaseHealthMessage(int beAttackedID,int numOfHealth) {
+    public DecreaseHealthMessage(int myID,int beAttackedID,int numOfHealth) {
         this.beAttackedID = beAttackedID;
+        this.myID=myID;
         this.numOfHealth=numOfHealth;
     }
 
@@ -34,6 +36,7 @@ public class DecreaseHealthMessage implements Message {
         DataOutputStream dos = new DataOutputStream(baos);
         try{
             dos.writeInt(msgType);
+            dos.writeInt(myID);
             dos.writeInt(beAttackedID);
             dos.writeInt(numOfHealth);
 
@@ -53,13 +56,26 @@ public class DecreaseHealthMessage implements Message {
     @Override
     public void process(DataInputStream dis) {
         try {
+            int myID = dis.readInt();
             int beAttackedID = dis.readInt();
             int numOfHealth = dis.readInt();
-            if(beAttackedID != this.gameClient.getMultiPlayer().getID()){
-                return;
-            }else{
-                this.gameClient.getMultiPlayer().decreaseHealth(numOfHealth);
 
+            //if this message is sent by my, then ignore it.
+            if(myID == this.gameClient.getMultiPlayer().getID()){
+                return;
+            }
+
+            //if i'm not a Victim, then decrease health for this player in my players list.
+            for(Player player : this.gameClient.getPlayers()){
+                if(player.getID()==beAttackedID){
+                    player.decreaseHealth(numOfHealth);
+                }
+            }
+
+            //if i'm a Victim, then decrease health for me.
+            if(beAttackedID == this.gameClient.getMultiPlayer().getID()){
+
+                this.gameClient.getMultiPlayer().decreaseHealth(numOfHealth);
 
                 if(debug) {
                     System.out.println("-------------------------------");
@@ -68,6 +84,7 @@ public class DecreaseHealthMessage implements Message {
                     System.out.println("-------------------------------");
                 }
             }
+
 
         } catch (IOException e){
             e.printStackTrace();

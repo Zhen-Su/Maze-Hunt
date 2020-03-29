@@ -297,7 +297,7 @@ public class Player {
             font.getData().setScale(1f, 1f);
             String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
             font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
-            animation.render();
+//            animation.render();
         } else {
             //need to change AI animation here
             switch (this.dir) {
@@ -332,7 +332,6 @@ public class Player {
 
         font.getData().setScale(0.5f, 0.5f);
         font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
-
     }
 
     //-----------------functions
@@ -459,10 +458,10 @@ public class Player {
 
     // attacks an ai paleyr same method as above
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-//        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+        if (aiAttackTime - time > 0.1 || !startAIAttack) {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                System.out.println("Player as attacking me");
+                System.out.println("Player is attacking an AI");
                 isAttacking = true;
                 sword = swordAttack;
                 int gearEnchantCount = 0;
@@ -470,16 +469,14 @@ public class Player {
                 playerA.decreaseHealth(1 + getGearCount());
 
                 if (playerA.health == 0) {
-                    System.out.println("I am about to die");
+                    System.out.println("AI has dead....");
                     this.coins += playerA.coins;
-                    playerA.death(time);
-
                 }
             }
         }
-//            this.aiAttackTime = time;
-//            startAIAttack = true;
-//        }
+            this.aiAttackTime = time;
+            startAIAttack = true;
+        }
 
         return playerA;
     }

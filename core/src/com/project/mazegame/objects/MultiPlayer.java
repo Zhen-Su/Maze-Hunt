@@ -426,11 +426,10 @@ public class MultiPlayer extends Player {
     // method for a player attacking another player
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
-        if (playerAttackTime - time > 0.3) {
+        if (playerAttackTime - time > 0.02) {
             // checks if the space key is pressed
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-
-                // checks if the player has a swrod and the player its attacking doesn't have a shield
+                // checks if the player has a sword and the player its attacking doesn't have a shield
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
 //              System.out.println("Player is attacking");
                     // sets is attacking to true
@@ -440,15 +439,15 @@ public class MultiPlayer extends Player {
                     // decreases health by one plus any gearenchatnments
                     int numOfDecrease = 1 + getGearCount();
                     playerA.decreaseHealth(numOfDecrease);
-                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(playerA.ID, numOfDecrease);
+
+                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID,playerA.ID, numOfDecrease);
                     this.gameClient.getNc().send(decreaseHealthMessage);
 
                     if (playerA.health == 0) {
                         // adds the coins to the opposing player
                         this.coins += playerA.coins;
                         System.out.println("opposing player has died");
-                        // calls the death method
-//                    playerA.death(time);
+
                     }
 
                 }
@@ -457,6 +456,35 @@ public class MultiPlayer extends Player {
         // sets the time again and gives tur to startattack
         this.playerAttackTime = time;
     }
+
+    // attacks an ai paleyr same method as above
+
+    public AIPlayer attackAI(AIPlayer playerA, float time) {
+//        if (aiAttackTime - time > 0.1 || !startAIAttack) {
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                    System.out.println("Player is attacking an AI");
+                    isAttacking = true;
+                    sword = swordAttack;
+
+                    int numOfDecrease = 1 + getGearCount();
+                    playerA.decreaseHealth(1 + getGearCount());
+                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID,playerA.ID, numOfDecrease);
+                    this.gameClient.getNc().send(decreaseHealthMessage);
+
+                    if (playerA.health == 0) {
+                        System.out.println("AI has dead....");
+                        this.coins += playerA.coins;
+                    }
+                }
+            }
+//            this.aiAttackTime = time;
+//            startAIAttack = true;
+//        }
+
+        return playerA;
+    }
+
 
     public void removeShield() {
         if (!this.items.contains("shield")) {
