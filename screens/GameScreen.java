@@ -271,7 +271,7 @@ public class GameScreen implements Screen {
 					forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
 					forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
 				} else {
-					player.attackAI(aiPlayers.get(posAAI), worldTimer);
+					playerTurn.attackAI(aiPlayers.get(posAAI), worldTimer);
 					aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
 					aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
 				}
