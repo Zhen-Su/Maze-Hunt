@@ -139,6 +139,15 @@ public class GameScreen implements Screen {
 
 		//coinAnimation = new AnimationTool(50,50,player,coinPick,true);
 		//coinAnimation.create();
+		if (game.audio.isMusicOn()) {
+			game.audio.setMusicOff();
+			game.audio.setCurrentScreen("game");
+			game.audio.setMusicOn();
+		} else {
+			game.audio.setMusicOff();
+		}
+
+
 	}
 
 	public void getAsset(){
@@ -551,6 +560,13 @@ public class GameScreen implements Screen {
 
 		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
 			this.dispose();
+			if (game.audio.isMusicOn()) {
+				game.audio.setMusicOff();
+				game.audio.setCurrentScreen("menu");
+				game.audio.setMusicOn();
+			} else {
+				game.audio.setMusicOff();
+			}
 			game.setScreen(new MenuScreen(this.game));
 		}
 
@@ -558,6 +574,13 @@ public class GameScreen implements Screen {
 			game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
 			if (Gdx.input.justTouched()) {
 				this.dispose();
+				if (game.audio.isMusicOn()) {
+					game.audio.setMusicOff();
+					game.audio.setCurrentScreen("menu");
+					game.audio.setMusicOn();
+				} else {
+					game.audio.setMusicOff();
+				}
 				game.setScreen(new MenuScreen(this.game));
 			}
 		}

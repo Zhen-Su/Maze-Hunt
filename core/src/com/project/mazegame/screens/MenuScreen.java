@@ -80,7 +80,13 @@ public class MenuScreen implements Screen {
         backGround = Assets.manager.get(Assets.menuBackground,Texture.class);
         //audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
 
-        game.audio.setMusicOn();
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen("menu");
+            game.audio.setMusicOn();
+        } else {
+            game.audio.setMusicOff();
+        }
 
 //        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
 //        bgm.setLooping(true);
@@ -107,7 +113,6 @@ public class MenuScreen implements Screen {
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
-                bgm.stop();
                 game.setScreen(new CreateMazeScreen(game , false));
             }
         } else {
@@ -119,7 +124,6 @@ public class MenuScreen implements Screen {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.justTouched()) {
                 System.out.println("mult2i");
-                bgm.stop();
                 this.dispose();
                 game.setScreen(new JoinMazeScreen(game));
             }
@@ -131,7 +135,6 @@ public class MenuScreen implements Screen {
             game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
             if(Gdx.input.justTouched())
             {
-                bgm.stop();
                 game.setScreen(new CreateMazeScreen(game , true));
             }
         } else {
