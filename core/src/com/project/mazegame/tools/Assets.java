@@ -42,6 +42,9 @@ public class Assets {
 	public static final String BackToMenuButton = "UI/MenuButtons/BackToMenuButton.png";
 	public static final String backToMenuButtonPressed = "UI/MenuButtons/backToMenuButtonPressed.png";
 	public static final String Leaderboard = "UI/Backgrounds/Leaderboard.png";
+	public static final String LeaderboardBigger = "UI/Backgrounds/LeaderboardBigger.png";
+	public static final String LeaderboardButton = "UI/MenuButtons/LeaderboardButton.png";
+	public static final String LeaderboardButtonPressed = "UI/MenuButtons/LeaderboardButtonPressed.png";
 
 	public static final String walkRightBlue = "Player/walkRightBlue.png";
     public static final String walkLeftBlue ="Player/walkLeftBlue.png";
@@ -155,6 +158,9 @@ public class Assets {
 		         manager.load(BackToMenuButton,Texture.class);
 		         manager.load(backToMenuButtonPressed,Texture.class);
 		         manager.load(Leaderboard,Texture.class);
+		         manager.load(LeaderboardBigger,Texture.class);
+		         manager.load(LeaderboardButton,Texture.class);
+		         manager.load(LeaderboardButtonPressed,Texture.class);
 		       
 		         //player's texture
 		         manager.load(walkRightBlue,Texture.class);

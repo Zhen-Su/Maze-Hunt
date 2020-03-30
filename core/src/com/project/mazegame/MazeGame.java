@@ -31,7 +31,7 @@ public class MazeGame extends Game {
 		//Only for test
 		Assets.load();
 		Assets.manager.finishLoading();
-		System.out.println(Assets.manager.update());
+		System.out.println(Assets.manager.update()); 
 		this.setScreen(new MenuScreen(this));
 		batch = new SpriteBatch();
 	}
