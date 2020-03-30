@@ -18,6 +18,10 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 //import com.project.mazegame.Player;
 import com.project.mazegame.tools.*;
 
+/**
+ * <h1>Player</h1>
+ * Class which handles player animation, movment, attack and other things to do with player
+ */
 public class Player {
 	public int x, y;
     protected Texture player, sword,swordAttack,swordNotAttack,shield;
@@ -29,10 +33,9 @@ public class Player {
     public int swordDamage;
     private int swordXP;
     private int shieldXP;
-    private ArrayList<Player> otherPlayers;
+
     Texture frames,walkRight,walkLeft,walkUp,walkDown, coinPick;
     public Coordinate moveTo;
-    private Thread playerThread;
     private float aiAttackTime;
     private float playerAttackTime;
     protected float deathTime;
@@ -88,9 +91,6 @@ public class Player {
         colour = "orange"; //----------default
        
         loadPlayerTextures();
-        playerThread = new Thread(new PlayerThread());
-//        playerThread.setPriority(1);
-//        playerThread.start();
         
         width = (int) walkUp.getWidth()/2; 
         height = walkUp.getHeight()/2; 
@@ -122,15 +122,29 @@ public class Player {
         
     }
 
-
+    /**
+     * Gets sword xp
+     * @return returns sword xp
+     */
     public int getswordXP() {
     	return this.swordXP;
     }
+
+    /**
+     * @return  shield cp
+     */
     public int getShieldXP() {
     	return this.shieldXP;
     }
+
+    /**
+     * @return name of player
+     */
     protected String getName() {return this.name;};
-    
+
+    /**
+     * Makes an initial postion for the player
+     */
     public void initialPosition () {
 
     	int maxX = this.collisionLayer.getWidth() ;
@@ -149,8 +163,13 @@ public class Player {
 		}
     }
 
-
-    public void update (float delta, int mode, ArrayList<Item> items, float time){
+    /**
+     * handles updating player movment and animation
+     * @param delta
+     * @param mode can be ignored here
+     * @param time time for atttacking
+     */
+    public void update (float delta, int mode, float time){
         // update player movement
 //        playerThread.run();
         if (this.haveyoudied) {
@@ -364,13 +383,21 @@ public class Player {
     	return cell != null && cell.getTile() != null
             & cell.getTile().getProperties().containsKey("isWall");
     }
-    
+
+    /**
+     * reduces health by number
+     * @param number to reduce health by
+     */
     public void decreaseHealth(int number) {
       this.health -= number;
     }
-    
 
-    // method for a player attacking antoher player
+
+    /**
+     * Method for a player  to attack another player with a time delay
+     * @param playerA
+     * @param time
+     */
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
         if (playerAttackTime - time > 0.3 || !startPAttack) {
@@ -400,7 +427,13 @@ public class Player {
         this.playerAttackTime = time;
         startPAttack = true;
     }
-    // attacks an ai paleyr same method as above
+
+    /**
+     * Method to attack an ai player
+     * @param playerA
+     * @param time
+     * @return
+     */
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         if (aiAttackTime - time > 0.3 || !startAIAttack) {
             if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
@@ -426,7 +459,11 @@ public class Player {
 
         return playerA;
     }
-    // coutns the amoutn of gear enchatns and returns the number
+
+    /**
+     * Counts the number of gears in the list
+     * @return the number of gears
+     */
     protected int getGearCount() {
         int count = 0;
         for (int i = 0; i < items.size(); i++) {
@@ -441,71 +478,29 @@ public class Player {
     }
 
 
-
-
+    /**
+     * generates health for the player by 1
+     */
     public void generateHealth() {
         if(this.health != 9) {
             this.health++;
         }
     }
 
+    /**
+     * gets the player position
+     * @return coordinate of player
+     */
     public Coordinate getPosition() {
         return new Coordinate(this.x, this.y);
     }
-    // method is no longer being used
-    public Player nearestPlayer(ArrayList<Player> players) {
-        Coordinate position = new Coordinate();
-        position = players.get(0).getPosition();
-        Player nearestPlayer = players.get(0);
-//		Item nearestItem = new Item(" ", position);
 
-        //System.out.println("items: " + mapItems.size());
-        for (int i = 0; i < players.size(); i++) {
-
-            int tempX = players.get(i).getPosition().getX();
-            int tempY = players.get(i).getPosition().getY();
-
-//			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
-            int tempDist = andinsEuclidianForPlayers(this.position.getX(), tempX, this.position.getY(), tempY);
-            //System.out.println("temp Dist: " + tempDist);
-//			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
-            int shortDist = andinsEuclidianForPlayers(this.position.getX(), nearestPlayer.getPosition().getX(), this.position.getY(), nearestPlayer.getPosition().getY());
-            //System.out.println("shortDist: " + shortDist);
-
-            if (tempDist < shortDist) {
-                nearestPlayer = players.get(i);
-                //System.out.println("found shorter!");
-            }
-        }
-        //System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
-        return nearestPlayer;
-    }
-
-    private int andinsEuclidianForPlayers(int x1, int x2, int y1, int y2) {
-        int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
-//		System.out.println()
-        return sqrEucl;
-    }
-
-
-    public Coordinate genSpace() {
-        int maxX = collisionLayer.getWidth();
-        int maxY = collisionLayer.getHeight();
-        int minY = 0;
-        int minX = 0;
-        int firstX = (int) (Math.random() * maxX - minX + 1) + minX;
-        int firstY = (int) (Math.random() * maxY - minY + 1) + minY;
-        boolean canGo = checkCollisionMap(firstX, firstY);
-        while(!canGo) {
-            firstX = (int) (Math.random() * maxX - minX + 1) + minX;
-            firstY = (int) (Math.random() * maxY - minY + 1) + minY;
-        }
-        return new Coordinate(firstX, firstY);
-    }
-
+    /**
+     * Causes the player to die and resets everything
+     * @param time
+     */
     public void death(float time) {
     // death method
-//        System.out.println("Player has died respawning now");
         // resets helath and coins and initialpositon
         this.health = 5;
         this.coins = 0;
@@ -526,8 +521,7 @@ public class Player {
 
 
 
-    public boolean hasSword () {return this.items.contains("Sword"); }
-    public boolean hasShield () {return this.items.contains("Shield"); }
+
 
 
     

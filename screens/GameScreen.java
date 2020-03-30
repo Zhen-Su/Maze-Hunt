@@ -30,7 +30,9 @@ import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 
-
+/**
+ * <h1> Gamescreen for single player</h1>
+ */
 
 public class GameScreen implements Screen {
 
@@ -38,7 +40,7 @@ public class GameScreen implements Screen {
     private OrthoCam cam;
 
     private Player player;
-    private AIPlayer aiPlayer;// ---------need to be implemented
+    private AIPlayer aiPlayer;
 	private ArrayList<AIPlayer> aiPlayers;
     private InputHandler inputHandler;
     private AIPlayer aiPlayerAttack;
@@ -171,7 +173,13 @@ public class GameScreen implements Screen {
 
     }
     int iconSize = 30;
-    @Override
+
+	/**
+	 * Handles all rendering and game
+	 * @param delta
+	 */
+	@Override
+
     public void render(float delta) { //method repeats a lot
     	
     	updateTime(delta);
@@ -189,11 +197,11 @@ public class GameScreen implements Screen {
 
 		ArrayList<Item> empty = new ArrayList<>();
 
-        player.update(delta, 0, empty, 0);
+        player.update(delta, 0, 0);
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-				aiPlayers.get(i).update(delta, 3, mapItems, worldTimer);
+				aiPlayers.get(i).update(delta, 3,worldTimer);
 
 		}
 
@@ -310,8 +318,11 @@ public class GameScreen implements Screen {
         
     }
 
-    // method to check if the ai is human or not
-    private boolean isHuman1() {
+	/**
+	 * Method checks if a player is a human or ai
+	 * @return boolean
+	 */
+	private boolean isHuman1() {
     	if (aiPlayerAttack != null && playerAttack == null) {
     		// checks whetehr one or the other is null
     		return false;
@@ -327,7 +338,14 @@ public class GameScreen implements Screen {
 		}
     	return true;
 	}
-	// method for checking if an ai player is on the same square as another player
+
+	/**
+	 * Checks if a ai player is on the same space as an ai or human player
+	 * @param current
+	 * @param playersA
+	 * @param aiPlayersA
+	 * @return
+	 */
     private boolean isPlayerOnSameAI(AIPlayer current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
     	// if one person on same square that is the player attack return true and set attackplayer
 		// starts by setting both to null
@@ -367,7 +385,14 @@ public class GameScreen implements Screen {
 		return false;
 
 	}
-	// same as above method just this time it is a human player checking for other laeyrs
+
+	/**
+	 * Cheks if a human player is on the same space as an ai or player
+	 * @param current
+	 * @param playersA
+	 * @param aiPlayersA
+	 * @return
+	 */
 	private boolean isPlayerOnSameP(Player current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
 		// first thing cycle through list checking and comparing coordinates
 		// if one person on same square that is the player attack return true and set attackplayer
@@ -399,7 +424,13 @@ public class GameScreen implements Screen {
 		return false;
 
 	}
-	// method which compares and checks if the palyers are on the same space
+
+	/**
+	 * works out if two coordinates are the same or not
+	 * @param investigation
+	 * @param check
+	 * @return
+	 */
 	private boolean sameSpace(Coordinate investigation, Coordinate check) {
     	// get  coordinates then abs and check difference
 		int xCorI = investigation.getX();
@@ -411,7 +442,9 @@ public class GameScreen implements Screen {
 		return (xdist <= 100 && ydist <= 100);
 	}
 
-	// method to do the same thing as paleyr pick up jsut for mutliple people
+	/**
+	 * Method for handling ai picking up
+	 */
     private void aiMultiPickUp() {
     	for (int i  = 0; i < aiPlayers.size(); i++) {
 			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
@@ -582,6 +615,11 @@ public class GameScreen implements Screen {
 		}
     }
 
+	/**
+	 * Method to handle picking up ai players
+	 * @param player
+	 * @param aico
+	 */
     private void aiPickUp(AIPlayer player, Collect aico) {
     	Item item = aico.nearestItem(player);
     	if (!(player.items.contains(item.getType())) && !(item.getType() == "coin")) {

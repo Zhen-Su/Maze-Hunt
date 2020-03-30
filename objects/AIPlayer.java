@@ -1,33 +1,27 @@
 package com.project.mazegame.objects;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.project.mazegame.objects.Player;
-import com.project.mazegame.screens.GameScreen;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
-import com.project.mazegame.tools.PlayerThread;
 import com.project.mazegame.tools.Pair;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Random;
 
-import jdk.nashorn.internal.objects.annotations.Where;
-import sun.awt.X11.XPropertyEvent;
 
 // each time ai moves needs to send message
 
 // In constructor can litterally just call AITakingOver and will genearate however many AIs wanted
+
+/**
+ * <h1> AI Player</h1>
+ * Class is ai for game handles any ai involved. It extends the player class and overrides the update method
+ *
+ * @Author James Bartlett
+ *
+ */
 public class AIPlayer extends Player {
-    public ArrayList<AIPlayer> ais;
-    private final int spawnNumber = 0;
-    private Collect co;
     protected Direction dir;
     private TiledMapTileLayer collisionLayer;
-    private Thread aiThread;
     private float initialisedTime;
     private boolean updateCount;
     private float attackPlayerTime;
@@ -35,43 +29,40 @@ public class AIPlayer extends Player {
     private boolean attackPStart;
     private boolean attackAIStart;
     private ArrayList<Coordinate> visited;
-    private int trackindex;
     private static final int movenumber = 30;
-    private String premov;
-    public int logx;
-    public int logy;
-    private int olditemcount;
-    private int colog1;
-    private int colog2;
     private Coordinate lastp;
     private Coordinate preve;
-    private String direct = null;
+    private String direct;
     public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID) {
         super(collisionLayer, name = "Super AI", ID);
-//        super.loadPlayerTextures();
         this.collisionLayer = collisionLayer;
         initialPosition();
-        aiThread = new Thread(new PlayerThread());
+
         this.updateCount = false;
         this.attackAIStart = false;
         this.attackPStart = false;
         this.visited = new ArrayList<>();
         this.visited.add(super.position);
-        this.trackindex = 0;
-        this.olditemcount = 0;
         this.direct = "Up";
         this.preve = null;
         this.lastp = null;
-//        aiThread.start();
-//        this.ais = AITakingOver(numberOfThem, collisionLayer, co);
 
     }
-    public void setInitialisedTime(float time) {this.initialisedTime = time;}
 
-    public AIPlayer() {super();}
+
+    /**
+     * Gets the directrion of the player
+     * @return Direction
+     */
     public Direction getDir() {
         return this.dir;
     }
+
+    /**
+     * Given a number spawns an amount of ai playeers buy constructing new instaces of the player
+     * @param number
+     * @return ArrayList<AIPlayer> players
+     */
     public ArrayList<AIPlayer> AITakingOver(int number) {
         ArrayList<AIPlayer> players = new ArrayList<>();
 
@@ -93,8 +84,6 @@ public class AIPlayer extends Player {
         return players;
     }
     private static String incrementString(String currentString) {
-//        System.out.println("Still works");
-//        System.out.println(currentString);
         String extractAI = currentString.substring(0, 2);
         if (!extractAI.equals("AI")) {
             try {
@@ -110,15 +99,26 @@ public class AIPlayer extends Player {
         }
         return null;
     }
+
+    /**
+     * <h1>Update</h1>
+     * Overrides the player update method to move the player based on the mode
+     * mode 1 is a random movment selects a random space next to it and goes to that space
+     * mode 2 is a only return if have to where moves in a straight line priroritising left, up, right down
+     * mode 3 is random mouse which looks at the junctions availabel and picks a junction to travel to but alwasy makes sure not to back track
+     *
+     * @param delta the detla from the gamescreen
+     * @param mode the mode for the player
+     * @param time The time to control movment
+     */
     @Override
-    public void update (float delta , int mode, ArrayList<Item> items, float time) {
-//        aiThread.run();
+    public void update (float delta , int mode, float time) {
+
         // operate the delay if dead
         if (super.haveyoudied) {
             System.out.println("I have gone here " + this.getID());
             if (deathTime - time > 5) {
                 haveyoudied = false;
-                System.out.println(deathTime - time);
             }
         }
         if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
@@ -131,13 +131,10 @@ public class AIPlayer extends Player {
                 this.position.setX((int) x);
                 this.position.setY((int) y);
                 Coordinate moveToTake = direction(avaibleMoves(x, y));
-                System.out.println("The ai player is moving "+ moveToTake.toString());
                 super.x = (int) moveToTake.getX();
                 super.y = (int) moveToTake.getY();
 
                 this.change(old, moveToTake);
-//                System.out.println("The direction the player is moving in is " + this.dir);
-
 
             } else if (mode == 3) {
                 // this algorithm has focused movemnt.
@@ -157,68 +154,45 @@ public class AIPlayer extends Player {
                 int randSize = junctions.size() - 1;
 
                 if (junctions.size() == 1) {
-                    System.out.println("Number of juntions " + 1);
                     tempx = junctions.get(0).getX();
                     tempy = junctions.get(0).getY();
-//                    this.preve = junctions.get(0);
                 } else if (junctions.size() == 2) {
                     if (preve != null && lastp != null) {
-//                        System.out.println("Prev is not null");
-                        System.out.println("Number of juntions " + 2);
-                        System.out.println("List before "  + junctions);
                         ArrayList<Coordinate> rem = customRemove(lastp, junctions);
-                        System.out.println("Preve is " + lastp.toString());
-
-                        System.out.println("List after " + rem);
                         int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
                         tempx = rem.get(index).getX();
                         tempy = rem.get(index).getY();
-//                        this.preve = junctions.get(0);
                     } else {
 
                         int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
                         tempx = junctions.get(index).getX();
                         tempy = junctions.get(index).getY();
-//                        preve = junctions.get(index);
                     }
                 } else if (junctions.size() == 3) {
                     if (preve != null && lastp != null) {
-//                        System.out.println("Prev is not null");
-                        System.out.println("Number of juntions " + 3);
-                        System.out.println("List before "  + junctions);
-                        System.out.println("Preve is " + lastp.toString());
                         ArrayList<Coordinate> rem = customRemove(lastp, junctions);
-                        System.out.println("List after " + rem);
                         int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
                         tempx = rem.get(index).getX();
                         tempy = rem.get(index).getY();
-//                        preve = junctions.get(index);
 
                     } else {
                         int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
                         tempx = junctions.get(index).getX();
                         tempy = junctions.get(index).getY();
-//                        preve = junctions.get(index);
                     }
 
                 } else if (junctions.size() == 4) {
                     if (preve != null && lastp != null) {
-                        System.out.println("Prev is not null");
-                        System.out.println("Number of juntions " + 4);
-                        System.out.println("Preve is " + lastp.toString());
-                        System.out.println("List before "  + junctions);
                         ArrayList<Coordinate> rem = customRemove(lastp, junctions);
-                        System.out.println("List after " + rem);
                         int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
                         tempx = rem.get(index).getX();
                         tempy = rem.get(index).getY();
-//                        preve = junctions.get(index);
 
                     } else {
                         int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
                         tempx = junctions.get(index).getX();
                         tempy = junctions.get(index).getY();
-//                        preve = junctions.get(index);
+
                     }
                 }
                 Coordinate nextMove = new Coordinate(tempx, tempy);
@@ -229,12 +203,6 @@ public class AIPlayer extends Player {
                 this.lastp = this.preve;
                 this.preve = nextMove;
 
-
-
-
-
-
-                // ultimate goal is coins
             } else if (mode == 2) {
                 Coordinate old = super.position;
                 int tempx = x;
@@ -301,15 +269,16 @@ public class AIPlayer extends Player {
         }
     }
 
-    private Coordinate bestMoveTrace(ArrayList<Coordinate> listgood) {
-        Coordinate returno = null;
-        for (int i = 0; i < listgood.size(); i++) {
-            if (!visited.contains(listgood.get(i))) {
-                return listgood.get(i);
-            }
-        }
-        return returno;
-    }
+    /**
+     * <h1> Custom remove</h1>
+     * <p>
+     *     Normally with the array list remove method it remvoes things however it looks for an object match
+     *     With the cooridnate looking to be removed it is not the same object so wrote custom remove method to remove coordinates from the list
+     * </p>
+     * @param rem coordinate to remove
+     * @param list list of coordinates to remove the coordinate from
+     * @return output list
+     */
     private ArrayList<Coordinate> customRemove(Coordinate rem, ArrayList<Coordinate> list) {
         ArrayList<Coordinate> outputlist = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
@@ -319,18 +288,15 @@ public class AIPlayer extends Player {
         }
         return outputlist;
     }
-    private ArrayList<Coordinate> workoutPath(Coordinate currentPos, Coordinate itemPos) {
-        ArrayList<Coordinate> howtoget = new ArrayList<>();
-        while(!currentPos.same(itemPos)) {
-            // method for working out path
-            // know always moves up in in 40s
-            // try and get to x first
-            // then y
 
-        }
-        return howtoget;
-    }
-    // just a string checking method
+    /**
+     * <h1>chosenMove</h1>
+     * Checks if the player can move in the chosen direction
+     * @param xt x value which is being looked at
+     * @param yt y value which is being looked at
+     * @param direction direction to go in
+     * @return boolean depending on whether the x and y are available to move to
+     */
     private boolean chosenMove(int xt, int yt, String direction) {
         if (direction.equals("Up")) {
             if (checkCollisionMap(xt, yt + movenumber)) {
@@ -365,91 +331,14 @@ public class AIPlayer extends Player {
         }
         return false;
     }
-    private String juntionType(ArrayList<Coordinate> moves) {
-        if (moves.size() == 1) {
-            return "Deadend";
-        } else if (moves.size() == 2) {
-            // always have previous cooridnates in line and junction remove prev from sysem
-            return "Line";
-        } else if (moves.size() == 3) {
-            return "Junction";
-        } else if (moves.size() == 4) {
-            return "freeforall";
-        } else {
-            return "help";
-        }
-    }
-    private double calcu(int px, int py, int ix, int iy) {
-        double xdif = ix - px;
-        double ydif = iy - py;
-        return Math.sqrt(Math.pow(xdif, 2) + Math.pow(ydif, 2));
-    }
-    private static boolean containsCo(Coordinate look, ArrayList<Coordinate> list) {
-        if (list.isEmpty()) {
-            return false;
-        }
-        for (int i = 0; i < list.size(); i++) {
-            if (Coordinate.same(look, list.get(i))) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private Coordinate nearest(AIPlayer player, ArrayList<Item> items) {
-        int px = player.getPosition().getX();
-        int py = player.getPosition().getY();
-        int bestlength = Collect.andinsEuclidian(px, items.get(0).getX(), py, items.get(0).getY());
-        Coordinate bestCoord = items.get(0).getPosition();
-        for (int i = 0; i < items.size(); i++) {
-            int secondbest = Collect.andinsEuclidian(px, items.get(i).getX(), py, items.get(i).getY());
-            if (secondbest < bestlength) {
-                bestlength = secondbest;
-                bestCoord = items.get(i).getPosition();
-            }
-        }
-        return position;
-    }
 
-    private ArrayList<Coordinate> sortForBest(Coordinate target, ArrayList<Coordinate> potMove) {
-        // work the eculidians
-        ArrayList<Integer> euclids = new ArrayList<>();
-        for (int i = 0; i < potMove.size(); i++) {
-            euclids.add(Collect.andinsEuclidian(target.getX(), potMove.get(i).getX(), target.getY(), potMove.get(i).getY()));
-        }
-       ArrayList<Pair> pairs = new ArrayList<>();
-       for (int i = 0; i < euclids.size(); i++) {
-           pairs.add(new Pair(i, 0));
-       }
-       ArrayList<Integer> before = new ArrayList<>();
-       for (int i = 0; i < euclids.size(); i++) {
-           before.add(euclids.get(i));
-       }
-       Collections.sort(euclids);
-       for (int i = 0; i < before.size(); i++) {
-           int beforelook = before.get(i);
-
-           for (int j = 0; j < euclids.size(); j++) {
-               if (beforelook == euclids.get(j) && pairs.get(i).getY() == 0) {
-                   pairs.get(i).setY(j);
-               }
-           }
-       }
-       ArrayList<Coordinate> outputs = new ArrayList<>();
-
-       for (int i = 0; i < pairs.size(); i++) {
-           outputs.add(null);
-       }
-       for (int i = 0; i < pairs.size(); i++) {
-           Pair examine = pairs.get(i);
-           Coordinate tobeadded = potMove.get((int)examine.getX());
-           Coordinate rem = outputs.remove((int) examine.getY());
-           outputs.add((int) examine.getY(), tobeadded);
-       }
-
-        return outputs;
-
-
-    }
+    /**
+     * <h> Change</h>
+     * Chagnges the textture of the player based on where it moves
+     * @param old position
+     * @param update new positon
+     *
+     */
     private void change(Coordinate old, Coordinate update) {
         if (old.getX() < update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.R;
@@ -474,10 +363,18 @@ public class AIPlayer extends Player {
             super.animation.setFrames(UpAnim.getFrames());
             System.out.println("D");
         }
-//        System.out.println("Direction not changed");
+
         System.out.println(this.dir);
 
     }
+
+    /**
+     * Available moves
+     * Method to work out the surrounding places which arent moves
+     * @param x current x coordinate of player
+     * @param y current y coordinate of player
+     * @return avaiable list of moves for player
+     */
     private ArrayList<Coordinate> avaibleMoves(int x, int y) {
         int move = movenumber;
         ArrayList<Coordinate> moves = new ArrayList<>();
@@ -496,6 +393,12 @@ public class AIPlayer extends Player {
         return moves;
     }
 
+    /**
+     * direction
+     * based on list of moves picks a random one
+     * @param openDoor moves availabe
+     * @return place to move to
+     */
     private Coordinate direction(ArrayList<Coordinate> openDoor) {
         if (openDoor.size() <= 0) {
             return null;
@@ -504,35 +407,19 @@ public class AIPlayer extends Player {
         int randomTake = (int)(Math.random() * ((openDoor.size() - 1) + 1));
         return openDoor.get(randomTake);
     }
-    private Coordinate bestMove(Coordinate target, ArrayList<Coordinate> onesToUse) {
-        int bestCurrent = Collect.andinsEuclidian(target.getX(), onesToUse.get(0).getX(), target.getY(), onesToUse.get(0).getY());
-        Coordinate take = onesToUse.get(0);
-        for (int i = 0; i < onesToUse.size(); i++) {
-            int current = Collect.andinsEuclidian(target.getX(), onesToUse.get(i).getX(), target.getY(), onesToUse.get(i).getY());
-            if (current < bestCurrent) {
-                bestCurrent = current;
-                take = onesToUse.get(i);
 
-            }
-
-        }
-        return take;
-    }
-    private Boolean targets(Coordinate target, Coordinate other, Coordinate compare) {
-        return Math.abs(target.getX() - other.getX()) < Math.abs(target.getX() - compare.getX()) || Math.abs(target.getY() - other.getY()) < Math.abs(target.getY() - compare.getY());
-    }
-
-    private float left() {return this.x -= movenumber;}
-    private float right() {return this.x += movenumber;}
-    private float up() {return this.y += movenumber;}
-    private float down() {return this.y -= movenumber;}
+    /**
+     * attack
+     * given a player it attacks them
+     * @param playerA the player being attacked
+     * @param time the time for attack count
+     */
     @Override
     public void attackP(Player playerA, float time) {
-        System.out.println("I am executing");
+
         // only difference with this and the player methods is doens't need space to be pressed
         if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                System.out.println("Going here");
                 super.isAttacking = true;
                 sword = swordAttack;
                 playerA.decreaseHealth(1 + super.getGearCount());
@@ -545,6 +432,14 @@ public class AIPlayer extends Player {
         this.attackPlayerTime = time;
         this.attackPStart = true;
     }
+
+    /**
+     * attackAI
+     * attacks ai player same as other attack method
+     * @param playerA playe to be attacked
+     * @param time to manage no spammning
+     * @return ai player who is being attacked
+     */
     @Override
     // same as bove method jsut attackign another ai instead
     public AIPlayer attackAI(AIPlayer playerA, float time) {
@@ -567,6 +462,10 @@ public class AIPlayer extends Player {
         return playerA;
     }
 
+    /**
+     * Sets the direction of player
+     * @param d
+     */
     public void setDir(Direction d) {
         this.dir = d;
     }

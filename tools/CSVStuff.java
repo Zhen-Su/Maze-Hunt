@@ -7,8 +7,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * <h1>CSV Stuff</h1>
+ * Handles writing and reading from CSV
+ * @Author James Bartlett
+ */
 public class CSVStuff {
-
+    /**
+     * Method for reading in CSV from a local file on computer
+     * @return Returns arraylist of data from the csv file
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
     public static ArrayList<String> readCSVFile() {
         String fileRead = "/home/james/CSVTest/james.csv";
         BufferedReader buff = null;
@@ -32,6 +42,11 @@ public class CSVStuff {
         return null;
     }
 
+    /**
+     * Method for writing to csv from array list
+     * @param list
+     * @throws IOException
+     */
     public static void writeCSV(ArrayList<String> list) {
         try {
         String outPutCSV = "/home/james/CSVTest/james.csv";
