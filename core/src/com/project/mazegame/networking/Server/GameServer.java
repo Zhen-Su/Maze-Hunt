@@ -214,13 +214,15 @@ public class GameServer implements Runnable {
     /**
      * Stop all threads
      */
-    public void dispose(MultiPlayerGameScreen gameClient) {
+    public void dispose(MultiPlayerGameScreen gameClient,boolean hasSentExitMsg) {
         isRunning = false;
 
-        //Send message to all client the server will close.
-        PlayerExitMessage message = new PlayerExitMessage(gameClient, gameClient.getMultiPlayer().getID());
-        gameClient.getNc().send(message);
-        gameClient.getNc().sendClientDisconnectMsg();
+        if(!hasSentExitMsg) {
+            //Send message to all client the server will close.
+            PlayerExitMessage message = new PlayerExitMessage(gameClient, gameClient.getMultiPlayer().getID());
+            gameClient.getNc().send(message);
+            gameClient.getNc().sendClientDisconnectMsg();
+        }
         try {
             Thread.currentThread().sleep(100);
         } catch (InterruptedException e) {

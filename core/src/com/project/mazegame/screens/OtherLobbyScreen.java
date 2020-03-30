@@ -125,7 +125,7 @@ public class OtherLobbyScreen implements Screen {
             font.setColor(Color.YELLOW);
             font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
         }
-        if (!players.isEmpty() && players.get(0).getName() != hostPlayerName) {
+        if (!players.isEmpty() && !players.get(0).getName().equals(hostPlayerName) ) {
             font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
         }
     }

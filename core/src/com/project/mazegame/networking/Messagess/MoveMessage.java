@@ -51,6 +51,7 @@ public class MoveMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
             if(debug) System.out.println("I'm id"+id+", I'll send a move message.");
+//            System.out.println("I'm id"+id+", I'll send a move message.");
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();

@@ -107,6 +107,8 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
 * Version 4.0: AI can completely work in multi, fix timer, add new feature : if a player exit game, then will show this info on the other player's screen
   
+  * 4.0.1 add hostLobby, fix player exit bug
+  
   
   
   

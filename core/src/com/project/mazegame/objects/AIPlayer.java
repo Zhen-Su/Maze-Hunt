@@ -378,7 +378,6 @@ public class AIPlayer extends Player {
     private float down() {return this.y -= movenumber;}
     @Override
     public void attackP(Player playerA, float time) {
-        System.out.println("I am executing");
         // only difference with this and the player methods is doens't need space to be pressed
         if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
@@ -398,7 +397,6 @@ public class AIPlayer extends Player {
     @Override
     // same as above method just attacking another ai instead
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-        System.out.println("I am executing");
         if (attackAITime - time > 0.3 || !attackAIStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                 System.out.println("Has gone here");

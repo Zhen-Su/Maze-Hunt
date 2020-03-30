@@ -13,9 +13,12 @@ import com.project.mazegame.networking.Messagess.StartGameMessage;
 import com.project.mazegame.networking.Server.GameServer;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
+import com.project.mazegame.tools.Assets;
+import com.project.mazegame.tools.CSVStuff;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class HostLobbyScreen implements Screen {
 
@@ -25,13 +28,15 @@ public class HostLobbyScreen implements Screen {
     private GameServer gameServer;
     private String hostUsername;
     private MultiPlayerGameScreen gameClient;
-    private BitmapFont font;
-    private Texture backGround;
+    private BitmapFont font ;
+    private Texture backGround ,startMazeButtonActive,startMazeButtonInactive;
+    public Texture playerRed,playerBlue,playerGreen,playerLilac,playerOrange,playerPink,playerYellow;
     private OrthographicCamera cam;
 
     public static final int WIDTH = 1000;
     public static final int HEIGHT = 1000;
-
+    private String hostColour;
+    private boolean StartPressed = false;
 
     public HostLobbyScreen(MazeGame game,String username,int NumOfAI, String map, String color) {
         this.game=game;
@@ -46,18 +51,36 @@ public class HostLobbyScreen implements Screen {
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        gameServer.setGameClient(gameClient);
         cam = new OrthographicCamera(WIDTH, HEIGHT);
         cam.setToOrtho(false, WIDTH, HEIGHT);
+
+
+        playerRed = Assets.manager.get(Assets.playerRed);
+        playerBlue  = Assets.manager.get(Assets.playerBlue);
+        playerGreen  = Assets.manager.get(Assets.playerGreen);
+        playerLilac  = Assets.manager.get(Assets.playerLilac);
+        playerOrange = Assets.manager.get(Assets.playerOrange);
+        playerPink = Assets.manager.get(Assets.playerPink);
+        playerYellow = Assets.manager.get(Assets.playerYellow);
+
+
+        ArrayList<String> output = CSVStuff.readCSVFile("csvFile");
+
+        this.hostColour = output.get(1);
+
+        startMazeButtonActive = Assets.manager.get(Assets.StartNewMazeButtonPressed,Texture.class);
+        startMazeButtonInactive = Assets.manager.get(Assets.StartNewMazeButton,Texture.class);
     }
 
     @Override
     public void show() {
-        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
-        bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
-        font = new BitmapFont();
-        font.setColor(Color.RED);
-        font.getData().setScale(1.5f);
+        backGround = Assets.manager.get(Assets.menuBackground, Texture.class);
+        font = Assets.manager.get(Assets.font, BitmapFont.class);
+//        font = new BitmapFont();
+        font.setColor(Color.WHITE);
+        font.getData().setScale(1f);
+
+
     }
 
     @Override
@@ -73,21 +96,77 @@ public class HostLobbyScreen implements Screen {
         game.batch.begin();
         {
             game.batch.draw(backGround, 0, 0, 1000, 1000);
-            font.draw(game.batch, "Here is Host Lobby...", 400, 950);
-            font.draw(game.batch, "Host Player:   " + hostUsername, 70, 900);
-            font.draw(game.batch, "Ready Player:   ", 70, 850);
+            game.batch.draw(Assets.manager.get(Assets.waitingForPlayers, Texture.class),0, 800);
+//            font.draw(game.batch, "Here is Host Lobby...", 400, 950);
+            font.draw(game.batch, "Host Player:   " ,70 , 700);
 
-            int currY = 850;
+            font.draw(game.batch, hostUsername, 500, 700);
+
+            game.batch.draw(getColour(this.hostColour),850, 650, 120,160);
+
+
+            font.draw(game.batch, "Ready Players:   ", 70, 600);
+
+            int currY = 500;
             for (Player multiPlayer : gameClient.getPlayers()) {
                 font.draw(game.batch, multiPlayer.getName(), 230, currY);
+
+
+                // Trying to display what colour each player has chosen next to their name
+                game.batch.draw(getColour(multiPlayer.getColour()), 850, currY - 50 , 120,160);
                 currY -= 50;
             }
+
+
         }
+
+
+
+        if (isHovering(300,150, 400, 100)) {
+            game.batch.draw(startMazeButtonActive,300,150, 400, 100);
+            if (Gdx.input.justTouched())
+                StartPressed = true;
+        }
+        else {
+            game.batch.draw(startMazeButtonInactive,300,150, 400, 100);
+        }
+
         game.batch.end();
     }
 
+    private boolean isHovering(int X, int  Y, int WIDTH, int HEIGHT) {
+        if (Gdx.input.getX() < (X + WIDTH) && Gdx.input.getX() > X && MazeGame.HEIGHT - Gdx.input.getY() > Y && MazeGame.HEIGHT - Gdx.input.getY() < Y + HEIGHT)
+            return true;
+        return false;
+    }
+
+    private Texture getColour(String colour) {
+        switch (colour) {
+            case "blue":
+                return playerBlue;
+
+            case "green":
+                return playerGreen;
+
+            case "pink":
+                return playerPink;
+
+            case "orange":
+                return playerOrange;
+
+            case "lilac":
+                return playerLilac;
+
+            case "yellow":
+                return playerYellow;
+
+            default:
+                return playerRed;
+        }
+    }
+
     private void handleInput(){
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+        if(StartPressed) {
             StartGameMessage start = new StartGameMessage(gameClient,true,gameClient.getMultiPlayer().getID());
             gameClient.getNc().send(start);
             gameClient.setImHost(true);
@@ -105,7 +184,7 @@ public class HostLobbyScreen implements Screen {
 
     //TODO handle player exit lobby event here
     private void disposeServer(){
-        gameServer.dispose(gameClient);
+        gameServer.dispose(gameClient,false);
     }
 
     @Override
