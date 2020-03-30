@@ -83,8 +83,8 @@ public class Assets {
     public static final String playerDying="Player/playerDying.png";
     public static final String font = "myFont.fnt";
 
-    public static final String menuBgm = "sounds//menubgm.mp3"; // BGM for main menu
-    public static final String mainBgm = "sounds/mainBgm.mp3"; // BGM for game screens
+    public static final String menuBgm = "sounds/menuBgm.mp3"; // BGM for main menu
+    public static final String mainBgm = "sounds/mainbgm.mp3"; // BGM for game screens
     public static final String hitSFX = "sounds/sfx/hit.mp3"; // SFX when getting hit
     public static final String atkSFX = "sounds/sfx/atk.mp3"; // SFX when attacking
     public static final String addHealthSFX = "sounds/sfx/addHealth.mp3"; // SFX when health is added (a.k.a consuming potion)

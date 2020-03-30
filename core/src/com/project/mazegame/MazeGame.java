@@ -24,8 +24,6 @@ public class MazeGame extends Game {
 
 	@Override
 	public void create () {
-		audio = new AudioHandler();
-		audio.setCurrentScreen("menu");
 		assets = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
@@ -34,6 +32,9 @@ public class MazeGame extends Game {
 		Assets.load();
 		Assets.manager.finishLoading();
 		System.out.println(Assets.manager.update());
+
+		audio = new AudioHandler();
+		audio.setCurrentScreen("menu");
 
 		batch = new SpriteBatch();
 	}
