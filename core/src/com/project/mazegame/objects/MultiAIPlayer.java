@@ -414,7 +414,6 @@ public class MultiAIPlayer extends AIPlayer {
 
     @Override
     public void attackP(Player playerA, float time) {
-        System.out.println("I am executing");
         // only difference with this and the player methods is doens't need space to be pressed
         if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
@@ -422,6 +421,7 @@ public class MultiAIPlayer extends AIPlayer {
                 sword = swordAttack;
                 attack();
                 playerA.decreaseHealth(1 + super.getGearCount());
+                System.out.println("I'm an AI, ID:"+ID+" I'm attacking a human player ID:"+playerA.getID());
 
                 int numOfDecrease = 1 + getGearCount();
                 playerA.decreaseHealth(numOfDecrease);
@@ -443,11 +443,12 @@ public class MultiAIPlayer extends AIPlayer {
         System.out.println("I am executing");
         if (attackAITime - time > 0.3 || !attackAIStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                System.out.println("Has gone here");
+
                 super.isAttacking = true;
                 sword = swordAttack;
                 attack();
                 playerA.decreaseHealth(1 + super.getGearCount());
+                System.out.println("I'm an AI,ID:"+ID+" I'm attacking an AI player,ID:"+playerA.getID());
 
                 int numOfDecrease = 1 + getGearCount();
                 playerA.decreaseHealth(1 + getGearCount());

@@ -101,7 +101,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 10;
+    public static float worldTimer = 360;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -151,6 +151,14 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, playerSkin, PlayersType.multi);
         netClient.connect(serverIP, false, 0, true);
 
+        //Sleep thread for guarantee host player is the first index in Players list
+        try {
+            Thread.currentThread().sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+
         if (isHost) {
             //create AI players
             createAIplayers(NumOfAI);
@@ -162,9 +170,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         }
 
         Gdx.input.setInputProcessor(this);
-
         cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
-
         getAsset();
     }
 
@@ -371,6 +377,13 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             }
         }
 
+        if(!imHost){
+            for(Player aiPlayer : players){
+                if(aiPlayer instanceof MultiAIPlayer){
+                }
+            }
+        }
+
         //update myself
         myMultiPlayer.update(delta, 0, empty, 0);
 
@@ -486,7 +499,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             }
 
             //draw timer
-            String message = "Time = " + (int) (worldTimer) ;
+            String message = "Time = " + (int) (worldTimer);
             font.draw(game.batch, message, myMultiPlayer.position.getX(), myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 10);
 
 
@@ -497,12 +510,12 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 }
 
                 String msg = nameOfExitPlayer + " quits the game! ";
-                font.draw(game.batch, msg, myMultiPlayer.position.getX()- 190, myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 100);
+                font.draw(game.batch, msg, myMultiPlayer.position.getX() - 190, myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 100);
 
                 //After 5 second, then make it null
                 if (time.currentTime() - counter == 4) {
                     nameOfExitPlayer = null;
-                    counter=0;
+                    counter = 0;
                 }
             }
 
@@ -522,7 +535,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                         e.printStackTrace();
                     }
                     if (isHost) {
-                        this.server.dispose(this);
+                        this.server.dispose(this,false);
                         if (debug) {
                             System.out.println("Server Close");
                         }
@@ -858,6 +871,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             PlayerExitMessage playerExitMessage = new PlayerExitMessage(this, getMultiPlayer().getID());
             this.getNc().send(playerExitMessage);
             this.getNc().sendClientDisconnectMsg();
+            if (imHost)
+                this.server.dispose(this,true);
         }
 
         if (Gdx.input.getX() < V_WIDTH && Gdx.input.getX() > V_WIDTH - EXIT_WIDTH && Gdx.input.getY() < EXIT_HEIGHT && Gdx.input.getY() > 0) {
@@ -865,10 +880,11 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             if (Gdx.input.justTouched()) {
                 this.dispose();
                 game.setScreen(new MenuScreen(this.game));
-                this.server.dispose(this);
-                if (debug) {
-                    System.out.println("Server close");
-                }
+                PlayerExitMessage playerExitMessage = new PlayerExitMessage(this, getMultiPlayer().getID());
+                this.getNc().send(playerExitMessage);
+                this.getNc().sendClientDisconnectMsg();
+                if (imHost)
+                    this.server.dispose(this,true);
 
             }
         } else game.batch.draw(exitButtonInactive, x, y, EXIT_WIDTH, EXIT_HEIGHT);

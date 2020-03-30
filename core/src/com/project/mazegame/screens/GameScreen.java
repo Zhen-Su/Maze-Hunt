@@ -1,7 +1,6 @@
 package com.project.mazegame.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.project.mazegame.networking.Database.WithdrawData;
 import com.project.mazegame.objects.*;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -99,7 +98,7 @@ public class GameScreen implements Screen {
 
 		inputHandler = new InputHandler();
 
-		worldTimer = 3;
+		worldTimer = 250;
 
 
 		// read csv file
@@ -306,7 +305,6 @@ public class GameScreen implements Screen {
 			if((worldTimer - time.currentTime()) < 0) {
 				this.dispose();
 				writeCoinCSV();
-
 				try {
 					game.setScreen(new EndScreen(this.game,false));
 				} catch (Exception e) {
