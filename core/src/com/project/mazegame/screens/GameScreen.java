@@ -292,7 +292,7 @@ public class GameScreen implements Screen {
 			aiPlayers.get(i).render(game.batch);
 		}
 
-		String message = "Time = " +  (int) (worldTimer) ;
+		String message = "Time = " +  (int) (worldTimer);
 
 
 		font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
