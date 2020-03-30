@@ -1,11 +1,13 @@
 package com.project.mazegame.tools;
 
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
-import org.junit.Assert;
-
+/**
+ * Class AudioHandler written by: Andin
+ * Use: to control music and sound preferences
+ */
 public class AudioHandler {
     private Music menuBGM;
     private Music gameBGM;
@@ -24,7 +26,11 @@ public class AudioHandler {
 
     private int volume;
 
-
+    /**
+     * Constructor imports all sounds loaded on the Assets class
+     * Only needs to be called once in the MazeGame class
+     * important!: declare AudioHandler after all assets been loaded else it'll give null pointer exceptions
+     */
     public AudioHandler() {
         this.musicOn = true;
         this.theScreen = "none";
@@ -42,6 +48,9 @@ public class AudioHandler {
         addHealthSound = Assets.manager.get(Assets.addHealthSFX, Sound.class);
     }
 
+    /**
+     * Turns music off and sets the boolean musicOn to false
+     */
     public void setMusicOff() {
         musicOn = false;
         switch (theScreen) {
@@ -54,6 +63,9 @@ public class AudioHandler {
         }
     }
 
+    /**
+     * Turns music on and sets the boolean musicOn to true
+     */
     public void setMusicOn() {
         musicOn = true;
         switch (theScreen) {
@@ -70,14 +82,25 @@ public class AudioHandler {
         }
     }
 
+    /**
+     * Sets boolean sfxOn to false
+     */
     public void setSFXoff() {
         sfxOn = false;
     }
 
+    /**
+     * Sets boolean sfxOn to true
+     */
     public void setSFXOn() {
         sfxOn = true;
     }
 
+    /**
+     * Tells the AudioHandler to know which music to load depending on the state of the screen
+     * Sets theScreen string to the current string
+     * @param screen current screen
+     */
     public void setCurrentScreen(String screen) {
         theScreen = screen;
         if (musicOn) {
@@ -87,30 +110,50 @@ public class AudioHandler {
         }
     }
 
+    /**
+     * Sound when moving
+     */
     public void step() {
         if (sfxOn)
             stepSound.play(volume);
     }
 
+    /**
+     * Sound when attacking
+     */
     public void atk() {
         if (sfxOn)
             attackSound.play(volume);
     }
 
+    /**
+     * Sound when defending (shield on)
+     */
     public void def() {
         if (sfxOn)
             shieldSound.play(volume);
     }
 
+    /**
+     * Sound when getting hit by another character
+     */
     public void hit(){
         if (sfxOn)
             hitSound.play();
     }
 
+    /**
+     * Gets the result of the && operator on sfxOn and musicOn
+     * @return Boolean
+     */
     public boolean isSoundOn() {
         return sfxOn && musicOn;
     }
 
+    /**
+     * Gets the current boolean value of musicOn
+     * @return Boolean of musicOn
+     */
     public boolean isMusicOn() {
         return musicOn;
     }
