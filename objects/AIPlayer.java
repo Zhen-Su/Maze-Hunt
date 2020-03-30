@@ -418,17 +418,22 @@ public class AIPlayer extends Player {
     public void attackP(Player playerA, float time) {
 
         // only difference with this and the player methods is doens't need space to be pressed
-        if (attackPlayerTime - time > 0.3 || !attackPStart) {
+
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                super.isAttacking = true;
-                sword = swordAttack;
-                playerA.decreaseHealth(1 + super.getGearCount());
-                if (playerA.health == 0) {
-                    this.coins += playerA.coins;
-                    playerA.death(time);
+                if (super.attackcount <= 8) {
+                    super.attackcount++;
+                } else {
+                    super.isAttacking = true;
+                    sword = swordAttack;
+                    playerA.decreaseHealth(1 + super.getGearCount());
+                    if (playerA.health == 0) {
+                        this.coins += playerA.coins;
+                        playerA.death(time);
+                    }
+                    super.attackcount = 0;
                 }
             }
-        }
+
         this.attackPlayerTime = time;
         this.attackPStart = true;
     }
@@ -444,19 +449,24 @@ public class AIPlayer extends Player {
     // same as bove method jsut attackign another ai instead
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         System.out.println("I am executing");
-        if (attackAITime - time > 0.3 || !attackAIStart) {
+
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                System.out.println("Has gone here");
-                super.isAttacking = true;
-                sword = swordAttack;
-                playerA.decreaseHealth(1 + super.getGearCount());
-                if (playerA.health == 0) {
-                    this.coins += playerA.coins;
-                    playerA.death(time);
-                    return playerA;
+                if (super.attackcount <= 8) {
+                    attackcount++;
+                } else {
+                    System.out.println("Has gone here");
+                    super.isAttacking = true;
+                    sword = swordAttack;
+                    playerA.decreaseHealth(1 + super.getGearCount());
+                    if (playerA.health == 0) {
+                        this.coins += playerA.coins;
+                        playerA.death(time);
+                        return playerA;
+                    }
+                    attackcount = 0;
                 }
             }
-        }
+
         this.attackAITime = time;
         this.attackAIStart = true;
         return playerA;

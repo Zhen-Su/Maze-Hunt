@@ -201,7 +201,7 @@ public class GameScreen implements Screen {
 
 
         for (int i = 0; i < aiPlayers.size(); i++) {
-				aiPlayers.get(i).update(delta, 3,worldTimer);
+				aiPlayers.get(i).update(delta, 1,worldTimer);
 
 		}
 
