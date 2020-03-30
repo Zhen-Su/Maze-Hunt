@@ -11,6 +11,7 @@ public interface Message {
     public static final int HOST_START = 4;
     public static final int ITEMS_CREATE = 5;
     public static final int ATTACK_MSG = 6;
+    public static final int DESCREASE_HP = 7;
 
 
 

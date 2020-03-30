@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.project.mazegame.networking.Messagess.AttackMessage;
+import com.project.mazegame.networking.Messagess.DecreaseHealthMessage;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Collect;
@@ -23,6 +24,7 @@ public class MultiPlayer extends Player {
     public boolean bL, bU, bR, bD;
     private Direction dir;
     public static boolean debug = false;
+    private float playerAttackTime;
 
     //constructors=================================================================================
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
@@ -144,7 +146,7 @@ public class MultiPlayer extends Player {
 
                 swipeAnim.render();
                 sword = swordAttack;
-                isAttacking=false;
+                isAttacking = false;
             } else {
                 sword = swordNotAttack;
                 swordSwipeRight.elapsedTime = 0;
@@ -181,15 +183,15 @@ public class MultiPlayer extends Player {
             //After 3 second, then call death()
             if (time.currentTime() - respawnCounter == 3) {
                 this.death();
-                MoveMessage message = new MoveMessage(this.gameClient.getMultiPlayer().getID(), this.position.getX(), this.position.getY(), dir);
-                gameClient.getNc().send(message);
+//                MoveMessage message = new MoveMessage(this.gameClient.getMultiPlayer().getID(), this.position.getX(), this.position.getY(), dir);
+//                gameClient.getNc().send(message);
             }
             setAnimation(DyingAnim);
         }
 
         // update the move to as they contantly get updated in the render method
-//        moveTo.setX(x);
-//        moveTo.setY(y);
+        moveTo.setX(x);
+        moveTo.setY(y);
     }
 
     /**
@@ -213,7 +215,8 @@ public class MultiPlayer extends Player {
                 bD = true;
                 break;
             case Input.Keys.SPACE:
-                isAttacking=true;
+                isAttacking = true;
+                pressSpace = true;
                 attackMessage();
                 break;
         }
@@ -242,8 +245,9 @@ public class MultiPlayer extends Player {
                 bD = false;
                 break;
             case Input.Keys.SPACE:
-                isAttacking=false;
-                attackMessage();
+                isAttacking = false;
+                pressSpace = false;
+//                attackMessage();
                 break;
         }
         locateDirection();
@@ -259,8 +263,8 @@ public class MultiPlayer extends Player {
         this.position.setY(y);
 
         // update the move to as they contantly get updated in the render method
-        moveTo.setX(x);
-        moveTo.setY(y);
+//        moveTo.setX(x);
+//        moveTo.setY(y);
 
         switch (dir) {
             case R:
@@ -419,24 +423,73 @@ public class MultiPlayer extends Player {
         this.health = 5;
         this.items.clear();
         this.respawnCounter = 0;
+
+        MoveMessage message = new MoveMessage(this.gameClient.getMultiPlayer().getID(), this.position.getX(), this.position.getY(), dir);
+        gameClient.getNc().send(message);
     }
 
-//    public void playerHitPlayer(Player hit) {
-//        // write boolean to check sword
-//
-//        if (this.items.contains("sword") && !hit.items.contains("shield")) {
-//            // will need to do if have item then that can be called
-//            // then decrease the helath based on that
-//            // could have a damage do attribute and various attributes which change throught the generateMapItems
-//            hit.decreaseHealth(this.swordDamage);
-//            if (hit.health == 0) {
-//                this.swordDamage++;
-//                this.coins += hit.coins;
-//                hit.death();
-//            }
-//        }
-//        //need to add shield stuffr
-//    }
+    // method for a player attacking another player
+    public void attackP(Player playerA, float time) {
+        // checks if the space key is pressed
+        if (pressSpace) {
+            // first checks the time delay to stop spamming and the plaeyer hans't attacked before
+            if (playerAttackTime - time > 0.03) {
+                // checks if the player has a sword and the player its attacking doesn't have a shield
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+//              System.out.println("Player is attacking");
+                    // sets is attacking to true
+                    isAttacking = true;
+                    // animation for sword
+                    sword = swordAttack;
+                    // decreases health by one plus any gearenchatnments
+                    int numOfDecrease = 1 + getGearCount();
+                    playerA.decreaseHealth(numOfDecrease);
+
+                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                    this.gameClient.getNc().send(decreaseHealthMessage);
+
+                    if (playerA.health == 0) {
+                        // adds the coins to the opposing player
+                        this.coins += playerA.coins;
+                        System.out.println("opposing player has died");
+
+                    }
+
+                }
+            } else sword = swordNotAttack;
+            // sets the time again and gives tur to startattack
+            this.playerAttackTime = time;
+        }
+    }
+
+    // attacks an ai paleyr same method as above
+
+    public AIPlayer attackAI(AIPlayer playerA, float time) {
+        if (pressSpace) {
+            if (aiAttackTime - time > 0.03 || !startAIAttack) {
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                    System.out.println("Player is attacking an AI");
+                    isAttacking = true;
+                    sword = swordAttack;
+
+                    int numOfDecrease = 1 + getGearCount();
+                    playerA.decreaseHealth(1 + getGearCount());
+                    DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                    this.gameClient.getNc().send(decreaseHealthMessage);
+
+                    if (playerA.health == 0) {
+                        System.out.println("AI has dead....");
+                        this.coins += playerA.coins;
+                    }
+                }
+            }
+            this.aiAttackTime = time;
+            startAIAttack = true;
+        }
+
+        return playerA;
+    }
+
 
     public void removeShield() {
         if (!this.items.contains("shield")) {

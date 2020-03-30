@@ -118,6 +118,7 @@ public class PlayerNewMessage implements Message {
                     System.out.println("id" + id + " 's position: (" + x + "," + y + ")");
                     gameClient.getPlayers().add(newPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
+                    gameClient.getHumanPlayers().add(newPlayer);
                 } else {
                     MultiAIPlayer newAIPlayer = new MultiAIPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir, colour, PlayersType.multi);
                     newAIPlayer.setID(id);

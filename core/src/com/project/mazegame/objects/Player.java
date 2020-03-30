@@ -35,11 +35,12 @@ public class Player {
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
 
-    private float aiAttackTime;
-    private float playerAttackTime;
-    private boolean startPAttack;
-    private boolean startAIAttack;
+    protected float aiAttackTime;
+    protected float playerAttackTime;
+    protected boolean startPAttack;
+    protected boolean startAIAttack;
     public boolean isAttacking = false;
+    protected boolean pressSpace;
 
     protected BitmapFont font;
     protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
@@ -249,7 +250,7 @@ public class Player {
                     else
                         this.position.setX(x);
                 }
-                this.dir=Direction.R;
+                this.dir = Direction.R;
             }
             if (LEFT_TOUCHED) {
                 if (x > 0) {
@@ -259,7 +260,7 @@ public class Player {
                     else
                         this.position.setX(x);
                 }
-                this.dir=Direction.L;
+                this.dir = Direction.L;
             }
             if (UP_TOUCHED) {
                 if (y < (collisionLayer.getHeight() * collisionLayer.getTileHeight()) - height) {
@@ -269,7 +270,7 @@ public class Player {
                     else
                         this.position.setY(y);
                 }
-                this.dir=Direction.U;
+                this.dir = Direction.U;
             }
             if (DOWN_TOUCHED) {
                 if (y > 0) {
@@ -280,7 +281,7 @@ public class Player {
                         this.position.setY(y);
 
                 }
-                this.dir=Direction.D;
+                this.dir = Direction.D;
             }
         }
 
@@ -297,27 +298,25 @@ public class Player {
             font.getData().setScale(1f, 1f);
             String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
             font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
-            animation.render();
-        }else{
+//            animation.render();
+        } else {
             //need to change AI animation here
-            if (playersType.equals(PlayersType.multi)||playersType.equals(PlayersType.single)) {
-                switch (this.dir) {
-                    case U:
-                        setAnimation(UpAnim);
-                        break;
-                    case D:
-                        setAnimation(DownAnim);
-                        break;
-                    case R:
-                        setAnimation(RightAnim);
-                        break;
-                    case L:
-                        setAnimation(LeftAnim);
-                        break;
-                    case STOP:
-                        setAnimation(DownAnim);
-                        break;
-                }
+            switch (this.dir) {
+                case U:
+                    setAnimation(UpAnim);
+                    break;
+                case D:
+                    setAnimation(DownAnim);
+                    break;
+                case R:
+                    setAnimation(RightAnim);
+                    break;
+                case L:
+                    setAnimation(LeftAnim);
+                    break;
+                case STOP:
+                    setAnimation(DownAnim);
+                    break;
             }
         }
 
@@ -329,12 +328,11 @@ public class Player {
         if (this.items.contains("shield"))
             sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
 
-        if(this.items.contains("gearEnchantment"))
-           sb.draw(enchantedGlow ,this.position.getX() -enchantedGlow.getWidth()/2 ,this.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
+        if (this.items.contains("gearEnchantment"))
+            sb.draw(enchantedGlow, this.position.getX() - enchantedGlow.getWidth() / 2, this.position.getY() - enchantedGlow.getHeight() / 2, enchantedGlow.getWidth(), enchantedGlow.getHeight());
 
         font.getData().setScale(0.5f, 0.5f);
         font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
-
     }
 
     //-----------------functions
@@ -379,8 +377,12 @@ public class Player {
         }
     }
 
+    public Coordinate getPosition() {
+        return new Coordinate(this.x, this.y);
+    }
+
     public void attack() {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        if (isAttacking) {
             if (this.items.contains("sword") && !this.isDead()) {
                 if (animation.toString().equals(RightAnim.toString()))
                     setSwordAnimation(swordSwipeRight);
@@ -393,7 +395,7 @@ public class Player {
 
                 //do animation
                 swipeAnim.render();
-                isAttacking = true;
+                isAttacking = false;
                 sword = swordAttack;
             }
         } else {
@@ -427,27 +429,28 @@ public class Player {
         //this.items = new ArrayList<>();
     }
 
-    // method for a player attacking antoher player
+    // method for a player attacking another player
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
 //        if (playerAttackTime - time > 0.3) {
         // checks if the space key is pressed
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            System.out.println("I'm going to attack a real player");
             // checks if the player has a swrod and the player its attacking doesn't have a shield
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
 //              System.out.println("Player is attacking");
                 // sets is attacking to true
                 isAttacking = true;
-                // animation for sowrd
+                // animation for sword
                 sword = swordAttack;
                 // decreases health by one plus any gearenchatnments
                 playerA.decreaseHealth(1 + getGearCount());
                 if (playerA.health == 0) {
-                    // adds the cons to the opposing player
+                    // adds the coins to the opposing player
                     this.coins += playerA.coins;
-                    // calls the death mehtod
-                    playerA.death(time);
-
+                    System.out.println("opposing player has died");
+                    // calls the death method
+//                    playerA.death(time);
                 }
 
             }
@@ -457,12 +460,13 @@ public class Player {
 //        this.playerAttackTime = time;
 //        startPAttack = true;
     }
+
     // attacks an ai paleyr same method as above
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-//        if (aiAttackTime - time > 0.3 || !startAIAttack) {
+        if (aiAttackTime - time > 0.1 || !startAIAttack) {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                System.out.println("Player as attacking me");
+                System.out.println("Player is attacking an AI");
                 isAttacking = true;
                 sword = swordAttack;
                 int gearEnchantCount = 0;
@@ -470,16 +474,14 @@ public class Player {
                 playerA.decreaseHealth(1 + getGearCount());
 
                 if (playerA.health == 0) {
-                    System.out.println("I am about to die");
+                    System.out.println("AI has dead....");
                     this.coins += playerA.coins;
-                    playerA.death(time);
-
                 }
             }
         }
-//            this.aiAttackTime = time;
-//            startAIAttack = true;
-//        }
+            this.aiAttackTime = time;
+            startAIAttack = true;
+        }
 
         return playerA;
     }
@@ -646,7 +648,7 @@ public class Player {
         swipeDown = Assets.manager.get(Assets.swipeDown, Texture.class);
         playerDying = Assets.manager.get(Assets.playerDying, Texture.class);
         font = Assets.manager.get(Assets.font, BitmapFont.class);
-        enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
+        enchantedGlow = Assets.manager.get(Assets.ENCHANTED, Texture.class);
 
         sword = swordNotAttack;
     }
@@ -661,107 +663,4 @@ public class Player {
 
     }
 
-    // private MazeGame game;
-
-//    public void pickUpItem(Item itemPicked , Collect co) {
-//
-//        switch(itemPicked.getType()) {
-//          case "Coin":
-//            this.coins++;
-//            //remove from map
-////            co.pickedUp(itemPicked);
-//
-//            break;
-//          case "Shield":
-//
-//            //hasShield = true;
-//            co.shield(itemPicked, this);
-//            //hasShield = false;
-//            break;
-//          case "Sword":
-//            hasSword = true;
-//            //Player player2 = new Player(collisionLayer"Hi", 234);
-//            //co.sword(itemPicked, this, player2);
-//
-//            break;
-//          case "Compass":
-//            hasCompass = true;
-//            co.compass(itemPicked);
-//            break;
-//          case "Healing Potion":
-//            hasHealingPotion = true;
-//            co.healingPotion(this);
-//            hasDamagingPotion = false;
-//            break;
-//          case "Damaging Potion":
-//            hasDamagingPotion = true;
-//            co.damagingPotion(itemPicked, this);
-//            hasDamagingPotion = false;
-//            break;
-//          /*default:
-//            throw new Exception("Item does not exist yet");*/
-//        }
-//      }
-//
-
-
-    /*
-    public void playerKillAI(AIPlayer AI) {
-        if (AI.health == 0) {
-        this.pickUpCoins(5);
-      } else {
-        AI.decreaseHealth(1);
-      }
-    }
-
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-
-    public float getSpeed() {
-    	return speed;
-    }
-
-    public void move(ItemCell coord) {
-        this.position = (ItemCell) coord;
-      }
-
-    public void changeXAndY(int x, int y) {
-
-        this.position.changeX(x);
-        this.position.changeY(y);
-     }
-
-    public boolean sameSpot(Player h) {
-       return this.position.same(h.position);
-    }
-    public boolean itemOnSquare(Item item) {
-       return this.position.same(item.getPosition());
-    }
-
-    public float getSpeed() {
-    	return speed;
-    }
-
-
-    public String toString() {
-        return "Name: " + this.name + " Health: " + this.health + " Coins: " + this.coins + " Items " + this.items + " Postion: " + position.toString();
-      }
-
-
-
-*/
 }

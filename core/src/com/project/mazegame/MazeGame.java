@@ -26,7 +26,7 @@ public class MazeGame extends Game {
 		assets = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
-		//this.setScreen(new SplashScreen(this));
+//		this.setScreen(new SplashScreen(this));
 
 		//Only for test
 		Assets.load();

@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.project.mazegame.networking.Messagess.AttackMessage;
+import com.project.mazegame.networking.Messagess.DecreaseHealthMessage;
 import com.project.mazegame.networking.Messagess.ItemCreateMessage;
 import com.project.mazegame.networking.Messagess.Message;
 import com.project.mazegame.networking.Messagess.MoveMessage;
@@ -84,13 +85,13 @@ public class NetClient {
             DataInputStream dis = new DataInputStream(is);
             int id = dis.readInt();
             this.serverUDPPort = dis.readInt();
-            this.PLAYER_EXIT_UDP_PORT=dis.readInt();
+            this.PLAYER_EXIT_UDP_PORT = dis.readInt();
             if (id == 1) {
                 //if i'm host player then send map to server
                 dos.writeUTF(gameClient.map);
-            }else{
+            } else {
                 //if i'm not a host player then receive map from server
-                this.map=dis.readUTF();
+                this.map = dis.readUTF();
             }
             if (!createAI) {
                 printMsg("Server gives me ID is: " + id + " ,and server UDP Port is: " + serverUDPPort);
@@ -147,6 +148,7 @@ public class NetClient {
 
     /**
      * send message to server
+     *
      * @param msg
      */
     public void send(Message msg) {
@@ -156,7 +158,7 @@ public class NetClient {
     /**
      * To set map and relevant variables in MultiplayerGameScreen
      */
-    public void settingMap(){
+    public void settingMap() {
         gameClient.setTileMap(tileMap);
         gameClient.setMapTexture(mapTexture);
         gameClient.setTileMapRenderer(tileMapRenderer);
@@ -240,6 +242,10 @@ public class NetClient {
                     msg = new AttackMessage(gameClient);
                     msg.process(dis);
                     break;
+                case Message.DESCREASE_HP:
+                    msg = new DecreaseHealthMessage(gameClient);
+                    msg.process(dis);
+                    break;
             }
         }
     }
@@ -247,7 +253,7 @@ public class NetClient {
     /**
      * To send player exit message.
      */
-    public void sendClientDisconnectMsg(){
+    public void sendClientDisconnectMsg() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(88);
         DataOutputStream dos = new DataOutputStream(baos);
         try {
@@ -255,15 +261,15 @@ public class NetClient {
             dos.writeInt(clientUDPPort);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
-            if(null != dos){
+        } finally {
+            if (null != dos) {
                 try {
                     dos.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            if(null != baos){
+            if (null != baos) {
                 try {
                     baos.close();
                 } catch (IOException e) {
@@ -272,7 +278,7 @@ public class NetClient {
             }
         }
         byte[] buf = baos.toByteArray();
-        try{
+        try {
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(serverIP, PLAYER_EXIT_UDP_PORT));
             datagramSocket.send(dp);
         } catch (IOException e) {

@@ -39,9 +39,13 @@ public class MenuScreen implements Screen {
     private static final int CREATE_HEIGHT = 100;
     private static final int CREATE_WIDTH = 100;
 
+    private static final int LEADERBOARD_HEIGHT = 100;
+    private static final int LEADERBOARD_WIDTH = 100;
+
+    private static final int LEADERBOARD_Y = MazeGame.HEIGHT / 2 - 330;
     private static final int CREATE_Y = MazeGame.HEIGHT / 2 - 200;
     private static final int PLAY_Y = MazeGame.HEIGHT / 2 + 50;
-    private static final int EXIT_Y = MazeGame.HEIGHT / 2 - 300;
+    private static final int EXIT_Y = MazeGame.HEIGHT / 2 - 400;
     private static final int JOIN_Y = MazeGame.HEIGHT / 2 - 70;
     private static final int AUDIO_WIDTH = 100;
     private static final int AUDIO_HEIGHT = 50;
@@ -60,6 +64,7 @@ public class MenuScreen implements Screen {
     Texture createMazeActive;
     Texture createMazeInactive;
     Texture mazeGame;
+    Texture leaderBoardButton ,leaderBoardButtonPressed;
 
     Sprite playButtonActiveSprite;
 
@@ -79,7 +84,8 @@ public class MenuScreen implements Screen {
         audioOff = Assets.manager.get(Assets.audioOff,Texture.class);
         backGround = Assets.manager.get(Assets.menuBackground,Texture.class);
         //audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
-
+        leaderBoardButton = Assets.manager.get(Assets.LeaderboardButton,Texture.class);
+        leaderBoardButtonPressed = Assets.manager.get(Assets.LeaderboardButtonPressed,Texture.class);
 
 
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
@@ -138,6 +144,20 @@ public class MenuScreen implements Screen {
             game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
         }
 
+        drawX = xMid("MB");
+        if (isHovering(drawX, LEADERBOARD_Y  , MB_WIDTH, MB_HEIGHT)) {
+            game.batch.draw(leaderBoardButton, drawX, LEADERBOARD_Y ,MB_WIDTH, MB_HEIGHT);
+            if (Gdx.input.justTouched())
+                try{
+                    game.setScreen(new LeaderboardScreen(game));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+        }
+        else {
+            game.batch.draw(leaderBoardButtonPressed, drawX, LEADERBOARD_Y,MB_WIDTH, MB_HEIGHT);
+        }
+
         drawX = xMid("SB");
         if (isHovering(drawX, EXIT_Y, SB_WIDTH, SB_HEIGHT)) {
             game.batch.draw(exitButtonActive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
@@ -147,6 +167,8 @@ public class MenuScreen implements Screen {
         else {
             game.batch.draw(exitButtonInactive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
         }
+
+
 
         drawX = xMid("AudioButton");
         if (isHovering(drawX, AUDIO_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {

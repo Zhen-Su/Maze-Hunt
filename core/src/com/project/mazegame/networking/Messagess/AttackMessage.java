@@ -15,9 +15,9 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
 public class AttackMessage implements Message{
-    private boolean debug = true;
     private int msgType = Message.ATTACK_MSG;
     private int id;
+    private boolean debug = false;
 
     private MultiPlayerGameScreen gameClient;
 

@@ -56,14 +56,15 @@ public class PlayerExitMessage implements Message {
     public void process(DataInputStream dis) {
         try{
             int id = dis.readInt();
-//            boolean isServerRunning = dis.readBoolean();
+
             if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
             //delete this player from player list according to player's id.
             int indexOfExitPlayer = gameClient.playersIdIndexList.get(id);
+            gameClient.nameOfExitPlayer = gameClient.getPlayers().get(indexOfExitPlayer).getName();
             gameClient.getPlayers().remove(indexOfExitPlayer);
-//            gameClient.setServerRunning(isServerRunning);
+
 
             System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
             System.out.println("My id: " +this.gameClient.getMultiPlayer().getID());

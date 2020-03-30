@@ -16,6 +16,7 @@ public class Assets {
     public static final String StartNewMazeButton = "UI/MenuButtons/StartNewMazeButton.png";
     public static final String StartNewMazeButtonPressed = "UI/MenuButtons/StartNewMazeButtonPressed.png";
     public static final String MazeHunt = "UI/Titles/MazeHunt.png";
+    public static final String JoinMaze = "UI/Titles/JoinMaze.png";
     public static final String audioOn = "UI/MenuButtons/audioOn.png";
     public static final String audioOff = "UI/MenuButtons/audioOff.png";
     public static final String menuBackground = "UI/Backgrounds/menuBackground.png";
@@ -41,6 +42,9 @@ public class Assets {
     public static final String BackToMenuButton = "UI/MenuButtons/BackToMenuButton.png";
     public static final String backToMenuButtonPressed = "UI/MenuButtons/backToMenuButtonPressed.png";
     public static final String Leaderboard = "UI/Backgrounds/Leaderboard.png";
+    public static final String LeaderboardBigger = "UI/Backgrounds/LeaderboardBigger.png";
+    public static final String LeaderboardButton = "UI/MenuButtons/LeaderboardButton.png";
+    public static final String LeaderboardButtonPressed = "UI/MenuButtons/LeaderboardButtonPressed.png";
 
     public static final String walkRightBlue = "Player/walkRightBlue.png";
     public static final String walkLeftBlue ="Player/walkLeftBlue.png";
@@ -80,9 +84,25 @@ public class Assets {
     public static final String swipeDown="Player/swipeDown.png";
     public static final String playerDying="Player/playerDying.png";
     public static final String font = "myFont.fnt";
+    public static final String enterBox = "UI/EnterBox.png";
 
-//	public static final String GAMEOVER = "UI\\Titles\\GAMEOVER!.png";
+    public static final String playerRed = ("Player/playerRed.png");
+    public static final String playerBlue = ("Player/playerBlue.png");
+    public static final String playerGreen = ("Player/playerGreen.png");
+    public static final String playerLilac = ("Player/playerLilac.png");
+    public static final String playerOrange = ("Player/playerOrange.png") ;
+    public static final String playerPink = ("Player/playerPink.png");
+    public static final String playerYellow = ("Player/playerYellow.png");
 
+    public static final String waitingForPlayers = "UI/Titles/Waitingforplayers....png";
+    public static final String endAnimation =  "Player/endAnimation.png";
+
+    public static final String playButton =  "UI/MenuButtons/playButton.png";
+    public static final String playButtonPressed =  "UI/MenuButtons/playButtonPressed.png";
+
+    public Assets (){
+        load();
+    }
 
 
     public static void load() {
@@ -98,6 +118,8 @@ public class Assets {
         manager.load(FindMazeButton,Texture.class);
         manager.load(FindMazeButtonPressed,Texture.class);
 
+        manager.load(JoinMaze, Texture.class);
+
         manager.load(StartNewMazeButton,Texture.class);
         manager.load(StartNewMazeButtonPressed,Texture.class);
         manager.load(MazeHunt,Texture.class);
@@ -106,6 +128,7 @@ public class Assets {
         manager.load(audioOff,Texture.class);
 
         manager.load(menuBackground,Texture.class);
+        manager.load(enterBox,Texture.class);
 
 
 //	         manager.load(exit_button_active, Texture.class);
@@ -135,6 +158,10 @@ public class Assets {
         manager.load(BackToMenuButton,Texture.class);
         manager.load(backToMenuButtonPressed,Texture.class);
         manager.load(Leaderboard,Texture.class);
+        manager.load(LeaderboardBigger,Texture.class);
+        manager.load(LeaderboardButton,Texture.class);
+        manager.load(LeaderboardButtonPressed,Texture.class);
+
         //player's texture
         manager.load(walkRightBlue,Texture.class);
         manager.load(walkLeftBlue,Texture.class);
@@ -175,6 +202,20 @@ public class Assets {
         manager.load(playerDying,Texture.class);
 
         manager.load(font, BitmapFont.class);
+        manager.load(waitingForPlayers , Texture.class);
+
+        manager.load(playerRed , Texture.class);
+        manager.load(playerBlue , Texture.class);
+        manager.load(playerGreen , Texture.class);
+        manager.load(playerLilac , Texture.class);
+        manager.load(playerOrange , Texture.class);
+        manager.load(playerPink , Texture.class);
+        manager.load(playerYellow , Texture.class);
+        manager.load(playButton , Texture.class);
+        manager.load(playButtonPressed , Texture.class);
+
+        manager.load(endAnimation , Texture.class);
+
 
         manager.finishLoading();
 
