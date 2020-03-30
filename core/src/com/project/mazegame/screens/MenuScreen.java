@@ -80,10 +80,10 @@ public class MenuScreen implements Screen {
         backGround = Assets.manager.get(Assets.menuBackground,Texture.class);
         //audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
 
+        game.audio.setMusicOn();
 
-
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
-        bgm.setLooping(true);
+//        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
+//        bgm.setLooping(true);
 //        bgm.play();
 
     }
@@ -151,17 +151,17 @@ public class MenuScreen implements Screen {
         drawX = xMid("AudioButton");
         if (isHovering(drawX, AUDIO_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {
             if (Gdx.input.justTouched()) {
-                if (bgm.isPlaying()) {
-                    bgm.setLooping(false);
-                    bgm.stop();
+                if (game.audio.isMusicOn()) {
+                    game.audio.setMusicOff();
+                    game.audio.setSFXoff();
                 } else {
-                    bgm.setLooping(true);
-                    bgm.play();
+                    game.audio.setMusicOn();
+                    game.audio.setSFXoff();
                 }
             }
         }
 
-        if (bgm.isPlaying())
+        if (game.audio.isMusicOn())
             game.batch.draw(audioOff, drawX, AUDIO_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
         else
             game.batch.draw(audioOn, drawX, AUDIO_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
