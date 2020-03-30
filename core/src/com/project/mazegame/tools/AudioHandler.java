@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
+import org.junit.Assert;
+
 public class AudioHandler {
     private Music menuBGM;
     private Music gameBGM;
@@ -30,22 +32,14 @@ public class AudioHandler {
         /**
          * BGM made by Andin
          */
-        menuBGM = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
-        gameBGM = Gdx.audio.newMusic(Gdx.files.internal("sounds\\mainbgm.mp3"));
-
-        attackSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\atk.mp3"));
-        hitSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\hit.mp3"));
-        shieldSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\shield.mp3"));
-        stepSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\step.mp3"));
-        pickupCoinSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\pickupCoin.mp3"));
-        addHealthSound = Gdx.audio.newSound(Gdx.files.internal("sounds\\sfx\\addHealth.mp3"));
-
-        //atk sound
-        //hit sound
-        //shield sound
-        //step sound
-        //pickup coin sound
-        //add health sound
+        menuBGM = Assets.manager.get(Assets.menuBgm, Music.class);
+        gameBGM = Assets.manager.get(Assets.mainBgm, Music.class);
+        attackSound = Assets.manager.get(Assets.atkSFX, Sound.class);
+        hitSound = Assets.manager.get(Assets.hitSFX, Sound.class);
+        shieldSound = Assets.manager.get(Assets.shieldSFX, Sound.class);
+        stepSound = Assets.manager.get(Assets.stepSFX, Sound.class);
+        pickupCoinSound = Assets.manager.get(Assets.pickupCoinSFX, Sound.class);
+        addHealthSound = Assets.manager.get(Assets.addHealthSFX, Sound.class);
     }
 
     public void setMusicOff() {

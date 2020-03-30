@@ -1,6 +1,8 @@
 package com.project.mazegame.tools;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
@@ -81,8 +83,14 @@ public class Assets {
     public static final String playerDying="Player/playerDying.png";
     public static final String font = "myFont.fnt";
 
-//	public static final String GAMEOVER = "UI\\Titles\\GAMEOVER!.png";
-
+    public static final String menuBgm = "sounds//menubgm.mp3"; // BGM for main menu
+    public static final String mainBgm = "sounds/mainBgm.mp3"; // BGM for game screens
+    public static final String hitSFX = "sounds/sfx/hit.mp3"; // SFX when getting hit
+    public static final String atkSFX = "sounds/sfx/atk.mp3"; // SFX when attacking
+    public static final String addHealthSFX = "sounds/sfx/addHealth.mp3"; // SFX when health is added (a.k.a consuming potion)
+    public static final String pickupCoinSFX = "sounds/sfx/pickupCoin.mp3"; // SFX when coin is picked up
+    public static final String shieldSFX = "sounds/sfx/shield.mp3"; // SFX when getting hit with shield on
+    public static final String stepSFX = "sounds/sfx/step.mp3"; // SFX when player moving
 
 
     public static void load() {
@@ -175,6 +183,15 @@ public class Assets {
         manager.load(playerDying,Texture.class);
 
         manager.load(font, BitmapFont.class);
+
+        manager.load(menuBgm, Music.class);
+        manager.load(mainBgm, Music.class);
+        manager.load(hitSFX, Sound.class);
+        manager.load(atkSFX, Sound.class);
+        manager.load(addHealthSFX, Sound.class);
+        manager.load(pickupCoinSFX, Sound.class);
+        manager.load(shieldSFX, Sound.class);
+        manager.load(stepSFX, Sound.class);
 
         manager.finishLoading();
 
