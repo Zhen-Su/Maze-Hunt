@@ -21,7 +21,8 @@ public class CSVStuff {
      */
 
     public static ArrayList<String> readCSVFile(String filename) {
-        String fileRead ="android\\"+ filename + ".csv";
+//        String fileRead ="android\\"+ filename + ".csv";
+        String fileRead ="/Users/kevin/mazeHunt/android/"+filename+".csv";
         BufferedReader buff = null;
         String line = "";
         ArrayList<String> output = new ArrayList<>();

@@ -1,3 +1,5 @@
+
+
 # Game Networking
 
 Basic idea: Use Server-Client Mode to implement multiplay game.
@@ -110,6 +112,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 4.0.1 add hostLobby, fix player exit bug
   * 4.0.2 add some SFX in game
   * 4.0.3 fix some bugs on AI attacking in multi
+  * 4.0.4 add JoinMazeScreen and OtherLobbyScreen
   
   
   
@@ -121,37 +124,26 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
 # TODO
 
-* Try to fix bugs on player click cancel button on enter ip or username screen to back to menu Screen.
-  
-* Use Interface to simplify code for multiplayer mode.
-  
-* Try to complete code on server can close relevant resources and close client's UDP socket after player exit game in multiplayer game mode (JOIN MAZE).
-  
-* Integration with game logic (make more message's types)
-  
-* Complete `GDX.app.log(info,error…)` system
-  
-* make more directions to make motion more fluency
-  
-* make sure all resource will be dispose when switch to other screen.
+* 
   
   
   
-
   
-
   
-
   
-
   
-
   
-
   
-
   
-
+  
+  
+  
+  
+  
+  
+  
+  
+  
   
   
 

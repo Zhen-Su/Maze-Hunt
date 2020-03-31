@@ -909,8 +909,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         int maxShields = 15;
         int maxCoins = 50;
         //TODO this swords number need to change, only for test
-        int maxSwords = 200;
-        int maxMinimaps = 100;
+        int maxSwords = 20;
+        int maxMinimaps = 10;
         int maxPotions = 50;
         int maxX = widthInTiles;
         int maxY = widthInTiles;
