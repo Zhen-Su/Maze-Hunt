@@ -420,14 +420,14 @@ public class CreateMazeScreen implements Screen {
     }
  
     
-    private class Button {
+    public class Button {
     	int x, y,width,height , activeWidth,activeHeight;
     	
     	Texture active,inactive,texture;
     	boolean isPressed = false;
     	String type;
     	String name;
-    	private Button (int x,int y, int w, int h , Texture active, Texture inactive , String type,String name) {
+    	public Button (int x,int y, int w, int h , Texture active, Texture inactive , String type,String name) {
     		this.x = x;
     		this.y = y;
     		this.width = w;
@@ -540,7 +540,7 @@ public class CreateMazeScreen implements Screen {
     		return isHovering(this.x,this.y,this.width,this.height);
     	}
     	
-    	private void resetButtons(String type) {
+    	public void resetButtons(String type) {
     		
     		
     		//loop through buttons changing their isPredd to false

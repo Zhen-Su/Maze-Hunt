@@ -19,7 +19,7 @@ public class Variables {
 	public static boolean SPACE_TOUCHED;
 
 
-
+	
 
 
 

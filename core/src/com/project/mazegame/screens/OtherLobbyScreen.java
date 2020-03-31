@@ -64,7 +64,7 @@ public class OtherLobbyScreen implements Screen {
     
     private Texture playButtonPressed,playButton;
 
-    public OtherLobbyScreen(MazeGame game,String username, String ip) {
+    public OtherLobbyScreen(MazeGame game,String username, String ip ,String colour) {
         this.game = game;
         this.username = username;
         this.ip = ip;
