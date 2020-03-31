@@ -56,6 +56,7 @@ public class EndScreen implements Screen {
     
     int initialY = 300;
     
+    
    
     
     EndScreen(MazeGame game , Player winner) {
@@ -174,6 +175,7 @@ public class EndScreen implements Screen {
     }
     
     private Texture getColour(String colour) {
+    	Assets.manager.finishLoading();
   	  switch (colour) {
         case "blue":
         	return Assets.manager.get(Assets.walkUpBlue, Texture.class);

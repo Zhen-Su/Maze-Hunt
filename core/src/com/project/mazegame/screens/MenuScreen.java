@@ -47,7 +47,7 @@ public class MenuScreen implements Screen {
     private static final int PLAY_Y = MazeGame.HEIGHT / 2 + 50;
     private static final int EXIT_Y = MazeGame.HEIGHT / 2 - 400;
     private static final int JOIN_Y = MazeGame.HEIGHT / 2 - 70;
-    private static final int AUDIO_WIDTH = 100;
+    private static final int AUDIO_WIDTH = 50;
     private static final int AUDIO_HEIGHT = 50;
     private static final int AUDIO_Y = MazeGame.HEIGHT - AUDIO_HEIGHT;
 
