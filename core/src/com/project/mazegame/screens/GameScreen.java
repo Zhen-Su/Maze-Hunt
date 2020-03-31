@@ -139,6 +139,7 @@ public class GameScreen implements Screen {
 
 		//coinAnimation = new AnimationTool(50,50,player,coinPick,true);
 		//coinAnimation.create();
+
 		if (game.audio.isMusicOn()) {
 			game.audio.setMusicOff();
 			game.audio.setCurrentScreen("game");
@@ -146,7 +147,6 @@ public class GameScreen implements Screen {
 		} else {
 			game.audio.setMusicOff();
 		}
-
 
 	}
 
@@ -186,13 +186,13 @@ public class GameScreen implements Screen {
 	int iconSize = 30;
 	@Override
 	public void render(float delta) { //method repeats a lot
+		updateTime(delta);
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		delta = Gdx.graphics.getDeltaTime();
 
-        updateTime(delta);
 		//updates - player position
 		inputHandler.update();
 		ArrayList<Item> empty = new ArrayList<>();
@@ -283,7 +283,7 @@ public class GameScreen implements Screen {
 					forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
 					forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
 				} else {
-					player.attackAI(aiPlayers.get(posAAI), worldTimer);
+					playerTurn.attackAI(aiPlayers.get(posAAI), worldTimer);
 					aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
 					aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
 				}
@@ -294,14 +294,14 @@ public class GameScreen implements Screen {
 
 		//render myself
 		player.render(game.batch);
-		player.attack();
+//		player.attack();
 
 		// renders players
 		for (int i = 0; i < aiPlayers.size(); i++) {
 			aiPlayers.get(i).render(game.batch);
 		}
 
-		String message = "Time = " +  (int) (worldTimer);
+		String message = "Time = " + (int) (worldTimer) ;
 
 
 		font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
@@ -314,7 +314,11 @@ public class GameScreen implements Screen {
 			if((worldTimer - time.currentTime()) < 0) {
 				this.dispose();
 				writeCoinCSV();
-				game.setScreen(new EndScreen(this.game));
+				try {
+					game.setScreen(new EndScreen(this.game,false));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 			}
 		}
@@ -567,11 +571,12 @@ public class GameScreen implements Screen {
 			} else {
 				game.audio.setMusicOff();
 			}
+
 			game.setScreen(new MenuScreen(this.game));
 		}
 
 		if (Gdx.input.getX()  < V_WIDTH  && Gdx.input.getX()  >  V_WIDTH - EXIT_WIDTH && Gdx.input.getY() < EXIT_HEIGHT && Gdx.input.getY() > 0 ) {
-			game.batch.draw(exitButtonActive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
+			game.batch.draw(exitButtonActive, x, y, EXIT_WIDTH, EXIT_HEIGHT);
 			if (Gdx.input.justTouched()) {
 				this.dispose();
 				if (game.audio.isMusicOn()) {

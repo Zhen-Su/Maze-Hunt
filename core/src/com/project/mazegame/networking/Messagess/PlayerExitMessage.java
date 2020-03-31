@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
+/**
+ * To send message through server and client for player exit game.
+ * @author Yueyi Wang & Zhen Su
+ */
 public class PlayerExitMessage implements Message {
     private int msgType = Message.PLAYER_EXIT_MSG;
     private int id;
@@ -28,7 +31,13 @@ public class PlayerExitMessage implements Message {
 //        this.isServerRunning = isServerRunning;
     }
 
-
+    /**
+     * If player exit game, then send message on server, tell everyone that player out.
+     * @param ds Send data using DatagreamSocket from server
+     * @param ip Input Server's IP address
+     * @param server_UDP_Port Input UDP's port
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(30);
@@ -51,7 +60,11 @@ public class PlayerExitMessage implements Message {
 
     }
 
-
+    /**
+     * To process player exit message, when player exit, then remove that info from set of players.
+     * @param dis
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void process(DataInputStream dis) {
         try{
@@ -62,6 +75,7 @@ public class PlayerExitMessage implements Message {
             }
             //delete this player from player list according to player's id.
             int indexOfExitPlayer = gameClient.playersIdIndexList.get(id);
+            gameClient.nameOfExitPlayer = gameClient.getPlayers().get(indexOfExitPlayer).getName();
             gameClient.getPlayers().remove(indexOfExitPlayer);
 
 

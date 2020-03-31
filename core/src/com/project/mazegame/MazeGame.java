@@ -10,13 +10,16 @@ import com.project.mazegame.screens.SplashScreen;
 import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.AudioHandler;
 
-import org.junit.Assert;
 
 public class MazeGame extends Game {
 	public SpriteBatch batch;
 	public AssetManager assets;
+	public static AssetManager manager;
 	public OrthographicCamera camera;
 	public AudioHandler audio;
+
+
+
 
 	public static final int WIDTH = 1000;
 	public static final int HEIGHT = 1000;
@@ -27,14 +30,13 @@ public class MazeGame extends Game {
 		assets = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
-		this.setScreen(new SplashScreen(this));
 
+		//Only for test
 		Assets.load();
 		Assets.manager.finishLoading();
-		System.out.println(Assets.manager.update());
-
 		audio = new AudioHandler();
-		audio.setCurrentScreen("menu");
+//		this.setScreen(new MenuScreen(this));
+		this.setScreen(new SplashScreen(this));
 
 		batch = new SpriteBatch();
 	}

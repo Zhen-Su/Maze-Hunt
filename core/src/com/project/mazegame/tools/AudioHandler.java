@@ -11,20 +11,24 @@ import com.badlogic.gdx.audio.Sound;
 public class AudioHandler {
     private Music menuBGM;
     private Music gameBGM;
+    private Music logoBGM;
     private Sound attackSound;
     private Sound hitSound;
     private Sound shieldSound;
     private Sound stepSound;
     private Sound pickupCoinSound;
     private Sound addHealthSound;
-
+    private Sound chooseButton;
+    private Sound gearEnchantment;
+    private Sound poison;
+    private Music endBgm;
 
     private String theScreen;
 
     private boolean musicOn;
     private boolean sfxOn;
 
-    private int volume;
+    private int volume=50;
 
     /**
      * Constructor imports all sounds loaded on the Assets class
@@ -40,12 +44,19 @@ public class AudioHandler {
          */
         menuBGM = Assets.manager.get(Assets.menuBgm, Music.class);
         gameBGM = Assets.manager.get(Assets.mainBgm, Music.class);
+        logoBGM = Assets.manager.get(Assets.logoBgm,Music.class);
+        endBgm = Assets.manager.get(Assets.endBgm,Music.class);
+
         attackSound = Assets.manager.get(Assets.atkSFX, Sound.class);
         hitSound = Assets.manager.get(Assets.hitSFX, Sound.class);
         shieldSound = Assets.manager.get(Assets.shieldSFX, Sound.class);
         stepSound = Assets.manager.get(Assets.stepSFX, Sound.class);
         pickupCoinSound = Assets.manager.get(Assets.pickupCoinSFX, Sound.class);
         addHealthSound = Assets.manager.get(Assets.addHealthSFX, Sound.class);
+        chooseButton = Assets.manager.get(Assets.chooseButtonSFX,Sound.class);
+        gearEnchantment=Assets.manager.get(Assets.gearEnchantment,Sound.class);
+        poison=Assets.manager.get(Assets.poison,Sound.class);
+
     }
 
     /**
@@ -60,6 +71,13 @@ public class AudioHandler {
             case "game":
                 gameBGM.stop();
                 break;
+            case "logo":
+                logoBGM.stop();
+                break;
+            case "end":
+                endBgm.stop();
+                break;
+
         }
     }
 
@@ -77,10 +95,20 @@ public class AudioHandler {
                 gameBGM.setLooping(true);
                 gameBGM.play();
                 break;
+            case "logo":
+                logoBGM.setLooping(true);
+                logoBGM.play();
+                logoBGM.setLooping(false);
+            case "end":
+                endBgm.stop();
+                endBgm.setLooping(false);
+                break;
             default:
                 break;
         }
     }
+
+
 
     /**
      * Sets boolean sfxOn to false
@@ -116,6 +144,35 @@ public class AudioHandler {
     public void step() {
         if (sfxOn)
             stepSound.play(volume);
+    }
+
+    public void poison(){
+        if (sfxOn)
+            poison.play(volume);
+    }
+
+    public void gearEnchantment(){
+        if (sfxOn)
+            gearEnchantment.play(volume);
+    }
+
+    public void pickupCoin(){
+        if (sfxOn)
+            pickupCoinSound.play(volume);
+    }
+
+    public void choose(){
+        if(sfxOn) {
+//            chooseButton.play(volume);
+            long id = chooseButton.play(1.0f);
+            chooseButton.setLooping(id,false);
+        }
+    }
+
+    public void addHealth(){
+        if(sfxOn){
+            addHealthSound.play(volume);
+        }
     }
 
     /**

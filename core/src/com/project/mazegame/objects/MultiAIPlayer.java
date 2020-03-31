@@ -3,6 +3,7 @@ package com.project.mazegame.objects;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.networking.Client.NetClient;
+import com.project.mazegame.networking.Messagess.DecreaseHealthMessage;
 import com.project.mazegame.networking.Messagess.MoveMessage;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Collect;
@@ -21,10 +22,11 @@ public class MultiAIPlayer extends AIPlayer {
     private MultiPlayerGameScreen gameClient;
     private boolean updateCount;
     private float initialisedTime;
-    private static final int movenumber = 40;
+    private static final int movenumber = 30;
     private String premov = "null";
     public static boolean debug = false;
     private String direct = null;
+
 
     public MultiAIPlayer(TiledMapTileLayer collisionLayer, String username, int ID, MultiPlayerGameScreen gameClient, String colour, Direction dir, PlayersType playersType) {
         super(collisionLayer, username, ID, colour, dir, playersType);
@@ -50,6 +52,9 @@ public class MultiAIPlayer extends AIPlayer {
         this.y = y;
         this.direct = "Up";
         this.position = new Coordinate(x, y);
+//        this.position = new Coordinate(x, y);
+        this.position.setX(x);
+        this.position.setY(y);
 
         loadPlayerTextures();
         createAnimations();
@@ -66,6 +71,21 @@ public class MultiAIPlayer extends AIPlayer {
     }
 
     //==============================================================================================
+
+
+    public void updateForNotHost(float delta, float time) {
+        removeShield();
+        removeEnchantment();
+        this.time.updateTimer(delta);
+
+        if (this.isDead()) {
+
+            if (respawnCounter == 0) respawnCounter = this.time.currentTime();
+
+            if (this.time.currentTime() - respawnCounter == 3) this.death(time);
+
+        }
+    }
 
     @Override
     public void update(float delta, int mode, ArrayList<Item> items, float time) {
@@ -94,55 +114,134 @@ public class MultiAIPlayer extends AIPlayer {
             if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
                 if (mode == 1) {
 
-                    // takes random coorediante it can mvoe to
-                    Coordinate old = super.position;
+                    // takes random coordinate it can mvoe to
+                    Coordinate old = new Coordinate(this.position.getX(), this.position.getY());
+//                    System.out.println(old);
                     // contantsnatly throwing exeption possibly becasue not linked to player
                     // will need to do something with the speed
-                    this.position.setX((int) x);
-                    this.position.setY((int) y);
-                    Coordinate moveToTake = direction(avaibleMoves(x, y));
+//                    this.position.setX((int) this.x);
+//                    this.position.setY((int) this.y);
+                    Coordinate moveToTake = direction(avaibleMoves(this.x, this.y));
                     System.out.println("The ai player is moving " + moveToTake.toString());
-                    super.x = (int) moveToTake.getX();
-                    super.y = (int) moveToTake.getY();
+                    this.x = (int) moveToTake.getX();
+                    this.y = (int) moveToTake.getY();
+
+                    this.position.setX(x);
+                    this.position.setY(y);
 
                     this.change(old, moveToTake);
-//                System.out.println("The direction the player is moving in is " + this.dir);
+                    System.out.println("The direction the player is moving in is " + this.dir);
 
 
                 } else if (mode == 3) {
-                    Item nearestI = nearest(this, items);
-                    System.out.println(nearestI.toString());
-                    Coordinate near = new Coordinate(nearestI.getX(), nearestI.getY());
-                    ArrayList<Coordinate> moves = avaibleMoves(super.x, super.y);
-                    Coordinate bested = bestMove(near, moves);
-                    super.x = bested.getX();
-                    super.y = bested.getY();
-                    this.change(near, bested);
-                    Coordinate secondMoveToTake = direction(avaibleMoves(x, y));
-                    System.out.println("Move is moing here " + secondMoveToTake.toString());
-//                super.x = (int) secondMoveToTake.getX();
-//                super.y = (int) secondMoveToTake.getY();
-                    this.position.setY(secondMoveToTake.getY());
-                    this.position.setX(secondMoveToTake.getX());
-//                this.logx = super.x;
-//                this.logy = super.y;
-                    this.change(bested, secondMoveToTake);
+                    // this algorithm has focused movement.
+                    // What it does is it looks at how many junctions there are. If there is one junction it goes back the same way
+                    // if there are two junctions it picks the junction it hasn't comefrom
+                    // if there are three junctions picks a random junction that it hasn't been down
+                    // if there are four junctions picks random junction otu of the ones it hasn't been dwon
+                    Coordinate old = super.getPosition();
 
+                    int tempx = x;
+                    int tempy = y;
+                    this.position.setX(x);
+                    this.position.setY(y);
+
+                    ArrayList<Coordinate> junctions = avaibleMoves(x, y);
+                    System.out.println(junctions);
+                    int randSize = junctions.size() - 1;
+
+                    if (junctions.size() == 1) {
+                        System.out.println("Number of juntions " + 1);
+                        tempx = junctions.get(0).getX();
+                        tempy = junctions.get(0).getY();
+//                    this.preve = junctions.get(0);
+                    } else if (junctions.size() == 2) {
+                        if (preve != null && lastp != null) {
+//                        System.out.println("Prev is not null");
+                            System.out.println("Number of juntions " + 2);
+                            System.out.println("List before " + junctions);
+                            ArrayList<Coordinate> rem = customRemove(lastp, junctions);
+                            System.out.println("Preve is " + lastp.toString());
+
+                            System.out.println("List after " + rem);
+                            int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
+                            tempx = rem.get(index).getX();
+                            tempy = rem.get(index).getY();
+//                        this.preve = junctions.get(0);
+                        } else {
+
+                            int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
+                            tempx = junctions.get(index).getX();
+                            tempy = junctions.get(index).getY();
+//                        preve = junctions.get(index);
+                        }
+                    } else if (junctions.size() == 3) {
+                        if (preve != null && lastp != null) {
+//                        System.out.println("Prev is not null");
+                            System.out.println("Number of juntions " + 3);
+                            System.out.println("List before " + junctions);
+                            System.out.println("Preve is " + lastp.toString());
+                            ArrayList<Coordinate> rem = customRemove(lastp, junctions);
+                            System.out.println("List after " + rem);
+                            int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
+                            tempx = rem.get(index).getX();
+                            tempy = rem.get(index).getY();
+//                        preve = junctions.get(index);
+
+                        } else {
+                            int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
+                            tempx = junctions.get(index).getX();
+                            tempy = junctions.get(index).getY();
+//                        preve = junctions.get(index);
+                        }
+
+                    } else if (junctions.size() == 4) {
+                        if (preve != null && lastp != null) {
+                            System.out.println("Prev is not null");
+                            System.out.println("Number of juntions " + 4);
+                            System.out.println("Preve is " + lastp.toString());
+                            System.out.println("List before " + junctions);
+                            ArrayList<Coordinate> rem = customRemove(lastp, junctions);
+                            System.out.println("List after " + rem);
+                            int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
+                            tempx = rem.get(index).getX();
+                            tempy = rem.get(index).getY();
+//                        preve = junctions.get(index);
+
+                        } else {
+                            int index = (int) (Math.random() * ((randSize - 0) + 1)) + 0;
+                            tempx = junctions.get(index).getX();
+                            tempy = junctions.get(index).getY();
+//                        preve = junctions.get(index);
+                        }
+                    }
+                    Coordinate nextMove = new Coordinate(tempx, tempy);
+                    System.out.println(nextMove.toString());
+                    super.x = tempx;
+                    super.y = tempy;
+                    this.change(old, nextMove);
+                    this.lastp = this.preve;
+                    this.preve = nextMove;
 
                     // ultimate goal is coins
                 } else if (mode == 2) {
-                    Coordinate old = super.position;
+                    Coordinate old = this.position;
+//                    System.out.println(old);
                     int tempx = x;
                     int tempy = y;
                     // refresh position
-                    this.position.setX((int) x);
-                    this.position.setY((int) y);
+//                    this.position.setX((int) x);
+//                    this.position.setY((int) y);
                     // have previous move
                     // first grab boolean to see where is possible to move
                     boolean up = checkCollisionMap(x, y + movenumber);
+//                    System.out.println(up);
                     boolean down = checkCollisionMap(x, y - movenumber);
+//                    System.out.println(down);
                     boolean left = checkCollisionMap(x - movenumber, y);
+//                    System.out.println(left);
                     boolean right = checkCollisionMap(x + movenumber, y);
+//                    System.out.println(right);
                     // Then give priroy to direction
                     // checks the direcion the player was preivoulsy moving in and if it can move there
                     if (chosenMove(x, y, direct)) {
@@ -181,18 +280,21 @@ public class MultiAIPlayer extends AIPlayer {
                         tempy = y - movenumber;
                         this.direct = "Down";
                     }
-                    super.x = tempx;
-                    super.y = tempy;
+                    this.x = tempx;
+                    this.y = tempy;
 
-                    Coordinate newt = new Coordinate(tempx, tempy);
-                    System.out.println(newt.toString());
-                    // sets the correct direciton
+                    //TODO add new
+                    this.position.setX(tempx);
+                    this.position.setY(tempy);
+
+                    Coordinate newt = new Coordinate(x, y);
+//                    System.out.println(newt.toString());
+
                     change(old, newt);
-
+                    System.out.println("The direction the player is moving in is " + this.dir);
                 }
                 this.initialisedTime = time;
                 updateCount = true;
-
             }
 
         }
@@ -252,6 +354,17 @@ public class MultiAIPlayer extends AIPlayer {
         return target;
     }
 
+    private ArrayList<Coordinate> customRemove(Coordinate rem, ArrayList<Coordinate> list) {
+        ArrayList<Coordinate> outputlist = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (!rem.same(list.get(i))) {
+                outputlist.add(list.get(i));
+            }
+        }
+        return outputlist;
+    }
+
+
     private Coordinate bestMove(Coordinate target, ArrayList<Coordinate> onesToUse) {
         int besteuclid = Collect.andinsEuclidian(target.getX(), onesToUse.get(0).getX(), target.getY(), onesToUse.get(0).getY());
         Coordinate best = onesToUse.get(0);
@@ -296,6 +409,7 @@ public class MultiAIPlayer extends AIPlayer {
             System.out.println("D");
         }
 
+//        System.out.println(update);
 //        if (dir != oldDir) {
         MoveMessage message = new MoveMessage(ID, this.position.getX(), this.position.getY(), dir);
         gameClient.getNc().send(message);
@@ -327,6 +441,134 @@ public class MultiAIPlayer extends AIPlayer {
             moves.add(new Coordinate(x, (y - move)));
         }
         return moves;
+    }
+
+    /**
+     * This method for human player attacks Ai player in multiPlayer game.
+     *
+     * @param playerA
+     * @param time
+     */
+    @Override
+    public void attackP(Player playerA, float time) {
+        // only difference with this and the player methods is doens't need space to be pressed
+        if (attackPlayerTime - time > 0.5 || !attackPStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                sword = swordAttack;
+                attack();
+//                playerA.decreaseHealth(1 + super.getGearCount());
+
+                int numOfDecrease = 1 + super.getGearCount();
+                playerA.decreaseHealth(numOfDecrease);
+
+                System.out.println("I'm an human player, ID:" + ID + " I'm attacking a human player ID:" + playerA.getID() + " decrease:" + numOfDecrease);
+                System.out.println("attacked Player's Health:" + playerA.health);
+
+                DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                gameClient.getNc().send(decreaseHealthMessage);
+
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                }
+            }
+        }
+        this.attackPlayerTime = time;
+        this.attackPStart = true;
+    }
+
+    /**
+     * This method for human player attacks AI player in multiPlayer game.
+     *
+     * @param playerA
+     * @param time
+     * @return
+     */
+    @Override
+    public AIPlayer attackAI(AIPlayer playerA, float time) {
+        if (attackAITime - time > 0.3 || !attackAIStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+
+                super.isAttacking = true;
+                sword = swordAttack;
+                attack();
+//                playerA.decreaseHealth(1 + super.getGearCount());
+                System.out.println("I'm a human Player,ID:" + ID + " I'm attacking an AI player,ID:" + playerA.getID());
+
+                int numOfDecrease = 1 + super.getGearCount();
+                playerA.decreaseHealth(1 + getGearCount());
+
+                DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                this.gameClient.getNc().send(decreaseHealthMessage);
+
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                    return playerA;
+                }
+            }
+        }
+        this.attackAITime = time;
+        this.attackAIStart = true;
+        return playerA;
+    }
+
+    /**
+     * This method for AI player attacks human player in multiPlayer game.
+     *
+     * @param playerA
+     * @param time
+     */
+    public void AIattackP(Player playerA, float time) {
+        if (attackPlayerTime - time > 0.3 || !attackPStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                attack();
+
+                int numOfDecrease = 1 + super.getGearCount();
+
+                System.out.println("I'm an AI, ID:" + ID + " I'm attacking a human player ID:" + playerA.getID() + " decrease:" + numOfDecrease);
+                System.out.println("attacked Player's Health:" + playerA.health);
+
+                DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                this.gameClient.getNc().send(decreaseHealthMessage);
+
+                if (playerA.health == 0) this.coins += playerA.coins;
+
+            }
+        }
+        this.attackPlayerTime = time;
+        this.attackPStart = true;
+    }
+
+    /**
+     * This method for AI player attacks AI player in multiPlayer game.
+     *
+     * @param playerA
+     * @param time
+     * @return
+     */
+    public AIPlayer AIattackAI(AIPlayer playerA, float time) {
+        if (attackAITime - time > 0.3 || !attackAIStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                attack();
+
+                System.out.println("I'm an AI,ID:" + ID + " I'm attacking an AI player,ID:" + playerA.getID());
+
+                int numOfDecrease = 1 + super.getGearCount();
+
+                DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                this.gameClient.getNc().send(decreaseHealthMessage);
+
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                    return playerA;
+                }
+            }
+        }
+        this.attackAITime = time;
+        this.attackAIStart = true;
+        return playerA;
     }
 
 

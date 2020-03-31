@@ -18,7 +18,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
+/**
+ * GameServer class,every send and process on here, every message will process on server.
+ */
 public class GameServer implements Runnable {
 
     private static int ID = 0001;                    //every client has an unique ID.
@@ -214,13 +216,15 @@ public class GameServer implements Runnable {
     /**
      * Stop all threads
      */
-    public void dispose(MultiPlayerGameScreen gameClient) {
+    public void dispose(MultiPlayerGameScreen gameClient,boolean hasSentExitMsg) {
         isRunning = false;
 
-        //Send message to all client the server will close.
-        PlayerExitMessage message = new PlayerExitMessage(gameClient, gameClient.getMultiPlayer().getID());
-        gameClient.getNc().send(message);
-        gameClient.getNc().sendClientDisconnectMsg();
+        if(!hasSentExitMsg) {
+            //Send message to all client the server will close.
+            PlayerExitMessage message = new PlayerExitMessage(gameClient, gameClient.getMultiPlayer().getID());
+            gameClient.getNc().send(message);
+            gameClient.getNc().sendClientDisconnectMsg();
+        }
         try {
             Thread.currentThread().sleep(100);
         } catch (InterruptedException e) {

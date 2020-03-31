@@ -125,7 +125,7 @@ public class OtherLobbyScreen implements Screen {
             font.setColor(Color.YELLOW);
             font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
         }
-        if (!players.isEmpty() && players.get(0).getName() != hostPlayerName) {
+        if (!players.isEmpty() && !players.get(0).getName().equals(hostPlayerName) ) {
             font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
         }
     }
@@ -143,8 +143,7 @@ public class OtherLobbyScreen implements Screen {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                //TODO this need make more general, if second create maze, then host player is not the first in List
-                //TODO if host player not ready, then will show an EXCEPTION!!!!!!
+
                 setHostPlayerName(gameClient.getPlayers().get(0).getName());
                 setPlayers(gameClient.getPlayers());
                 hasReady = false;

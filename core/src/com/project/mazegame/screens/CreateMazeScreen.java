@@ -301,7 +301,7 @@ public class CreateMazeScreen implements Screen {
 
         bgTexture = createBackgroundTexture(50, 50);
         style.background = new TextureRegionDrawable(new TextureRegion(bgTexture));
-        numField = new TextField("2", style);
+        numField = new TextField("0", style);
 
         usernameTextField.setSize(TEXT_FIELD_WIDTH, TEXT_FIELD_HEIGHT);
         numField.setSize(50,50);
