@@ -92,7 +92,6 @@ public class MultiPlayer extends Player {
     public void render(SpriteBatch sb) {
 
         setBatch(sb);
-        game.audio.setSFXOn();
         if (this.isDead()) {
             font.getData().setScale(1f, 1f);
             String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);

@@ -265,6 +265,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         this.tileMapRenderer = tileMapRenderer;
     }
 
+    public MazeGame getGame() {
+        return game;
+    }
+
     public List<Player> getHumanPlayers() {
         return humanPlayers;
     }
@@ -372,15 +376,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         //Only host player can update AI player for movements, other player only update them for animation.
         if (imHost) {
-            //TODO Can i use players to update movements? that would be great!
-//            for (Player aiPlayer : aiPlayers) {
-//                if (aiPlayer instanceof Player)
-//                    aiPlayer.update(delta, 2, mapItems, worldTimer);
-//            }
-
             for (Player aiPlayer : players) {
                 if (aiPlayer instanceof MultiAIPlayer)
-                    aiPlayer.update(delta, 1, mapItems, worldTimer);
+                    aiPlayer.update(delta, 2, mapItems, worldTimer);
             }
         }
 
@@ -907,8 +905,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         int maxShields = 15;
         int maxCoins = 50;
         //TODO this swords number need to change, only for test
-        int maxSwords = 100;
-        int maxMinimaps = 15;
+        int maxSwords = 200;
+        int maxMinimaps = 100;
         int maxPotions = 50;
         int maxX = widthInTiles;
         int maxY = widthInTiles;

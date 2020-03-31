@@ -23,8 +23,6 @@ public class AudioHandler {
     private Sound poison;
     private Music endBgm;
 
-
-
     private String theScreen;
 
     private boolean musicOn;

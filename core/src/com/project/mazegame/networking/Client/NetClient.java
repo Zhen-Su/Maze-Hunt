@@ -111,6 +111,7 @@ public class NetClient {
                     settingMap();
                     MultiPlayer myMultiPlayer = new MultiPlayer(collisionLayer, gameClient.username, gameClient, Direction.STOP, gameClient.playerSkin, PlayersType.multi);
                     gameClient.setMultiPlayer(myMultiPlayer);
+                    myMultiPlayer.setGame(gameClient.getGame());
                     gameClient.getMultiPlayer().setID(id);
                 }
                 gameClient.getMultiPlayer().setID(id);

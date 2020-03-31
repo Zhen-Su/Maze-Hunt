@@ -52,6 +52,9 @@ public class MultiAIPlayer extends AIPlayer {
         this.y = y;
         this.direct = "Up";
         this.position = new Coordinate(x, y);
+//        this.position = new Coordinate(x, y);
+        this.position.setX(x);
+        this.position.setY(y);
 
         loadPlayerTextures();
         createAnimations();
@@ -70,7 +73,7 @@ public class MultiAIPlayer extends AIPlayer {
     //==============================================================================================
 
 
-    public void updateForNotHost(float delta,float time){
+    public void updateForNotHost(float delta, float time) {
         removeShield();
         removeEnchantment();
         this.time.updateTimer(delta);
@@ -112,22 +115,22 @@ public class MultiAIPlayer extends AIPlayer {
                 if (mode == 1) {
 
                     // takes random coordinate it can mvoe to
-                    Coordinate old = super.position;
+                    Coordinate old = new Coordinate(this.position.getX(), this.position.getY());
 //                    System.out.println(old);
                     // contantsnatly throwing exeption possibly becasue not linked to player
                     // will need to do something with the speed
-                    this.position.setX((int) x);
-                    this.position.setY((int) y);
-                    Coordinate moveToTake = direction(avaibleMoves(x, y));
+//                    this.position.setX((int) this.x);
+//                    this.position.setY((int) this.y);
+                    Coordinate moveToTake = direction(avaibleMoves(this.x, this.y));
                     System.out.println("The ai player is moving " + moveToTake.toString());
-                    super.x = (int) moveToTake.getX();
-                    super.y = (int) moveToTake.getY();
-                    //TODO add without asking
-                    this.position.setX(super.x);
-                    this.position.setY(super.y);
+                    this.x = (int) moveToTake.getX();
+                    this.y = (int) moveToTake.getY();
+
+                    this.position.setX(x);
+                    this.position.setY(y);
 
                     this.change(old, moveToTake);
-//                System.out.println("The direction the player is moving in is " + this.dir);
+                    System.out.println("The direction the player is moving in is " + this.dir);
 
 
                 } else if (mode == 3) {
@@ -222,13 +225,13 @@ public class MultiAIPlayer extends AIPlayer {
 
                     // ultimate goal is coins
                 } else if (mode == 2) {
-                    Coordinate old = super.position;
+                    Coordinate old = this.position;
 //                    System.out.println(old);
                     int tempx = x;
                     int tempy = y;
                     // refresh position
-                    this.position.setX((int) x);
-                    this.position.setY((int) y);
+//                    this.position.setX((int) x);
+//                    this.position.setY((int) y);
                     // have previous move
                     // first grab boolean to see where is possible to move
                     boolean up = checkCollisionMap(x, y + movenumber);
@@ -277,22 +280,21 @@ public class MultiAIPlayer extends AIPlayer {
                         tempy = y - movenumber;
                         this.direct = "Down";
                     }
-                    super.x = tempx;
-                    super.y = tempy;
+                    this.x = tempx;
+                    this.y = tempy;
 
                     //TODO add new
                     this.position.setX(tempx);
                     this.position.setY(tempy);
 
-                    Coordinate newt = new Coordinate(tempx, tempy);
+                    Coordinate newt = new Coordinate(x, y);
 //                    System.out.println(newt.toString());
-                    // sets the correct direciton
-                    change(old, newt);
 
+                    change(old, newt);
+                    System.out.println("The direction the player is moving in is " + this.dir);
                 }
                 this.initialisedTime = time;
                 updateCount = true;
-
             }
 
         }
@@ -443,6 +445,7 @@ public class MultiAIPlayer extends AIPlayer {
 
     /**
      * This method for human player attacks Ai player in multiPlayer game.
+     *
      * @param playerA
      * @param time
      */
@@ -476,6 +479,7 @@ public class MultiAIPlayer extends AIPlayer {
 
     /**
      * This method for human player attacks AI player in multiPlayer game.
+     *
      * @param playerA
      * @param time
      * @return
@@ -510,11 +514,12 @@ public class MultiAIPlayer extends AIPlayer {
 
     /**
      * This method for AI player attacks human player in multiPlayer game.
+     *
      * @param playerA
      * @param time
      */
     public void AIattackP(Player playerA, float time) {
-        if (attackPlayerTime - time > 0.5 || !attackPStart) {
+        if (attackPlayerTime - time > 0.3 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                 super.isAttacking = true;
                 attack();
@@ -537,6 +542,7 @@ public class MultiAIPlayer extends AIPlayer {
 
     /**
      * This method for AI player attacks AI player in multiPlayer game.
+     *
      * @param playerA
      * @param time
      * @return
@@ -564,7 +570,6 @@ public class MultiAIPlayer extends AIPlayer {
         this.attackAIStart = true;
         return playerA;
     }
-
 
 
 }
