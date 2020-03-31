@@ -223,28 +223,40 @@ public class NetClient {
                     }
                     break;
                 case Message.PLAYER_MOVE_MSG:
-                    msg = new MoveMessage(gameClient);
-                    msg.process(dis);
+                    if(!isAI) {
+                        msg = new MoveMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
                 case Message.PLAYER_EXIT_MSG:
-                    msg = new PlayerExitMessage(gameClient);
-                    msg.process(dis);
+                    if(!isAI) {
+                        msg = new PlayerExitMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
                 case Message.ITEMS_CREATE:
-                    msg = new ItemCreateMessage(gameClient);
-                    msg.process(dis);
+                    if(!isAI) {
+                        msg = new ItemCreateMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
                 case Message.HOST_START:
-                    msg = new StartGameMessage(gameClient);
-                    msg.process(dis);
+                    if(!isAI) {
+                        msg = new StartGameMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
                 case Message.ATTACK_MSG:
-                    msg = new AttackMessage(gameClient);
-                    msg.process(dis);
+                    if(!isAI) {
+                        msg = new AttackMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
                 case Message.DESCREASE_HP:
-                    msg = new DecreaseHealthMessage(gameClient);
-                    msg.process(dis);
+                    if(!isAI) {
+                        msg = new DecreaseHealthMessage(gameClient);
+                        msg.process(dis);
+                    }
                     break;
             }
         }

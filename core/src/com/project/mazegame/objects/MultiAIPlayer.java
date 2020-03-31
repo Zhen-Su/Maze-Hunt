@@ -22,7 +22,7 @@ public class MultiAIPlayer extends AIPlayer {
     private MultiPlayerGameScreen gameClient;
     private boolean updateCount;
     private float initialisedTime;
-    private static final int movenumber = 40;
+    private static final int movenumber = 30;
     private String premov = "null";
     public static boolean debug = false;
     private String direct = null;
@@ -69,6 +69,21 @@ public class MultiAIPlayer extends AIPlayer {
 
     //==============================================================================================
 
+
+    public void updateForNotHost(float delta,float time){
+        removeShield();
+        removeEnchantment();
+        this.time.updateTimer(delta);
+
+        if (this.isDead()) {
+
+            if (respawnCounter == 0) respawnCounter = this.time.currentTime();
+
+            if (this.time.currentTime() - respawnCounter == 3) this.death(time);
+
+        }
+    }
+
     @Override
     public void update(float delta, int mode, ArrayList<Item> items, float time) {
 //        aiThread.run();
@@ -96,8 +111,9 @@ public class MultiAIPlayer extends AIPlayer {
             if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
                 if (mode == 1) {
 
-                    // takes random coorediante it can mvoe to
+                    // takes random coordinate it can mvoe to
                     Coordinate old = super.position;
+//                    System.out.println(old);
                     // contantsnatly throwing exeption possibly becasue not linked to player
                     // will need to do something with the speed
                     this.position.setX((int) x);
@@ -106,6 +122,9 @@ public class MultiAIPlayer extends AIPlayer {
                     System.out.println("The ai player is moving " + moveToTake.toString());
                     super.x = (int) moveToTake.getX();
                     super.y = (int) moveToTake.getY();
+                    //TODO add without asking
+                    this.position.setX(super.x);
+                    this.position.setY(super.y);
 
                     this.change(old, moveToTake);
 //                System.out.println("The direction the player is moving in is " + this.dir);
@@ -137,7 +156,7 @@ public class MultiAIPlayer extends AIPlayer {
                         if (preve != null && lastp != null) {
 //                        System.out.println("Prev is not null");
                             System.out.println("Number of juntions " + 2);
-                            System.out.println("List before "  + junctions);
+                            System.out.println("List before " + junctions);
                             ArrayList<Coordinate> rem = customRemove(lastp, junctions);
                             System.out.println("Preve is " + lastp.toString());
 
@@ -157,7 +176,7 @@ public class MultiAIPlayer extends AIPlayer {
                         if (preve != null && lastp != null) {
 //                        System.out.println("Prev is not null");
                             System.out.println("Number of juntions " + 3);
-                            System.out.println("List before "  + junctions);
+                            System.out.println("List before " + junctions);
                             System.out.println("Preve is " + lastp.toString());
                             ArrayList<Coordinate> rem = customRemove(lastp, junctions);
                             System.out.println("List after " + rem);
@@ -178,7 +197,7 @@ public class MultiAIPlayer extends AIPlayer {
                             System.out.println("Prev is not null");
                             System.out.println("Number of juntions " + 4);
                             System.out.println("Preve is " + lastp.toString());
-                            System.out.println("List before "  + junctions);
+                            System.out.println("List before " + junctions);
                             ArrayList<Coordinate> rem = customRemove(lastp, junctions);
                             System.out.println("List after " + rem);
                             int index = (int) (Math.random() * (((rem.size() - 1) - 0) + 1)) + 0;
@@ -204,6 +223,7 @@ public class MultiAIPlayer extends AIPlayer {
                     // ultimate goal is coins
                 } else if (mode == 2) {
                     Coordinate old = super.position;
+//                    System.out.println(old);
                     int tempx = x;
                     int tempy = y;
                     // refresh position
@@ -212,9 +232,13 @@ public class MultiAIPlayer extends AIPlayer {
                     // have previous move
                     // first grab boolean to see where is possible to move
                     boolean up = checkCollisionMap(x, y + movenumber);
+//                    System.out.println(up);
                     boolean down = checkCollisionMap(x, y - movenumber);
+//                    System.out.println(down);
                     boolean left = checkCollisionMap(x - movenumber, y);
+//                    System.out.println(left);
                     boolean right = checkCollisionMap(x + movenumber, y);
+//                    System.out.println(right);
                     // Then give priroy to direction
                     // checks the direcion the player was preivoulsy moving in and if it can move there
                     if (chosenMove(x, y, direct)) {
@@ -255,6 +279,10 @@ public class MultiAIPlayer extends AIPlayer {
                     }
                     super.x = tempx;
                     super.y = tempy;
+
+                    //TODO add new
+                    this.position.setX(tempx);
+                    this.position.setY(tempy);
 
                     Coordinate newt = new Coordinate(tempx, tempy);
 //                    System.out.println(newt.toString());
@@ -361,24 +389,25 @@ public class MultiAIPlayer extends AIPlayer {
             this.dir = Direction.R;
             super.frames = walkRight;
             super.animation.setFrames(RightAnim.getFrames());
-//            System.out.println("R");
+            System.out.println("R");
         } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.L;
             super.frames = walkLeft;
             super.animation.setFrames(LeftAnim.getFrames());
-//            System.out.println("L");
+            System.out.println("L");
         } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
             this.dir = Direction.U;
             super.frames = walkDown;
             super.animation.setFrames(DownAnim.getFrames());
-//            System.out.println("U");
+            System.out.println("U");
         } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
             this.dir = Direction.D;
             super.frames = walkUp;
             super.animation.setFrames(UpAnim.getFrames());
-//            System.out.println("D");
+            System.out.println("D");
         }
 
+//        System.out.println(update);
 //        if (dir != oldDir) {
         MoveMessage message = new MoveMessage(ID, this.position.getX(), this.position.getY(), dir);
         gameClient.getNc().send(message);
@@ -412,22 +441,29 @@ public class MultiAIPlayer extends AIPlayer {
         return moves;
     }
 
+    /**
+     * This method for human player attacks Ai player in multiPlayer game.
+     * @param playerA
+     * @param time
+     */
     @Override
     public void attackP(Player playerA, float time) {
         // only difference with this and the player methods is doens't need space to be pressed
-        if (attackPlayerTime - time > 0.3 || !attackPStart) {
+        if (attackPlayerTime - time > 0.5 || !attackPStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
                 super.isAttacking = true;
                 sword = swordAttack;
                 attack();
-                playerA.decreaseHealth(1 + super.getGearCount());
-                System.out.println("I'm an AI, ID:"+ID+" I'm attacking a human player ID:"+playerA.getID());
+//                playerA.decreaseHealth(1 + super.getGearCount());
 
-                int numOfDecrease = 1 + getGearCount();
+                int numOfDecrease = 1 + super.getGearCount();
                 playerA.decreaseHealth(numOfDecrease);
 
+                System.out.println("I'm an human player, ID:" + ID + " I'm attacking a human player ID:" + playerA.getID() + " decrease:" + numOfDecrease);
+                System.out.println("attacked Player's Health:" + playerA.health);
+
                 DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
-                this.gameClient.getNc().send(decreaseHealthMessage);
+                gameClient.getNc().send(decreaseHealthMessage);
 
                 if (playerA.health == 0) {
                     this.coins += playerA.coins;
@@ -437,21 +473,27 @@ public class MultiAIPlayer extends AIPlayer {
         this.attackPlayerTime = time;
         this.attackPStart = true;
     }
+
+    /**
+     * This method for human player attacks AI player in multiPlayer game.
+     * @param playerA
+     * @param time
+     * @return
+     */
     @Override
-    // same as above method just attacking another ai instead
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-        System.out.println("I am executing");
         if (attackAITime - time > 0.3 || !attackAIStart) {
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
 
                 super.isAttacking = true;
                 sword = swordAttack;
                 attack();
-                playerA.decreaseHealth(1 + super.getGearCount());
-                System.out.println("I'm an AI,ID:"+ID+" I'm attacking an AI player,ID:"+playerA.getID());
+//                playerA.decreaseHealth(1 + super.getGearCount());
+                System.out.println("I'm a human Player,ID:" + ID + " I'm attacking an AI player,ID:" + playerA.getID());
 
-                int numOfDecrease = 1 + getGearCount();
+                int numOfDecrease = 1 + super.getGearCount();
                 playerA.decreaseHealth(1 + getGearCount());
+
                 DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
                 this.gameClient.getNc().send(decreaseHealthMessage);
 
@@ -465,6 +507,64 @@ public class MultiAIPlayer extends AIPlayer {
         this.attackAIStart = true;
         return playerA;
     }
+
+    /**
+     * This method for AI player attacks human player in multiPlayer game.
+     * @param playerA
+     * @param time
+     */
+    public void AIattackP(Player playerA, float time) {
+        if (attackPlayerTime - time > 0.5 || !attackPStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                attack();
+
+                int numOfDecrease = 1 + super.getGearCount();
+
+                System.out.println("I'm an AI, ID:" + ID + " I'm attacking a human player ID:" + playerA.getID() + " decrease:" + numOfDecrease);
+                System.out.println("attacked Player's Health:" + playerA.health);
+
+                DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                this.gameClient.getNc().send(decreaseHealthMessage);
+
+                if (playerA.health == 0) this.coins += playerA.coins;
+
+            }
+        }
+        this.attackPlayerTime = time;
+        this.attackPStart = true;
+    }
+
+    /**
+     * This method for AI player attacks AI player in multiPlayer game.
+     * @param playerA
+     * @param time
+     * @return
+     */
+    public AIPlayer AIattackAI(AIPlayer playerA, float time) {
+        if (attackAITime - time > 0.3 || !attackAIStart) {
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                super.isAttacking = true;
+                attack();
+
+                System.out.println("I'm an AI,ID:" + ID + " I'm attacking an AI player,ID:" + playerA.getID());
+
+                int numOfDecrease = 1 + super.getGearCount();
+
+                DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
+                this.gameClient.getNc().send(decreaseHealthMessage);
+
+                if (playerA.health == 0) {
+                    this.coins += playerA.coins;
+                    return playerA;
+                }
+            }
+        }
+        this.attackAITime = time;
+        this.attackAIStart = true;
+        return playerA;
+    }
+
 
 
 }
