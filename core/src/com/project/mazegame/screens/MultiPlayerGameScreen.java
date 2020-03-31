@@ -101,7 +101,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 360;
+    public static float worldTimer = 200;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -150,6 +150,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, playerSkin, PlayersType.multi);
         netClient.connect(serverIP, false, 0, true);
+        myMultiPlayer.setGame(game);
 
         //Sleep thread for guarantee host player is the first index in Players list
         try {
@@ -172,6 +173,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
         cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
         getAsset();
+//        game.audio.setMusicOff();
     }
 
     public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, String playerSkin) {
@@ -411,7 +413,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
                 if ((myMultiPlayer.position.getX() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX() + 100) &&
                         (myMultiPlayer.position.getY() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY() + 100)) {
-                    pickUpItem(myMultiPlayer);
+                    pickUpItem(myMultiPlayer,true);
                 }
             }
 
@@ -527,38 +529,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         game.batch.end();
     }
 
-    /**
-     * pick up method ONLY for human player, not include AI
-     */
-    private void pickUpforNotAIPlayer() {
-        if (!(mapItems.size() == 0)) {
-            for (int i = 0; i < players.size(); i++) {
-                Player otherPlayer = players.get(i);
-                if (otherPlayer instanceof MultiPlayer) {
-                    if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
-                            (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
-                        pickUpItem(otherPlayer);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * pick up method ONLY for AI
-     */
-    private void pickUpforAI() {
-        if (!(mapItems.size() == 0)) {
-            for (int i = 0; i < aiPlayers.size(); i++) {
-                Player otherPlayer = aiPlayers.get(i);
-                if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
-                        (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
-                    pickUpItem(otherPlayer);
-                }
-
-            }
-        }
-    }
 
     /**
      * pick up method for ALL other player,include AI and human player
@@ -569,7 +539,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 Player otherPlayer = players.get(i);
                 if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
                         (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
-                    pickUpItem(otherPlayer);
+                    pickUpItem(otherPlayer,false);
                 }
             }
 
@@ -789,7 +759,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     }
 
-    public void pickUpItem(Player player) {
+    public void pickUpItem(Player player,boolean isMy) {
         Item item = player.getCo().nearestItem(player);
 
         boolean containItems = player.items.contains(item.getType());
@@ -817,17 +787,34 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 player.initialisedEnchantmentTime = time.currentTime();
                 if (player.items.contains("shield"))
                     player.initialisedShieldTime += 3;
+                if(isMy) {
+                    game.audio.setSFXOn();
+                    game.audio.gearEnchantment();
+                }
+
             }
             if (item.getType().equals("minimap")) {
                 player.getCo().minimap(item);
             }
         } else if (isCoin) {
+            if(isMy) {
+                game.audio.setSFXOn();
+                game.audio.pickupCoin();
+            }
             mapItems.remove(item);
             player.coins++;
         } else if (isHealingPotion) {
+            if(isMy) {
+                game.audio.setSFXOn();
+                game.audio.addHealth();
+            }
             mapItems.remove(item);
             player.getCo().healingPotion(player);
         } else if (isDamagingPotion) {
+            if(isMy) {
+                game.audio.setSFXOn();
+                game.audio.poison();
+            }
             mapItems.remove(item);
             player.getCo().damagingPotion(player);
         }

@@ -92,6 +92,7 @@ public class MultiPlayer extends Player {
     public void render(SpriteBatch sb) {
 
         setBatch(sb);
+        game.audio.setSFXOn();
         if (this.isDead()) {
             font.getData().setScale(1f, 1f);
             String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
@@ -218,6 +219,7 @@ public class MultiPlayer extends Player {
                 isAttacking = true;
                 pressSpace = true;
                 attackMessage();
+                game.audio.atk();
                 break;
         }
         locateDirection();
@@ -234,15 +236,19 @@ public class MultiPlayer extends Player {
         switch (keycode) {
             case Input.Keys.RIGHT:
                 bR = false;
+//                game.audio.step();
                 break;
             case Input.Keys.LEFT:
                 bL = false;
+//                game.audio.step();
                 break;
             case Input.Keys.UP:
                 bU = false;
+//                game.audio.step();
                 break;
             case Input.Keys.DOWN:
                 bD = false;
+//                game.audio.step();
                 break;
             case Input.Keys.SPACE:
                 isAttacking = false;
