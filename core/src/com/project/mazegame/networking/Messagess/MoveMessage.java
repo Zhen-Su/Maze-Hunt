@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
+/**
+ * To send player's movement info through client and server on that.
+ * @author Yueyi Wang & Zhen Su
+ */
 public class MoveMessage implements Message {
     private int msgType = Message.PLAYER_MOVE_MSG;
     private int id;
@@ -33,7 +36,13 @@ public class MoveMessage implements Message {
         this.gameClient=gameClient;
     }
 
-
+    /**
+     * This method to send player's movement info using DatagreamSocket
+     * @param ds Send data using DatagreamSocket from server
+     * @param ip Server's ip address
+     * @param server_UDP_Port UDP' port
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(30);
@@ -58,7 +67,12 @@ public class MoveMessage implements Message {
         }
 
     }
-
+    /**
+     * Use DataInputStream to process the acquired data and transform
+     * the player set in the client for movement operations.
+     * @param dis Input stream
+     * @throws Exception
+     */
     @Override
     public void process(DataInputStream dis) {
         try{

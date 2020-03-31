@@ -14,6 +14,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
+/**
+ * This class to send and process attack info through server and client.
+ * @author Yueyi Wang & Zhen Su
+ */
 public class AttackMessage implements Message{
     private int msgType = Message.ATTACK_MSG;
     private int id;
@@ -28,6 +32,13 @@ public class AttackMessage implements Message{
 
     public AttackMessage(MultiPlayerGameScreen gameClient){this.gameClient = gameClient;}
 
+    /**
+     * This method send attack info to server, and let other client to receive that and process
+     * @param ds Send data using DatagreamSocket from server
+     * @param serverIP Input Server's IP address
+     * @param serverUDPPort Input UDP's port
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -49,14 +60,23 @@ public class AttackMessage implements Message{
         }
     }
 
+    /**
+     * Use DataInputStream to process the acquired data and transform
+     * the player set in the client for attack operations.
+     * @param dis Input stream
+     * @throws Exception
+     */
     @Override
     public void process(DataInputStream dis) {
         try {
+            //Read user ID
             int id = dis.readInt();
+            //If is myself, so do nothing
             if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
 
+            //Iterate over the user to perform an action.
             for(Player t : gameClient.getPlayers())
             {
                 if(t.getID() == id)

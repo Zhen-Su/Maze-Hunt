@@ -10,7 +10,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
+/**
+ * This class to send and process damage info through client and server.
+ * @author Yueyi Wang & Zhen Su
+ */
 public class DecreaseHealthMessage implements Message {
     private int msgType = Message.DESCREASE_HP;
     private int beAttackedID;
@@ -28,7 +31,13 @@ public class DecreaseHealthMessage implements Message {
     public DecreaseHealthMessage(MultiPlayerGameScreen gameClient){
         this.gameClient = gameClient;
     }
-
+    /**
+     * This method send damage info to server, and let other client to receive that and process
+     * @param ds Send data using DatagreamSocket from server
+     * @param serverIP Input Server's IP address
+     * @param serverUDPPort Input UDP's port
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -50,7 +59,12 @@ public class DecreaseHealthMessage implements Message {
             e.printStackTrace();
         }
     }
-
+    /**
+     * Use DataInputStream to process the acquired data and transform
+     * the player set in the client for damage operations.
+     * @param dis Input stream
+     * @throws Exception
+     */
     @Override
     public void process(DataInputStream dis) {
         try {

@@ -314,7 +314,11 @@ public class GameScreen implements Screen {
 			if((worldTimer - time.currentTime()) < 0) {
 				this.dispose();
 				writeCoinCSV();
-				game.setScreen(new EndScreen(this.game));
+				try {
+					game.setScreen(new EndScreen(this.game,false));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
 			}
 		}

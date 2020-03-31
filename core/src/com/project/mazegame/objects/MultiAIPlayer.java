@@ -225,8 +225,7 @@ public class MultiAIPlayer extends AIPlayer {
 
                     // ultimate goal is coins
                 } else if (mode == 2) {
-                    Coordinate old = this.position;
-//                    System.out.println(old);
+                    Coordinate old = new Coordinate(position.getX(), position.getY());
                     int tempx = x;
                     int tempy = y;
                     // refresh position

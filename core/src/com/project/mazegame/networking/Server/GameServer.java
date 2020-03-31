@@ -18,7 +18,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-
+/**
+ * GameServer class,every send and process on here, every message will process on server.
+ */
 public class GameServer implements Runnable {
 
     private static int ID = 0001;                    //every client has an unique ID.
