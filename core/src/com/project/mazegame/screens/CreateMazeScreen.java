@@ -20,7 +20,10 @@ import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.CSVStuff;
 
 
-
+/**
+ * CreateMaze UI
+ * @author Zhen Su & Yueyi Wang Edit by Charlotte Barnes
+ */
 public class CreateMazeScreen implements Screen {
 
     private MazeGame game;
@@ -63,8 +66,6 @@ public class CreateMazeScreen implements Screen {
     private static int PLAYER2_Y = PLAYER_Y - 120;
     private static int MAP_Y = PLAYER2_Y -  120;
 
-    private HostLobbyScreen hostlobby;
-
     private static final String TAG = JoinMazeScreen.class.getSimpleName();
 
 
@@ -79,8 +80,6 @@ public class CreateMazeScreen implements Screen {
     private Texture bgTexture;
 
     private Texture cursorTexture;
-
-    private BitmapFont bitmapFont;
 
     private BitmapFont font;
 
@@ -98,8 +97,6 @@ public class CreateMazeScreen implements Screen {
 
     Texture player1, player2, player3, player4, player5, player6, playerSelected , player7;
 
-    TextureRegion txture;
-    TextureRegion[][] playerRegion;
     Button player1Button,player2Button,player3Button,player4Button,player5Button,player6Button,player7Button;
     Button[] playerButtons ;
 
@@ -118,8 +115,6 @@ public class CreateMazeScreen implements Screen {
     public CreateMazeScreen(MazeGame game , boolean multi) {
         this.game = game;
         this.multi = multi;
-        // this.playerEnterUsername();
-
         joinMazeButtonInactive = new Texture("UI\\MenuButtons\\button.png");
         joinMazeButtonActive = new Texture("UI\\MenuButtons\\buttonPressed.png");
         backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
@@ -137,8 +132,6 @@ public class CreateMazeScreen implements Screen {
         diffButton2Selected = new Texture("UI\\MenuButtons\\diff2Selected.png");
         diffButton3 = new Texture("UI\\MenuButtons\\diff3.png");
         diffButton3Selected = new Texture("UI\\MenuButtons\\diff3Selected.png");
-        //playerRegion = TextureRegion.split(new Texture("Player\\walkDownYellow.png"),playerSelected.getWidth()-2,playerSelected.getHeight()-2);
-        // txture =  playerRegion[0][0];
         createYourMaze = new Texture("UI\\Titles\\CreateyourMaze.png");
 
 
@@ -156,27 +149,7 @@ public class CreateMazeScreen implements Screen {
 
     }
 
-    private void playerEnterUsername (){
-        Gdx.input.getTextInput(new Input.TextInputListener() {
-            @Override
-            public void input(String text) {
-                Gdx.app.log("Username:",text);
-                username=text;
-                hasEnterUsername=true;
-            }
-            @Override
-            public void canceled() {
-                Gdx.app.log("MutiPlayerScreen: ","Player cancel,GOODBYE!");
-
-            }
-        },"ENTER USERNAME", "", "Your username Please");
-    }
-
     public void setPreferences() {
-
-        //String[] preferences = new String[3] ;
-
-
         difficulty = "3";
         player = "red";
         map = "map 1";
@@ -184,7 +157,6 @@ public class CreateMazeScreen implements Screen {
         name = "Barry";
 
         //loop though buttons to see which is chosen
-
         for( int i = 0; i < difficultyButtons.length ; i ++) {
             if(difficultyButtons[i].isPressed) {
                 difficulty = difficultyButtons[i].name;
@@ -217,17 +189,9 @@ public class CreateMazeScreen implements Screen {
         input.add(name);
 
         CSVStuff.writeCSV(input , "csvFile");
-
-
-
     }
 
-
-
-
-
     //---------------------------------------Override-----------------------------------------------
-    //----------------------------------------------------------------------------------------------
     @Override
     public void show() {
 
@@ -272,7 +236,6 @@ public class CreateMazeScreen implements Screen {
 
         CreateMaze = new Button(DRAW_X,MAP_Y - 100, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
 
-        //font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
         stage = new Stage(new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT));
@@ -291,8 +254,6 @@ public class CreateMazeScreen implements Screen {
         style.font = font;
         style.fontColor = new Color(1,1,1, 1);
 
-
-        //BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
         font.setColor(Color.WHITE);
         font.getData().setScale(0.5f);
@@ -333,14 +294,6 @@ public class CreateMazeScreen implements Screen {
         game.batch.begin();
         game.batch.draw(backGround,0,0,1000,1000);
 
-
-
-//
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-//            Gdx.app.log(TAG, "username = " + usernameTextField.getText());
-//            Gdx.app.log(TAG, "number of AI players = " + numField.getText());
-//            game.setScreen(new HostLobbyScreen(game,usernameTextField.getText()));
-//        }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();
@@ -396,21 +349,6 @@ public class CreateMazeScreen implements Screen {
         message = "Select Map" ;
 
         font.draw(game.batch,message, DRAW_X - 300 ,MAP_Y + 50);
-
-
-        /*if(hasEnterUsername){
-            try {
-                Gdx.app.log("Server","I'm a server!");
-                Gdx.app.log("Server IP:", InetAddress.getLocalHost().getHostAddress());
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            }
-
-            new Thread(new GameServer()).start();
-
-            game.setScreen(new MultiPlayerGameScreen(game,username,"127.0.0.1"));
-
-        }*/
 
         game.batch.end();
         stage.act();
@@ -471,7 +409,7 @@ public class CreateMazeScreen implements Screen {
                             //change all others to false
                             resetButtons(this.type);
 
-//        					change this one to true
+                            //change this one to true
                             this.isPressed = true;
                             playerChosen = true;
                         }
@@ -643,8 +581,6 @@ public class CreateMazeScreen implements Screen {
 
     private void backToMenuScreen(){
         System.out.println("back to");
-        // cam = new OrthoCam(game, false, MazeGame.WIDTH,MazeGame.WIDTH,0,0);
-        //this.dispose();
         game.setScreen(new MenuScreen(this.game));
         System.out.println("shouldn't see");
     }

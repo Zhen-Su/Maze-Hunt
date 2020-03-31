@@ -36,7 +36,13 @@ public class StartGameMessage implements Message{
 
 
 
-
+    /**
+     * When host player click start, then it message will send other players, and start game.
+     * @param ds
+     * @param serverIP Server ip
+     * @param serverUDPPort
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -58,6 +64,11 @@ public class StartGameMessage implements Message{
         }
     }
 
+    /**
+     * To process start game message when host player click start game.
+     * @param dis
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void process(DataInputStream dis) {
         try{

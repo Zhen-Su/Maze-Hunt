@@ -19,6 +19,10 @@ import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+/**
+ * GameServer class,every send and process on here, every message will process on server.
+ * @author Yueyi Wang & Zhen Su
+ */
 public class GameServer implements Runnable {
 
     private static int ID = 0001;                    //every client has an unique ID.
@@ -155,7 +159,7 @@ public class GameServer implements Runnable {
     /**
      * Client inner class
      *
-     * @author kevin
+     * @author Yueyi Wang
      */
     private class Client {
         String IP;
@@ -171,7 +175,7 @@ public class GameServer implements Runnable {
      * This inner class will listen to whether client send messages to me,and send those messages to other clients
      * Broadcast to other clients
      *
-     * @author kevin
+     * @author Yueyi Wang
      */
     private class UDPThread implements Runnable {
 

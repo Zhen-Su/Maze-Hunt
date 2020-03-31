@@ -1,5 +1,5 @@
 android {
-    buildToolsVersion "29.0.3"
+    buildToolsVersion "29.0.2"
     compileSdkVersion 29
     sourceSets {
         main {
@@ -17,7 +17,7 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "com.project.mazegame"
+        applicationId "com.norakomi.mambow2"
         minSdkVersion 14
         targetSdkVersion 29
         versionCode 1
@@ -86,5 +86,5 @@ task run(type: Exec) {
     }
 
     def adb = path + "/platform-tools/adb"
-    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.project.mazegame/com.project.mazegame.AndroidLauncher'
+    commandLine "$adb", 'shell', 'am', 'start', '-n', 'com.norakomi.mambow2/com.norakomi.mambow2.AndroidLauncher'
 }

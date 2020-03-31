@@ -6,6 +6,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+/**
+ * <h1>AddData</h1>
+ * The class is to upload the player's coins and username to the database
+ * @Author Zhen Su & Yueyi Wang
+ */
 public class WithdrawData {
     public ArrayList<String> list = new ArrayList<>();
     public ArrayList<String> download() throws Exception {

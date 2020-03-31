@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 /**
  * To send host items generate situation to everyone, and let other to copy that items
+ * @author Yueyi Wang & Zhen Su
  */
 public class ItemCreateMessage implements Message {
     private int msgType = Message.ITEMS_CREATE;
@@ -39,6 +40,13 @@ public class ItemCreateMessage implements Message {
         this.gameClient = gameClient;
     }
 
+    /**
+     * This method send generating items on map info to server, and let other client to receive that and process
+     * @param ds Send data using DatagreamSocket from server
+     * @param serverIP Input Server's IP address
+     * @param serverUDPPort Input UDP's port
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -65,6 +73,12 @@ public class ItemCreateMessage implements Message {
 
     }
 
+    /**
+     * Use DataInputStream to process the acquired data and transform
+     * the player set in the client for generating map items operations.
+     * @param dis Input stream
+     * @throws Exception
+     */
     @Override
     public void process(DataInputStream dis) {
         try {

@@ -3,7 +3,18 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
 
+/**
+ * <h1>CreateDataBase</h1>
+ * The class is to create a default database table we need.
+ * @Author Zhen Su & Yueyi Wang
+ */
 public class CreateDataBase {
+    /**
+     * To create a default database table we need
+     * Including username and coins.
+     * @param args Unused
+     * @throws Exception Exception on database connection
+     */
     public static void main(String args[]) {
         Connection c = null;
         Statement stmt = null;

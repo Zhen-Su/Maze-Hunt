@@ -18,6 +18,10 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 
+/**
+ * To send new player joining message through server and client
+ * @author Yueyi Wang & Zhen Su
+ */
 public class PlayerNewMessage implements Message {
 
 
@@ -45,8 +49,9 @@ public class PlayerNewMessage implements Message {
      * Send a packet to Server,then Server broadcast this packet to all clients
      *
      * @param datagramSocket
-     * @param ip              Server ip
+     * @param ip Server ip
      * @param server_UDP_Port
+     * @throws Exception This exception is thrown when closing the stream fails
      */
     @Override
     public void send(DatagramSocket datagramSocket, String ip, int server_UDP_Port) {
@@ -80,6 +85,11 @@ public class PlayerNewMessage implements Message {
     }
 
 
+    /**
+     * When player join in the server, then add that on set of players
+     * @param dis
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void process(DataInputStream dis) {
         try {

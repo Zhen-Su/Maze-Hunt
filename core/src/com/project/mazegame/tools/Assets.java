@@ -4,6 +4,9 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
+/**
+ * To management every animation stuff images
+ */
 public class Assets {
     public static final AssetManager manager= new AssetManager();
 
@@ -99,6 +102,16 @@ public class Assets {
 
     public static final String playButton =  "UI/MenuButtons/playButton.png";
     public static final String playButtonPressed =  "UI/MenuButtons/playButtonPressed.png";
+
+    public static final String menuBgm = "sounds/menuBgm.mp3"; // BGM for main menu
+    public static final String mainBgm = "sounds/mainbgm.mp3"; // BGM for game screens
+    public static final String hitSFX = "sounds/sfx/hit.mp3"; // SFX when getting hit
+    public static final String atkSFX = "sounds/sfx/atk.mp3"; // SFX when attacking
+    public static final String addHealthSFX = "sounds/sfx/addHealth.mp3"; // SFX when health is added (a.k.a consuming potion)
+    public static final String pickupCoinSFX = "sounds/sfx/pickupCoin.mp3"; // SFX when coin is picked up
+    public static final String shieldSFX = "sounds/sfx/shield.mp3"; // SFX when getting hit with shield on
+    public static final String stepSFX = "sounds/sfx/step.mp3"; // SFX when player moving
+
 
     public Assets (){
         load();
