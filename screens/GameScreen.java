@@ -122,7 +122,7 @@ public class GameScreen implements Screen {
 		this.collisionLayer1 = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
         player = new Player(this.collisionLayer,"james",123);
         aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124);
-        aiPlayers = aiPlayer.AITakingOver(3);
+        aiPlayers = aiPlayer.AITakingOver(2);
         aicos = new ArrayList<Collect>();
 
 

@@ -1,6 +1,7 @@
 package com.project.mazegame.objects;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.Pair;
@@ -46,7 +47,22 @@ public class AIPlayer extends Player {
         this.direct = "Up";
         this.preve = null;
         this.lastp = null;
-
+        frames = walkDown;
+        RightAnim = new AnimationTool(width, height, this, walkLeft, true);
+        RightAnim.create();
+        LeftAnim = new AnimationTool(width,height,this,walkLeft,true);
+        LeftAnim.create();
+//        System.out.println("new animations");
+        UpAnim = new AnimationTool(width,height,this,walkUp,true);
+        UpAnim.create();
+//        System.out.println("new animations");
+        DownAnim = new AnimationTool(width,height,this,walkDown,true);
+        DownAnim.create();
+//        System.out.println("new animations");
+        coinAnimation = new AnimationTool(width,height,this,coinPick,true);
+        coinAnimation.create();
+        animation = new AnimationTool(width,height,this,walkDown,true);
+        animation.create();
     }
 
 
@@ -121,18 +137,18 @@ public class AIPlayer extends Player {
                 haveyoudied = false;
             }
         }
-        if (initialisedTime - time > 0.3 || !updateCount && !haveyoudied) {
+        if (initialisedTime - time > 0.2f || !updateCount && !haveyoudied) {
             if (mode == 1) {
 
             // takes random coorediante it can mvoe to
                 Coordinate old = new Coordinate(position.getX(), position.getY());
                 // contantsnatly throwing exeption possibly becasue not linked to player
                 // will need to do something with the speed
-                this.position.setX((int) x);
-                this.position.setY((int) y);
-                Coordinate moveToTake = direction(avaibleMoves(x, y));
-                super.x = (int) moveToTake.getX();
-                super.y = (int) moveToTake.getY();
+                this.position.setX((int) this.x);
+                this.position.setY((int) this.y);
+                Coordinate moveToTake = direction(avaibleMoves(this.x, this.y));
+                this.x = (int) moveToTake.getX();
+                this.y = (int) moveToTake.getY();
 
                 this.change(old, moveToTake);
 
@@ -142,7 +158,7 @@ public class AIPlayer extends Player {
                 // if there are two junctions it picks the junction it hasn't comefrom
                 // if there are three junctions pciks a random junction that it hasn't been down
                 // if there are four junctions picks random junction otu of the ones it hasn't been dwon
-                Coordinate old = super.getPosition();
+                Coordinate old = new Coordinate(position.getX(), position.getY());
 
                 int tempx = x;
                 int tempy = y;
@@ -197,14 +213,14 @@ public class AIPlayer extends Player {
                 }
                 Coordinate nextMove = new Coordinate(tempx, tempy);
                 System.out.println(nextMove.toString());
-                super.x = tempx;
-                super.y = tempy;
+                this.x = tempx;
+                this.y = tempy;
                 this.change(old, nextMove);
                 this.lastp = this.preve;
                 this.preve = nextMove;
 
             } else if (mode == 2) {
-                Coordinate old = super.position;
+                Coordinate old = new Coordinate(position.getX(), position.getY());
                 int tempx = x;
                 int tempy = y;
                 // refresh posion
@@ -254,8 +270,8 @@ public class AIPlayer extends Player {
                     tempy = y - movenumber;
                     this.direct = "Down";
                 }
-                super.x = tempx;
-                super.y = tempy;
+                this.x = tempx;
+                this.y = tempy;
 
                 Coordinate newt = new Coordinate(tempx, tempy);
                 System.out.println(newt.toString());

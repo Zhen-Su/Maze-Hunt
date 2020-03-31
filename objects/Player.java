@@ -26,7 +26,7 @@ public class Player {
 	public int x, y;
     protected Texture player, sword,swordAttack,swordNotAttack,shield;
     private float speed = 6;
-    private int width, height ,coinSize;
+    protected int width, height ,coinSize;
     public int coins;
     public int health = 5;
     private int ID;
@@ -452,8 +452,9 @@ public class Player {
                         int gearEnchantCount = 0;
 
                         playerA.decreaseHealth(1 + getGearCount());
-                        this.coins += 1;
+
                         if (playerA.health == 0) {
+                            this.coins += 1;
                             System.out.println("I am about to die");
                             this.coins += playerA.coins;
                             playerA.death(time);
