@@ -2,13 +2,13 @@ package com.project.mazegame.networking.Messagess;
 
 import java.io.DataInputStream;
 import java.net.DatagramSocket;
-
 /**
  * This is interface for Message using on client sending data through server,
  * and several Message type on here.
  * @author Yueyi Wang & Zhen Su
  */
 public interface Message {
+
     public static final int PLAYER_NEW_MSG = 1;
     public static final int PLAYER_MOVE_MSG= 2;
     public static final int PLAYER_EXIT_MSG=3;

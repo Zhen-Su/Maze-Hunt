@@ -39,7 +39,6 @@ public class ItemCreateMessage implements Message {
     public ItemCreateMessage(MultiPlayerGameScreen gameClient) {
         this.gameClient = gameClient;
     }
-
     /**
      * This method send generating items on map info to server, and let other client to receive that and process
      * @param ds Send data using DatagreamSocket from server
@@ -72,7 +71,6 @@ public class ItemCreateMessage implements Message {
         }
 
     }
-
     /**
      * Use DataInputStream to process the acquired data and transform
      * the player set in the client for generating map items operations.

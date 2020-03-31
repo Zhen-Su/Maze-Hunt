@@ -181,14 +181,14 @@ public class LeaderboardScreen implements Screen {
         WithdrawData draw = new WithdrawData();
 
 
-    @Override
-    public void run() {
-        try {
-            CSVStuff.writeCSV(draw.download(),"leaderboardCSV");
-            output = CSVStuff.readCSVFile("leaderboardCSV");
-        } catch (Exception e) {
-            e.printStackTrace();
+        @Override
+        public void run() {
+            try {
+                CSVStuff.writeCSV(draw.download(),"leaderboardCSV");
+                output = CSVStuff.readCSVFile("leaderboardCSV");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
-}
 }

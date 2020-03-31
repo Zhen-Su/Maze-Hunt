@@ -1,12 +1,11 @@
 package com.project.mazegame.tools;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
-/**
- * To management every animation stuff images
- */
 public class Assets {
     public static final AssetManager manager= new AssetManager();
 
@@ -105,12 +104,18 @@ public class Assets {
 
     public static final String menuBgm = "sounds/menuBgm.mp3"; // BGM for main menu
     public static final String mainBgm = "sounds/mainbgm.mp3"; // BGM for game screens
+    public static final String logoBgm ="sounds/logoBgm.mp3";  //BGM for logo screens
+    public static final String endBgm ="sounds/endBgm.mp3";  //BGM for end screens
     public static final String hitSFX = "sounds/sfx/hit.mp3"; // SFX when getting hit
     public static final String atkSFX = "sounds/sfx/atk.mp3"; // SFX when attacking
     public static final String addHealthSFX = "sounds/sfx/addHealth.mp3"; // SFX when health is added (a.k.a consuming potion)
     public static final String pickupCoinSFX = "sounds/sfx/pickupCoin.mp3"; // SFX when coin is picked up
     public static final String shieldSFX = "sounds/sfx/shield.mp3"; // SFX when getting hit with shield on
     public static final String stepSFX = "sounds/sfx/step.mp3"; // SFX when player moving
+    public static final String chooseButtonSFX = "sounds/sfx/chooseButton.mp3";
+    public static final String gearEnchantment = "sounds/sfx/gearEnchantment.mp3";
+    public static final String poison = "sounds/sfx/poison.mp3";
+
 
 
     public Assets (){
@@ -229,10 +234,24 @@ public class Assets {
 
         manager.load(endAnimation , Texture.class);
 
+        manager.load(menuBgm, Music.class);
+        manager.load(mainBgm, Music.class);
+        manager.load(endBgm, Music.class);
+        manager.load(logoBgm, Music.class);
+        manager.load(hitSFX, Sound.class);
+        manager.load(atkSFX, Sound.class);
+        manager.load(addHealthSFX, Sound.class);
+        manager.load(pickupCoinSFX, Sound.class);
+        manager.load(shieldSFX, Sound.class);
+        manager.load(stepSFX, Sound.class);
+        manager.load(chooseButtonSFX,Sound.class);
+        manager.load(gearEnchantment,Sound.class);
+        manager.load(poison,Sound.class);
+
+
 
         manager.finishLoading();
 
-        System.out.println("added everything to queue");
 
     }
     public static void dispose() {

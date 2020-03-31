@@ -11,11 +11,13 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
+import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.*;
 
 public class Player {
 
     public int x, y;
+    public MazeGame game;
     public PlayersType playersType;
     protected float speed;
     protected String colour;
@@ -202,6 +204,14 @@ public class Player {
 
     public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
         this.collisionLayer = collisionLayer;
+    }
+
+    public MazeGame getGame() {
+        return game;
+    }
+
+    public void setGame(MazeGame game) {
+        this.game = game;
     }
 
     //==============================================================================================

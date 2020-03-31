@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
 /**
  * To send player's movement info through client and server on that.
  * @author Yueyi Wang & Zhen Su
@@ -68,7 +67,6 @@ public class MoveMessage implements Message {
         }
 
     }
-
     /**
      * Use DataInputStream to process the acquired data and transform
      * the player set in the client for movement operations.

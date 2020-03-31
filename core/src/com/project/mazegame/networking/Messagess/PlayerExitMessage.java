@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
 /**
  * To send message through server and client for player exit game.
  * @author Yueyi Wang & Zhen Su
@@ -31,7 +30,6 @@ public class PlayerExitMessage implements Message {
         this.id = id;
 //        this.isServerRunning = isServerRunning;
     }
-
 
     /**
      * If player exit game, then send message on server, tell everyone that player out.
@@ -61,7 +59,6 @@ public class PlayerExitMessage implements Message {
         }
 
     }
-
 
     /**
      * To process player exit message, when player exit, then remove that info from set of players.

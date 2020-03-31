@@ -102,6 +102,16 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
   * 3.0.1Add a new UDP thread for listen player exiting.
   * 3.0.2 integrate with AI player in single
+  * 3.0.3 real player can flight with each other, add mode2 in multi, will add mode2 in single.
+  * 3.0.4 human player can attack AI in multiplayer
+  
+* Version 4.0: AI can completely work in multi, fix timer, add new feature : if a player exit game, then will show this info on the other player's screen
+  
+  * 4.0.1 add hostLobby, fix player exit bug
+  * 4.0.2 add some SFX in game
+  * 4.0.3 fix some bugs on AI attacking in multi
+  
+  
   
   
   

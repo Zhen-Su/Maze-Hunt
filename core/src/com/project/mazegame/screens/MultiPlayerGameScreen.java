@@ -101,7 +101,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 360;
+    public static float worldTimer = 200;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -150,6 +150,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         myMultiPlayer = new MultiPlayer(this.collisionLayer, username, this, Direction.STOP, playerSkin, PlayersType.multi);
         netClient.connect(serverIP, false, 0, true);
+        myMultiPlayer.setGame(game);
 
         //Sleep thread for guarantee host player is the first index in Players list
         try {
@@ -172,6 +173,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
         cam = new OrthoCam(game, false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, myMultiPlayer.position.getX(), myMultiPlayer.position.getY());
         getAsset();
+//        game.audio.setMusicOff();
     }
 
     public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, String playerSkin) {
@@ -261,6 +263,10 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     public void setTileMapRenderer(OrthogonalTiledMapRenderer tileMapRenderer) {
         this.tileMapRenderer = tileMapRenderer;
+    }
+
+    public MazeGame getGame() {
+        return game;
     }
 
     public List<Player> getHumanPlayers() {
@@ -361,28 +367,28 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
         delta = Gdx.graphics.getDeltaTime();
 
-        //update other player
+        //only update multiPlayer, not AIPlayer
         ArrayList<Item> empty = new ArrayList<>();
         for (Player otherPlayer : players) {
-            //only update multiPlayer, not AIPlayer
             if (otherPlayer instanceof MultiPlayer)
                 otherPlayer.update(delta, 0, empty, 0);
         }
 
-        //Only host player can update ai player
+        //Only host player can update AI player for movements, other player only update them for animation.
         if (imHost) {
-            for (Player aiPlayer : aiPlayers) {
-                if (aiPlayer instanceof Player)
+            for (Player aiPlayer : players) {
+                if (aiPlayer instanceof MultiAIPlayer)
                     aiPlayer.update(delta, 2, mapItems, worldTimer);
             }
         }
 
-        if(!imHost){
-            for(Player aiPlayer : players){
-                if(aiPlayer instanceof MultiAIPlayer){
-                }
+        if (!imHost) {
+            for (Player aiPlayer : players) {
+                if (aiPlayer instanceof MultiAIPlayer)
+                    ((MultiAIPlayer) aiPlayer).updateForNotHost(delta, worldTimer);
             }
         }
+
 
         //update myself
         myMultiPlayer.update(delta, 0, empty, 0);
@@ -405,17 +411,11 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
                 if ((myMultiPlayer.position.getX() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX()) && (myMultiPlayer.position.getX() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getX() + 100) &&
                         (myMultiPlayer.position.getY() > myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY()) && (myMultiPlayer.position.getY() < myMultiPlayer.co.nearestItem(myMultiPlayer).getPosition().getY() + 100)) {
-                    pickUpItem(myMultiPlayer);
+                    pickUpItem(myMultiPlayer,true);
                 }
             }
 
-            //Collectibles pick up for other player and AI
-            if (imHost) {
-                pickUpforNotAIPlayer();
-                pickUpforAI();
-            } else {
-                pickUPforAllOtherPlayer();
-            }
+            pickUPforAllOtherPlayer();
 
             game.batch.draw(overlay, myMultiPlayer.position.getX() - overlayWidth / 2, myMultiPlayer.position.getY() - overlayHeight / 2, overlayWidth, overlayHeight);
 
@@ -425,78 +425,62 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             drawIcons(iconSize, buffer, playerPos);
             drawExitButton(playerPos);
 
-            // generate list of players at the moment empty but with networking will be changed
-
-            // first checks for the player to see if there is a player
-            if (isPlayerOnSameP(myMultiPlayer, (ArrayList<Player>) humanPlayers, aiPlayers)) {
-//                //checks if the player is human or not
-                if (isHuman1()) {
-//                    //if player is human removes the player from the list then calls attack
-//                    emptyattack.remove(0);
-//                    System.out.println("Here is a human player by my side");
-                    myMultiPlayer.attackP(humanPlayers.get(posAP), worldTimer);
-//                    // earlier issue with not respawning so checks the move to and changes move to to coords generated by death
-//                    emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
-//                    emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
-//                    // adds player back to list
-//                    emptyattack.add(myMultiPlayer);
-                } else {
-//                    // does same thing as above except with ai players
-//                    AIPlayer playerinsert = aiPlayers.remove(posAAI);
-//                    System.out.println("Here is an AI by my side");
-                    myMultiPlayer.attackAI(aiPlayers.get(posAAI), worldTimer);
-//                    playerinsert.x = playerinsert.moveTo.getX();
-//                    playerinsert.y = playerinsert.moveTo.getY();
-//                    aiPlayers.add(posAAI, playerinsert);
-                }
-            }
-
-            // creates list of players and adds them so the ai can attack players
-            ArrayList<Player> forAI = new ArrayList<>();
-            forAI.add(myMultiPlayer);
-            // goes through the list of ai players
-            for (int i = 0; i < aiPlayers.size(); i++) {
-                // takes one player to attack
-                AIPlayer playerTurn = aiPlayers.remove(i);
-                // does the same thing as the above lines of code just with ai
-                if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
-                    if (isHuman1()) {
-                        System.out.println("An ai is about to attack me");
-                        playerTurn.attackP(forAI.get(posAP), worldTimer);
-                        forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
-                        forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
-                    } else {
-                        playerTurn.attackAI(aiPlayers.get(posAAI), worldTimer);
-                        aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
-                        aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
-                    }
-                }
-                // adds the ai player back into the list so it is available to be attacked
-                aiPlayers.add(i, playerTurn);
-            }
-
-
-            //if i'm host then will use aiPlayers to render ai
-            if (imHost) {
-                for (Player aiPlayer : aiPlayers) {
-                    aiPlayer.render(game.batch);
-                }
-                //only draw otherplayer, no need to draw AI again.
-                for (Player otherPlayer : players) {
-                    if (otherPlayer instanceof MultiPlayer)
-                        otherPlayer.render(game.batch);
-                }
-            } else {
-                //if i'm not a host player, then only use players list to draw all players, include AI
-                for (Player otherPlayer : players) {
-                    otherPlayer.render(game.batch);
-                }
+            //draw other player on my screen, include AI
+            for (Player otherPlayer : players) {
+                otherPlayer.render(game.batch);
             }
 
             //draw myself on my screen
             if (null != myMultiPlayer) {
                 myMultiPlayer.render(game.batch);
             }
+
+
+            ArrayList<AIPlayer> tempAIPlayers = new ArrayList<>();
+            for (Player player : players) {
+                if (player instanceof MultiAIPlayer) {
+                    tempAIPlayers.add((AIPlayer) player);
+                }
+            }
+            // first checks for the player to see if there is a player
+            if (myMultiPlayer.health > 0) {
+                if (isPlayerOnSameP(myMultiPlayer, (ArrayList<Player>) humanPlayers, tempAIPlayers)) {
+                    if (isHuman1()) {
+                        myMultiPlayer.attackP(humanPlayers.get(posAP), worldTimer);
+                    } else {
+                        myMultiPlayer.attackAI(tempAIPlayers.get(posAAI), worldTimer);
+                    }
+                }
+            }
+
+
+            // creates list of players and adds them so the ai can attack players
+            ArrayList<Player> forAI = new ArrayList<>();
+            forAI.add(myMultiPlayer);
+            for (Player player : humanPlayers) {
+                forAI.add(player);
+            }
+            ArrayList<AIPlayer> tempAIplayers = new ArrayList<>();
+            for (Player aiPlayer : players) {
+                if (aiPlayer instanceof MultiAIPlayer) {
+                    tempAIplayers.add((AIPlayer) aiPlayer);
+                }
+            }
+            // goes through the list of ai players
+            for (int i = 0; i < tempAIplayers.size(); i++) {
+                // takes one player to attack
+                MultiAIPlayer playerTurn = (MultiAIPlayer) tempAIplayers.get(i);
+                if (playerTurn.health > 0) {
+                    if (isPlayerOnSameAI(playerTurn, forAI, tempAIplayers)) {
+                        if (isHuman1()) {
+                            playerTurn.AIattackP(forAI.get(posAP), worldTimer);
+                        } else {
+//                            playerTurn.AIattackAI(tempAIPlayers.get(posAAI), worldTimer);
+                        }
+                    }
+                }
+            }
+
 
             //draw timer
             String message = "Time = " + (int) (worldTimer);
@@ -535,7 +519,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                         e.printStackTrace();
                     }
                     if (isHost) {
-                        this.server.dispose(this,false);
+                        this.server.dispose(this, false);
                         if (debug) {
                             System.out.println("Server Close");
                         }
@@ -547,38 +531,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         game.batch.end();
     }
 
-    /**
-     * pick up method ONLY for human player, not include AI
-     */
-    private void pickUpforNotAIPlayer() {
-        if (!(mapItems.size() == 0)) {
-            for (int i = 0; i < players.size(); i++) {
-                Player otherPlayer = players.get(i);
-                if (otherPlayer instanceof MultiPlayer) {
-                    if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
-                            (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
-                        pickUpItem(otherPlayer);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * pick up method ONLY for AI
-     */
-    private void pickUpforAI() {
-        if (!(mapItems.size() == 0)) {
-            for (int i = 0; i < aiPlayers.size(); i++) {
-                Player otherPlayer = aiPlayers.get(i);
-                if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
-                        (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
-                    pickUpItem(otherPlayer);
-                }
-
-            }
-        }
-    }
 
     /**
      * pick up method for ALL other player,include AI and human player
@@ -589,7 +541,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 Player otherPlayer = players.get(i);
                 if ((otherPlayer.position.getX() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getX()) && (otherPlayer.position.getX() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getX() + 100) &&
                         (otherPlayer.position.getY() > otherPlayer.co.nearestItem(otherPlayer).getPosition().getY()) && (otherPlayer.position.getY() < otherPlayer.co.nearestItem(otherPlayer).getPosition().getY() + 100)) {
-                    pickUpItem(otherPlayer);
+                    pickUpItem(otherPlayer,false);
                 }
             }
 
@@ -809,7 +761,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     }
 
-    public void pickUpItem(Player player) {
+    public void pickUpItem(Player player,boolean isMy) {
         Item item = player.getCo().nearestItem(player);
 
         boolean containItems = player.items.contains(item.getType());
@@ -837,17 +789,34 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 player.initialisedEnchantmentTime = time.currentTime();
                 if (player.items.contains("shield"))
                     player.initialisedShieldTime += 3;
+                if(isMy) {
+                    game.audio.setSFXOn();
+                    game.audio.gearEnchantment();
+                }
+
             }
             if (item.getType().equals("minimap")) {
                 player.getCo().minimap(item);
             }
         } else if (isCoin) {
+            if(isMy) {
+                game.audio.setSFXOn();
+                game.audio.pickupCoin();
+            }
             mapItems.remove(item);
             player.coins++;
         } else if (isHealingPotion) {
+            if(isMy) {
+                game.audio.setSFXOn();
+                game.audio.addHealth();
+            }
             mapItems.remove(item);
             player.getCo().healingPotion(player);
         } else if (isDamagingPotion) {
+            if(isMy) {
+                game.audio.setSFXOn();
+                game.audio.poison();
+            }
             mapItems.remove(item);
             player.getCo().damagingPotion(player);
         }
@@ -872,7 +841,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             this.getNc().send(playerExitMessage);
             this.getNc().sendClientDisconnectMsg();
             if (imHost)
-                this.server.dispose(this,true);
+                this.server.dispose(this, true);
         }
 
         if (Gdx.input.getX() < V_WIDTH && Gdx.input.getX() > V_WIDTH - EXIT_WIDTH && Gdx.input.getY() < EXIT_HEIGHT && Gdx.input.getY() > 0) {
@@ -884,7 +853,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 this.getNc().send(playerExitMessage);
                 this.getNc().sendClientDisconnectMsg();
                 if (imHost)
-                    this.server.dispose(this,true);
+                    this.server.dispose(this, true);
 
             }
         } else game.batch.draw(exitButtonInactive, x, y, EXIT_WIDTH, EXIT_HEIGHT);
@@ -940,8 +909,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         int maxShields = 15;
         int maxCoins = 50;
         //TODO this swords number need to change, only for test
-        int maxSwords = 100;
-        int maxMinimaps = 15;
+        int maxSwords = 200;
+        int maxMinimaps = 100;
         int maxPotions = 50;
         int maxX = widthInTiles;
         int maxY = widthInTiles;

@@ -18,6 +18,7 @@ public class SplashScreen implements Screen {
     private Stage stage;
     private Image splashImg;
     public Texture splashTex;
+    private boolean flag=true;
 
     public SplashScreen(MazeGame game){
         this.game = game;
@@ -26,7 +27,6 @@ public class SplashScreen implements Screen {
 
     @Override
     public void show() {
-        System.out.println("Now is SPLASH Screen..");
         Gdx.input.setInputProcessor(stage);
 
         Runnable transitionRunnable = new Runnable() {
@@ -60,6 +60,10 @@ public class SplashScreen implements Screen {
 
         stage.draw();
 
+        if(flag) {
+            game.audio.setCurrentScreen("logo");
+            flag=false;
+        }
     }
     public void update(float delta) {
         stage.act(delta);

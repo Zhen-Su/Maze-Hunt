@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
 /**
  * To send new player joining message through server and client
  * @author Yueyi Wang & Zhen Su
@@ -83,7 +82,6 @@ public class PlayerNewMessage implements Message {
             e.printStackTrace();
         }
     }
-
 
     /**
      * When player join in the server, then add that on set of players

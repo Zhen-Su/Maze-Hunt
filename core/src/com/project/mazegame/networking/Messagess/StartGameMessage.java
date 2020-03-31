@@ -63,7 +63,6 @@ public class StartGameMessage implements Message{
             e.printStackTrace();
         }
     }
-
     /**
      * To process start game message when host player click start game.
      * @param dis

@@ -218,6 +218,7 @@ public class MultiPlayer extends Player {
                 isAttacking = true;
                 pressSpace = true;
                 attackMessage();
+                game.audio.atk();
                 break;
         }
         locateDirection();
@@ -234,15 +235,19 @@ public class MultiPlayer extends Player {
         switch (keycode) {
             case Input.Keys.RIGHT:
                 bR = false;
+//                game.audio.step();
                 break;
             case Input.Keys.LEFT:
                 bL = false;
+//                game.audio.step();
                 break;
             case Input.Keys.UP:
                 bU = false;
+//                game.audio.step();
                 break;
             case Input.Keys.DOWN:
                 bD = false;
+//                game.audio.step();
                 break;
             case Input.Keys.SPACE:
                 isAttacking = false;
@@ -468,12 +473,13 @@ public class MultiPlayer extends Player {
         if (pressSpace) {
             if (aiAttackTime - time > 0.03 || !startAIAttack) {
                 if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                    System.out.println("Player is attacking an AI");
                     isAttacking = true;
                     sword = swordAttack;
 
                     int numOfDecrease = 1 + getGearCount();
                     playerA.decreaseHealth(1 + getGearCount());
+                    System.out.println("I'm a human player,ID:" + ID + " I'm attacking an AI player,ID:" + playerA.getID());
+
                     DecreaseHealthMessage decreaseHealthMessage = new DecreaseHealthMessage(ID, playerA.ID, numOfDecrease);
                     this.gameClient.getNc().send(decreaseHealthMessage);
 

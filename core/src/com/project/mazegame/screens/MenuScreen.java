@@ -66,6 +66,7 @@ public class MenuScreen implements Screen {
     Texture mazeGame;
     Texture leaderBoardButton ,leaderBoardButtonPressed;
 
+
     Sprite playButtonActiveSprite;
 
     public MenuScreen(MazeGame game) {
@@ -83,20 +84,29 @@ public class MenuScreen implements Screen {
         audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
         audioOff = Assets.manager.get(Assets.audioOff,Texture.class);
         backGround = Assets.manager.get(Assets.menuBackground,Texture.class);
-        //audioOn = Assets.manager.get(Assets.audioOn,Texture.class);
         leaderBoardButton = Assets.manager.get(Assets.LeaderboardButton,Texture.class);
         leaderBoardButtonPressed = Assets.manager.get(Assets.LeaderboardButtonPressed,Texture.class);
 
-
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
-        bgm.setLooping(true);
-//        bgm.play();
+//        if (game.audio.isMusicOn()) {
+//            game.audio.setMusicOff();
+//            game.audio.setCurrentScreen("menu");
+//            game.audio.setMusicOn();
+//        } else {
+//            game.audio.setMusicOff();
+//        }
 
     }
 
     @Override
     public void show() {
 //    	cam = new OrthoCam(game,false, V_WIDTH, V_HEIGHT, V_WIDTH/2,V_HEIGHT/2);
+    }
+
+    private void playSound(boolean player){
+        if(player) {
+            game.audio.setSFXOn();
+            game.audio.choose();
+        }
     }
 
     @Override
@@ -113,10 +123,11 @@ public class MenuScreen implements Screen {
         if (isHovering(drawX, PLAY_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
-                bgm.stop();
                 game.setScreen(new CreateMazeScreen(game , false));
+                playSound(true);
             }
         } else {
+
             game.batch.draw(playButtonInactive, drawX, PLAY_Y,MB_WIDTH, MB_HEIGHT);
         }
 
@@ -124,24 +135,12 @@ public class MenuScreen implements Screen {
         if (isHovering(drawX, JOIN_Y, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(joinMazeButtonActive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.justTouched()) {
-                System.out.println("mult2i");
-                bgm.stop();
                 this.dispose();
                 game.setScreen(new JoinMazeScreen(game));
+                playSound(true);
             }
         } else {
             game.batch.draw(joinMazeButtonInactive, drawX, JOIN_Y,MB_WIDTH, MB_HEIGHT);
-        }
-
-        if (isHovering(drawX, CREATE_Y, MB_WIDTH, MB_HEIGHT)) {
-            game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
-            if(Gdx.input.justTouched())
-            {
-                bgm.stop();
-                game.setScreen(new CreateMazeScreen(game , true));
-            }
-        } else {
-            game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
         }
 
         drawX = xMid("MB");
@@ -158,32 +157,46 @@ public class MenuScreen implements Screen {
             game.batch.draw(leaderBoardButtonPressed, drawX, LEADERBOARD_Y,MB_WIDTH, MB_HEIGHT);
         }
 
+        if (isHovering(drawX, CREATE_Y, MB_WIDTH, MB_HEIGHT)) {
+            game.batch.draw(createMazeActive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
+            if(Gdx.input.justTouched())
+            {
+                game.setScreen(new CreateMazeScreen(game , true));
+                playSound(true);
+            }
+        } else {
+            game.batch.draw(createMazeInactive, drawX, CREATE_Y,MB_WIDTH, MB_HEIGHT);
+        }
+
         drawX = xMid("SB");
         if (isHovering(drawX, EXIT_Y, SB_WIDTH, SB_HEIGHT)) {
+            game.audio.setSFXOn();
+            game.audio.choose();
+            game.audio.setSFXoff();
             game.batch.draw(exitButtonActive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
-            if (Gdx.input.justTouched())
+            if (Gdx.input.justTouched()) {
                 Gdx.app.exit();
+                playSound(true);
+            }
         }
         else {
             game.batch.draw(exitButtonInactive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
         }
 
-
-
         drawX = xMid("AudioButton");
         if (isHovering(drawX, AUDIO_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {
             if (Gdx.input.justTouched()) {
-                if (bgm.isPlaying()) {
-                    bgm.setLooping(false);
-                    bgm.stop();
+                if (game.audio.isMusicOn()) {
+                    game.audio.setMusicOff();
+                    game.audio.setSFXoff();
                 } else {
-                    bgm.setLooping(true);
-                    bgm.play();
+                    game.audio.setMusicOn();
+                    game.audio.setSFXoff();
                 }
             }
         }
 
-        if (bgm.isPlaying())
+        if (game.audio.isMusicOn())
             game.batch.draw(audioOff, drawX, AUDIO_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
         else
             game.batch.draw(audioOn, drawX, AUDIO_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
