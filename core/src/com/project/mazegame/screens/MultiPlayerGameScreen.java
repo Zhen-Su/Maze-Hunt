@@ -31,9 +31,12 @@ import com.project.mazegame.tools.PlayersType;
 import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
@@ -101,7 +104,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 20;
+    public static float worldTimer = 10;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -514,7 +517,35 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                     //TODO when  game over, player want to start a new game again
                     writeCoinCSV();
                     try {
-                        game.setScreen(new EndScreen(this.game,this.myMultiPlayer,true));
+
+                        Map<Integer, Integer> map = new HashMap<>();
+                        for(Player winner : players)
+                        {
+                            map.put(winner.getID(),winner.coins);
+                            map.put(myMultiPlayer.getID(),myMultiPlayer.coins);
+                        }
+
+                        List<Map.Entry<Integer,Integer>> infos = new ArrayList<>(map.entrySet());
+
+                        Collections.sort(infos, new Comparator<Map.Entry<Integer, Integer>>() {
+                            @Override
+                            public int compare(Map.Entry<Integer, Integer> o2, Map.Entry<Integer, Integer> o1) {
+
+
+                                return (o1.getValue().compareTo(o2.getValue()));
+                            }
+                        });
+                        int id = infos.get(0).getKey();
+
+                        if(id == myMultiPlayer.getID()) {
+                            game.setScreen(new EndScreen(this.game,myMultiPlayer,true));
+                        }else {
+                            for (Player winner : players) {
+                                if (winner.getID() == id) {
+                                    game.setScreen(new EndScreen(this.game, winner, true));
+                                }
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

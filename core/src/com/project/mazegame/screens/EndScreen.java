@@ -59,8 +59,7 @@ public class EndScreen implements Screen {
 
 
 
-
-    EndScreen(MazeGame game , Player winner,boolean ifmulti) {
+    EndScreen(MazeGame game , Player winner, boolean ifmulti) {
         this.game = game;
         this.winner = winner;
         this.ifmulti = ifmulti;
@@ -82,7 +81,7 @@ public class EndScreen implements Screen {
 
         output = CSVStuff.readCSVFile("coinCSV");
         AddData add = new AddData();
-        if(ifmulti)
+        if (ifmulti)
         {
             add.update(output);
         }
