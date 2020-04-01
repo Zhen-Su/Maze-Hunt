@@ -37,6 +37,7 @@ public class AudioHandler {
      */
     public AudioHandler() {
         this.musicOn = true;
+        this.sfxOn = true;
         this.theScreen = "none";
 
         /**
@@ -113,7 +114,7 @@ public class AudioHandler {
     /**
      * Sets boolean sfxOn to false
      */
-    public void setSFXoff() {
+    public void setSFXOff() {
         sfxOn = false;
     }
 
@@ -164,8 +165,9 @@ public class AudioHandler {
     public void choose(){
         if(sfxOn) {
 //            chooseButton.play(volume);
-            long id = chooseButton.play(1.0f);
-            chooseButton.setLooping(id,false);
+            chooseButton.play(1.0f);
+//            chooseButton.setLooping(id,false);
+
         }
     }
 
@@ -214,4 +216,6 @@ public class AudioHandler {
     public boolean isMusicOn() {
         return musicOn;
     }
+
+    public boolean isSFXOn() { return sfxOn;}
 }
