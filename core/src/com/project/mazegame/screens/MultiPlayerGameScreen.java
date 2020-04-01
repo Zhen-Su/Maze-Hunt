@@ -483,7 +483,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
             //draw timer
-            String message = "Time = " + (int) (worldTimer);
+            String message = "Time = " + (int) worldTimer;
             font.draw(game.batch, message, myMultiPlayer.position.getX(), myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 10);
 
 
@@ -505,11 +505,11 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
             //if timer runs out
-            if ((worldTimer - time.currentTime()) < 3) {
+            if ((worldTimer) < 3) {
                 overlayWidth -= 15;
                 overlayHeight -= 15;
 
-                if ((worldTimer - time.currentTime()) < 0) {
+                if ((worldTimer) < 0) {
                     this.dispose();
                     //TODO when  game over, player want to start a new game again
                     writeCoinCSV();
