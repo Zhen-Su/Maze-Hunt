@@ -27,6 +27,7 @@ public class AudioHandler {
 
     private boolean musicOn;
     private boolean sfxOn;
+    public boolean buttonPlayed = false;
 
     private int volume=50;
 
@@ -163,9 +164,10 @@ public class AudioHandler {
     }
 
     public void choose(){
-        if(sfxOn) {
+        if(sfxOn && !buttonPlayed) {
 //            chooseButton.play(volume);
             chooseButton.play(1.0f);
+            buttonPlayed = true;
 //            chooseButton.setLooping(id,false);
 
         }

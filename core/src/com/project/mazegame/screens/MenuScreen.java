@@ -52,7 +52,6 @@ public class MenuScreen implements Screen {
     private static final int AUDIO_Y = 0;
     private static final int AUDIO_SFX_Y = AUDIO_Y + 90;
 
-    private static boolean wasOutsideOfButton = true;
 
 
     Texture playButtonActive;
@@ -176,10 +175,7 @@ public class MenuScreen implements Screen {
 
         drawX = xMid("SB");
         if (isHovering(drawX, EXIT_Y, SB_WIDTH, SB_HEIGHT)) {
-            if (wasOutsideOfButton)
-                game.audio.choose();
-
-            wasOutsideOfButton = false;
+            game.audio.choose();
             game.batch.draw(exitButtonActive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
             if (Gdx.input.justTouched()) {
                 Gdx.app.exit();
@@ -187,7 +183,7 @@ public class MenuScreen implements Screen {
             }
         }
         else {
-            wasOutsideOfButton = true;
+            game.audio.buttonPlayed = false;
             game.batch.draw(exitButtonInactive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
         }
 
