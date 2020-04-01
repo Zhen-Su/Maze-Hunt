@@ -45,16 +45,17 @@ public class JoinMazeScreen implements Screen {
         joinMaze = Assets.manager.get(Assets.JoinMaze,Texture.class);
         enterBox = Assets.manager.get(Assets.enterBox,Texture.class);
         
-        joinMazeButtonInactive = new Texture("UI\\MenuButtons\\FindMazeButton.png");
-        joinMazeButtonActive = new Texture("UI\\MenuButtons\\FindMazeButtonPressed.png") ;
-        playerSelected = new Texture("Player\\playerSelected.png");
-        player1 = new Texture("Player\\playerRed.png");
-        player2 = new Texture("Player\\playerBlue.png");
-        player3 = new Texture("Player\\playerGreen.png");
-        player4 = new Texture("Player\\playerLilac.png");
-        player5 = new Texture("Player\\playerOrange.png");
-        player6 = new Texture("Player\\playerPink.png");
-        player7 = new Texture("Player\\playerYellow.png");
+   
+        joinMazeButtonInactive = Assets.manager.get(Assets.FindMazeButton , Texture.class);
+        joinMazeButtonActive = Assets.manager.get(Assets.FindMazeButtonPressed , Texture.class);
+        playerSelected = Assets.manager.get(Assets.playerSelected , Texture.class);
+        player1 = Assets.manager.get(Assets.playerRed , Texture.class);
+        player2 = Assets.manager.get(Assets.playerBlue , Texture.class);
+        player3 = Assets.manager.get(Assets.playerGreen , Texture.class);
+        player4 = Assets.manager.get(Assets.playerLilac , Texture.class);
+        player5 = Assets.manager.get(Assets.playerOrange , Texture.class);
+        player6 = Assets.manager.get(Assets.playerPink , Texture.class);
+        player7 = Assets.manager.get(Assets.playerYellow , Texture.class);
         
         
     }
@@ -107,7 +108,7 @@ public class JoinMazeScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
+        backGround = Assets.manager.get(Assets.menuBackground , Texture.class);
 
         bgTexture = createBackgroundTexture();
         cursorTexture = createCursorTexture();

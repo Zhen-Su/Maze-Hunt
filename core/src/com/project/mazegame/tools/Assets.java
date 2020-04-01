@@ -38,6 +38,9 @@ public class Assets {
 	public static final String map1Icon = "Maps/Map1Icon.png";
 	public static final String map2Icon = "Maps/Map2Icon.png";
 	public static final String map3Icon = "Maps/Map3Icon.png";
+	public static final String Map1IconSelected = "Maps/Map1IconSelected.png";
+	public static final String Map2IconSelected = "Maps/Map2IconSelected.png";
+	public static final String Map3IconSelected = "Maps/Map3IconSelected.png";
 	public static final String GAMEOVER = "UI/Titles/GAMEOVER!.png";
 	public static final String BackToMenuButton = "UI/MenuButtons/BackToMenuButton.png";
 	public static final String backToMenuButtonPressed = "UI/MenuButtons/backToMenuButtonPressed.png";
@@ -93,12 +96,22 @@ public class Assets {
     public static final String playerOrange = ("Player/playerOrange.png") ;
     public static final String playerPink = ("Player/playerPink.png");
     public static final String playerYellow = ("Player/playerYellow.png");
+    public static final String playerSelected = ("Player/playerSelected.png");
     
     public static final String waitingForPlayers = "UI/Titles/Waitingforplayers....png";
     public static final String endAnimation =  "Player/endAnimation.png";
    
     public static final String playButton =  "UI/MenuButtons/playButton.png";
     public static final String playButtonPressed =  "UI/MenuButtons/playButtonPressed.png";
+    
+    public static final String diff1 =  "UI/MenuButtons/diff1.png";
+    public static final String diff1Selected =  "UI/MenuButtons/diff1Selected.png";
+    public static final String diff2 =  "UI/MenuButtons/diff2.png";
+    public static final String diff2Selected =  "UI/MenuButtons/diff2Selected.png";
+    public static final String diff3 =  "UI/MenuButtons/diff3.png";
+    public static final String diff3Selected =  "UI/MenuButtons/diff3Selected.png";
+    
+    public static final String CreateyourMaze =  "UI/Titles/CreateyourMaze.png";
     
 	public Assets (){
 		load();
@@ -107,6 +120,15 @@ public class Assets {
 	
 	public static void load() {
 //			
+		
+			manager.load(diff1,Texture.class );
+			manager.load(diff1Selected,Texture.class );
+			manager.load(diff2,Texture.class );
+			manager.load(diff2Selected,Texture.class );
+			manager.load(diff3,Texture.class );
+			manager.load(diff3Selected,Texture.class );
+			manager.load(CreateyourMaze,Texture.class );
+		
 	         //-----------menu
 			 System.out.println("loading");
 	         manager.load(playSoloButton,Texture.class );
@@ -153,6 +175,11 @@ public class Assets {
 		         manager.load(map1Icon,Texture.class);
 		         manager.load(map2Icon,Texture.class);
 		         manager.load(map3Icon,Texture.class);
+		         manager.load(Map1IconSelected,Texture.class);
+		         manager.load(Map2IconSelected,Texture.class);
+		         manager.load(Map3IconSelected,Texture.class);
+		         
+		     
 		         
 		         manager.load(GAMEOVER,Texture.class);
 		         manager.load(BackToMenuButton,Texture.class);
@@ -211,6 +238,7 @@ public class Assets {
 		         manager.load(playerOrange , Texture.class);
 		         manager.load(playerPink , Texture.class);
 		         manager.load(playerYellow , Texture.class);
+		         manager.load(playerSelected , Texture.class);
 		         manager.load(playButton , Texture.class);
 		         manager.load(playButtonPressed , Texture.class);
 		         

@@ -499,8 +499,6 @@ public class GameScreen implements Screen {
     @Override
     public void hide() {
     	tileMap.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
         player.dispose();
         mapItems.clear();
     }
@@ -508,8 +506,6 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         tileMap.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
         player.dispose();
         mapItems.clear();
 //        cam.update(V_WIDTH/2, V_HEIGHT/2, game);

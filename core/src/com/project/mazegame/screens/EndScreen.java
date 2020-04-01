@@ -19,6 +19,7 @@ import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
+import com.project.mazegame.tools.InputHandler;
 import com.project.mazegame.tools.Variables;
 
 //import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
@@ -111,6 +112,7 @@ public class EndScreen implements Screen {
     
 
     @Override
+    
     public void show() {
     	
     	
@@ -128,8 +130,8 @@ public class EndScreen implements Screen {
         game.batch.draw(leaderboard,150,100, 800 , 600);
         
         for(int i = 0 ;  i < output.size(); i ++) {
-        	
-            font.draw(game.batch,output.get(i) , 450 ,500 - (i*50));
+        	font.getData().setScale(0.5f);
+            font.draw(game.batch,output.get(i) , 450 ,450 - (i*50));
         }
         
     

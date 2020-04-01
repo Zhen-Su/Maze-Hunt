@@ -142,7 +142,7 @@ public class LeaderboardScreen implements Screen {
                 return MazeGame.WIDTH / 2 - LB_WIDTH / 2;
             case "MB":
                 return MazeGame.WIDTH / 2 - MB_WIDTH / 2;
-            case "SB":
+            case "SB": 
                 return MazeGame.WIDTH / 2 - SB_WIDTH / 2;
             default:
                 return -10;
