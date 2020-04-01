@@ -16,7 +16,7 @@ public class WithdrawData {
     public ArrayList<String> download() throws Exception {
         String result = null;
         Connection con = DriverManager.getConnection("jdbc:postgresql://127.0.0.1/", "dbuser", "12345678");
-        String sql = "SELECT * FROM leaderboard order by coins";
+        String sql = "SELECT * FROM leaderboard order by coins DESC;";
         PreparedStatement pstat = con.prepareStatement(sql);
         ResultSet rs = pstat.executeQuery();
         while (rs.next()) {

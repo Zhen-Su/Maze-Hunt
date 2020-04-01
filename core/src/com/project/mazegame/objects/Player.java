@@ -101,6 +101,13 @@ public class Player {
         createAnimations();
     }
 
+    public Player(TiledMapTileLayer collisionLayer, String username) {
+    }
+
+    public Player(TiledMapTileLayer collisionLayer, String username, int x, int y, Direction dir) {
+    }
+
+
     //Getter&Setter=================================================================================
     public int getID() {
         return ID;

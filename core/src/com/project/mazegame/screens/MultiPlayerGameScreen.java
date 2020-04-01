@@ -101,7 +101,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 200;
+    public static float worldTimer = 20;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -514,7 +514,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                     //TODO when  game over, player want to start a new game again
                     writeCoinCSV();
                     try {
-                        game.setScreen(new EndScreen(this.game,true));
+                        game.setScreen(new EndScreen(this.game,this.myMultiPlayer,true));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
