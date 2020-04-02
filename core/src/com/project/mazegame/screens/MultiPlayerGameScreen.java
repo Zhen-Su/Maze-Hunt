@@ -134,6 +134,15 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         aiPlayerAttack = null;
         playerAttack = null;
 
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen("game");
+            game.audio.setMusicOn();
+        } else {
+            game.audio.setMusicOff();
+        }
+
+
         if (map.equals("map1")) {
             tileMap = new TmxMapLoader().load("Map1.tmx");
             mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class);
