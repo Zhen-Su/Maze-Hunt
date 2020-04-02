@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
@@ -159,6 +160,15 @@ public class EndScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
+    	 if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
+         {
+         	this.dispose();
+         	game.setScreen(new MenuScreen(this.game));
+
+         }
+
+
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         time.updateTimer(delta);
@@ -211,7 +221,6 @@ public class EndScreen implements Screen {
 
 
         }
-
         game.batch.end();
     }
 

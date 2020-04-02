@@ -27,6 +27,7 @@ public class AudioHandler {
 
     private boolean musicOn;
     private boolean sfxOn;
+    public boolean buttonPlayed = false;
 
     private int volume=50;
 
@@ -37,6 +38,7 @@ public class AudioHandler {
      */
     public AudioHandler() {
         this.musicOn = true;
+        this.sfxOn = true;
         this.theScreen = "none";
 
         /**
@@ -214,4 +216,14 @@ public class AudioHandler {
     public boolean isMusicOn() {
         return musicOn;
     }
+
+    /**
+     * Gets the current boolean value of musicOn
+     * @return Boolean of musicOn
+     */
+    public boolean isMusicOn() {
+        return musicOn;
+    }
+
+    public boolean isSFXOn() { return sfxOn;}
 }
