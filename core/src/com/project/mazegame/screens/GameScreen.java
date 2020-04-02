@@ -30,17 +30,28 @@ import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 import static com.project.mazegame.tools.Variables.*;
 
+/**
+ * Is called when the single player mode is chosen
+ * Is where the game play is rendered, player, AI players and items are generated.
+ * Read the csvFile.csv to customise the game;
+ *
+ */
 public class GameScreen implements Screen {
-	private Player player;
-	private AIPlayer aiPlayer;// ---------need to be implemented
+	private MazeGame game;
+	private OrthoCam cam;
 
+	private Player player;
+	private Player player2;
+	
+	private AIPlayer aiPlayer;
 	public ArrayList<AIPlayer> aiPlayers;
+	
+	private AIPlayer aiPlayerAttack;
+	private Player playerAttack;
 	
 	private int posAP;
 	private int posAAI;
 
-	private AIPlayer aiPlayerAttack;
-	private Player playerAttack;
 	private InputHandler inputHandler;
 	private float delta;
 
@@ -48,72 +59,52 @@ public class GameScreen implements Screen {
 	private OrthogonalTiledMapRenderer tileMapRenderer;//
 	private TiledMapTileLayer collisionLayer,collisionLayer1;
 
+	//textures
 	private Texture exitButtonActive,exitButtonInactive;
-
-	private Texture heartTexture;
-	private Texture coinTexture;
-	private Texture swordTexture;
-	private Texture shieldTexture;
+	private Texture heartTexture, coinTexture ,swordTexture,shieldTexture;
 	private Texture minimapTexture;
-	private Texture healingPotionTexture;
-	private Texture damagingPotionTexture;
-	private Texture gearEnchantmentTexture;
-	private Texture audioButtonActive; //-------need to  implemented
-	private Texture audioButtonInactive;
-	private Texture overlay;
-	private Texture coinPick;
+	private Texture healingPotionTexture ,damagingPotionTexture, gearEnchantmentTexture;
+	private Texture audioButtonActive ,audioButtonInactive; 
+	private Texture overlay ,enchantedGlow;
 	private BitmapFont font;
 	private Texture mapTexture, minimapOutline, playerIcon;
 
-	private Texture enchantedGlow;
-
-	//    private float timer;
 	public static float worldTimer;
-
+	
 	Timer time = new Timer();
 
-	private Player player2;
-
 	private Collect co;
+	private ArrayList<Collect> aicos;
 
 	private final int EXIT_WIDTH = 50;
 	private final int EXIT_HEIGHT = 20;
+	int overlayWidth;
+	int overlayHeight;
+	int keyFrame;
+	int iconSize = 30;
+	int coinSize = iconSize*2;
 
 	public static ArrayList<Item> mapItems = new ArrayList<Item>();
 
-	private final int EXIT_Y = VIEWPORT_HEIGHT;
-
-	private int tempMapItemssize;
-
-	private MazeGame game;
-	private OrthoCam cam;
-
-
-
-
+	//customisation variables
 	private int numOfAI;
 	private String map;
 	private String playerSkin;
 	private String AIDifficulty;
 
-	private AssetManager manager;
-
-	int overlayWidth;
-	int overlayHeight;
-	int keyFrame;
-
 	Coordinate playerPos;
 	
-	 private ArrayList<Collect> aicos;
+	/**
+	 * Creates a new game screen belonging to the same game as previous screens.
+	 * @param game the MazeGame instance
+	 */
 
 	public GameScreen(MazeGame game) {
 		this.game = game;
 		
-		 aiPlayerAttack = null;
-		 playerAttack = null;
-
+		aiPlayerAttack = null;
+		playerAttack = null;
 		aicos = new ArrayList<Collect>();
-
 
 		inputHandler = new InputHandler();
 
@@ -121,7 +112,7 @@ public class GameScreen implements Screen {
 		aiPlayers = new ArrayList<AIPlayer> ();
 
 
-		// read csv file
+		// read csv file- Set variables to the values set in csv file
 		ArrayList<String> output = CSVStuff.readCSVFile("csvFile");
 
 		this.map = output.get(0);
@@ -130,7 +121,7 @@ public class GameScreen implements Screen {
 		this.numOfAI = Integer.parseInt(output.get(3));
 		String name = output.get(4);
 
-
+		//loading the right map file
 		if(this.map.equals( "map1")) {
 			tileMap = new TmxMapLoader().load("Map1.tmx");
 			mapTexture = Assets.manager.get(Assets.map1Icon, Texture.class) ;
@@ -145,38 +136,27 @@ public class GameScreen implements Screen {
 		}
 
 		tileMapRenderer = new OrthogonalTiledMapRenderer(tileMap);
-
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 		collisionLayer1 = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
+		//initialising the player
 		player = new Player(this.collisionLayer,name,123 , this.playerSkin,PlayersType.single);
-		
-		
-        player.initialPosition();
+  
        
-            
+      //initialising the AI players based on the amount set in csvFile
         aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124, "red" , PlayersType.single);
-        aiPlayers = aiPlayer.AITakingOver(2);
+        aiPlayers = aiPlayer.AITakingOver(this.numOfAI);
 
-        
-    
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
-
-
-
-
-
-
-		//coinAnimation = new AnimationTool(50,50,player,coinPick,true);
-		//coinAnimation.create();
 	}
-
+/**
+ * getting textures of the assets previously loaded by the asset manager
+ */
 	public void getAsset(){
-		// buttons
-
+	
 		exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
 		exitButtonInactive = Assets.manager.get(Assets.exit_button_inactive,Texture.class);
 		audioButtonActive = Assets.manager.get(Assets.audioOn,Texture.class);
@@ -190,44 +170,40 @@ public class GameScreen implements Screen {
 		damagingPotionTexture = Assets.manager.get(Assets.Potion3,Texture.class);
 		minimapTexture = Assets.manager.get(Assets.RolledMap,Texture.class);
 		overlay = Assets.manager.get(Assets.circularOverlay,Texture.class);
-		coinPick= Assets.manager.get(Assets.coinAnimation,Texture.class);
 		minimapOutline = Assets.manager.get(Assets.minimapOutline,Texture.class);
 		enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
 		playerIcon = Assets.manager.get(Assets.playerOnMap,Texture.class);
-
-
 		overlayWidth = overlay.getWidth() +300;
 		overlayHeight = overlay.getHeight() +300;
-
-
 	}
-
+/**
+ * Writes in the players names next to the amount of coins they have when the game ends.
+ * It is written in the coinCSV.csv file.
+ */
 	private void writeCoinCSV() {
 		ArrayList<String> input = new ArrayList<>();
-
-
-
 
 		input.add(player.getName() + " = " + player.coins);
 
     	for(int i = 0; i < numOfAI; i ++) {
     		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).coins);
     	}
-
-
 		CSVStuff.writeCSV(input , "coinCSV");
 	}
 
+	/**
+	 * Called when the game screen is first called. It only runs once.
+	 * Players location are initialised and assets are retrieved. 
+	 */
 	@Override
 	public void show() {
 
 		getAsset();
-
 		//assuming it's a square map -> only need width of map and width of tile
 		generateMapItems((int) collisionLayer.getWidth(), 100 );
 		co = new Collect(player);
-		tempMapItemssize = mapItems.size();
-		//start timer
+
+		//setting player position
 		player.initialPosition();
 		font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
 
@@ -237,51 +213,50 @@ public class GameScreen implements Screen {
 		for (int i = 0; i < aiPlayers.size(); i++) {
 			aicos.add(new Collect(aiPlayers.get(i)));
 		}
-		
+		//initialising AI players positions
 		for (int i = 0; i < aiPlayers.size(); i++) {
-
-            aiPlayers.get(i).initialPosition();
-
+			aiPlayers.get(i).initialPosition();
+            while(aiPlayers.get(i).getPosition().same(player.getPosition())){
+            	aiPlayers.get(i).initialPosition();
+            }
 		}
-
-
+		
 	}
-	int iconSize = 30;
+	
+	/**
+	 * Is called constantly, is where the map, items and player is drawn and the player interaction happens.
+	 */
 	@Override
 	public void render(float delta) { //method repeats a lot
 
 		updateTime(delta);
-//    	player.removeShield();
-//    	removeEnchantment();
-
+		delta = Gdx.graphics.getDeltaTime();
 
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-		delta = Gdx.graphics.getDeltaTime();
 
 		//updates - player position
 		inputHandler.update();
 		player.update(delta,0,0);
 		
 		for (int i = 0; i < aiPlayers.size(); i++) {
-			aiPlayers.get(i).update(delta, 2,worldTimer);
+			System.out.println(this.AIDifficulty);
+			int difficulty = Integer.valueOf(this.AIDifficulty.split(" ")[1]);
+			System.out.println(difficulty);
+			aiPlayers.get(i).update(delta, difficulty ,worldTimer);
 
 		}
 
 		//camera
 		cam.update(player.position.getX(),player.position.getY(),game);
 
-		//comment out ai player line to run correctly
-//       aiPlayer.update(delta);
-
-		//draws tilemap
+		//draws tile map
 		tileMapRenderer.setView(cam.cam);
 		tileMapRenderer.render();
 
 		game.batch.begin();
 
-		//draw collectibles
+		//draw collectible
 		drawCollectibles();
 
 		//Collectibles pick up
@@ -306,75 +281,63 @@ public class GameScreen implements Screen {
 		
 		
 		// genereates list of players at the moment empty but with networking will be changed
-				ArrayList<Player> emptyattack = new ArrayList<>();
-//				emptyattack.add(player);
-				// first checks for the player to see if there is a player
-				if(isPlayerOnSameP(player, emptyattack, aiPlayers)) {
-					System.out.println("on same");
-					//checks if the player is human or not
-					if(isHuman1()) {
-						System.out.println("is human");
-						//if player is human removes the player from the list then calls attack
-						emptyattack.remove(0);
-						player.attackP(emptyattack.get(posAP), worldTimer);
-						// earlier issue with not respawning so checks the move to and changes move to to coords generated by death
-						emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
-						emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
-						// adds player back to list
-						emptyattack.add(player);
-					} else {
-						System.out.println("is AI ");
-						// does same thing as above except iwth ai plaeyrs
-						AIPlayer playerinsert = aiPlayers.remove(posAAI);
-						System.out.println("before attack");
-						System.out.println("after attack");
-						player.attackAI(playerinsert, worldTimer);
-						playerinsert.x = playerinsert.moveTo.getX();
-						playerinsert.y = playerinsert.moveTo.getY();
-						aiPlayers.add(posAAI, playerinsert);
-						System.out.println("aiplayers.added");
-					}
-				}
+		ArrayList<Player> emptyattack = new ArrayList<>();
+//		emptyattack.add(player);
+		// first checks for the player to see if there is a player
+		if(isPlayerOnSameP(player, emptyattack, aiPlayers)) {
+			//checks if the player is human or not
+			if(isHuman1()) {
+				//if player is human removes the player from the list then calls attack
+				emptyattack.remove(0);
+				player.attackP(emptyattack.get(posAP), worldTimer);
+				// earlier issue with not respawning so checks the move to and changes move to to coords generated by death
+				emptyattack.get(posAP).x = emptyattack.get(posAP).moveTo.getX();
+				emptyattack.get(posAP).y = emptyattack.get(posAP).moveTo.getY();
+				// adds player back to list
+				emptyattack.add(player);
+			} else {
+				// does same thing as above except iwth ai plaeyrs
+				AIPlayer playerinsert = aiPlayers.remove(posAAI);
+				player.attackAI(playerinsert, worldTimer);
+				playerinsert.x = playerinsert.moveTo.getX();
+				playerinsert.y = playerinsert.moveTo.getY();
+				aiPlayers.add(posAAI, playerinsert); 
+			}
+		}
 				// creates list of players and adds them so the ai can attack players
-				ArrayList<Player> forAI = new ArrayList<>();
-				forAI.add(player);
-				// goes throught the list of ai players
-				for (int i = 0; i < aiPlayers.size(); i++) {
-					// takes one player to attack
-					AIPlayer playerTurn = aiPlayers.remove(i);
-					// does the same thing as the above lines of code just with ai
-					if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
-						if(isHuman1()) {
-							System.out.println("An ai is about to attack me");
-							playerTurn.attackP(forAI.get(posAP), worldTimer);
-							forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
-							forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
-						} else {
-							playerTurn.attackAI(aiPlayers.get(posAAI), worldTimer);
-							aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
-							aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
-						}
-					}
-					// adds the ai plaeyr back into the list so it is avaible to be attacked
-					aiPlayers.add(i, playerTurn);
+		ArrayList<Player> forAI = new ArrayList<>();
+		forAI.add(player);
+		// goes throught the list of ai players
+		for (int i = 0; i < aiPlayers.size(); i++) {
+			// takes one player to attack
+			AIPlayer playerTurn = aiPlayers.remove(i);
+			// does the same thing as the above lines of code just with ai
+			if (isPlayerOnSameAI(playerTurn, forAI, aiPlayers)) {
+				if(isHuman1()) {
+					playerTurn.attackP(forAI.get(posAP), worldTimer);
+					forAI.get(posAP).x = forAI.get(posAP).moveTo.getX();
+					forAI.get(posAP).y = forAI.get(posAP).moveTo.getY();
+				} else {
+					playerTurn.attackAI(aiPlayers.get(posAAI), worldTimer);
+					aiPlayers.get(posAAI).x = aiPlayers.get(posAAI).moveTo.getX();
+					aiPlayers.get(posAAI).y = aiPlayers.get(posAAI).moveTo.getY();
 				}
-
-
+			}
+			// adds the ai plaeyr back into the list so it is avaible to be attacked
+			aiPlayers.add(i, playerTurn);
+		}
 
 		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
-
 
 		player.render(game.batch);
 		player.attack();
 		
 		for(int i = 0 ; i < numOfAI; i ++) {
-	         
             aiPlayers.get(i).render(game.batch);
         }
 
+		//drawing Timer on screen
 		String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
-
-
 		font.draw(game.batch,message, player.position.getX(),player.position.getY() + VIEWPORT_HEIGHT/2 -10);
 
 		//if timer runs out
@@ -544,7 +507,10 @@ public class GameScreen implements Screen {
 		return (xdist <= 100 && ydist <= 100);
 	}
 
-	
+	/**
+	 * Method for handling ai picking up
+	 */
+
 	private void aiMultiPickUp() {
     	for (int i  = 0; i < aiPlayers.size(); i++) {
 			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
@@ -558,10 +524,13 @@ public class GameScreen implements Screen {
 		}
 	}
 
-
-
-	int coinSize = iconSize*2;
-
+	
+/**
+ * Draws the icons in the HUD , the player health, coins, and items they have picked up
+ * @param iconSize integer to keep all sizes uniform
+ * @param buffer the space between the icon and the edge of the screen
+ * @param position the coordinate on the player at the time
+ */
 
 	private void drawIcons(int iconSize, int buffer, Coordinate position) {
 		//take player x and y into account
@@ -629,6 +598,11 @@ public class GameScreen implements Screen {
 
 	}
 
+	/**
+	 * drawing the exit button on the right right hand corner of the screen.
+	 * Clicking it will exit the player from the game and return them to the menu screen.
+	 * @param position the player position at the time
+	 */
 	private void drawExitButton(Coordinate position) {
 
 		//take player x and y into account
@@ -657,6 +631,12 @@ public class GameScreen implements Screen {
 		else game.batch.draw(exitButtonInactive, x, y,EXIT_WIDTH,EXIT_HEIGHT);
 	}
 	
+	/**
+	 * Method to handle picking up ai players
+	 * @param player
+	 * @param aico
+	 */
+
 	private void aiPickUp(AIPlayer player, Collect aico) {
 		Item item =  aico.nearestItem(player);
 
@@ -701,7 +681,9 @@ public class GameScreen implements Screen {
 
 	}
 
-
+	/**
+	 * drawing the collectibles generated by generate items method. The player will be able to pick these items up
+	 */
 	private void drawCollectibles() {
 		for(int i = 0; i < mapItems.size(); i ++) {
 			Texture texture = heartTexture;
@@ -734,7 +716,10 @@ public class GameScreen implements Screen {
 		}
 
 	}
-	// -------------------------------------------------could move to collect class
+	
+	/**
+	 * calls methods in collect class to implement the items functionalities
+	 */
 	private void pickUpItem() {
 		Item item =  co.nearestItem(player);
 
@@ -778,19 +763,7 @@ public class GameScreen implements Screen {
 		}
 	}
 
-	private void animateCoin() {
-
-//    	TextureRegion[] region = coinAnimation.getFrames();
-//    	for(int i = 0 ; i < 4 ; i = keyFrame ) {
-//    		game.batch.draw(region[keyFrame],player.position.getX() - 50/2,player.position.getY() - 50/2);
-//
-//    	}
-//
-	}
-
-
-
-
+	
 	@Override
 	public void resize(int width, int height) {
 
@@ -809,8 +782,6 @@ public class GameScreen implements Screen {
 	@Override
 	public void hide() {
 		tileMap.dispose();
-		exitButtonActive.dispose();
-		exitButtonInactive.dispose();
 		player.dispose();
 		mapItems.clear();
 	}
@@ -828,6 +799,13 @@ public class GameScreen implements Screen {
 		cam.cam.update();
 
 	}
+/**
+ * Generates the positions of the collectibles being drawn on the maze for the user to pick up.
+ *It uses the max amount of each type of item, attempts draw it and if it is the position of a wall then it will be deleted.
+ *This ends up with the final amount of items being random each time.
+ * @param widthInTiles the amount of 100 x 100 tiles in the width of the maze
+ * @param tileWidth the width of each tile (100px)
+ */
 
 	public void generateMapItems( int widthInTiles, int tileWidth ) {
 		HashSet<String> positions = new HashSet<String>();

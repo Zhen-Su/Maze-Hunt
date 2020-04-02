@@ -18,9 +18,15 @@ import com.project.mazegame.tools.Coordinate;
 //import com.project.mazegame.Pair;
 import com.project.mazegame.tools.Variables;
 
+/**
+ * The Collect class is used for keeping track of which item is the nearest to the player at all times, 
+ * picking up that item if the player traverses over it, and dictating what each item does.  
+ * @author Selma Kander
+ *
+ */
 public class Collect {
     public Coordinate position = new Coordinate();
-    public Item item = new Item(" ", position);
+    public Item item = new Item(" ", position); 
     ArrayList<Item> mapItems;
     ArrayList<String> items;
 
@@ -50,7 +56,12 @@ public class Collect {
         items.add(item.getType());
         return item;
     }
-
+/**
+ * To find the nearest item, we loop through the array of map items and calculate the Euclidian distance from the player. 
+ * There is a method for each type of item and when an item is picked up the method which corresponds to the type of the item is called.
+ * @param player
+ * @return
+ */
     public Item nearestItem(Player player) {
 //		Coordinate position = new Coordinate();
 //		position = mapItems.get(0).getPosition();

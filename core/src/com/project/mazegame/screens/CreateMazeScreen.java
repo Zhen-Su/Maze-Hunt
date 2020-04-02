@@ -25,21 +25,24 @@ public class CreateMazeScreen implements Screen {
 
     private MazeGame game;
     public String username;
-    private boolean hasEnterUsername =false;
-
+    private boolean hasEnterUsername = false; 
 
     private static final int LB_WIDTH = 350;
-    private static final int LB_HEIGHT = 200;
-
     private static final int MB_WIDTH = 250;
-    private static final int MB_HEIGHT = 100;
-
-    private static final int SB_HEIGHT = 80;
     private static final int SB_WIDTH = 50;
-
-    private static final int CREATE_HEIGHT = 100;
-    private static final int CREATE_WIDTH = 100;
-
+    private static final int AUDIO_WIDTH = 100;
+    
+    private static int AI_Y =  MazeGame.HEIGHT -450;
+    private static int DRAW_X = 350;
+    private static int PLAYER_Y = AI_Y - 120;
+    private static int PLAYER2_Y = PLAYER_Y - 120;
+    private static int MAP_Y = PLAYER2_Y -  120;
+    
+    public static final float WORLD_WIDTH = 480;
+    public static final float WORLD_HEIGHT = 800;
+    public static final int TEXT_FIELD_WIDTH = 300;
+    public static final int TEXT_FIELD_HEIGHT = 50;
+    
     private int size = 100;
 
     String difficulty;
@@ -48,64 +51,27 @@ public class CreateMazeScreen implements Screen {
     String numOfAI;
     String name;
 
-    private static final int CREATE_Y = MazeGame.HEIGHT / 2 - 200;
-    private static final int PLAY_Y = MazeGame.HEIGHT / 2 + 50;
-    private static final int EXIT_Y = MazeGame.HEIGHT / 2 - 300;
-    private static  final int JOIN_Y = MazeGame.HEIGHT / 2 - 70;
-    private static final int AUDIO_WIDTH = 100;
-    private static final int AUDIO_HEIGHT = 50;
-    private static final int AUDIO_Y = MazeGame.HEIGHT - AUDIO_HEIGHT;
-
-
-    private static int AI_Y =  MazeGame.HEIGHT -450;
-    private static int DRAW_X = 350;
-    private static int PLAYER_Y = AI_Y - 120;
-    private static int PLAYER2_Y = PLAYER_Y - 120;
-    private static int MAP_Y = PLAYER2_Y -  120;
-
-    private HostLobbyScreen hostlobby;
-
-    private static final String TAG = JoinMazeScreen.class.getSimpleName();
-
-
-    public static final float WORLD_WIDTH = 480;
-    public static final float WORLD_HEIGHT = 800;
-
-    public static final int TEXT_FIELD_WIDTH = 300;
-    public static final int TEXT_FIELD_HEIGHT = 50;
-
     private Stage stage;
-
-    private Texture bgTexture;
-
-    private Texture cursorTexture;
-
-    private BitmapFont bitmapFont;
-
+   
     private BitmapFont font;
 
-    private TextField usernameTextField;
+    private TextField usernameTextField , numField;
 
-    private TextField numField;
-
-
+    private Texture bgTexture, cursorTexture;
     Texture createYourMaze;
     Texture joinMazeButtonActive;
     Texture joinMazeButtonInactive;
     Texture diffButton1,diffButton1Selected,diffButton2,diffButton2Selected,diffButton3,diffButton3Selected;
     Texture backGround;
     Texture Map1,Map2,Map3, Map1Selected,Map2Selected,Map3Selected ;
-
     Texture player1, player2, player3, player4, player5, player6, playerSelected , player7;
-
     TextureRegion txture;
     TextureRegion[][] playerRegion;
+    
     Button player1Button,player2Button,player3Button,player4Button,player5Button,player6Button,player7Button;
     Button[] playerButtons ;
-
     Button AIButton,AIDifficulty1Button,AIDifficulty2Button,AIDifficulty3Button;
     Button[] difficultyButtons;
-
     Button Map1Button,Map2Button,Map3Button;
     Button[] mapButtons;
     Button CreateMaze;
@@ -115,10 +81,14 @@ public class CreateMazeScreen implements Screen {
     boolean difficultyChosen;
     boolean multi;
 
+    /**
+     * initialising textures and setting whether buttons have been pressed to false
+     * @param game
+     * @param multi true if it is a multiplayer game, false if not
+     */
     public CreateMazeScreen(MazeGame game , boolean multi) {
         this.game = game;
         this.multi = multi;
-        // this.playerEnterUsername();
 
         joinMazeButtonInactive = new Texture("UI\\MenuButtons\\button.png");
         joinMazeButtonActive = new Texture("UI\\MenuButtons\\buttonPressed.png");
@@ -137,10 +107,7 @@ public class CreateMazeScreen implements Screen {
         diffButton2Selected = new Texture("UI\\MenuButtons\\diff2Selected.png");
         diffButton3 = new Texture("UI\\MenuButtons\\diff3.png");
         diffButton3Selected = new Texture("UI\\MenuButtons\\diff3Selected.png");
-        //playerRegion = TextureRegion.split(new Texture("Player\\walkDownYellow.png"),playerSelected.getWidth()-2,playerSelected.getHeight()-2);
-        // txture =  playerRegion[0][0];
         createYourMaze = new Texture("UI\\Titles\\CreateyourMaze.png");
-
 
         Map1 = new Texture("Maps\\Map1Icon.png");
         Map2 = new Texture("Maps\\Map2Icon.png");
@@ -152,10 +119,11 @@ public class CreateMazeScreen implements Screen {
         playerChosen = false;
         mapChosen = false;
         difficultyChosen = false;
-
-
     }
 
+    /**
+     * 
+     */
     private void playerEnterUsername (){
         Gdx.input.getTextInput(new Input.TextInputListener() {
             @Override
@@ -172,11 +140,10 @@ public class CreateMazeScreen implements Screen {
         },"ENTER USERNAME", "", "Your username Please");
     }
 
+    /**
+     * writes the csvFile with player name, amount of AI, colour and map
+     */
     public void setPreferences() {
-
-        //String[] preferences = new String[3] ;
-
-
         difficulty = "3";
         player = "red";
         map = "map 1";
@@ -184,25 +151,17 @@ public class CreateMazeScreen implements Screen {
         name = "Barry";
 
         //loop though buttons to see which is chosen
-
         for( int i = 0; i < difficultyButtons.length ; i ++) {
-            if(difficultyButtons[i].isPressed) {
+            if(difficultyButtons[i].isPressed) 
                 difficulty = difficultyButtons[i].name;
-
-            }
         }
         for( int i = 0; i < playerButtons.length ; i ++) {
-            if(playerButtons[i].isPressed) {
+            if(playerButtons[i].isPressed) 
                 player = playerButtons[i].name;
-
-            }
         }
-
         for( int i = 0; i < mapButtons.length ; i ++) {
-            if(mapButtons[i].isPressed) {
+            if(mapButtons[i].isPressed) 
                 map= mapButtons[i].name;
-
-            }
         }
 
         name = usernameTextField.getText();
@@ -217,10 +176,6 @@ public class CreateMazeScreen implements Screen {
         input.add(name);
 
         CSVStuff.writeCSV(input , "csvFile");
-       
-
-
-
     }
 
 
@@ -229,11 +184,13 @@ public class CreateMazeScreen implements Screen {
 
     //---------------------------------------Override-----------------------------------------------
     //----------------------------------------------------------------------------------------------
+    /**
+     * creates the buttons and sets positions of textFields
+     */
     @Override
     public void show() {
 
         int buf = 110;
-
         int drawX = DRAW_X;
         AIButton = new Button(drawX - 100,AI_Y, size,size, joinMazeButtonActive, joinMazeButtonInactive , "AI" , "numAI");
         drawX += buf *2;
@@ -273,7 +230,6 @@ public class CreateMazeScreen implements Screen {
 
         CreateMaze = new Button(DRAW_X,MAP_Y - 100, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "create" , "create");
 
-        //font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
         stage = new Stage(new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT));
@@ -292,8 +248,6 @@ public class CreateMazeScreen implements Screen {
         style.font = font;
         style.fontColor = new Color(1,1,1, 1);
 
-
-        //BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
         font.setColor(Color.WHITE);
         font.getData().setScale(0.5f);
@@ -314,15 +268,11 @@ public class CreateMazeScreen implements Screen {
         numField.setAlignment(Align.center);
         numField.setMaxLength(2);
 
-
-
         stage.addActor(usernameTextField);
         stage.addActor(numField);
-
-
-
     }
 
+    
     @Override
     public void render(float delta) {
 
@@ -334,14 +284,6 @@ public class CreateMazeScreen implements Screen {
         game.batch.begin();
         game.batch.draw(backGround,0,0,1000,1000);
 
-
-
-//
-//        if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-//            Gdx.app.log(TAG, "username = " + usernameTextField.getText());
-//            Gdx.app.log(TAG, "number of AI players = " + numField.getText());
-//            game.setScreen(new HostLobbyScreen(game,usernameTextField.getText()));
-//        }
         if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE))
         {
             backToMenuScreen();
@@ -618,7 +560,7 @@ public class CreateMazeScreen implements Screen {
 
     @Override
     public void dispose() {
-        font.dispose();
+        
 
 
     }

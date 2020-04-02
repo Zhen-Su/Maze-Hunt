@@ -132,13 +132,18 @@ public class AIPlayer extends Player {
     @Override
     public void update (float delta , int mode, float time) {
 
-        // operate the delay if dead
-        if (super.haveyoudied) {
-            System.out.println("I have gone here " + this.getID());
-            if (deathTime - time > 5) {
-                haveyoudied = false;
-            }
-        }
+//        // operate the delay if dead
+//        if (super.haveyoudied) {
+//            System.out.println("I have gone here " + this.getID());
+//            if (deathTime - time > 5) {
+//                haveyoudied = false;
+//            }
+//        }
+    	
+    	 
+
+        
+        
         if (initialisedTime - time > 0.2f || !updateCount && !haveyoudied) {
             if (mode == 1) {
 
@@ -151,7 +156,8 @@ public class AIPlayer extends Player {
                 Coordinate moveToTake = direction(avaibleMoves(this.x, this.y));
                 this.x = (int) moveToTake.getX();
                 this.y = (int) moveToTake.getY();
-
+                
+                super.moveTo = moveToTake;
                 this.change(old, moveToTake);
 
             } else if (mode == 3) {
@@ -164,7 +170,7 @@ public class AIPlayer extends Player {
 
                 int tempx = x;
                 int tempy = y;
-                this.position.setX(x);
+                this.position.setX(x); 
                 this.position.setY(y);
 
                 ArrayList<Coordinate> junctions = avaibleMoves(x, y);
@@ -217,6 +223,7 @@ public class AIPlayer extends Player {
                 System.out.println(nextMove.toString());
                 this.x = tempx;
                 this.y = tempy;
+                this.moveTo = nextMove;
                 this.change(old, nextMove);
                 this.lastp = this.preve;
                 this.preve = nextMove;
@@ -275,10 +282,11 @@ public class AIPlayer extends Player {
                 this.x = tempx;
                 this.y = tempy;
 
-                Coordinate newt = new Coordinate(tempx, tempy);
-                System.out.println(newt.toString());
+                Coordinate next = new Coordinate(tempx, tempy);
+                System.out.println(next.toString());
                 // sets the correct direciton
-                this.change(old, newt);
+                this.change(old, next);
+                this.moveTo = next;
 
             }
             this.initialisedTime = time;
@@ -287,6 +295,8 @@ public class AIPlayer extends Player {
         }
     }
 
+    
+   
     /**
      * <h1> Custom remove</h1>
      * <p>
@@ -446,7 +456,8 @@ public class AIPlayer extends Player {
                     playerA.decreaseHealth(1 + super.getGearCount());
                     if (playerA.health == 0) {
                         this.coins += playerA.coins;
-                        playerA.death(time);
+//                        playerA.death(time);
+                        playerA.haveyoudied = true;
                     }
                     super.attackcount = 0;
                 }
@@ -478,7 +489,8 @@ public class AIPlayer extends Player {
                     playerA.decreaseHealth(1 + super.getGearCount());
                     if (playerA.health == 0) {
                         this.coins += playerA.coins;
-                        playerA.death(time);
+//                        playerA.death(time);
+                        playerA.haveyoudied = true;
                         return playerA;
                     }
                     attackcount = 0;
