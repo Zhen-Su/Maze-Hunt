@@ -36,6 +36,11 @@ public class Player {
     public Coordinate moveTo;
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
+    
+    
+    protected int attackcount;
+   
+   
 
     protected float aiAttackTime;
     protected float playerAttackTime;
@@ -242,7 +247,7 @@ public class Player {
         y = this.position.getY();
     }
 
-    public void update(float delta, int mode, ArrayList<Item> items, float worldTime) {
+    public void update(float delta, int mode, float worldTime) {
         removeShield();
         removeEnchantment();
         time.updateTimer(delta);
@@ -445,63 +450,76 @@ public class Player {
 
         //this.items = new ArrayList<>();
     }
-
-    // method for a player attacking another player
+    
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
-//        if (playerAttackTime - time > 0.3) {
-        // checks if the space key is pressed
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            System.out.println("I'm going to attack a real player");
-            // checks if the player has a swrod and the player its attacking doesn't have a shield
-            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+
+            // checks if the space key is pressed
+            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+                // checks if the player has a swrod and the player its attacking doesn't have a shield
+                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                    if (attackcount <= 8) {
+                        this.attackcount++;
+                    } else {
 //              System.out.println("Player is attacking");
-                // sets is attacking to true
-                isAttacking = true;
-                // animation for sword
-                sword = swordAttack;
-                // decreases health by one plus any gearenchatnments
-                playerA.decreaseHealth(1 + getGearCount());
-                if (playerA.health == 0) {
-                    // adds the coins to the opposing player
-                    this.coins += playerA.coins;
-                    System.out.println("opposing player has died");
-                    // calls the death method
-//                    playerA.death(time);
-                }
+                        // sets is attacking to true
+                        isAttacking = true;
+                        // animation for sowrd
+                        sword = swordAttack;
+                        // decreases health by one plus any gearenchatnments
+                        playerA.decreaseHealth(1 + getGearCount());
+                        if (playerA.health == 0) {
+                            // adds the cons to the opposing player
+//                        this.coins += playerA.coins;
+                            // calls the death mehtod
+                            playerA.death(time);
 
-            }
-        } else sword = swordNotAttack;
-//        }
+                        }
+                        attackcount = 0;
+                    }
+                }
+            } else sword = swordNotAttack;
+
         // sets the time again and gives tur to startattack
-//        this.playerAttackTime = time;
-//        startPAttack = true;
+        this.playerAttackTime = time;
+        startPAttack = true;
     }
 
-    // attacks an ai paleyr same method as above
+
+    
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-        if (aiAttackTime - time > 0.1 || !startAIAttack) {
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                System.out.println("Player is attacking an AI");
-                isAttacking = true;
-                sword = swordAttack;
-                int gearEnchantCount = 0;
+//      if (aiAttackTime - time > 0.3 || !startAIAttack) {
+          if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 
-                playerA.decreaseHealth(1 + getGearCount());
+              if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                  if (attackcount <= 8) {
+                      this.attackcount++;
+                  } else {
+                      System.out.println("Player as attacking me");
+                      isAttacking = true;
+                      sword = swordAttack;
+                      int gearEnchantCount = 0;
 
-                if (playerA.health == 0) {
-                    System.out.println("AI has dead....");
-                    this.coins += playerA.coins;
-                }
-            }
-        }
-            this.aiAttackTime = time;
-            startAIAttack = true;
-        }
+                      playerA.decreaseHealth(1 + getGearCount());
 
-        return playerA;
-    }
+                      if (playerA.health == 0) {
+                          this.coins += 1;
+                          System.out.println("I am about to die");
+                          this.coins += playerA.coins;
+                          playerA.death(time);
+
+                      }
+                      attackcount = 0;
+                  }
+              }
+          }
+
+          startAIAttack = true;
+//      }
+
+      return playerA;
+  }
+
 
     // counts the amount of gear enchatns and returns the number
     protected int getGearCount() {

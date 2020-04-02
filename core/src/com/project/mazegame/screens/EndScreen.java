@@ -159,7 +159,7 @@ public class EndScreen implements Screen {
 
 
             playerWin.setAnimation(UpAnim);
-            playerWin.update(delta,0,null,0);
+            playerWin.update(delta,0,0);
             playerWin.position.setX(550);
             if(initialY <= 730)
                 playerWin.position.setY(initialY += 3 );
