@@ -200,8 +200,6 @@ public class GameScreen implements Screen {
 		input.add(player.getName() + " = " + player.coins);
 
     	for(int i = 0; i < numOfAI; i ++) {
-    		System.out.println(aiPlayers.get(i).getName());
-    		System.out.println(aiPlayers.get(i).coins);
     		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).coins);
     	}
 
