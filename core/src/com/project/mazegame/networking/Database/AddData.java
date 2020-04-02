@@ -10,12 +10,9 @@ import java.util.ArrayList;
  * @Author Zhen Su & Yueyi Wang
  */
 public class AddData {
-<<<<<<< HEAD
 
     private Connection c = null;
     private Statement stmt = null;
-=======
->>>>>>> charlotte
 
     /**
      * <h1>exist</h1>
@@ -27,11 +24,7 @@ public class AddData {
      * @return True if the username appears in the database, otherwise false
      * @throws Exception Exception on database connection
      */
-<<<<<<< HEAD
     private static boolean exist(String username) throws Exception {
-=======
-    public static boolean exist(String username) throws Exception {
->>>>>>> charlotte
         boolean exist = false;
         WithdrawData withdraw = new WithdrawData();
         ArrayList<String> list = withdraw.download();
@@ -56,7 +49,6 @@ public class AddData {
      */
     public void update(ArrayList<String> input)
     {
-<<<<<<< HEAD
 
         String[] str;
         String[] name = new String[1000];
@@ -89,41 +81,6 @@ public class AddData {
                 if(exist == true){
                     sql = "UPDATE leaderboard SET coins = "+coins[i]+" WHERE username = '"+ name[i]+"';";
 
-=======
-        Connection c = null;
-        Statement stmt = null;
-        String[] str;
-        String[] name = new String[1000];
-        String[] coins = new String[1000];
-
-        //Separate the user names and gold coins in the arraylist for easy operation and storage in the database.
-        for(int i = 0; i < input.size();i++)
-        {
-            str = input.get(i).split(" = ");
-            name[i] = str[0];
-            coins[i] = str[1];
-            System.out.println(name[i] + " = " + coins[i]);
-        }
-        for (int i = 0; i < input.size();i++) {
-
-            try {
-                //To connect database
-                String sql;
-                Class.forName("org.postgresql.Driver").newInstance();
-                c = DriverManager.getConnection("jdbc:postgresql://127.0.0.1/", "dbuser", "12345678");
-                c.setAutoCommit(false);
-                System.out.println("Opened database successfully");
-
-                //Update data to database
-                stmt = c.createStatement();
-                System.out.println(name[i] + " = " + coins[i]);
-                boolean exist = exist(name[i]);
-
-                //Different judgment methods use different database statements.
-                if(exist == true){
-                    sql = "UPDATE leaderboard SET coins = "+coins[i]+" WHERE username = '"+ name[i]+"';";
-
->>>>>>> charlotte
                 }else {
                     sql = "INSERT INTO leaderboard(username, coins) VALUES(" +
                             "'" + name[i] + "', '" + coins[i] + "');";
