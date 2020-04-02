@@ -87,8 +87,8 @@ public class AnimationTool extends ApplicationAdapter {
             this.rows = 5;
             this.columns = 5  ;
 //            System.out.println("here");
-            System.out.println(this.width + " , --  " + this.height);
-            System.out.println(this.rows + " , --  " + this.columns );
+//            System.out.println(this.width + " , --  " + this.height);
+//            System.out.println(this.rows + " , --  " + this.columns );
             tmpFrames = TextureRegion.split(this.img,this.width,this.height);
             animationFrames = new TextureRegion[25];
         }
@@ -118,11 +118,11 @@ public class AnimationTool extends ApplicationAdapter {
             this.rows = 2;
             this.columns = 2;
             batch = this.player.getSpriteBatch();
-            System.out.println(this.width + " , " + this.height);
+//            System.out.println(this.width + " , " + this.height);
             batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), player.position.getX() + this.xOffset - this.width/2,player.position.getY() - this.height/2 + this.yOffset);
         }
         else {
-            System.out.println(this.width + " , --  " + this.height);
+//            System.out.println(this.width + " , --  " + this.height);
             batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), 500 + this.xOffset - this.width/2,500 - this.height/2 + this.yOffset);
 
         }

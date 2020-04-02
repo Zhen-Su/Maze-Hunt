@@ -113,6 +113,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   * 4.0.2 add some SFX in game
   * 4.0.3 fix some bugs on AI attacking in multi
   * 4.0.4 add JoinMazeScreen and OtherLobbyScreen
+  * 4.0.5 add AI difficulty in multiplayer, fix bug on mode3 in update method of MultiAIPlayer class.
   
   
   
@@ -124,7 +125,7 @@ In Week6 prototye demo, we are going to make a demonstration on JOIN MAZE mode. 
   
 # TODO
 
-* 
+* ALL DONE!!!!!
   
   
   

@@ -218,8 +218,6 @@ public class CreateMazeScreen implements Screen {
 
         CSVStuff.writeCSV(input , "csvFile");
 
-
-
     }
 
 
@@ -457,7 +455,7 @@ public class CreateMazeScreen implements Screen {
                         if(playerChosen && difficultyChosen && mapChosen) {
                             setPreferences();
                             if (multi)
-                                game.setScreen(new HostLobbyScreen(game, usernameTextField.getText(),Integer.parseInt(numOfAI),map,player));
+                                game.setScreen(new HostLobbyScreen(game, usernameTextField.getText(),Integer.parseInt(numOfAI),map,player,difficulty));
                             else
                                 game.setScreen(new GameScreen(game));
                         }

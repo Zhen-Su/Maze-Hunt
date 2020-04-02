@@ -108,7 +108,7 @@ public class GameScreen implements Screen {
 
 		inputHandler = new InputHandler();
 
-		worldTimer = 5;
+		worldTimer = 100;
 		aiPlayers = new ArrayList<AIPlayer> ();
 
 

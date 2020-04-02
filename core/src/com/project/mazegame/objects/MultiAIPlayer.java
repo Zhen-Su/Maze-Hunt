@@ -139,12 +139,12 @@ public class MultiAIPlayer extends AIPlayer {
                     // if there are two junctions it picks the junction it hasn't comefrom
                     // if there are three junctions picks a random junction that it hasn't been down
                     // if there are four junctions picks random junction otu of the ones it hasn't been dwon
-                    Coordinate old = super.getPosition();
+                    Coordinate old = new Coordinate(this.position.getX(), this.position.getY());
 
                     int tempx = x;
                     int tempy = y;
-                    this.position.setX(x);
-                    this.position.setY(y);
+//                    this.position.setX(x);
+//                    this.position.setY(y);
 
                     ArrayList<Coordinate> junctions = avaibleMoves(x, y);
                     System.out.println(junctions);
@@ -216,12 +216,17 @@ public class MultiAIPlayer extends AIPlayer {
                         }
                     }
                     Coordinate nextMove = new Coordinate(tempx, tempy);
-                    System.out.println(nextMove.toString());
-                    super.x = tempx;
-                    super.y = tempy;
+                    System.out.println("nextMove: "+nextMove.toString());
+
+                    this.x = tempx;
+                    this.y = tempy;
+                    this.position.setX(x);
+                    this.position.setY(y);
+
                     this.change(old, nextMove);
                     this.lastp = this.preve;
                     this.preve = nextMove;
+
 
                     // ultimate goal is coins
                 } else if (mode == 2) {

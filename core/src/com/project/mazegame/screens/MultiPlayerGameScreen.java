@@ -104,7 +104,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 10;
+    public static float worldTimer = 100;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -119,13 +119,14 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String username;
     public String serverIP;
     public String playerSkin;
+    public int difficulty;
     int counter;
 
 
     //=====================================constructors=============================================
 
     //This construction for host Player
-    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, int NumOfAI, String map, String playerSkin) {
+    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, int NumOfAI, String map, String playerSkin,String difficulty) {
         this.game = game;
         this.username = username;
         this.serverIP = serverIP;
@@ -133,6 +134,16 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         this.playerSkin = playerSkin;
         this.isHost = isHost;
         timer = 0;
+
+        if(difficulty.equals("difficulty 1")){
+            this.difficulty=1;
+        }else if(difficulty.equals("difficulty 2")){
+            this.difficulty=2;
+        }else if(difficulty.equals("difficulty 3")){
+            this.difficulty=3;
+        }
+
+        System.out.println("difficulty for AI:"+difficulty);
 
         aiPlayerAttack = null;
         playerAttack = null;
@@ -381,7 +392,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         if (imHost) {
             for (Player aiPlayer : players) {
                 if (aiPlayer instanceof MultiAIPlayer)
-                    aiPlayer.update(delta, 2, mapItems, worldTimer);
+                    aiPlayer.update(delta, difficulty, mapItems, worldTimer);
             }
         }
 
@@ -513,7 +524,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 overlayHeight -= 15;
 
                 if ((worldTimer) < 0) {
-                    //TODO when  game over, player want to start a new game again
                     writeCoinCSV();
                     writeMultiCoinCSV();
                     try {
@@ -538,12 +548,12 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                         int id = infos.get(0).getKey();
                         System.out.println("========================" + id);
                         if(id == myMultiPlayer.getID()) {
-                            System.out.println("=================fking in=======");
+                            System.out.println("=================in=======");
                             game.setScreen(new EndScreen(this.game,myMultiPlayer,true));
                         }else {
                             for (Player winner : players) {
                                 if (winner.getID() == id) {
-                                    System.out.println("=================fking not in=======");
+                                    System.out.println("================= not in=======");
                                     game.setScreen(new EndScreen(this.game, winner, true));
 
                                 }
@@ -552,6 +562,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
                     if (isHost) {
                         this.server.dispose(this, false);
                         if (debug) {
