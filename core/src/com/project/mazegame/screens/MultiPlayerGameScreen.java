@@ -172,6 +172,14 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen();
+            game.audio.setMusicOn();
+            
+        } else {
+            game.audio.setMusicOff();
+        }
 
 
         if (isHost) {
