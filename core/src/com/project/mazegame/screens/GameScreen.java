@@ -109,7 +109,7 @@ public class GameScreen implements Screen {
 		inputHandler = new InputHandler();
 
 		worldTimer = 30;
-		aiPlayers = new ArrayList<AIPlayer> ();
+		aiPlayers = new ArrayList<AIPlayer> (); 
 
 
 		// read csv file- Set variables to the values set in csv file

@@ -568,7 +568,7 @@ public class CreateMazeScreen implements Screen {
     private Texture createBackgroundTexture(int width ,int height) {
         Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
         pixmap.setColor(0.5f, 1, 0, 1);
-        pixmap.drawRectangle(0,0, pixmap.getWidth(), pixmap.getHeight());
+        pixmap.drawRectangle(0,0, pixmap.getWidth(), pixmap.getHeight()); 
         Texture texture = new Texture(pixmap);
         pixmap.dispose();
         return texture;

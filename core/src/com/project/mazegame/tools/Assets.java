@@ -21,6 +21,8 @@ public class Assets {
     public static final String JoinMaze = "UI/Titles/JoinMaze.png";
     public static final String audioOn = "UI/MenuButtons/audioOn.png";
     public static final String audioOff = "UI/MenuButtons/audioOff.png";
+    public static final String audioSFXOff = "UI/MenuButtons/audioSFXOff.png";
+    public static final String audioSFXOn = "UI/MenuButtons/audioSFXOn.png";
     public static final String menuBackground = "UI/Backgrounds/menuBackground.png";
     public static final String heart = "Collectibles/heart.png";
     public static final String coin = "Collectibles/coin.png";
@@ -144,6 +146,9 @@ public class Assets {
 
         manager.load(audioOn,Texture.class);
         manager.load(audioOff,Texture.class);
+
+        manager.load(audioSFXOn, Texture.class);
+        manager.load(audioSFXOff, Texture.class);
 
         manager.load(menuBackground,Texture.class);
         manager.load(enterBox,Texture.class);
