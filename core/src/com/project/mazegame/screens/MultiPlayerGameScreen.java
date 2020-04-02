@@ -513,9 +513,9 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 overlayHeight -= 15;
 
                 if ((worldTimer) < 0) {
-                    this.dispose();
                     //TODO when  game over, player want to start a new game again
                     writeCoinCSV();
+                    writeMultiCoinCSV();
                     try {
 
                         Map<Integer, Integer> map = new HashMap<>();
@@ -536,13 +536,16 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                             }
                         });
                         int id = infos.get(0).getKey();
-
+                        System.out.println("========================" + id);
                         if(id == myMultiPlayer.getID()) {
+                            System.out.println("=================fking in=======");
                             game.setScreen(new EndScreen(this.game,myMultiPlayer,true));
                         }else {
                             for (Player winner : players) {
                                 if (winner.getID() == id) {
+                                    System.out.println("=================fking not in=======");
                                     game.setScreen(new EndScreen(this.game, winner, true));
+
                                 }
                             }
                         }
@@ -556,6 +559,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                         }
                     }
                     //if gameover, then close server from hostplayer
+                    this.dispose();
+
                 }
             }
         }
@@ -699,6 +704,22 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         System.out.println("in method " + input);
 
         CSVStuff.writeCSV(input, "coinCSV");
+    }
+
+    private void writeMultiCoinCSV() {
+        ArrayList<String> input = new ArrayList<>();
+
+        for (Player player : players) {
+            if(player instanceof MultiPlayer) {
+                input.add(player.getName() + " = " + player.coins);
+            }
+        }
+
+        input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.coins);
+
+        System.out.println("in method " + input);
+
+        CSVStuff.writeCSV(input, "multi_coinCSV");
     }
 
     private void drawIcons(int iconSize, int buffer, Coordinate position) {

@@ -32,7 +32,7 @@ import static com.project.mazegame.tools.Variables.*;
 
 public class GameScreen implements Screen {
 	private Player player;
-	//private AIPlayer aiPlayer;// ---------need to be implemented
+	private AIPlayer aiPlayer;// ---------need to be implemented
 
 	public ArrayList<AIPlayer> aiPlayers;
 
@@ -108,8 +108,8 @@ public class GameScreen implements Screen {
 
 		inputHandler = new InputHandler();
 
-		worldTimer = 30;
-
+		worldTimer = 5;
+		aiPlayers = new ArrayList<AIPlayer> ();
 
 
 		// read csv file
@@ -141,8 +141,14 @@ public class GameScreen implements Screen {
 
 		player = new Player(this.collisionLayer,name,123 , this.playerSkin,PlayersType.single);
 
-//       player.initialPosition();
-//        aiPlayer = new AIPlayer(this.collisionLayer, "Al", 124);
+
+		player.initialPosition();
+		for(int i = 0 ; i < numOfAI; i ++) {
+			aiPlayer = new AIPlayer(this.collisionLayer, "Al" + i, 124+i, "red", Direction.L, PlayersType.single);
+
+			aiPlayers.add(aiPlayer);
+		}
+
 		cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
@@ -193,9 +199,11 @@ public class GameScreen implements Screen {
 
 		input.add(player.getName() + " = " + player.coins);
 
-//    	for(int i = 0; i < numOfAI; i ++) {
-//    		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).getCoins());
-//    	}
+		for(int i = 0; i < numOfAI; i ++) {
+			System.out.println(aiPlayers.get(i).getName());
+			System.out.println(aiPlayers.get(i).coins);
+			input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).coins);
+		}
 
 
 		CSVStuff.writeCSV(input , "coinCSV");
@@ -233,6 +241,11 @@ public class GameScreen implements Screen {
 		//updates - player position
 		inputHandler.update();
 		player.update(delta,0,null,0);
+
+		for(int i = 0 ; i < numOfAI; i ++) {
+
+			aiPlayers.get(i).update(delta, Integer.valueOf(this.AIDifficulty.split(" ")[1]), mapItems,(float) time.currentTime());
+		}
 		//camera
 		cam.update(player.position.getX(),player.position.getY(),game);
 
@@ -272,6 +285,11 @@ public class GameScreen implements Screen {
 		player.render(game.batch);
 		player.attack();
 
+		for(int i = 0 ; i < numOfAI; i ++) {
+
+			aiPlayers.get(i).render(game.batch);
+		}
+
 		String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
 
 
@@ -286,6 +304,29 @@ public class GameScreen implements Screen {
 				this.dispose();
 
 				writeCoinCSV();
+
+				if( numOfAI != 0) {
+					AIPlayer AIwinner = aiPlayers.get(0);
+
+
+
+					int maxCoins = 0;
+					for(int i = 0; i < numOfAI; i++) {
+						int tempCoins = aiPlayers.get(i).coins;
+						if(tempCoins > maxCoins) {
+							maxCoins = tempCoins;
+							AIwinner = aiPlayers.get(i);
+
+						}
+					}
+
+					if(AIwinner.coins > player.coins) {
+						//then AI have won
+						player.setName( AIwinner.getName());
+						player.coins = AIwinner.coins;
+						player.setColour(AIwinner.getColour());
+					}
+				}
 
 				game.setScreen(new EndScreen(this.game , player,false));
 
@@ -508,8 +549,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void dispose() {
 		tileMap.dispose();
-		exitButtonActive.dispose();
-		exitButtonInactive.dispose();
+
 		player.dispose();
 		mapItems.clear();
 //        cam.update(V_WIDTH/2, V_HEIGHT/2, game);

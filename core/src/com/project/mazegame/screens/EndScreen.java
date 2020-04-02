@@ -2,6 +2,11 @@ package com.project.mazegame.screens;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -46,6 +51,8 @@ public class EndScreen implements Screen {
     Texture playButtonInactive;
     Texture leaderboard;
     ArrayList<String> output;
+    ArrayList<String> multioutput;
+    ArrayList<String> result = new ArrayList<>();
     Texture frames;
     AnimationTool end;
     Timer time = new Timer();
@@ -66,7 +73,7 @@ public class EndScreen implements Screen {
 
 
 
-        playerWin = new Player(this.winner.getCollisionLayer(), this.winner.getName(),this.winner.getID(),this.winner.getColour(),this.winner.playersType);
+        playerWin = winner;
 
         backGround = Assets.manager.get(Assets.menuBackground, Texture.class);
         title =  Assets.manager.get(Assets.GAMEOVER, Texture.class);
@@ -80,18 +87,47 @@ public class EndScreen implements Screen {
         bgm.play();
 
         output = CSVStuff.readCSVFile("coinCSV");
+        multioutput = CSVStuff.readCSVFile("multi_coinCSV");
         AddData add = new AddData();
         if (ifmulti)
         {
-            add.update(output);
+            add.update(multioutput);
         }
         for(int i = 0 ; i <= output.size(); i ++) {
 
             System.out.println("End" + output);
         }
 
+        Map<String ,Integer> map = new HashMap<>();
+        String[] str;
+        String[] name = new String[1000];
+        String[] coins = new String[1000];
+        for(int i = 0; i < output.size(); i++)
+        {
+            str =  output.get(i).split(" = ");
+            name[i] = str[0];
+            coins[i] = str[1];
+        }
+        for (int i = 0; i < output.size(); i++)
+        {
+            map.put(name[i],Integer.parseInt(coins[i]));
+        }
+        List<Map.Entry<String,Integer>> list = new ArrayList<>(map.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o2, Map.Entry<String, Integer> o1) {
+                return (o1.getValue().compareTo(o2.getValue()));
+            }
+        });
+
+        for (int i = 0; i < output.size(); i++)
+        {
+            result.add(list.get(i).getKey() + " = " +list.get(i).getValue());
+//            System.out.println("Username: " +list.get(i).getKey() + " Coins: " + list.get(i).getValue());
+        }
+
         ///assuming that player with most coins is top of list
-        winningPlayer = output.get(0).split("=")[0];
+        winningPlayer = playerWin.getName();
 
 
         font = (Assets.manager.get(Assets.font));
@@ -134,7 +170,7 @@ public class EndScreen implements Screen {
 
         for(int i = 0 ;  i < output.size(); i ++) {
 
-            font.draw(game.batch,output.get(i) , 450 ,500 - (i*50));
+            font.draw(game.batch,result.get(i) , 450 ,450 - (i*50));
         }
 
 

@@ -170,10 +170,10 @@ public class OtherLobbyScreen implements Screen {
     private void checkHostLeave(){
         if(players.isEmpty()) {
             font.setColor(Color.YELLOW);
-            font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
+            font.draw(game.batch, "The host player has quit! Please back to Menu", 80, 500);
         }
         if (!players.isEmpty() && players.get(0).getName() != hostPlayerName) {
-            font.draw(game.batch, "The host player has quit! Please back to Menu Screen...", 240, 500);
+            font.draw(game.batch, "The host player has quit! Please back to Menu", 80, 500);
         }
     }
 
