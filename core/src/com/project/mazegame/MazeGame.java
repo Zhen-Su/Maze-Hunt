@@ -8,13 +8,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.project.mazegame.screens.MenuScreen;
 import com.project.mazegame.screens.SplashScreen;
 import com.project.mazegame.tools.Assets;
+import com.project.mazegame.tools.AudioHandler;
 
 
 public class MazeGame extends Game {
 	public SpriteBatch batch;
-	public Assets assets;
+	public AssetManager assets;
 	public static AssetManager manager;
 	public OrthographicCamera camera;
+	public AudioHandler audio;
+
+
 
 
 	public static final int WIDTH = 1000;
@@ -23,16 +27,17 @@ public class MazeGame extends Game {
 
 	@Override
 	public void create () {
-		assets = new Assets();
+		assets = new AssetManager();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, WIDTH, HEIGHT);
-		//this.setScreen(new SplashScreen(this));
 
 		//Only for test
 		Assets.load();
 		Assets.manager.finishLoading();
-		System.out.println(Assets.manager.update()); 
-		this.setScreen(new MenuScreen(this));
+		audio = new AudioHandler();
+//		this.setScreen(new MenuScreen(this));
+		this.setScreen(new SplashScreen(this));
+
 		batch = new SpriteBatch();
 	}
 

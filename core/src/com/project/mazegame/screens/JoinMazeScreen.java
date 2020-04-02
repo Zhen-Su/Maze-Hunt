@@ -18,9 +18,8 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.IntMap;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.project.mazegame.MazeGame;
-import com.project.mazegame.screens.CreateMazeScreen.Button;
 import com.project.mazegame.tools.Assets;
-import com.project.mazegame.tools.CSVStuff;
+
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -38,26 +37,25 @@ public class JoinMazeScreen implements Screen {
     Button CreateMaze;
     Texture joinMazeButtonActive;
     Texture joinMazeButtonInactive;
-    
+
     public JoinMazeScreen(MazeGame game) {
         this.game = game;
-        
+
         joinMaze = Assets.manager.get(Assets.JoinMaze,Texture.class);
         enterBox = Assets.manager.get(Assets.enterBox,Texture.class);
-        
-   
-        joinMazeButtonInactive = Assets.manager.get(Assets.FindMazeButton , Texture.class);
-        joinMazeButtonActive = Assets.manager.get(Assets.FindMazeButtonPressed , Texture.class);
-        playerSelected = Assets.manager.get(Assets.playerSelected , Texture.class);
-        player1 = Assets.manager.get(Assets.playerRed , Texture.class);
-        player2 = Assets.manager.get(Assets.playerBlue , Texture.class);
-        player3 = Assets.manager.get(Assets.playerGreen , Texture.class);
-        player4 = Assets.manager.get(Assets.playerLilac , Texture.class);
-        player5 = Assets.manager.get(Assets.playerOrange , Texture.class);
-        player6 = Assets.manager.get(Assets.playerPink , Texture.class);
-        player7 = Assets.manager.get(Assets.playerYellow , Texture.class);
-        
-        
+
+        joinMazeButtonInactive = new Texture("UI\\MenuButtons\\FindMazeButton.png");
+        joinMazeButtonActive = new Texture("UI\\MenuButtons\\FindMazeButtonPressed.png") ;
+        playerSelected = new Texture("Player\\playerSelected.png");
+        player1 = new Texture("Player\\playerRed.png");
+        player2 = new Texture("Player\\playerBlue.png");
+        player3 = new Texture("Player\\playerGreen.png");
+        player4 = new Texture("Player\\playerLilac.png");
+        player5 = new Texture("Player\\playerOrange.png");
+        player6 = new Texture("Player\\playerPink.png");
+        player7 = new Texture("Player\\playerYellow.png");
+
+
     }
     private static final String TAG = JoinMazeScreen.class.getSimpleName();
 
@@ -76,17 +74,17 @@ public class JoinMazeScreen implements Screen {
     private String ipAdrress;
     private String username;
     private String colour;
-    
+
     private static int DRAW_X = 300;
     private static int MAP_Y = 200;
-    
+
     private static int PLAYER_Y = 340;
     private static int PLAYER2_Y = 240;
-    
+
     boolean playerChosen;
-    
-    
-    
+
+
+
     Texture backGround;
     BitmapFont font;
     private static final String ipRegex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
@@ -94,12 +92,12 @@ public class JoinMazeScreen implements Screen {
     public void setIpAdrress(String ipAdrress) { this.ipAdrress = ipAdrress; }
 
     public void setUsername(String username) { this.username = username; }
-    
-    public void setColour (String colour) { this.colour = colour;}
-    	
-    
 
-    
+    public void setColour (String colour) { this.colour = colour;}
+
+
+
+
     @Override
     public void show() {
         Gdx.app.setLogLevel(Application.LOG_DEBUG);
@@ -108,7 +106,7 @@ public class JoinMazeScreen implements Screen {
 
         Gdx.input.setInputProcessor(stage);
 
-        backGround = Assets.manager.get(Assets.menuBackground , Texture.class);
+        backGround = new Texture("UI\\Backgrounds\\menuBackground.png");
 
         bgTexture = createBackgroundTexture();
         cursorTexture = createCursorTexture();
@@ -124,7 +122,7 @@ public class JoinMazeScreen implements Screen {
 
         BitmapFont bitmapFont = new BitmapFont(Gdx.files.internal("bitmap.fnt"));
         font = new BitmapFont((Gdx.files.internal("myFont.fnt")));
-        
+
         font.setColor(Color.WHITE);
         font.getData().setScale(1f);
 
@@ -142,126 +140,126 @@ public class JoinMazeScreen implements Screen {
 
         stage.addActor(usernameTextField);
         stage.addActor(ipAddressTextField);
-        
+
         int drawX, buf , size;
         drawX = DRAW_X - 30;
-    	buf = 150;
-    	size = 100;
-    	player1Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player1 ,"player" , "red");
-    	drawX += buf;
-    	player2Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player2 ,"player", "blue");
-    	drawX += buf;
-    	player3Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player3 ,"player", "green");
-    	drawX = DRAW_X - 100;
-    	buf = 150;
-    	player4Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player4 ,"player", "lilac");
-    	drawX += buf;
-    	player5Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player5 ,"player", "orange");
-    	drawX += buf;
-    	player6Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player6 ,"player", "pink");
-    	drawX += buf;
-    	player7Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player7,"player", "yellow");
-    	CreateMaze = new Button(DRAW_X,MAP_Y - 100, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "join" , "join");
-    	playerButtons = new Button[] {player1Button,player2Button,player3Button,player4Button,player5Button,player6Button,player7Button};
+        buf = 150;
+        size = 100;
+        player1Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player1 ,"player" , "red");
+        drawX += buf;
+        player2Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player2 ,"player", "blue");
+        drawX += buf;
+        player3Button = new Button(drawX,PLAYER_Y, size,size, playerSelected, player3 ,"player", "green");
+        drawX = DRAW_X - 100;
+        buf = 150;
+        player4Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player4 ,"player", "lilac");
+        drawX += buf;
+        player5Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player5 ,"player", "orange");
+        drawX += buf;
+        player6Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player6 ,"player", "pink");
+        drawX += buf;
+        player7Button = new Button(drawX,PLAYER2_Y, size,size, playerSelected, player7,"player", "yellow");
+        CreateMaze = new Button(DRAW_X,MAP_Y - 100, 400,size,joinMazeButtonActive,joinMazeButtonInactive , "join" , "join");
+        playerButtons = new Button[] {player1Button,player2Button,player3Button,player4Button,player5Button,player6Button,player7Button};
     }
-    
 
-    
+
+
     public class Button {
-    	int x, y,width,height , activeWidth,activeHeight;
-    	
-    	Texture active,inactive,texture;
-    	boolean isPressed = false;
-    	String type;
-    	String name;
-    	public Button (int x,int y, int w, int h , Texture active, Texture inactive , String type,String name) {
-    		this.x = x;
-    		this.y = y;
-    		this.width = w;
-    		this.height = h;
-    		this.active = active;
-    		this.inactive = inactive;
-    		this.type = type;
-    		this.name = name;
-    		
-    		texture = this.inactive;
-    		
-    		activeWidth = this.width + 10;
-    		activeHeight = this.height + 10;
-    		
-    	}
-    	public void draw() {
-    		if (isButtonHovering()) {
-    			if (Gdx.input.justTouched() && !isPressed) {
-    				
-    				if(this.type == "join") {
-    					
-    					if(playerChosen) {
-    					    Gdx.app.log(TAG, "username = " + usernameTextField.getText());
-    			            Gdx.app.log(TAG, "ipaddress = " + ipAddressTextField.getText());
-    			            setIpAdrress(ipAddressTextField.getText());
-    			            setUsername(usernameTextField.getText());
-    			            
-    			        	for( int i = 0; i < playerButtons.length ; i ++) {
-    			        		if(playerButtons[i].isPressed) {
-    			        			setColour(playerButtons[i].name);
-    			        	
-    			        		}
-    			        	}
-    					
-    						
-    					}
-    				}
-    				if(this.type == "player") {
-    					if(!playerChosen) {
-        					this.isPressed = true;
-        					playerChosen = true;
-        				}else {
-        					//change all others to false
-        					resetButtons(this.type);
-        					
+        int x, y,width,height , activeWidth,activeHeight;
+
+        Texture active,inactive,texture;
+        boolean isPressed = false;
+        String type;
+        String name;
+        public Button (int x,int y, int w, int h , Texture active, Texture inactive , String type,String name) {
+            this.x = x;
+            this.y = y;
+            this.width = w;
+            this.height = h;
+            this.active = active;
+            this.inactive = inactive;
+            this.type = type;
+            this.name = name;
+
+            texture = this.inactive;
+
+            activeWidth = this.width + 10;
+            activeHeight = this.height + 10;
+
+        }
+        public void draw() {
+            if (isButtonHovering()) {
+                if (Gdx.input.justTouched() && !isPressed) {
+
+                    if(this.type == "join") {
+
+                        if(playerChosen) {
+                            Gdx.app.log(TAG, "username = " + usernameTextField.getText());
+                            Gdx.app.log(TAG, "ipaddress = " + ipAddressTextField.getText());
+                            setIpAdrress(ipAddressTextField.getText());
+                            setUsername(usernameTextField.getText());
+
+                            for( int i = 0; i < playerButtons.length ; i ++) {
+                                if(playerButtons[i].isPressed) {
+                                    setColour(playerButtons[i].name);
+
+                                }
+                            }
+
+
+                        }
+                    }
+                    if(this.type == "player") {
+                        if(!playerChosen) {
+                            this.isPressed = true;
+                            playerChosen = true;
+                        }else {
+                            //change all others to false
+                            resetButtons(this.type);
+
 //        					change this one to true
-        					this.isPressed = true;
-        					playerChosen = true;
-        				}
-    				}
-    			}else if (Gdx.input.justTouched() && isPressed) {
-    				this.isPressed = false;
-    				
-    				if(this.type == "player") {
-    					playerChosen = false;
-    				}
-    			}
-    		}
-    		
-    		if(isPressed) 
-    			
-    			this.texture = this.active;
-    		else if (isButtonHovering()) {
-    			this.texture = this.active;
-    		}else {
-    			this.texture = this.inactive;
-    		}
-    		
-    		
-    		game.batch.draw(this.texture, this.x, this.y,this.width,this.height);
-    	}
-    	public boolean isButtonHovering() {
-    		
-    		return isHovering(this.x,this.y,this.width,this.height);
-    	}
-    	public void resetButtons(String type) {
-    		if(type.equals("player")) {
-	    		for( int i = 0; i < playerButtons.length ; i ++) {
-	        		if(playerButtons[i].isPressed) {
-	        			playerButtons[i].isPressed  = false;
-	        	
-	        		}
-	        	}
-    		}
-    	}
+                            this.isPressed = true;
+                            playerChosen = true;
+                        }
+                    }
+                }else if (Gdx.input.justTouched() && isPressed) {
+                    this.isPressed = false;
+
+                    if(this.type == "player") {
+                        playerChosen = false;
+                    }
+                }
+            }
+
+            if(isPressed)
+
+                this.texture = this.active;
+            else if (isButtonHovering()) {
+                this.texture = this.active;
+            }else {
+                this.texture = this.inactive;
+            }
+
+
+            game.batch.draw(this.texture, this.x, this.y,this.width,this.height);
+        }
+        public boolean isButtonHovering() {
+
+            return isHovering(this.x,this.y,this.width,this.height);
+        }
+        public void resetButtons(String type) {
+            if(type.equals("player")) {
+                for( int i = 0; i < playerButtons.length ; i ++) {
+                    if(playerButtons[i].isPressed) {
+                        playerButtons[i].isPressed  = false;
+
+                    }
+                }
+            }
+        }
     }
-    
+
     private boolean isHovering(int X, int  Y, int WIDTH, int HEIGHT) {
         if (Gdx.input.getX() < (X + WIDTH) && Gdx.input.getX() > X && MazeGame.HEIGHT - Gdx.input.getY() > Y && MazeGame.HEIGHT - Gdx.input.getY() < Y + HEIGHT)
             return true;
@@ -295,41 +293,41 @@ public class JoinMazeScreen implements Screen {
         game.batch.begin();
         {
             game.batch.draw(backGround, 0, 0, 1000, 1000);
-            
+
             game.batch.draw(joinMaze, 150, 800, 700, 200);
-            
+
             String message = "Enter name";
-        	font.draw(game.batch, message, MazeGame.WIDTH/2 -100, 750 );
-        	message = "Enter IP address";
-         	font.draw(game.batch, message, MazeGame.WIDTH/2 -150, 620);
-         	message = "Choose your player";
-         	font.draw(game.batch, message, MazeGame.WIDTH/2 -150, 470);
+            font.draw(game.batch, message, MazeGame.WIDTH/2 -100, 750 );
+            message = "Enter IP address";
+            font.draw(game.batch, message, MazeGame.WIDTH/2 -150, 620);
+            message = "Choose your player";
+            font.draw(game.batch, message, MazeGame.WIDTH/2 -150, 470);
             handleInput();
             checkIp();
             stage.act();
-            
-        	
+
+
             player1Button.draw();
-        	player2Button.draw();
-        	player3Button.draw();
-        	player4Button.draw();
-        	player5Button.draw();
-        	player6Button.draw();
-        	player7Button.draw();
-        	
-        	CreateMaze.draw();
+            player2Button.draw();
+            player3Button.draw();
+            player4Button.draw();
+            player5Button.draw();
+            player6Button.draw();
+            player7Button.draw();
+
+            CreateMaze.draw();
         }
         game.batch.end();
         stage.draw();
     }
-    
+
 
 
 
     private void handleInput(){
-        
-            //game.setScreen(new MultiPlayerGameScreen(game,usernameTextField.getText(),ipAddressTextField.getText()));
-        
+
+        //game.setScreen(new MultiPlayerGameScreen(game,usernameTextField.getText(),ipAddressTextField.getText()));
+
         if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             backToMenuScreen();
         }
@@ -343,7 +341,7 @@ public class JoinMazeScreen implements Screen {
             if (matchIp) {
                 game.setScreen(new OtherLobbyScreen(game, username, ipAdrress , colour));
             } else {
-            	
+
                 font.draw(game.batch, "Ip not correct,Please try again...", 320, 500);
             }
         }

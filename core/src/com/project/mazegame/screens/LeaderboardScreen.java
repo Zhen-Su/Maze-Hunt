@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.project.mazegame.networking.Database.WithdrawData;
 import com.project.mazegame.tools.Timer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Database.AddData;
@@ -35,67 +36,68 @@ public class LeaderboardScreen implements Screen {
     private static final int SB_HEIGHT = 80;
     private static final int SB_WIDTH = 50;
     private static final int PLAY_Y = 100;
-    
+
     private BitmapFont font;
 
     private MazeGame game;
     Texture backGround;
-    
+
     private Music bgm;
     Texture playButtonActive;
     Texture playButtonInactive;
     Texture leaderboard;
     ArrayList<String> output;
     Texture frames;
-    
-    Timer time = new Timer(); 
+
+    Timer time = new Timer();
     String winningPlayer;
     AnimationTool UpAnim;
-    
-    
-    
+
+
+
     int initialY = 300;
-    
-   
-    
+
+
+
     LeaderboardScreen(MazeGame game ) {
         this.game = game;
-        
-        
+
+
         backGround = Assets.manager.get(Assets.menuBackground, Texture.class);
-       
+
         playButtonActive = Assets.manager.get(Assets.BackToMenuButton, Texture.class);
         playButtonInactive = Assets.manager.get(Assets.backToMenuButtonPressed, Texture.class);
         leaderboard = Assets.manager.get(Assets.LeaderboardBigger, Texture.class);
-        
-        
+
+
         bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
         bgm.setLooping(true);
         bgm.play();
-        
-        output = CSVStuff.readCSVFile("coinCSV");
-        
+
+        new Thread(new Withdraw()).start();
+        output = CSVStuff.readCSVFile("leaderboardCSV");
+
         for(int i = 0 ; i <= output.size(); i ++) {
-        	
-        	System.out.println("End" + output);
+
+            System.out.println("End" + output);
         }
-        
-       
+
+
         font = (Assets.manager.get(Assets.font));
         font.setColor(Color.BLACK);
         font.getData().setScale(1f);
         frames = Assets.manager.get(Assets.endAnimation , Texture.class);
-        
-        
+
+
 
     }
-    
-    
+
+
 
     @Override
     public void show() {
-    	
-    	
+
+
     }
 
     @Override
@@ -104,16 +106,16 @@ public class LeaderboardScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         time.updateTimer(delta);
         game.batch.begin();
-        
+
         game.batch.draw(backGround,0,0,1000,1000);
-     
+
         game.batch.draw(leaderboard,150,150, 700 , 800);
-        
-        for(int i = 0 ;  i < output.size(); i ++) {
-        	
+
+        for(int i = 0 ;  i <output.size() & i < 10; i ++) {
+
             font.draw(game.batch,output.get(i) , 400 ,750 - (i*50));
         }
-        
+
         int drawX = xMid("MB");
         if (isHovering(drawX, PLAY_Y- 50, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y - 50 ,MB_WIDTH, MB_HEIGHT);
@@ -124,11 +126,11 @@ public class LeaderboardScreen implements Screen {
         } else {
             game.batch.draw(playButtonInactive, drawX, PLAY_Y -50,MB_WIDTH, MB_HEIGHT);
         }
-       
+
 
         game.batch.end();
     }
-    
+
 
     private boolean isHovering(int X, int  Y, int WIDTH, int HEIGHT) {
         if (Gdx.input.getX() < (X + WIDTH) && Gdx.input.getX() > X && MazeGame.HEIGHT - Gdx.input.getY() > Y && MazeGame.HEIGHT - Gdx.input.getY() < Y + HEIGHT)
@@ -142,7 +144,7 @@ public class LeaderboardScreen implements Screen {
                 return MazeGame.WIDTH / 2 - LB_WIDTH / 2;
             case "MB":
                 return MazeGame.WIDTH / 2 - MB_WIDTH / 2;
-            case "SB": 
+            case "SB":
                 return MazeGame.WIDTH / 2 - SB_WIDTH / 2;
             default:
                 return -10;
@@ -172,5 +174,21 @@ public class LeaderboardScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    private class Withdraw implements Runnable
+    {
+        WithdrawData draw = new WithdrawData();
+
+
+        @Override
+        public void run() {
+            try {
+                CSVStuff.writeCSV(draw.download(),"leaderboardCSV");
+                output = CSVStuff.readCSVFile("leaderboardCSV");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

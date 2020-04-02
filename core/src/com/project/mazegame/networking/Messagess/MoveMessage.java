@@ -13,7 +13,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
+/**
+ * To send player's movement info through client and server on that.
+ * @author Yueyi Wang & Zhen Su
+ */
 public class MoveMessage implements Message {
     private int msgType = Message.PLAYER_MOVE_MSG;
     private int id;
@@ -33,7 +36,13 @@ public class MoveMessage implements Message {
         this.gameClient=gameClient;
     }
 
-
+    /**
+     * This method to send player's movement info using DatagreamSocket
+     * @param ds Send data using DatagreamSocket from server
+     * @param ip Server's ip address
+     * @param server_UDP_Port UDP' port
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String ip, int server_UDP_Port) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream(30);
@@ -51,13 +60,19 @@ public class MoveMessage implements Message {
         try{
             DatagramPacket dp = new DatagramPacket(buf, buf.length, new InetSocketAddress(ip, server_UDP_Port));
             if(debug) System.out.println("I'm id"+id+", I'll send a move message.");
+//            System.out.println("I'm id"+id+", I'll send a move message.");
             ds.send(dp);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-
+    /**
+     * Use DataInputStream to process the acquired data and transform
+     * the player set in the client for movement operations.
+     * @param dis Input stream
+     * @throws Exception
+     */
     @Override
     public void process(DataInputStream dis) {
         try{
@@ -70,11 +85,13 @@ public class MoveMessage implements Message {
             int newY = dis.readInt();
             for(Player t : gameClient.getPlayers()){
                 if(t.getID() == id){
-
                     //change coordinate and direction
                     t.setDir(dir);
+                    //TODO this need think, setX() and position.setX()
                     t.setX(newX);
                     t.setY(newY);
+                    t.position.setX(newX);
+                    t.position.setY(newY);
 
                     if(debug) {
                         System.out.println("****************************");
@@ -84,20 +101,6 @@ public class MoveMessage implements Message {
                         System.out.println("This (id" + id + ") player's position y: " + newY);
                         System.out.println("****************************");
                     }
-
-                    //change player texture
-//                    if(t.bU ==true && t.bD == false){
-//                        t.setPlayerTexture(t.getPlayer_up());
-//                    }else if(t.bD==true&&t.bU==false){
-//                        t.setPlayerTexture(t.getPlayer_down());
-//                    }else if(t.bL==true&&t.bR==false){
-//                        t.setPlayerTexture(t.getPlayer_left());
-//                    }else if(t.bR==true&&t.bL==false){
-//                        t.setPlayerTexture(t.getPlayer_right());
-//                    }else {
-//                        t.setPlayerTexture(t.getPlayer_down());
-//                    }
-//                    break;
                 }
             }
         } catch (IOException e) {
@@ -109,5 +112,4 @@ public class MoveMessage implements Message {
     public void process(DataInputStream dis, int aiIndex) {
 
     }
-
 }

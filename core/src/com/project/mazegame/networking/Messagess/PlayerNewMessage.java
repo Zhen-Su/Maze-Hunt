@@ -4,9 +4,11 @@ package com.project.mazegame.networking.Messagess;
 import com.project.mazegame.objects.AIGameClient;
 import com.project.mazegame.objects.AIPlayer;
 import com.project.mazegame.objects.Direction;
+import com.project.mazegame.objects.MultiAIPlayer;
 import com.project.mazegame.objects.MultiPlayer;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
+import com.project.mazegame.tools.PlayersType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -15,7 +17,10 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
-
+/**
+ * To send new player joining message through server and client
+ * @author Yueyi Wang & Zhen Su
+ */
 public class PlayerNewMessage implements Message {
 
 
@@ -33,9 +38,9 @@ public class PlayerNewMessage implements Message {
         player = gameClient.getMultiPlayer();
     }
 
-    public PlayerNewMessage(MultiPlayerGameScreen gameClient,AIGameClient aiGameClient){
-        this.aigameClient=aiGameClient;
-        player=aiGameClient.getAiPlayer();
+    public PlayerNewMessage(MultiPlayerGameScreen gameClient, AIGameClient aiGameClient) {
+        this.aigameClient = aiGameClient;
+        player = aiGameClient.getAiPlayer();
         this.gameClient = gameClient;
     }
 
@@ -43,8 +48,9 @@ public class PlayerNewMessage implements Message {
      * Send a packet to Server,then Server broadcast this packet to all clients
      *
      * @param datagramSocket
-     * @param ip  Server ip
+     * @param ip Server ip
      * @param server_UDP_Port
+     * @throws Exception This exception is thrown when closing the stream fails
      */
     @Override
     public void send(DatagramSocket datagramSocket, String ip, int server_UDP_Port) {
@@ -57,9 +63,10 @@ public class PlayerNewMessage implements Message {
             dos.writeInt(player.position.getY());
             dos.writeInt(player.getDir().ordinal());
             dos.writeUTF(player.getName());
-            if(player instanceof AIPlayer){
+            //MultiAIPlayer is the type of AIplayer or Player, so it works here
+            if (player instanceof AIPlayer) {
                 dos.writeBoolean(true);
-            }else{
+            } else {
                 dos.writeBoolean(false);
             }
             dos.writeUTF(player.getColour());
@@ -76,12 +83,16 @@ public class PlayerNewMessage implements Message {
         }
     }
 
-
+    /**
+     * When player join in the server, then add that on set of players
+     * @param dis
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void process(DataInputStream dis) {
-        try{
+        try {
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getID()){
+            if (id == this.gameClient.getMultiPlayer().getID()) {
                 return;
             }
 
@@ -92,30 +103,32 @@ public class PlayerNewMessage implements Message {
             boolean isAIPlayer = dis.readBoolean();
             String colour = dis.readUTF();
 
+
             boolean exist = false;
-            for (Player t : gameClient.getPlayers()){
-                if(id == t.getID()){
+            for (Player t : gameClient.getPlayers()) {
+                if (id == t.getID()) {
                     exist = true;
                     break;
                 }
             }
-            if(!exist) {
+            if (!exist) {
                 //if i find this player isn't in my players list, so this player is a new player, then i will send my info to he/she
                 PlayerNewMessage msg = new PlayerNewMessage(gameClient);
                 gameClient.getNc().send(msg);
 
                 System.out.println("--------------------------------------");
-                System.out.println("my id: "+this.gameClient.getMultiPlayer().getID());
-                System.out.println("I'm a Real player: this player new message is from: id "+id);
+                System.out.println("my id: " + this.gameClient.getMultiPlayer().getID());
+                System.out.println("I'm a Real player: this player new message is from: id " + id);
 
-                if(!isAIPlayer) {
-                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour);
+                if (!isAIPlayer) {
+                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir, colour, PlayersType.multi);
                     newPlayer.setID(id);
-                    System.out.println("id"+id+" 's position: ("+x+","+y+")");
+                    System.out.println("id" + id + " 's position: (" + x + "," + y + ")");
                     gameClient.getPlayers().add(newPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
-                }else {
-                    AIPlayer newAIPlayer = new AIPlayer(gameClient.getCollisionLayer(),username,id,"red",dir);
+                    gameClient.getHumanPlayers().add(newPlayer);
+                } else {
+                    MultiAIPlayer newAIPlayer = new MultiAIPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir, colour, PlayersType.multi);
                     newAIPlayer.setID(id);
                     gameClient.getPlayers().add(newAIPlayer);
                     gameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newAIPlayer));
@@ -132,10 +145,10 @@ public class PlayerNewMessage implements Message {
     }
 
     @Override
-    public void process(DataInputStream dis,int aiIndex) {
+    public void process(DataInputStream dis, int aiIndex) {
         try {
             int id = dis.readInt();
-            if(id == this.aigameClient.getAiPlayer().getID()){
+            if (id == this.aigameClient.getAiPlayer().getID()) {
                 return;
             }
 
@@ -147,28 +160,29 @@ public class PlayerNewMessage implements Message {
             String colour = dis.readUTF();
 
             boolean exist = false;
-            for (Player t : aigameClient.getPlayers()){
-                if(id == t.getID()){
+            for (Player t : aigameClient.getPlayers()) {
+                if (id == t.getID()) {
                     exist = true;
                     break;
                 }
             }
-            if(!exist){
+            if (!exist) {
                 //if i find this player isn't in my players list, so this player is a new player, then i will send my info to he/she
-                PlayerNewMessage msg = new PlayerNewMessage(gameClient,aigameClient);
+                PlayerNewMessage msg = new PlayerNewMessage(gameClient, aigameClient);
                 aigameClient.getNetClient().send(msg);
 
                 System.out.println("--------------------------------------");
-                System.out.println("my id: "+aigameClient.getAiPlayer().getID());
-                System.out.println("I'm an AI player: this player new message is from: id "+id);
+                System.out.println("my id: " + aigameClient.getAiPlayer().getID());
+                System.out.println("I'm an AI player: this player new message is from: id " + id);
 
-                if(!isAIPlayer) {
-                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir,colour);
+                if (!isAIPlayer) {
+                    MultiPlayer newPlayer = new MultiPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir, colour, PlayersType.multi);
                     newPlayer.setID(id);
                     aigameClient.getPlayers().add(newPlayer);
                     aigameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newPlayer));
-                }else {
-                    AIPlayer newAIPlayer = new AIPlayer(gameClient.getCollisionLayer(),username,id,"red",dir);
+                } else {
+                    //TODO this need to think
+                    MultiAIPlayer newAIPlayer = new MultiAIPlayer(gameClient.getCollisionLayer(), username, x, y, gameClient, dir, colour, PlayersType.multi);
                     newAIPlayer.setID(id);
                     aigameClient.getPlayers().add(newAIPlayer);
                     aigameClient.playersIdIndexList.put(id, gameClient.getPlayers().indexOf(newAIPlayer));

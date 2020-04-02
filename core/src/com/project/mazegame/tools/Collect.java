@@ -1,10 +1,12 @@
 package com.project.mazegame.tools;
+
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.objects.*;
 import com.project.mazegame.screens.MultiPlayerGameScreen;
 import com.project.mazegame.tools.Variables.*;
 
 import com.project.mazegame.screens.GameScreen;
+
 import java.lang.Math;
 import java.lang.Integer;
 import java.util.ArrayList;
@@ -17,93 +19,92 @@ import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.Variables;
 
 public class Collect {
-	public Coordinate position = new Coordinate();
-	public Item item = new Item(" ", position);
+    public Coordinate position = new Coordinate();
+    public Item item = new Item(" ", position);
+    ArrayList<Item> mapItems;
+    ArrayList<String> items;
 
-	ArrayList<Item> mapItems;
-	ArrayList<String> items;
-	public int indexOfItem;
+    /**
+     * If this player is a instance of Player or AIPlayer, then use mapItems which created in GameScreen
+     * If this player is a instance of Multiplayer or MultiAIPlayer, then use mapItems which created  in MultiplayerGameScreen
+     * @param player
+     */
+    public Collect(Player player) {
 
-	public ArrayList<Coordinate> positions;
+        switch(player.playersType){
+            case single:
+                this.mapItems = GameScreen.mapItems;
+                break;
+            case multi:
+                this.mapItems = MultiPlayerGameScreen.mapItems;
+                break;
+        }
+        this.items = player.items;
+    }
 
-	public Collect (Player player, MultiPlayerGameScreen gameClient) {
+    //ArrayList<Item> items = test.items;
+    //if the player picks up an item, remove it from the map and return the item collected
+    public Item pickedUp(Item item) {
+        this.item = item;
+        mapItems.remove(item);
+        items.add(item.getType());
+        return item;
+    }
 
-		if(player instanceof MultiPlayer){
-			mapItems =gameClient.mapItems;
-		}else {
-			mapItems = GameScreen.mapItems;
-		}
-
-		items = player.items;
-	}
-
-
-	//ArrayList<Item> items = test.items;
-	//if the player picks up an item, remove it from the map and return the item collected
-	public Item pickedUp(Item item) {
-		this.item = item;
-		mapItems.remove(item);
-		items.add(item.getType());
-		return item;
-	}
-
-	public Item nearestItem(Player player) {
+    public Item nearestItem(Player player) {
 //		Coordinate position = new Coordinate();
 //		position = mapItems.get(0).getPosition();
 
 //		Item nearestItem = new Item(" ", position);
-		Item nearestItem = mapItems.get(0);
-		//System.out.println("items: " + mapItems.size());
-		for (int i = 0; i < mapItems.size(); i++) {
+        Item nearestItem = mapItems.get(0);
+        //System.out.println("items: " + mapItems.size());
+        for (int i = 0; i < mapItems.size(); i++) {
 
-			int tempX = mapItems.get(i).getPosition().getX();
-			int tempY = mapItems.get(i).getPosition().getY();
+            int tempX = mapItems.get(i).getPosition().getX();
+            int tempY = mapItems.get(i).getPosition().getY();
 
 //			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
-			int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
-			//System.out.println("temp Dist: " + tempDist);
+            int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
+            //System.out.println("temp Dist: " + tempDist);
 //			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
-			int shortDist = andinsEuclidian(player.position.getX(), nearestItem.getPosition().getX(), player.position.getY(), nearestItem.getPosition().getY());
-			//System.out.println("shortDist: " + shortDist);
+            int shortDist = andinsEuclidian(player.position.getX(), nearestItem.getPosition().getX(), player.position.getY(), nearestItem.getPosition().getY());
+            //System.out.println("shortDist: " + shortDist);
 
-			if (tempDist < shortDist) {
-				nearestItem = mapItems.get(i);
-				//System.out.println("found shorter!");
-				indexOfItem=i;
-			}
-		}
-		//System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
-		return nearestItem;
-	}
+            if (tempDist < shortDist) {
+                nearestItem = mapItems.get(i);
+                //System.out.println("found shorter!");
+            }
+        }
+        //System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
+        return nearestItem;
+    }
 
-	private int andinsEuclidian(int x1, int x2, int y1, int y2) {
-		int sqrEucl = ( (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) );
+    public static int andinsEuclidian(int x1, int x2, int y1, int y2) {
+        int sqrEucl = ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 //		System.out.println()
-		return sqrEucl;
-	}
+        return sqrEucl;
+    }
 
 
+    public void shield(Item item, Player player1) {
 
-	public void shield(Item item, Player player1) {
 
+        final ArrayList<String> items = player1.items;
+        int seconds = 60;
+        int startHealth = player1.health;
 
-		final ArrayList<String> items = player1.items;
-		int seconds = 60;
-		int startHealth = player1.health;
+        int time = 60000;
 
-		int time = 60000;
+    }
 
-	
-	}
+    public void coin(Player player1) {
+        player1.coins++;
+        //ArrayList<String> items = player1.items;
+    }
 
-	public void coin(Player player1) {
-		player1.coins ++;
-		//ArrayList<String> items = player1.items;
-	}
-
-	public void sword(Item item, Player player1) {
-		ArrayList<String> items = player1.items;
-		int swordPower = player1.getSwordXP();
+    public void sword(Item item, Player player1) {
+        ArrayList<String> items = player1.items;
+        int swordPower = player1.getSwordXP();
 //		if (player1.items.contains("gearEnchantment")) {
 //			swordPower += 5;
 //		}
@@ -111,47 +112,44 @@ public class Collect {
 //		if (player2.health == 0) { //going to come back to level
 //			swordPower += 1;
 //		}
-		player1.swordDamage++;
-		//display sword icon on screen
-	}
+        player1.swordDamage++;
+        //display sword icon on screen
+    }
 
-	public void minimap(Item item) {
-		//ArrayList<String> items = player1.items;
-		//pick nearest player, follow it
-		//display compass
-	}
+    public void minimap(Item item) {
+        //ArrayList<String> items = player1.items;
+        //pick nearest player, follow it
+        //display compass
+    }
 
-	public void healingPotion( Player player1) {
-		//ArrayList<String> items = player1.items;
-		player1.generateHealth();
-		player1.generateHealth();
+    public void healingPotion(Player player1) {
+        //ArrayList<String> items = player1.items;
+        player1.generateHealth();
+        player1.generateHealth();
 
-		items.remove("healingPotion");
-	}
+        items.remove("healingPotion");
+    }
 
-	public void damagingPotion(Player player1) {
-		ArrayList<String> items = player1.items;
+    public void damagingPotion(Player player1) {
+        ArrayList<String> items = player1.items;
 
-		player1.decreaseHealth(10);
+        player1.decreaseHealth(3);
 
 //		player1.playerPosioned();
 
-		//items.remove("damagingPotion");
-		//player1.loadPlayerTextures();
-	}
+        //items.remove("damagingPotion");
+        //player1.loadPlayerTextures();
+    }
 
-	public void gearEnchantment(Item item, Player player1) {
-		ArrayList<String> items = player1.items;
-		//boolean collected = true;
-		player1.increaseSwordXP( 1);
-		player1.increaseShieldXP(1);
-		System.out.println("added xp" + player1.getShieldXP()  + " , " + player1.getSwordXP());
-
-
-
-	}
+    public void gearEnchantment(Item item, Player player1) {
+        ArrayList<String> items = player1.items;
+        //boolean collected = true;
+        player1.increaseSwordXP(1);
+        player1.increaseShieldXP(1);
+        System.out.println("added xp" + player1.getShieldXP() + " , " + player1.getSwordXP());
 
 
+    }
 
 
 }

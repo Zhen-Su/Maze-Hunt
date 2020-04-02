@@ -18,6 +18,7 @@ public class SplashScreen implements Screen {
     private Stage stage;
     private Image splashImg;
     public Texture splashTex;
+    private boolean flag=true;
 
     public SplashScreen(MazeGame game){
         this.game = game;
@@ -26,7 +27,6 @@ public class SplashScreen implements Screen {
 
     @Override
     public void show() {
-        System.out.println("Now is SPLASH Screen..");
         Gdx.input.setInputProcessor(stage);
 
         Runnable transitionRunnable = new Runnable() {
@@ -36,20 +36,19 @@ public class SplashScreen implements Screen {
             }
         };
 
-        game.assets.manager.load("UI\\splash2.png", Texture.class);
-        game.assets.manager.finishLoading();// waiting for all assets load.
-        splashTex = game.assets.manager.get("UI\\splash2.png", Texture.class);
+        game.assets.load("UI/LogoSuggestion.png", Texture.class);
+        game.assets.finishLoading();// waiting for all assets load.
+        splashTex = game.assets.get("UI/LogoSuggestion.png", Texture.class);
         splashImg = new Image(splashTex);
-        splashImg.setOrigin(splashImg.getWidth() , splashImg.getHeight()/2);
+        splashImg.setOrigin(splashImg.getWidth()-270 , splashImg.getHeight()/2);
         splashImg.setPosition(stage.getWidth() / 2 - 32, stage.getHeight() + 32);
         splashImg.addAction(sequence(alpha(0), scaleTo(.1f, .1f),
                 parallel(fadeIn(2f, Interpolation.pow2),
-                        scaleTo(2f, 2f, 2.5f, Interpolation.pow5),
+                        scaleTo(3f, 3f, 2.5f, Interpolation.pow5),
                         moveTo(stage.getWidth() / 2 - 32, stage.getHeight() / 2 - 32, 2f, Interpolation.swing)),
                 delay(1.5f), fadeOut(1.25f), run(transitionRunnable)));
 
         stage.addActor(splashImg);
-
     }
 
     @Override
@@ -61,6 +60,10 @@ public class SplashScreen implements Screen {
 
         stage.draw();
 
+        if(flag) {
+            game.audio.setCurrentScreen("logo");
+            flag=false;
+        }
     }
     public void update(float delta) {
         stage.act(delta);
@@ -90,6 +93,6 @@ public class SplashScreen implements Screen {
     public void dispose() {
         stage.dispose();
 //        game.assets.clear();
-        game.assets.dispose();
+//        game.assets.dispose();
     }
 }

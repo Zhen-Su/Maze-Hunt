@@ -58,19 +58,22 @@ public class OtherLobbyScreen implements Screen {
 
     String username;
     String ip;
-    
+    String colour;
+
     public Texture playerRed,playerBlue,playerGreen,playerLilac,playerOrange,playerPink,playerYellow;
     private boolean ReadyPressed = false;
-    
+
     private Texture playButtonPressed,playButton;
 
-    public OtherLobbyScreen(MazeGame game,String username, String ip ,String colour) {
+    public OtherLobbyScreen(MazeGame game,String username, String ip,String colour) {
         this.game = game;
         this.username = username;
         this.ip = ip;
+        this.colour=colour;
+
         cam = new OrthographicCamera(WIDTH, HEIGHT);
         cam.setToOrtho(false, WIDTH, HEIGHT);
-        
+
         playerRed = Assets.manager.get(Assets.playerRed);
         playerBlue  = Assets.manager.get(Assets.playerBlue);
         playerGreen  = Assets.manager.get(Assets.playerGreen);
@@ -80,8 +83,8 @@ public class OtherLobbyScreen implements Screen {
         playerYellow = Assets.manager.get(Assets.playerYellow);
         playButton = Assets.manager.get(Assets.playButton,Texture.class);
         playButtonPressed = Assets.manager.get(Assets.playButtonPressed,Texture.class);
-    
-        
+
+
     }
 
     public MultiPlayerGameScreen getGameClient() { return gameClient; }
@@ -98,11 +101,11 @@ public class OtherLobbyScreen implements Screen {
 
     @Override
     public void show() {
-    	backGround = Assets.manager.get(Assets.menuBackground, Texture.class);
-    	font = Assets.manager.get(Assets.font, BitmapFont.class);
-        
-    	 font.setColor(Color.WHITE);
-         font.getData().setScale(1f);
+        backGround = Assets.manager.get(Assets.menuBackground, Texture.class);
+        font = Assets.manager.get(Assets.font, BitmapFont.class);
+
+        font.setColor(Color.WHITE);
+        font.getData().setScale(1f);
     }
 
     @Override
@@ -116,7 +119,7 @@ public class OtherLobbyScreen implements Screen {
         game.batch.begin();
         {
             game.batch.draw(backGround, 0, 0, 1000, 1000);
-            
+
             game.batch.draw(Assets.manager.get(Assets.waitingForPlayers, Texture.class),0, 800);
 //            font.draw(game.batch, "Here is Lobby...", 400, 950);
             font.draw(game.batch, "Ready Player:   ", 70, 750);
@@ -125,12 +128,12 @@ public class OtherLobbyScreen implements Screen {
 
             if (gameClient != null) {
                 //draw the ready players on the screen
-                int currY = 800;
-                font.draw(game.batch, username, 230, 850);
-                
+                int currY = 650;
+                font.draw(game.batch, username, 230, 700);
+
                 for (Player multiPlayer : players) {
                     font.draw(game.batch, multiPlayer.getName(), 230, currY);
-                    
+
                     // Trying to display what colour each player has chosen next to their name
                     game.batch.draw(getColour(multiPlayer.getColour()), 850, currY - 50 , 120,160);
                     currY -= 50;
@@ -145,19 +148,19 @@ public class OtherLobbyScreen implements Screen {
                 game.setScreen(gameClient);
             }
         }
-        
+
         if (isHovering(300,150, 400, 100)) {
             game.batch.draw(playButtonPressed,300,150, 400, 100);
             if (Gdx.input.justTouched())
-            	ReadyPressed = true;
+                ReadyPressed = true;
         }
         else {
             game.batch.draw(playButton,300,150, 400, 100);
         }
-        
+
         game.batch.end();
     }
-    
+
     private boolean isHovering(int X, int  Y, int WIDTH, int HEIGHT) {
         if (Gdx.input.getX() < (X + WIDTH) && Gdx.input.getX() > X && MazeGame.HEIGHT - Gdx.input.getY() > Y && MazeGame.HEIGHT - Gdx.input.getY() < Y + HEIGHT)
             return true;
@@ -178,7 +181,7 @@ public class OtherLobbyScreen implements Screen {
         if(ReadyPressed)
         {
             if(hasReady) {
-                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false);
+                MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game, username, ip,false,colour);
                 setGameClient(gameClient);
                 //TODO Thread problem!!!!
                 try {
@@ -206,31 +209,31 @@ public class OtherLobbyScreen implements Screen {
         game.setScreen(new MenuScreen(this.game));
         System.out.println("shouldn't see");
     }
-    
+
     private Texture getColour(String colour) {
-  	  switch (colour) {
-        case "blue":
-        	return playerBlue;
-            
-        case "green":
-      	  return playerGreen;
-          
-        case "pink":
-      	  return playerPink;
-          
-        case "orange":
-      	  return playerOrange;
-            
-        case "lilac":
-      	  return playerLilac;
-          
-        case "yellow":
-      	  return playerYellow;
-       
-        default:
-      	  return playerRed;
+        switch (colour) {
+            case "blue":
+                return playerBlue;
+
+            case "green":
+                return playerGreen;
+
+            case "pink":
+                return playerPink;
+
+            case "orange":
+                return playerOrange;
+
+            case "lilac":
+                return playerLilac;
+
+            case "yellow":
+                return playerYellow;
+
+            default:
+                return playerRed;
         }
-  }
+    }
 
     @Override
     public void resize(int width, int height) {
