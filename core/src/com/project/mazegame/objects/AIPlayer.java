@@ -124,7 +124,11 @@ public class AIPlayer extends Player {
 //                haveyoudied = false;
 //            }
 //        }
+        if (this.isDead()) {
+            if (this.respawnCounter == 0) this.respawnCounter = time.currentTime();
 
+            if (time.currentTime() - this.respawnCounter == 3) this.death(worldTime);
+        } else {
 
         if (initialisedTime - time > 0.2f || !updateCount && !haveyoudied) {
             if (mode == 1) {
@@ -274,6 +278,7 @@ public class AIPlayer extends Player {
             this.initialisedTime = time;
             updateCount = true;
 
+        }
         }
     }
 
