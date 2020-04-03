@@ -15,7 +15,10 @@ import com.project.mazegame.tools.Timer;
 import java.util.ArrayList;
 
 /**
- * This MultiAIPlayer will use
+ * This MultiAIPlayer will use in multi-player mode.
+ *
+ *  @author Yueyi wang
+ *  @author Zhen su
  */
 public class MultiAIPlayer extends AIPlayer {
 

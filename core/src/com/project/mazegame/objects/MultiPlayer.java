@@ -17,7 +17,12 @@ import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
 
-
+/**
+ * This Multiplayer class will use in multi-player mode
+ *
+ * @author Yueyi wang
+ * @author Zhen su
+ */
 public class MultiPlayer extends Player {
 
     private MultiPlayerGameScreen gameClient;
@@ -443,7 +448,13 @@ public class MultiPlayer extends Player {
         gameClient.getNc().send(message);
     }
 
-    // method for a player attacking another player
+
+
+    /**
+     * method for a player attacking another player
+     * @param playerA
+     * @param time
+     */
     public void attackP(Player playerA, float time) {
         // checks if the space key is pressed
         if (pressSpace) {
@@ -477,8 +488,14 @@ public class MultiPlayer extends Player {
         }
     }
 
-    // attacks an ai paleyr same method as above
 
+
+    /**
+     * attacks an ai paleyr same method as above
+     * @param playerA
+     * @param time
+     * @return
+     */
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         if (pressSpace) {
             if (aiAttackTime - time > 0.03 || !startAIAttack) {
@@ -507,6 +524,9 @@ public class MultiPlayer extends Player {
     }
 
 
+    /**
+     * remove shield for player according to the time
+     */
     public void removeShield() {
         if (!this.items.contains("shield")) {
             return;
@@ -520,6 +540,9 @@ public class MultiPlayer extends Player {
         }
     }
 
+    /**
+     * remove enchantment for player according to the time
+     */
     public void removeEnchantment() {
         if (!this.items.contains("gearEnchantment")) {
             return;

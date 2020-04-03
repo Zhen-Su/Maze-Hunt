@@ -19,7 +19,9 @@ import java.net.SocketException;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 /**
- * GameServer class,every send and process on here, every message will process on server.
+ * GameServer class,every send and process on here, every message will broadcast by server.
+ * @author Yueyi wang
+ * @author Zhen su
  */
 public class GameServer implements Runnable {
 

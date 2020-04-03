@@ -10,17 +10,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.networking.Database.WithdrawData;
 import com.project.mazegame.tools.Timer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Database.AddData;
-import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
-import com.project.mazegame.tools.Variables;
+
 
 //import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class LeaderboardScreen implements Screen {

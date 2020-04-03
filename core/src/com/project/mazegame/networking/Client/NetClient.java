@@ -35,6 +35,12 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Random;
 
+/**
+ * Every player in multi-player mode will have an instance of NetClint
+ * NetClient used to send, receive and process message.
+ * @author Yueyi Wang
+ * @author Zhen su
+ */
 public class NetClient {
 
     private String map;

@@ -43,6 +43,13 @@ import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
 
+/**
+ * Is called when the multi-player mode is chosen
+ * Is where the game play is rendered, player, AI players and items are generated.
+ * @author Yueyi Wang
+ * @author Zhen su
+ */
+
 public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private boolean debug = true;
     //Use for Host player
@@ -694,7 +701,13 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     }
 
-    // method which compares and checks if the palyers are on the same space
+
+    /**
+     * method which compares and checks if the palyers are on the same space
+     * @param investigation
+     * @param check
+     * @return
+     */
     private boolean sameSpace(Coordinate investigation, Coordinate check) {
         // get  coordinates then abs and check difference
         int xCorI = investigation.getX();
