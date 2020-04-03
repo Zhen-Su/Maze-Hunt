@@ -6,11 +6,23 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+/**
+ * <h1>CSV Stuff</h1>
+ * Handles writing and reading from CSV
+ * @Author James Bartlett
+ */
 
 public class CSVStuff {
+    /**
+     * Method for reading in CSV from a local file on computer
+     * @return Returns arraylist of data from the csv file
+     * @throws IOException
+     * @throws FileNotFoundException
+     */
 
-    public static ArrayList<String> readCSVFile() {
-        String fileRead = "/home/james/CSVTest/james.csv";
+    public static ArrayList<String> readCSVFile(String filename) {
+//        String fileRead ="android\\"+ filename + ".csv";
+        String fileRead ="android\\"+filename+".csv";
         BufferedReader buff = null;
         String line = "";
         ArrayList<String> output = new ArrayList<>();
@@ -31,22 +43,24 @@ public class CSVStuff {
         }
         return null;
     }
-
-    public static void writeCSV(ArrayList<String> list) {
+    /**
+     * Method for writing to csv from array list
+     * @param list
+     * @throws IOException
+     */
+    public static void writeCSV(ArrayList<String> list, String filename) {
         try {
-        String outPutCSV = "/home/james/CSVTest/james.csv";
-        FileWriter writer = new FileWriter(outPutCSV);
-        for (int i = 0; i < list.size(); i++) {
-            writer.append(list.get(i));
-            writer.append(",");
-            writer.append("\n");
-
+            String outPutCSV = "android\\"+ filename + ".csv";
+            FileWriter writer = new FileWriter(outPutCSV);
+            for (int i = 0; i < list.size(); i++) {
+                writer.append(list.get(i));
+                writer.append(",");
+                writer.append("\n");
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        System.out.print("Written successfully");
-        writer.flush();
-        writer.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
     }
 }

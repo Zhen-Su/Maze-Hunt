@@ -3,6 +3,11 @@ package com.project.mazegame.objects;
 //import com.project.mazegame.Pair;
 import com.project.mazegame.tools.Coordinate;
 
+/**
+ * The Item object is used to generate the collectibles on the map and for the player to pick them up. Once a collectible has been picked up it is no longer an Item object
+ * @author Selma Kander
+ *
+ */
 public class Item {
 	private String type;
 	private int x;
@@ -11,7 +16,7 @@ public class Item {
 	private float forNowIdkTime;
 	private float initialisedTime;
 
-	public Item(String type, Coordinate itemPosition) {
+	public Item(String type, Coordinate itemPosition) { 
 		this.type = type;
 		this.itemPosition = itemPosition;
 		if (type == "shield") {
@@ -42,13 +47,13 @@ public class Item {
 		return itemPosition;
 	}
 
-	//public int getX() {
-	//	return x;
-	//}
+	public int getX() {
+		return x;
+	}
 
-	//public int getY() {
-	//	return y;
-	//}
+	public int getY() {
+		return y;
+	}
 
 
 }

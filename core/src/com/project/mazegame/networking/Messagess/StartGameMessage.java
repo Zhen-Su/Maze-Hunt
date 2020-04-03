@@ -22,6 +22,7 @@ public class StartGameMessage implements Message{
     public boolean HostStartGame;
     private int id;
     private MultiPlayerGameScreen gameClient;
+    private boolean debug =false;
 
     public StartGameMessage(MultiPlayerGameScreen gameClient) { this.gameClient = gameClient;}
 
@@ -35,7 +36,13 @@ public class StartGameMessage implements Message{
 
 
 
-
+    /**
+     * When host player click start, then it message will send other players, and start game.
+     * @param ds
+     * @param serverIP Server ip
+     * @param serverUDPPort
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -56,13 +63,17 @@ public class StartGameMessage implements Message{
             e.printStackTrace();
         }
     }
-
+    /**
+     * To process start game message when host player click start game.
+     * @param dis
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void process(DataInputStream dis) {
         try{
 
             int id = dis.readInt();
-            if(id == this.gameClient.getMultiPlayer().getId()){
+            if(id == this.gameClient.getMultiPlayer().getID()){
                 return;
             }
 
@@ -70,14 +81,21 @@ public class StartGameMessage implements Message{
             //set my HostStartGame true
             gameClient.setHostStartGame(start);
 
-            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-            System.out.println("My id: " +this.gameClient.getMultiPlayer().getId());
-            System.out.println("This start game message is from: id"+id);
-            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            if(debug) {
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
+                System.out.println("This start game message is from: id" + id);
+                System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+            }
 
         }catch (IOException e)
         {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

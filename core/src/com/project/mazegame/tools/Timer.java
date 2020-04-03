@@ -1,23 +1,40 @@
 package com.project.mazegame.tools;
-import java.util.Timer;
-import java.util.TimerTask;
 
+/**
+ *Code written by: Andin
+ **/
 public class Timer {
-	public Timer timer;
+    private float counter;
+    private int time;
 
-	public Timer() {
-		timer = new Timer();
-		timer.schedule(new DisplayCountdown(), 0, 1000);
-	}
-}
+    /**
+     * Call constructer to initialize the object
+     * The constructor will initialize the time to zero
+     */
+    public Timer() {
+        time = 0;
+    }
 
-class DisplayCountdown extends TimerTask {
-	int seconds;
+    /**
+     * must be called inside the render method
+     * @param delta to keep track of time
+     *             To check time, call currentTime();
+     */
+    public void updateTimer(float delta) {
+        counter += delta;
+        if (counter >= 1) {
+            time++;
+            counter = 0;
+        }
+    }
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
+    /**
+     * Will return the current time from when the object is initialized, given that the updateTimer(float delta) method is called inside the render method.
+     * The time return is in seconds.
+     * @return
+     */
+    public int currentTime() {
+        return (int) time;
+    }
 
 }

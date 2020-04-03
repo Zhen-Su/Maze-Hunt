@@ -17,6 +17,7 @@ import java.util.HashSet;
 
 /**
  * To send host items generate situation to everyone, and let other to copy that items
+ * @author Yueyi Wang & Zhen Su
  */
 public class ItemCreateMessage implements Message {
     private int msgType = Message.ITEMS_CREATE;
@@ -25,7 +26,7 @@ public class ItemCreateMessage implements Message {
     private int x;
     private int y;
     private MultiPlayerGameScreen gameClient;
-    private boolean debug=true;
+    private boolean debug=false;
 
 
     public ItemCreateMessage(int id, String itemType, int x, int y) {
@@ -38,7 +39,13 @@ public class ItemCreateMessage implements Message {
     public ItemCreateMessage(MultiPlayerGameScreen gameClient) {
         this.gameClient = gameClient;
     }
-
+    /**
+     * This method send generating items on map info to server, and let other client to receive that and process
+     * @param ds Send data using DatagreamSocket from server
+     * @param serverIP Input Server's IP address
+     * @param serverUDPPort Input UDP's port
+     * @throws Exception This exception is thrown when closing the stream fails
+     */
     @Override
     public void send(DatagramSocket ds, String serverIP, int serverUDPPort) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -64,15 +71,19 @@ public class ItemCreateMessage implements Message {
         }
 
     }
-
+    /**
+     * Use DataInputStream to process the acquired data and transform
+     * the player set in the client for generating map items operations.
+     * @param dis Input stream
+     * @throws Exception
+     */
     @Override
     public void process(DataInputStream dis) {
         try {
             int id = dis.readInt();
-            if (id == this.gameClient.getMultiPlayer().getId()) {
+            if (id == this.gameClient.getMultiPlayer().getID()) {
                 return;
             }
-
 
             String itemType = dis.readUTF();
             int itemsX = dis.readInt();
@@ -84,7 +95,7 @@ public class ItemCreateMessage implements Message {
 
             if(debug) {
                 System.out.println("-------------------------------");
-                System.out.println("My id: " + this.gameClient.getMultiPlayer().getId());
+                System.out.println("My id: " + this.gameClient.getMultiPlayer().getID());
                 System.out.println("This item generation message is from: id" + id);
                 System.out.println("This (id" + id + ") player collect: " + itemType);
                 System.out.println("Items position x: " + itemsX + " y: " + itemsY);
@@ -99,5 +110,10 @@ public class ItemCreateMessage implements Message {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void process(DataInputStream dis, int aiIndex) {
+
     }
 }

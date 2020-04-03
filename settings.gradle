@@ -1,0 +1,2 @@
+include ':lib'
+include 'desktop', 'core', 'android'
