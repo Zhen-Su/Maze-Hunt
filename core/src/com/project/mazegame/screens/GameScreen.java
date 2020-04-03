@@ -335,10 +335,13 @@ public class GameScreen implements Screen {
 			aiPlayers.add(i, playerTurn);
 		}
 
-		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
-
+		
 		player.render(game.batch);
 		player.attack();
+		
+		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
+
+		
 
 		for(int i = 0 ; i < numOfAI; i ++) {
             aiPlayers.get(i).render(game.batch);
