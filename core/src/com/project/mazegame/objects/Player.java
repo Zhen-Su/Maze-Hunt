@@ -220,24 +220,8 @@ public class Player {
         this.colour = colour;
     }
 
-    public AnimationTool getDyingAnim() {
-        return DyingAnim;
-    }
-
     public Collect getCo() {
         return co;
-    }
-
-    public void setCo(Collect co) {
-        this.co = co;
-    }
-
-    public TiledMapTileLayer getCollisionLayer() {
-        return collisionLayer;
-    }
-
-    public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
-        this.collisionLayer = collisionLayer;
     }
 
     public MazeGame getGame() {
@@ -450,7 +434,7 @@ public class Player {
      */
 
     public void attack() {
-        if (isAttacking) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (this.items.contains("sword") && !this.isDead()) {
                 if (animation.toString().equals(RightAnim.toString()))
                     setSwordAnimation(swordSwipeRight);
@@ -463,6 +447,7 @@ public class Player {
 
                 //do animation
                 swipeAnim.render();
+                game.audio.atk();
                 isAttacking = false;
                 sword = swordAttack;
             }

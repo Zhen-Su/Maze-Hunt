@@ -62,11 +62,5 @@ public class CSVStuff {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        writer.flush();
-        writer.close();
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
     }
 }

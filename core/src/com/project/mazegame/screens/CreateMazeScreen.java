@@ -59,13 +59,6 @@ public class CreateMazeScreen implements Screen {
     public static final int TEXT_FIELD_WIDTH = 300;
     public static final int TEXT_FIELD_HEIGHT = 50;
 
-    private int size = 100;
-
-    String difficulty;
-    String player;
-    String map;
-    String numOfAI;
-    String name;
 
     private Stage stage;
 
@@ -420,6 +413,7 @@ public class CreateMazeScreen implements Screen {
                             else
                                 game.setScreen(new GameScreen(game));
                         }
+                        game.audio.choose();
                     }
 
                     if(this.type == "player") {
@@ -434,6 +428,7 @@ public class CreateMazeScreen implements Screen {
                             this.isPressed = true;
                             playerChosen = true;
                         }
+                        game.audio.choose();
                     }
                     if(this.type == "map") {
                         if(!mapChosen) {
@@ -445,6 +440,7 @@ public class CreateMazeScreen implements Screen {
                             this.isPressed = true;
                             mapChosen = true;
                         }
+                        game.audio.choose();
                     }
                     if(this.type == "difficulty") {
                         if(!difficultyChosen) {
@@ -455,6 +451,7 @@ public class CreateMazeScreen implements Screen {
                             this.isPressed = true;
                             difficultyChosen = true;
                         }
+                        game.audio.choose();
 
                     }
 

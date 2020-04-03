@@ -58,6 +58,7 @@ public class GameScreen implements Screen {
 	private TiledMap tileMap;//
 	private OrthogonalTiledMapRenderer tileMapRenderer;//
 	private TiledMapTileLayer collisionLayer,collisionLayer1;
+	private int tempMapItemssize;
 
 	//textures
 	private Texture exitButtonActive,exitButtonInactive;
@@ -141,10 +142,10 @@ public class GameScreen implements Screen {
 
 		//initialising the player
 		player = new Player(this.collisionLayer,name,123 , this.playerSkin,PlayersType.single);
-
+		player.setGame(game);
 
       //initialising the AI players based on the amount set in csvFile
-        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124, "red" , PlayersType.single);
+        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124, "red" ,Direction.STOP,PlayersType.single);
         aiPlayers = aiPlayer.AITakingOver(this.numOfAI);
 
         cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
@@ -221,6 +222,13 @@ public class GameScreen implements Screen {
             }
 		}
 
+		if (game.audio.isMusicOn()) {
+			game.audio.setMusicOff();
+			game.audio.setCurrentScreen("game");
+			game.audio.setMusicOn();
+		} else {
+			game.audio.setMusicOff();
+		}
 	}
 
 	/**
@@ -240,9 +248,9 @@ public class GameScreen implements Screen {
 		player.update(delta,0,0);
 
 		for (int i = 0; i < aiPlayers.size(); i++) {
-			System.out.println(this.AIDifficulty);
+//			System.out.println(this.AIDifficulty);
 			int difficulty = Integer.valueOf(this.AIDifficulty.split(" ")[1]);
-			System.out.println(difficulty);
+//			System.out.println(difficulty);
 			aiPlayers.get(i).update(delta, difficulty ,worldTimer);
 
 		}
@@ -352,8 +360,6 @@ public class GameScreen implements Screen {
 
 				if( numOfAI != 0) {
 					AIPlayer AIwinner = aiPlayers.get(0);
-
-
 
 					int maxCoins = 0;
 					for(int i = 0; i < numOfAI; i++) {
@@ -745,6 +751,8 @@ public class GameScreen implements Screen {
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
 				player.initialisedEnchantmentTime = time.currentTime();
+				game.audio.setSFXOn();
+				game.audio.gearEnchantment();
 				if(player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
@@ -752,12 +760,18 @@ public class GameScreen implements Screen {
 				co.minimap(item);
 			}
 		} else if (item.getType() == "coin") {
+			game.audio.setSFXOn();
+			game.audio.pickupCoin();
 			mapItems.remove(item);
 			player.coins++;
 		}else if (item.getType() == "healingPotion") {
+			game.audio.setSFXOn();
+			game.audio.addHealth();
 			mapItems.remove(item);
 			co.healingPotion (player);
 		}else if (item.getType() == "damagingPotion") {
+			game.audio.setSFXOn();
+			game.audio.poison();
 			mapItems.remove(item);
 			co.damagingPotion(player);
 		}

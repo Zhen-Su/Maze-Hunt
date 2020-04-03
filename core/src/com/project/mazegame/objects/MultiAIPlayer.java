@@ -38,7 +38,6 @@ public class MultiAIPlayer extends AIPlayer {
     public MultiAIPlayer(TiledMapTileLayer collisionLayer, String username, int x, int y, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
         super();
         this.dir = dir;
-        this.aiThread = new Thread(new PlayerThread());
         this.updateCount = false;
         this.attackAIStart = false;
         this.attackPStart = false;
@@ -88,16 +87,7 @@ public class MultiAIPlayer extends AIPlayer {
     }
 
     @Override
-    public void update(float delta, int mode, ArrayList<Item> items, float time) {
-//        aiThread.run();
-        // operate the delay if dead
-//        if (super.haveyoudied) {
-//            System.out.println("I have gone here " + this.getID());
-//            if (deathTime - time > 5) {
-//                haveyoudied = false;
-//                System.out.println(deathTime - time);
-//            }
-//        }
+    public void update(float delta, int mode, float time) {
         removeShield();
         removeEnchantment();
         this.time.updateTimer(delta);
@@ -287,7 +277,6 @@ public class MultiAIPlayer extends AIPlayer {
                     this.x = tempx;
                     this.y = tempy;
 
-                    //TODO add new
                     this.position.setX(tempx);
                     this.position.setY(tempy);
 
@@ -295,7 +284,7 @@ public class MultiAIPlayer extends AIPlayer {
 //                    System.out.println(newt.toString());
 
                     change(old, newt);
-                    System.out.println("The direction the player is moving in is " + this.dir);
+//                    System.out.println("The direction the player is moving in is " + this.dir);
                 }
                 this.initialisedTime = time;
                 updateCount = true;
@@ -395,22 +384,22 @@ public class MultiAIPlayer extends AIPlayer {
             this.dir = Direction.R;
             super.frames = walkRight;
             super.animation.setFrames(RightAnim.getFrames());
-            System.out.println("R");
+//            System.out.println("R");
         } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.L;
             super.frames = walkLeft;
             super.animation.setFrames(LeftAnim.getFrames());
-            System.out.println("L");
+//            System.out.println("L");
         } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
             this.dir = Direction.U;
             super.frames = walkDown;
             super.animation.setFrames(DownAnim.getFrames());
-            System.out.println("U");
+//            System.out.println("U");
         } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
             this.dir = Direction.D;
             super.frames = walkUp;
             super.animation.setFrames(UpAnim.getFrames());
-            System.out.println("D");
+//            System.out.println("D");
         }
 
 //        System.out.println(update);
@@ -445,6 +434,37 @@ public class MultiAIPlayer extends AIPlayer {
             moves.add(new Coordinate(x, (y - move)));
         }
         return moves;
+    }
+
+    /**
+     * Sets the sword swipe animation.
+     * If the player is holding a sword and is alive they can attack.
+     */
+
+    public void attack() {
+        if (isAttacking) {
+            if (this.items.contains("sword") && !this.isDead()) {
+                if (animation.toString().equals(RightAnim.toString()))
+                    setSwordAnimation(swordSwipeRight);
+                else if (animation.toString().equals(LeftAnim.toString()))
+                    setSwordAnimation(swordSwipeLeft);
+                else if (animation.toString().equals(UpAnim.toString()))
+                    setSwordAnimation(swordSwipeUp);
+                else if (animation.toString().equals(DownAnim.toString()))
+                    setSwordAnimation(swordSwipeDown);
+
+                //do animation
+                swipeAnim.render();
+                isAttacking = false;
+                sword = swordAttack;
+            }
+        } else {
+            sword = swordNotAttack;
+            swordSwipeRight.elapsedTime = 0;
+            swordSwipeLeft.elapsedTime = 0;
+            swordSwipeUp.elapsedTime = 0;
+            swordSwipeDown.elapsedTime = 0;
+        }
     }
 
     /**

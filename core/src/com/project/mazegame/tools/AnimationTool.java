@@ -86,9 +86,9 @@ public class AnimationTool extends ApplicationAdapter {
             //need to set batch and img before calling render
             this.rows = 5;
             this.columns = 5  ;
-            System.out.println("here");
-            System.out.println(this.width + " , --  " + this.height);
-            System.out.println(this.rows + " , --  " + this.columns );
+//            System.out.println("here");
+//            System.out.println(this.width + " , --  " + this.height);
+//            System.out.println(this.rows + " , --  " + this.columns );
             tmpFrames = TextureRegion.split(this.img,this.width,this.height);
             animationFrames = new TextureRegion[25];
         }
@@ -97,9 +97,9 @@ public class AnimationTool extends ApplicationAdapter {
         int r = this.rows;
         int c = this.columns;
         for (int i = 0; i < this.rows; i++){
-            System.out.println("next row");
+//            System.out.println("next row");
             for(int j = 0; j < this.columns; j++) {
-                System.out.println("next col");
+//                System.out.println("next col");
                 animationFrames[index++] = tmpFrames[i][j];
             }
         }
@@ -110,19 +110,19 @@ public class AnimationTool extends ApplicationAdapter {
     @Override
     public void render () {
         //draws the animation based on the frames for this animation
-        System.out.println("got to render");
+//        System.out.println("got to render");
         elapsedTime += Gdx.graphics.getDeltaTime();
-        System.out.println("get here11");
+//        System.out.println("get here11");
         if (this.player != null) {
-            System.out.println("get here");
+//            System.out.println("get here");
             this.rows = 2;
             this.columns = 2;
             batch = this.player.getSpriteBatch();
-            System.out.println(this.width + " , " + this.height);
+//            System.out.println(this.width + " , " + this.height);
             batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), player.position.getX() + this.xOffset - this.width/2,player.position.getY() - this.height/2 + this.yOffset);
         }
         else {
-            System.out.println(this.width + " , --  " + this.height);
+//            System.out.println(this.width + " , --  " + this.height);
             batch.draw((TextureRegion)this.animation.getKeyFrame(elapsedTime,this.loop), 500 + this.xOffset - this.width/2,500 - this.height/2 + this.yOffset);
 
         }

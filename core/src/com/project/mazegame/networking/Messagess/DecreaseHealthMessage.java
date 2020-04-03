@@ -95,6 +95,7 @@ public class DecreaseHealthMessage implements Message {
             if(beAttackedID == this.gameClient.getMultiPlayer().getID()){
 
                 this.gameClient.getMultiPlayer().decreaseHealth(numOfHealth);
+                this.gameClient.getMultiPlayer().setBeAttacked(true);
 
                 if(false) {
                     System.out.println("-------------------------------");

@@ -1,7 +1,6 @@
 package com.project.mazegame.objects;
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-<<<<<<< HEAD
 import com.project.mazegame.networking.Client.NetClient;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
@@ -12,7 +11,6 @@ import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Collect;
 import com.project.mazegame.tools.Coordinate;
 import com.project.mazegame.tools.Pair;
->>>>>>> charlotte
 import com.project.mazegame.tools.PlayersType;
 
 import java.util.ArrayList;
@@ -31,24 +29,28 @@ import java.util.Collections;
  *
  */
 public class AIPlayer extends Player {
-    protected Direction dir;
-    private TiledMapTileLayer collisionLayer;
-    private float initialisedTime;
-    private boolean updateCount;
-    private float attackPlayerTime;
-    private float attackAITime;
-    private boolean attackPStart;
-    private boolean attackAIStart;
-    private ArrayList<Coordinate> visited;
-    private static final int movenumber = 30;
-    private Coordinate lastp;
-    private Coordinate preve;
-    private String direct;
-    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID,String colour, PlayersType playersType) {
-        super(collisionLayer, name = "Super AI", ID , colour , playersType);
-        this.collisionLayer = collisionLayer;
-        initialPosition();
 
+    protected float initialisedTime;
+    protected boolean updateCount;
+    protected float attackPlayerTime;
+    protected float attackAITime;
+    protected boolean attackPStart;
+    protected boolean attackAIStart;
+    protected NetClient aiNetClient;
+    protected static final int movenumber = 40;
+    protected ArrayList<Coordinate> visited;
+    protected String premov = "null";
+    protected String direct = null;
+    protected Coordinate lastp;
+    protected Coordinate preve;
+
+    public AIPlayer(){
+        super();
+    }
+
+    public AIPlayer(TiledMapTileLayer collisionLayer, String name, int ID, String colour, Direction dir, PlayersType playersType) {
+        super(collisionLayer, name, ID, colour,playersType);
+        this.dir=dir;
         this.updateCount = false;
         this.attackAIStart = false;
         this.attackPStart = false;
@@ -122,9 +124,6 @@ public class AIPlayer extends Player {
 //                haveyoudied = false;
 //            }
 //        }
-
-
-
 
 
         if (initialisedTime - time > 0.2f || !updateCount && !haveyoudied) {
@@ -356,23 +355,23 @@ public class AIPlayer extends Player {
 //            System.out.println(this.dir);
             super.frames = walkRight;
             super.animation.setFrames(RightAnim.getFrames());
-            System.out.println("R");
+//            System.out.println("R");
         } else if (old.getX() > update.getX() && old.getY() == update.getY()) {
             this.dir = Direction.L;
             super.frames = walkLeft;
             super.animation.setFrames(LeftAnim.getFrames());
-            System.out.println("L");
+//            System.out.println("L");
 
         } else if (old.getX() == update.getX() && old.getY() < update.getY()) {
             this.dir = Direction.U;
             super.frames = walkDown;
             super.animation.setFrames(DownAnim.getFrames());
-            System.out.println("U");
+//            System.out.println("U");
         } else if (old.getX() == update.getX() && old.getY() > update.getY()) {
             this.dir = Direction.D;
             super.frames = walkUp;
             super.animation.setFrames(UpAnim.getFrames());
-            System.out.println("D");
+//            System.out.println("D");
         }
 //        System.out.println("Direction not changed");
 //        System.out.println(this.dir);

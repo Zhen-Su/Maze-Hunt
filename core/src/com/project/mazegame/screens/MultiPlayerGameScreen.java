@@ -172,15 +172,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        if (game.audio.isMusicOn()) {
-            game.audio.setMusicOff();
-            game.audio.setCurrentScreen();
-            game.audio.setMusicOn();
-            
-        } else {
-            game.audio.setMusicOff();
-        }
-
 
         if (isHost) {
             //create AI players
@@ -376,6 +367,14 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             }
             System.out.println();
         }
+
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen("game");
+            game.audio.setMusicOn();
+        } else {
+            game.audio.setMusicOff();
+        }
     }
 
     int iconSize = 30;
@@ -390,17 +389,16 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         delta = Gdx.graphics.getDeltaTime();
 
         //only update multiPlayer, not AIPlayer
-        ArrayList<Item> empty = new ArrayList<>();
         for (Player otherPlayer : players) {
             if (otherPlayer instanceof MultiPlayer)
-                otherPlayer.update(delta, 0, empty, 0);
+                otherPlayer.update(delta, 0, 0);
         }
 
         //Only host player can update AI player for movements, other player only update them for animation.
         if (imHost) {
             for (Player aiPlayer : players) {
                 if (aiPlayer instanceof MultiAIPlayer)
-                    aiPlayer.update(delta, difficulty, mapItems, worldTimer);
+                    aiPlayer.update(delta, difficulty, worldTimer);
             }
         }
 
@@ -413,7 +411,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
         //update myself
-        myMultiPlayer.update(delta, 0, empty, 0);
+        myMultiPlayer.update(delta, 0, 0);
 
         //camera
         cam.update(myMultiPlayer.position.getX(), myMultiPlayer.position.getY(), game);
