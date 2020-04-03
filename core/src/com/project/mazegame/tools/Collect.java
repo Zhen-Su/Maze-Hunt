@@ -63,74 +63,34 @@ public class Collect {
  * @return
  */
     public Item nearestItem(Player player) {
-//		Coordinate position = new Coordinate();
-//		position = mapItems.get(0).getPosition();
-
-//		Item nearestItem = new Item(" ", position);
         Item nearestItem = mapItems.get(0);
-        //System.out.println("items: " + mapItems.size());
+      
         for (int i = 0; i < mapItems.size(); i++) {
 
             int tempX = mapItems.get(i).getPosition().getX();
             int tempY = mapItems.get(i).getPosition().getY();
-
-//			int tempDist =player.position.getX() + player.position.getY() - tempX - tempY;
             int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
-            //System.out.println("temp Dist: " + tempDist);
-//			int shortDist = player.position.getX() + player.position.getY() - nearestItem.getPosition().getX() - nearestItem.getPosition().getY();
             int shortDist = andinsEuclidian(player.position.getX(), nearestItem.getPosition().getX(), player.position.getY(), nearestItem.getPosition().getY());
-            //System.out.println("shortDist: " + shortDist);
-
+          
             if (tempDist < shortDist) {
                 nearestItem = mapItems.get(i);
-                //System.out.println("found shorter!");
             }
         }
-        //System.out.println(nearestItem.getPosition().getX() + " , " + nearestItem.getPosition().getY());
         return nearestItem;
     }
 
     public static int andinsEuclidian(int x1, int x2, int y1, int y2) {
         int sqrEucl = ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-//		System.out.println()
         return sqrEucl;
     }
 
 
-    public void shield(Item item, Player player1) {
-
-
-        final ArrayList<String> items = player1.items;
-        int seconds = 60;
-        int startHealth = player1.health;
-
-        int time = 60000;
-
-    }
-
     public void coin(Player player1) {
         player1.coins++;
-        //ArrayList<String> items = player1.items;
     }
 
     public void sword(Item item, Player player1) {
-        ArrayList<String> items = player1.items;
-        int swordPower = player1.getSwordXP();
-//		if (player1.items.contains("gearEnchantment")) {
-//			swordPower += 5;
-//		}
-
-//		if (player2.health == 0) { //going to come back to level
-//			swordPower += 1;
-//		}
         player1.swordDamage++;
-        //display sword icon on screen
-    }
-
-    public void minimap(Item item) {
-        //ArrayList<String> items = player1.items;
-        //pick nearest player, follow it
-        //display compass
     }
 
     public void healingPotion(Player player1) {
@@ -142,32 +102,16 @@ public class Collect {
     }
 
     public void damagingPotion(Player player1) {
-        ArrayList<String> items = player1.items;
-
         player1.decreaseHealth(3);
-
-//		player1.playerPosioned();
-
-        //items.remove("damagingPotion");
-        //player1.loadPlayerTextures();
     }
 
     public void gearEnchantment(Item item, Player player1) {
-        ArrayList<String> items = player1.items;
-        //boolean collected = true;
         player1.increaseSwordXP(1);
         player1.increaseShieldXP(1);
-        System.out.println("added xp" + player1.getShieldXP() + " , " + player1.getSwordXP());
-
-
     }
 
 
 }
-
-
-
-
 
 
 

@@ -761,10 +761,10 @@ public class Player {
 
 
     public void dispose() {
-        walkDown.dispose();
-        walkLeft.dispose();
-        walkRight.dispose();
-        walkUp.dispose();
+//        walkDown.dispose();
+//        walkLeft.dispose();
+//        walkRight.dispose();
+//        walkUp.dispose();
         // player.dispose();
 
     }

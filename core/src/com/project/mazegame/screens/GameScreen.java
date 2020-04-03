@@ -655,7 +655,7 @@ public class GameScreen implements Screen {
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
 				player.initialisedShieldTime = time.currentTime();
-				aico.sword(item, player);
+				
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				}
@@ -671,9 +671,7 @@ public class GameScreen implements Screen {
 				if(player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
-			if(item.getType() == "minimap") {
-				aico.minimap(item);
-			}
+			
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
@@ -727,6 +725,7 @@ public class GameScreen implements Screen {
 	 * calls methods in collect class to implement the items functionalities
 	 */
 	private void pickUpItem() {
+	
 		Item item =  co.nearestItem(player);
 
 
@@ -738,7 +737,7 @@ public class GameScreen implements Screen {
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
 				player.initialisedShieldTime = time.currentTime();
-				co.sword(item, player);
+				
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				}
@@ -751,30 +750,22 @@ public class GameScreen implements Screen {
 			if (item.getType() == "gearEnchantment") {
 				co.gearEnchantment(item , player);
 				player.initialisedEnchantmentTime = time.currentTime();
-				game.audio.setSFXOn();
-				game.audio.gearEnchantment();
 				if(player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
-			if(item.getType() == "minimap") {
-				co.minimap(item);
-			}
+			
 		} else if (item.getType() == "coin") {
-			game.audio.setSFXOn();
-			game.audio.pickupCoin();
 			mapItems.remove(item);
 			player.coins++;
 		}else if (item.getType() == "healingPotion") {
-			game.audio.setSFXOn();
-			game.audio.addHealth();
 			mapItems.remove(item);
 			co.healingPotion (player);
 		}else if (item.getType() == "damagingPotion") {
-			game.audio.setSFXOn();
-			game.audio.poison();
 			mapItems.remove(item);
 			co.damagingPotion(player);
 		}
+
+		
 	}
 
 
