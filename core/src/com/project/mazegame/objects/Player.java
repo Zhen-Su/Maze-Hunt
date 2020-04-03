@@ -139,98 +139,174 @@ public class Player {
 
 
     //Getter&Setter=================================================================================
+    /**
+     * gets the player id
+     * @return int
+     */
     public int getID() {
         return ID;
     }
-
+    
+    /**
+     * sets the player id
+     * @param ID
+     */
     public void setID(int ID) {
         this.ID = ID;
     }
-
+    /**
+     * gets the player direction
+     * @return player direction
+     */
     public Direction getDir() {
         return dir;
     }
+    /**
+     * sets the player direction
+     * @param dir
+     */
 
     public void setDir(Direction dir) {
         this.dir = dir;
     }
 
+    /**
+     * gets the players x position
+     * @return int x
+     */
     public int getX() {
         return x;
     }
-
+    /**
+     * sets the players x position
+     * @param x
+     */
     public void setX(int x) {
         this.x = x;
     }
-
+    /**
+     * gets the players y position
+     * @return int y
+     */
     public int getY() {
         return y;
     }
-
+    /**
+     * sets the players y position
+     *@param y
+     */
     public void setY(int y) {
         this.y = y;
     }
-
+    /**
+     * gets the player name
+     * @return String name
+     */
     public String getName() {
         return name;
     }
-
+    /**
+     * sets the player name
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
-
+    /**
+     * sets the player animation
+     * @param direction
+     */
     public void setAnimation(AnimationTool direction) {
         animation = direction;
     }
-
+    /**
+     * sets the sword animation
+     * @param direction
+     */
     public void setSwordAnimation(AnimationTool direction) {
         swipeAnim = direction;
     }
-
+    /**
+     * sets the sprite batch
+     * @param sb
+     */
     public void setBatch(SpriteBatch sb) {
         this.batch = sb;
     }
-
+    /**
+     * gets the sprite batch
+     * @return SpriteBatch
+     */
     public SpriteBatch getSpriteBatch() {
         return this.batch;
     }
-
+    /**
+     * gets the texture frames
+     * @return frames
+     */
     public Texture getFrames() {
         return frames;
     }
-
+    /**
+     * gets the sword xp
+     * @return int swordxp
+     */
     public int getSwordXP() {
         return this.swordXP;
     }
-
+    /**
+     * gets the shield xp
+     * @return shield xp
+     */
     public int getShieldXP() {
         return this.shieldXP;
     }
-
+    /**
+     * gets the player health
+     * @return int health
+     */
     public int getHealth() {
         return health;
     }
-
+    /**
+     * gets the current time
+     * @return float time
+     */
     public float getTime() {
         return this.time.currentTime();
     }
-
+    /**
+     * gets the player colour
+     * @return String colour
+     */
     public String getColour() {
         return colour;
     }
-
+    /**
+     * sets the player colour
+     * @param colour
+     */
     public void setColour(String colour) {
         this.colour = colour;
     }
-
+    /**
+     * gets the collect object
+     * @return collect
+     */
     public Collect getCo() {
         return co;
     }
-
+    /**
+     * gets the mazgame
+     * @return game
+     */
     public MazeGame getGame() {
         return game;
     }
-
+    /**
+     * sets the mazegame
+     * @param game
+     */
     public void setGame(MazeGame game) {
         this.game = game;
     }
@@ -384,18 +460,30 @@ public class Player {
     }
 
     //-----------------functions
+    /**
+     * increases the sword xp
+     * @param xp
+     */
     public void increaseSwordXP(int XP) {
         this.swordXP += XP;
     }
-
+    /**
+     * increasers shield xp
+     * @param xp
+     */
     public void increaseShieldXP(int XP) {
         this.shieldXP += XP;
     }
-
+    /**
+     * decrease player health
+     * @param number
+     */
     public void decreaseHealth(int number) {
         this.health -= number;
     }
-
+    /**
+     * generates player health
+     */
     public void generateHealth() {
         if (this.health != 9) {
             this.health++;
