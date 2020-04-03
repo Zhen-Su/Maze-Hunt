@@ -99,14 +99,14 @@ public class Player {
         this.startAIAttack = false;
         this.dir = Direction.STOP;
     }
-/**
- *
- * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
- * @param name The chosen name of the player
- * @param ID The player ID number
- * @param colour The chosen colour of the player
- * @param playersType The type of player, single player or multi player
- */
+    /**
+     *
+     * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
+     * @param name The chosen name of the player
+     * @param ID The player ID number
+     * @param colour The chosen colour of the player
+     * @param playersType The type of player, single player or multi player
+     */
     public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour, PlayersType playersType) {
         this();
         this.name = name;
@@ -119,21 +119,21 @@ public class Player {
         loadPlayerTextures();
         createAnimations();
     }
-/**
- *
- * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
- * @param username The chosen name of the player
- */
+    /**
+     *
+     * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
+     * @param username The chosen name of the player
+     */
     public Player(TiledMapTileLayer collisionLayer, String username) {
     }
-/**
- *
- * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
- * @param username The chosen name of the player
- * @param x the x position
- * @param y the y position
- * @param dir the direction of the player
- */
+    /**
+     *
+     * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
+     * @param username The chosen name of the player
+     * @param x the x position
+     * @param y the y position
+     * @param dir the direction of the player
+     */
     public Player(TiledMapTileLayer collisionLayer, String username, int x, int y, Direction dir) {
     }
 
@@ -146,7 +146,7 @@ public class Player {
     public int getID() {
         return ID;
     }
-    
+
     /**
      * sets the player id
      * @param ID
@@ -313,10 +313,10 @@ public class Player {
 
     //==============================================================================================
 
-/**
- * Chooses the initial player position at the start of the game, and when they respawn.
- * It recursively loops until a position has been chosen that isn't a wall.
- */
+    /**
+     * Chooses the initial player position at the start of the game, and when they respawn.
+     * It recursively loops until a position has been chosen that isn't a wall.
+     */
     public void initialPosition() {
         int maxX = collisionLayer.getWidth();
         int maxY = collisionLayer.getHeight();
@@ -453,8 +453,8 @@ public class Player {
         if (this.items.contains("shield"))
             sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
 
-        
-        
+
+
         font.getData().setScale(0.5f, 0.5f);
         font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
     }
@@ -491,9 +491,9 @@ public class Player {
     }
 
     // ---------------------------player functionality
-/**
- * After 10 seconds the shield is removed from player items
- */
+    /**
+     * After 10 seconds the shield is removed from player items
+     */
     public void removeShield() {
         if (!this.items.contains("shield")) {
             return;
@@ -504,9 +504,9 @@ public class Player {
 
         }
     }
-/**
- * After 10 seconds the gear enchantment is removed from player items
- */
+    /**
+     * After 10 seconds the gear enchantment is removed from player items
+     */
     public void removeEnchantment() {
         if (!this.items.contains("gearEnchantment")) {
             return;
@@ -564,10 +564,10 @@ public class Player {
         } else
             return false;
     }
- /**
-  * once player has been dead for 3 seconds this method is called to allow the player to respawn
-  * @param time the current time
-  */
+    /**
+     * once player has been dead for 3 seconds this method is called to allow the player to respawn
+     * @param time the current time
+     */
     public void death(float time) {
         this.initialPosition();
         setAnimation(DownAnim);
@@ -592,31 +592,31 @@ public class Player {
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
 
-            // checks if the space key is pressed
-            if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-                // checks if the player has a swrod and the player its attacking doesn't have a shield
-                if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                    if (attackcount <= 8) {
-                        this.attackcount++;
-                    } else {
+        // checks if the space key is pressed
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            // checks if the player has a swrod and the player its attacking doesn't have a shield
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                if (attackcount <= 8) {
+                    this.attackcount++;
+                } else {
 //              System.out.println("Player is attacking");
-                        // sets is attacking to true
-                        isAttacking = true;
-                        // animation for sowrd
-                        sword = swordAttack;
-                        // decreases health by one plus any gearenchatnments
-                        playerA.decreaseHealth(1 + getGearCount());
-                        if (playerA.health == 0) {
-                            // adds the cons to the opposing player
+                    // sets is attacking to true
+                    isAttacking = true;
+                    // animation for sowrd
+                    sword = swordAttack;
+                    // decreases health by one plus any gearenchatnments
+                    playerA.decreaseHealth(1 + getGearCount());
+                    if (playerA.health == 0) {
+                        // adds the cons to the opposing player
 //                        this.coins += playerA.coins;
-                            // calls the death mehtod
-                            playerA.death(time);
+                        // calls the death mehtod
+                        playerA.death(time);
 
-                        }
-                        attackcount = 0;
                     }
+                    attackcount = 0;
                 }
-            } else sword = swordNotAttack;
+            }
+        } else sword = swordNotAttack;
 
         // sets the time again and gives tur to startattack
         this.playerAttackTime = time;
@@ -633,36 +633,36 @@ public class Player {
 
     public AIPlayer attackAI(AIPlayer playerA, float time) {
 //      if (aiAttackTime - time > 0.3 || !startAIAttack) {
-          if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
 
-              if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                  if (attackcount <= 8) {
-                      this.attackcount++;
-                  } else {
-                      System.out.println("Player as attacking me");
-                      isAttacking = true;
-                      sword = swordAttack;
-                      int gearEnchantCount = 0;
+            if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                if (attackcount <= 8) {
+                    this.attackcount++;
+                } else {
+                    System.out.println("Player as attacking me");
+                    isAttacking = true;
+                    sword = swordAttack;
+                    int gearEnchantCount = 0;
 
-                      playerA.decreaseHealth(1 + getGearCount());
+                    playerA.decreaseHealth(1 + getGearCount());
 
-                      if (playerA.health == 0) {
-                          this.coins += 1;
-                          System.out.println("I am about to die");
-                          this.coins += playerA.coins;
-                          playerA.death(time);
+                    if (playerA.health == 0) {
+                        this.coins += 1;
+                        System.out.println("I am about to die");
+                        this.coins += playerA.coins;
+                        playerA.death(time);
 
-                      }
-                      attackcount = 0;
-                  }
-              }
-          }
+                    }
+                    attackcount = 0;
+                }
+            }
+        }
 
-          startAIAttack = true;
+        startAIAttack = true;
 //      }
 
-      return playerA;
-  }
+        return playerA;
+    }
 
 
     /**

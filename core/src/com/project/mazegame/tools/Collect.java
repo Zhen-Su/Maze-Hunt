@@ -56,62 +56,62 @@ public class Collect {
         items.add(item.getType());
         return item;
     }
-/**
- * To find the nearest item, we loop through the array of map items and calculate the Euclidian distance from the player.
- * There is a method for each type of item and when an item is picked up the method which corresponds to the type of the item is called.
- * @param player
- * @return
- */
+    /**
+     * To find the nearest item, we loop through the array of map items and calculate the Euclidian distance from the player.
+     * There is a method for each type of item and when an item is picked up the method which corresponds to the type of the item is called.
+     * @param player
+     * @return
+     */
     public Item nearestItem(Player player) {
         Item nearestItem = mapItems.get(0);
-      
+
         for (int i = 0; i < mapItems.size(); i++) {
 
             int tempX = mapItems.get(i).getPosition().getX();
             int tempY = mapItems.get(i).getPosition().getY();
             int tempDist = andinsEuclidian(player.position.getX(), tempX, player.position.getY(), tempY);
             int shortDist = andinsEuclidian(player.position.getX(), nearestItem.getPosition().getX(), player.position.getY(), nearestItem.getPosition().getY());
-          
+
             if (tempDist < shortDist) {
                 nearestItem = mapItems.get(i);
             }
         }
         return nearestItem;
     }
-/**
- * this method calculates the euclidian distance between two points on the map. 
- * We exclusively use it in nearestItem
- * @param x1 
- * @param x2
- * @param y1
- * @param y2
- * @return
- */
+    /**
+     * this method calculates the euclidian distance between two points on the map.
+     * We exclusively use it in nearestItem
+     * @param x1
+     * @param x2
+     * @param y1
+     * @param y2
+     * @return
+     */
     public static int andinsEuclidian(int x1, int x2, int y1, int y2) {
         int sqrEucl = ((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         return sqrEucl;
     }
 
-/**
- * when the item collected is a coin, the coin count increases by one
- * @param player1
- */
+    /**
+     * when the item collected is a coin, the coin count increases by one
+     * @param player1
+     */
     public void coin(Player player1) {
         player1.coins++;
     }
-/**
- * the sword method is called when a player attacks another player. 
- * That other player’s health decreases.
- * @param item
- * @param player1
- */
+    /**
+     * the sword method is called when a player attacks another player.
+     * That other playerâ€™s health decreases.
+     * @param item
+     * @param player1
+     */
     public void sword(Item item, Player player1) {
         player1.swordDamage++;
     }
-/**
- * when the item collected is a healing potion, the player’s health increases by 2
- * @param player1
- */
+    /**
+     * when the item collected is a healing potion, the playerâ€™s health increases by 2
+     * @param player1
+     */
     public void healingPotion(Player player1) {
         //ArrayList<String> items = player1.items;
         player1.generateHealth();
@@ -119,19 +119,19 @@ public class Collect {
 
         items.remove("healingPotion");
     }
-/**
- * when the item collected is a damaging potion, the player’s health decreases by 3
- * @param player1
- */
+    /**
+     * when the item collected is a damaging potion, the playerâ€™s health decreases by 3
+     * @param player1
+     */
     public void damagingPotion(Player player1) {
         player1.decreaseHealth(3);
     }
-/**
- * when the item collected is a gear enchantment potion, 
- * the player’s sword and/or shield gain one point of XP
- * @param item
- * @param player1
- */
+    /**
+     * when the item collected is a gear enchantment potion,
+     * the playerâ€™s sword and/or shield gain one point of XP
+     * @param item
+     * @param player1
+     */
     public void gearEnchantment(Item item, Player player1) {
         player1.increaseSwordXP(1);
         player1.increaseShieldXP(1);

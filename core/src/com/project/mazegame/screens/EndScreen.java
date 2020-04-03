@@ -18,10 +18,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.project.mazegame.objects.Direction;
 import com.project.mazegame.tools.Timer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Database.AddData;
-import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Assets;
@@ -133,7 +133,7 @@ public class EndScreen implements Screen {
 
 
         font = (Assets.manager.get(Assets.font));
-        font.setColor(Color.BLACK);
+        font.setColor(Color.WHITE);
         font.getData().setScale(1.5f);
         frames = Assets.manager.get(Assets.endAnimation , Texture.class);
 
@@ -214,7 +214,7 @@ public class EndScreen implements Screen {
                 playerWin.position.setY(initialY += 3 );
             else playerWin.position.setY(initialY  );
             playerWin.render(game.batch);
-            System.out.println(playerWin.position.getX() + " , " + playerWin.position.getY());
+//            System.out.println(playerWin.position.getX() + " , " + playerWin.position.getY());
 
 
 

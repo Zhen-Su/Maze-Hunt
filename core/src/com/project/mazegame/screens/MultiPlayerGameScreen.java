@@ -845,7 +845,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             if (item.getType().equals("shield")) {
                 item.setInitialisedTime(time.currentTime());
                 player.initialisedShieldTime = time.currentTime();
-                player.getCo().shield(item, player);
                 if (player.items.contains("gearEnchantment")) {
                     player.initialisedShieldTime += 3;
                 }
@@ -863,9 +862,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                     game.audio.gearEnchantment();
                 }
 
-            }
-            if (item.getType().equals("minimap")) {
-                player.getCo().minimap(item);
             }
         } else if (isCoin) {
             if(isMy) {
@@ -952,8 +948,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         tileMap.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
+//        exitButtonActive.dispose();
+//        exitButtonInactive.dispose();
         myMultiPlayer.dispose();
         for (int i = 0; i < players.size(); i++) {
             Player otherMultiPlayer = players.get(i);

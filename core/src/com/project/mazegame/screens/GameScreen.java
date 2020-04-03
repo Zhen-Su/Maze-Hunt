@@ -147,18 +147,18 @@ public class GameScreen implements Screen {
 		player = new Player(this.collisionLayer,name,123 , this.playerSkin,PlayersType.single);
 		player.setGame(game);
 
-      //initialising the AI players based on the amount set in csvFile
-        aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124, "red" ,Direction.STOP,PlayersType.single);
-        aiPlayers = aiPlayer.AITakingOver(this.numOfAI);
+		//initialising the AI players based on the amount set in csvFile
+		aiPlayer = new AIPlayer(this.collisionLayer1, "Albert", 124, "red" ,Direction.STOP,PlayersType.single);
+		aiPlayers = aiPlayer.AITakingOver(this.numOfAI);
 
-        cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
+		cam = new OrthoCam(game,false, VIEWPORT_WIDTH, VIEWPORT_HEIGHT, player.position.getX(),player.position.getY());
 
 		collisionLayer = (TiledMapTileLayer) tileMap.getLayers().get("wallLayer");
 
 	}
-/**
- * getting textures of the assets previously loaded by the asset manager
- */
+	/**
+	 * getting textures of the assets previously loaded by the asset manager
+	 */
 	public void getAsset(){
 
 		exitButtonActive = Assets.manager.get(Assets.exit_button_active,Texture.class);
@@ -180,18 +180,18 @@ public class GameScreen implements Screen {
 		overlayWidth = overlay.getWidth() +300;
 		overlayHeight = overlay.getHeight() +300;
 	}
-/**
- * Writes in the players names next to the amount of coins they have when the game ends.
- * It is written in the coinCSV.csv file.
- */
+	/**
+	 * Writes in the players names next to the amount of coins they have when the game ends.
+	 * It is written in the coinCSV.csv file.
+	 */
 	private void writeCoinCSV() {
 		ArrayList<String> input = new ArrayList<>();
 
 		input.add(player.getName() + " = " + player.coins);
 
-    	for(int i = 0; i < numOfAI; i ++) {
-    		input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).coins);
-    	}
+		for(int i = 0; i < numOfAI; i ++) {
+			input.add(aiPlayers.get(i).getName() + " = " + aiPlayers.get(i).coins);
+		}
 		CSVStuff.writeCSV(input , "coinCSV");
 	}
 
@@ -210,7 +210,6 @@ public class GameScreen implements Screen {
 		//start timer
 		player.initialPosition();
 		font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
-		
 
 		playerPos = new Coordinate(player.position.getX(), player.position.getY());
 
@@ -221,9 +220,9 @@ public class GameScreen implements Screen {
 		//initialising AI players positions
 		for (int i = 0; i < aiPlayers.size(); i++) {
 			aiPlayers.get(i).initialPosition();
-            while(aiPlayers.get(i).getPosition().same(player.getPosition())){
-            	aiPlayers.get(i).initialPosition();
-            }
+			while(aiPlayers.get(i).getPosition().same(player.getPosition())){
+				aiPlayers.get(i).initialPosition();
+			}
 		}
 
 		if (game.audio.isMusicOn()) {
@@ -281,7 +280,6 @@ public class GameScreen implements Screen {
 		}
 
 		aiMultiPickUp();
-//		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
 
 		game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
 
@@ -317,7 +315,7 @@ public class GameScreen implements Screen {
 				aiPlayers.add(posAAI, playerinsert);
 			}
 		}
-				// creates list of players and adds them so the ai can attack players
+		// creates list of players and adds them so the ai can attack players
 		ArrayList<Player> forAI = new ArrayList<>();
 		forAI.add(player);
 		// goes throught the list of ai players
@@ -340,13 +338,17 @@ public class GameScreen implements Screen {
 			aiPlayers.add(i, playerTurn);
 		}
 
-		
+
 		player.render(game.batch);
 		player.attack();
 
+		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
+
+
+
 		for(int i = 0 ; i < numOfAI; i ++) {
-            aiPlayers.get(i).render(game.batch);
-        }
+			aiPlayers.get(i).render(game.batch);
+		}
 
 		//drawing Timer on screen
 		String message = "Time = " + (int) (worldTimer - (time.currentTime())) ;
@@ -395,12 +397,12 @@ public class GameScreen implements Screen {
 	 * @return boolean
 	 */
 	private boolean isHuman1() {
-    	if (aiPlayerAttack != null && playerAttack == null) {
-    		// checks whetehr one or the other is null
-    		return false;
+		if (aiPlayerAttack != null && playerAttack == null) {
+			// checks whetehr one or the other is null
+			return false;
 		} else if (aiPlayerAttack == null && playerAttack != null) {
-    		return true;
-    		// shouldn't return antying so will through exception
+			return true;
+			// shouldn't return antying so will through exception
 		} else {
 			try {
 				throw new Exception();
@@ -408,7 +410,7 @@ public class GameScreen implements Screen {
 				System.out.println("This should not be happening");
 			}
 		}
-    	return true;
+		return true;
 	}
 
 	/**
@@ -418,8 +420,8 @@ public class GameScreen implements Screen {
 	 * @param aiPlayersA
 	 * @return
 	 */
-    private boolean isPlayerOnSameAI(AIPlayer current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
-    	// if one person on same square that is the player attack return true and set attackplayer
+	private boolean isPlayerOnSameAI(AIPlayer current, ArrayList<Player> playersA, ArrayList<AIPlayer> aiPlayersA) {
+		// if one person on same square that is the player attack return true and set attackplayer
 		// starts by setting both to null
 
 		this.aiPlayerAttack = null;
@@ -507,7 +509,7 @@ public class GameScreen implements Screen {
 	 * @return boolean true if on same space false if not
 	 */
 	private boolean sameSpace(Coordinate investigation, Coordinate check) {
-    	// get  coordinates then abs and check difference
+		// get  coordinates then abs and check difference
 		int xCorI = investigation.getX();
 		int xCorC = check.getX();
 		int yCorI = investigation.getY();
@@ -522,7 +524,7 @@ public class GameScreen implements Screen {
 	 */
 
 	private void aiMultiPickUp() {
-    	for (int i  = 0; i < aiPlayers.size(); i++) {
+		for (int i  = 0; i < aiPlayers.size(); i++) {
 			if (!(mapItems.size() == 0)) { // if there is something to pick up - avoid null pointer exception
 				if ((aiPlayers.get(i).position.getX() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX()) && (aiPlayers.get(i).position.getX() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getX() + 100) &&
 						(aiPlayers.get(i).position.getY() > aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY()) && (aiPlayers.get(i).position.getY() < aicos.get(i).nearestItem(aiPlayers.get(i)).getPosition().getY() + 100)) {
@@ -535,12 +537,12 @@ public class GameScreen implements Screen {
 	}
 
 
-/**
- * Draws the icons in the HUD , the player health, coins, and items they have picked up
- * @param iconSize integer to keep all sizes uniform
- * @param buffer the space between the icon and the edge of the screen
- * @param position the coordinate on the player at the time
- */
+	/**
+	 * Draws the icons in the HUD , the player health, coins, and items they have picked up
+	 * @param iconSize integer to keep all sizes uniform
+	 * @param buffer the space between the icon and the edge of the screen
+	 * @param position the coordinate on the player at the time
+	 */
 
 	private void drawIcons(int iconSize, int buffer, Coordinate position) {
 		//take player x and y into account
@@ -659,7 +661,7 @@ public class GameScreen implements Screen {
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
 				player.initialisedShieldTime = time.currentTime();
-				
+
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				}
@@ -675,7 +677,7 @@ public class GameScreen implements Screen {
 				if(player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
-			
+
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
@@ -729,7 +731,7 @@ public class GameScreen implements Screen {
 	 * calls methods in collect class to implement the items functionalities
 	 */
 	private void pickUpItem() {
-	
+
 		Item item =  co.nearestItem(player);
 
 
@@ -741,7 +743,7 @@ public class GameScreen implements Screen {
 			if (item.getType() == "shield") {
 				item.setInitialisedTime((time.currentTime()));
 				player.initialisedShieldTime = time.currentTime();
-				
+
 				if(player.items.contains("gearEnchantment")) {
 					player.initialisedShieldTime += 3;
 				}
@@ -757,7 +759,7 @@ public class GameScreen implements Screen {
 				if(player.items.contains("shield"))
 					player.initialisedShieldTime += 3;
 			}
-			
+
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
 			player.coins++;
@@ -769,7 +771,7 @@ public class GameScreen implements Screen {
 			co.damagingPotion(player);
 		}
 
-		
+
 	}
 
 
@@ -797,10 +799,10 @@ public class GameScreen implements Screen {
 		player.dispose();
 		mapItems.clear();
 	}
-    /**
-     * disposes of everything
-     */
-     
+	/**
+	 * disposes of everything
+	 */
+
 	@Override
 	public void dispose() {
 		tileMap.dispose();
@@ -814,13 +816,13 @@ public class GameScreen implements Screen {
 		cam.cam.update();
 
 	}
-/**
- * Generates the positions of the collectibles being drawn on the maze for the user to pick up.
- *It uses the max amount of each type of item, attempts draw it and if it is the position of a wall then it will be deleted.
- *This ends up with the final amount of items being random each time.
- * @param widthInTiles the amount of 100 x 100 tiles in the width of the maze
- * @param tileWidth the width of each tile (100px)
- */
+	/**
+	 * Generates the positions of the collectibles being drawn on the maze for the user to pick up.
+	 *It uses the max amount of each type of item, attempts draw it and if it is the position of a wall then it will be deleted.
+	 *This ends up with the final amount of items being random each time.
+	 * @param widthInTiles the amount of 100 x 100 tiles in the width of the maze
+	 * @param tileWidth the width of each tile (100px)
+	 */
 
 	public void generateMapItems( int widthInTiles, int tileWidth ) {
 		HashSet<String> positions = new HashSet<String>();
@@ -912,18 +914,18 @@ public class GameScreen implements Screen {
 		}
 	}
 
-    /**
-     * works out the time passed in the game
-     * @param theTime
-     * @return theTimepassed
-     */
+	/**
+	 * works out the time passed in the game
+	 * @param theTime
+	 * @return theTimepassed
+	 */
 	private float timePassed(float theTime) {
 		return worldTimer - theTime;
 	}
-    /**
-     * updates the time
-     * @param dt
-     */
+	/**
+	 * updates the time
+	 * @param dt
+	 */
 	private void updateTime(float dt) {
 		float initial  = time.currentTime();
 		time.updateTimer(dt);

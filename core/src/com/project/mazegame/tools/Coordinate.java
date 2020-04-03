@@ -15,32 +15,32 @@ public class Coordinate {
 		this.x = 0;
 		this.y = 0;
 	}
-    /**
-     * gets the x part of the coordinate
-     * @return int x
-     */
+	/**
+	 * gets the x part of the coordinate
+	 * @return int x
+	 */
 	public int getX() {
 		return x;
 	}
 
-    /**
-     * gets y part of the coordinate
-     * @return int y
-     */
+	/**
+	 * gets y part of the coordinate
+	 * @return int y
+	 */
 	public int getY() {
 		return y;
 	}
-    /**
-     * changes the x coordinate by adding it
-     * @param x
-     */
+	/**
+	 * changes the x coordinate by adding it
+	 * @param x
+	 */
 	public void changeX(int x) {
 		this.x += x;
 	}
-    /**
-     * changes the y coordinate by adding it
-     * @param y
-     */
+	/**
+	 * changes the y coordinate by adding it
+	 * @param y
+	 */
 	public void changeY(int y) {
 		this.y += y;
 	}
@@ -60,10 +60,10 @@ public class Coordinate {
 		this.y = y;
 
 	}
-    /**
-     * prints the coordinate as a string
-     * @return string
-     */
+	/**
+	 * prints the coordinate as a string
+	 * @return string
+	 */
 	public String toString() {
 		return "(" + x + " , " + y + ")" ;
 	}
