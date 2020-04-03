@@ -149,10 +149,8 @@ public class MenuScreen implements Screen {
             if (Gdx.input.justTouched())
                 try{
                     game.setScreen(new LeaderboardScreen(game));
-                    playSound(true);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    
                 }
         }
         else {
@@ -191,33 +189,23 @@ public class MenuScreen implements Screen {
             if (Gdx.input.justTouched()) {
                 if (game.audio.isMusicOn()) {
                     game.audio.setMusicOff();
-                    
-                } else {
-                    game.audio.setMusicOn();
-           
-                }
-            }
-        }
-        if (isHovering(drawX, AUDIO_SFX_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {
-            if (Gdx.input.justTouched()) {
-                if (game.audio.isSFXOn()) {
                     game.audio.setSFXoff();
                 } else {
-            
-                    game.audio.setSFXOn();
+                    game.audio.setMusicOn();
+                    game.audio.setSFXoff();
                 }
             }
         }
 
         if (game.audio.isMusicOn())
-            game.batch.draw(audioOn, drawX, AUDIO_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
-        else
             game.batch.draw(audioOff, drawX, AUDIO_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
+        else
+            game.batch.draw(audioOn, drawX, AUDIO_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
 
         if (game.audio.isSFXOn())
-            game.batch.draw(audioSFXOn, drawX, AUDIO_SFX_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
-        else
             game.batch.draw(audioSFXOff, drawX, AUDIO_SFX_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
+        else
+            game.batch.draw(audioSFXOn, drawX, AUDIO_SFX_Y,AUDIO_WIDTH,AUDIO_HEIGHT);
 
         game.batch.end();
     }

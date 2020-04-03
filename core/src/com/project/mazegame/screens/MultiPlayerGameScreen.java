@@ -111,7 +111,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 100;
+    public static float worldTimer = 120;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -736,6 +736,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         CSVStuff.writeCSV(input, "coinCSV");
     }
 
+    //it will store coins and use for update on database(just store real player)
     private void writeMultiCoinCSV() {
         ArrayList<String> input = new ArrayList<>();
 

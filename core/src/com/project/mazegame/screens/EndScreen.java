@@ -93,6 +93,7 @@ public class EndScreen implements Screen {
         AddData add = new AddData();
         if (ifmulti)
         {
+            System.out.println("Update to database");
             add.update(multioutput);
         }
         for(int i = 0 ; i <= output.size(); i ++) {

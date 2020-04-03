@@ -22,7 +22,7 @@ public class CSVStuff {
 
     public static ArrayList<String> readCSVFile(String filename) {
 //        String fileRead ="android\\"+ filename + ".csv";
-        String fileRead ="android\\"+filename+".csv";
+        String fileRead ="android/"+filename+".csv";
         BufferedReader buff = null;
         String line = "";
         ArrayList<String> output = new ArrayList<>();
@@ -50,7 +50,7 @@ public class CSVStuff {
      */
     public static void writeCSV(ArrayList<String> list, String filename) {
         try {
-            String outPutCSV = "android\\"+ filename + ".csv";
+            String outPutCSV = "android/"+ filename + ".csv";
             FileWriter writer = new FileWriter(outPutCSV);
             for (int i = 0; i < list.size(); i++) {
                 writer.append(list.get(i));
