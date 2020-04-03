@@ -16,7 +16,10 @@ import com.project.mazegame.tools.*;
 
 /**
  * Contains the player attributes and carries out the functionality of the player and their animations
- *
+ * @author Charlotte
+ * @author James
+ * @author Andin
+ * @author Selma
  */
 
 public class Player {
