@@ -9,7 +9,8 @@ import java.util.ArrayList;
 /**
  * <h1>AddData</h1>
  * The class is to upload the player's coins and username to the database
- * @Author Zhen Su & Yueyi Wang
+ * @Author Zhen Su
+ * @author Yueyi Wang
  */
 public class WithdrawData {
     public ArrayList<String> list = new ArrayList<>();

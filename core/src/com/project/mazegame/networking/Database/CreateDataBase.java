@@ -6,7 +6,8 @@ import java.sql.Statement;
 /**
  * <h1>CreateDataBase</h1>
  * The class is to create a default database table we need.
- * @Author Zhen Su & Yueyi Wang
+ * @Author Zhen Su
+ * @author Yueyi Wang
  */
 public class CreateDataBase {
     /**

@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Every AI player in multi-player mode will have an instance of AIGameClient
+ * @Yueyi wang
+ * @Zhen su
+ */
 public class AIGameClient {
 
     private AIPlayer aiPlayer;
