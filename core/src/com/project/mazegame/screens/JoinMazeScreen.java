@@ -206,9 +206,8 @@ public class JoinMazeScreen implements Screen {
 
                                 }
                             }
-
-
                         }
+                        game.audio.choose();
                     }
                     if(this.type == "player") {
                         if(!playerChosen) {
@@ -222,6 +221,7 @@ public class JoinMazeScreen implements Screen {
                             this.isPressed = true;
                             playerChosen = true;
                         }
+                        game.audio.choose();
                     }
                 }else if (Gdx.input.justTouched() && isPressed) {
                     this.isPressed = false;

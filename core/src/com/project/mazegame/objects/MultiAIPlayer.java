@@ -277,7 +277,6 @@ public class MultiAIPlayer extends AIPlayer {
                     this.x = tempx;
                     this.y = tempy;
 
-                    //TODO add new
                     this.position.setX(tempx);
                     this.position.setY(tempy);
 
@@ -435,6 +434,37 @@ public class MultiAIPlayer extends AIPlayer {
             moves.add(new Coordinate(x, (y - move)));
         }
         return moves;
+    }
+
+    /**
+     * Sets the sword swipe animation.
+     * If the player is holding a sword and is alive they can attack.
+     */
+
+    public void attack() {
+        if (isAttacking) {
+            if (this.items.contains("sword") && !this.isDead()) {
+                if (animation.toString().equals(RightAnim.toString()))
+                    setSwordAnimation(swordSwipeRight);
+                else if (animation.toString().equals(LeftAnim.toString()))
+                    setSwordAnimation(swordSwipeLeft);
+                else if (animation.toString().equals(UpAnim.toString()))
+                    setSwordAnimation(swordSwipeUp);
+                else if (animation.toString().equals(DownAnim.toString()))
+                    setSwordAnimation(swordSwipeDown);
+
+                //do animation
+                swipeAnim.render();
+                isAttacking = false;
+                sword = swordAttack;
+            }
+        } else {
+            sword = swordNotAttack;
+            swordSwipeRight.elapsedTime = 0;
+            swordSwipeLeft.elapsedTime = 0;
+            swordSwipeUp.elapsedTime = 0;
+            swordSwipeDown.elapsedTime = 0;
+        }
     }
 
     /**

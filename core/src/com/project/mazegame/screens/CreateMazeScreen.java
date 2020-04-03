@@ -413,6 +413,7 @@ public class CreateMazeScreen implements Screen {
                             else
                                 game.setScreen(new GameScreen(game));
                         }
+                        game.audio.choose();
                     }
 
                     if(this.type == "player") {
@@ -427,6 +428,7 @@ public class CreateMazeScreen implements Screen {
                             this.isPressed = true;
                             playerChosen = true;
                         }
+                        game.audio.choose();
                     }
                     if(this.type == "map") {
                         if(!mapChosen) {
@@ -438,6 +440,7 @@ public class CreateMazeScreen implements Screen {
                             this.isPressed = true;
                             mapChosen = true;
                         }
+                        game.audio.choose();
                     }
                     if(this.type == "difficulty") {
                         if(!difficultyChosen) {
@@ -448,6 +451,7 @@ public class CreateMazeScreen implements Screen {
                             this.isPressed = true;
                             difficultyChosen = true;
                         }
+                        game.audio.choose();
 
                     }
 

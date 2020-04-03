@@ -117,6 +117,8 @@ public class Assets {
     public static final String chooseButtonSFX = "sounds/sfx/chooseButton.mp3";
     public static final String gearEnchantment = "sounds/sfx/gearEnchantment.mp3";
     public static final String poison = "sounds/sfx/poison.mp3";
+    public static final String attacked = "sounds/sfx/attacked.mp3";
+    public static final String killed = "sounds/sfx/killed.mp3";
 
 
 
@@ -252,6 +254,8 @@ public class Assets {
         manager.load(chooseButtonSFX,Sound.class);
         manager.load(gearEnchantment,Sound.class);
         manager.load(poison,Sound.class);
+        manager.load(attacked,Sound.class);
+        manager.load(killed,Sound.class);
 
 
 

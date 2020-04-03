@@ -21,6 +21,8 @@ public class AudioHandler {
     private Sound chooseButton;
     private Sound gearEnchantment;
     private Sound poison;
+    private Sound attacked;
+    private Sound killed;
     private Music endBgm;
 
     private String theScreen;
@@ -58,6 +60,8 @@ public class AudioHandler {
         chooseButton = Assets.manager.get(Assets.chooseButtonSFX,Sound.class);
         gearEnchantment=Assets.manager.get(Assets.gearEnchantment,Sound.class);
         poison=Assets.manager.get(Assets.poison,Sound.class);
+        attacked=Assets.manager.get(Assets.attacked,Sound.class);
+        killed=Assets.manager.get(Assets.killed,Sound.class);
 
     }
 
@@ -146,6 +150,18 @@ public class AudioHandler {
     public void step() {
         if (sfxOn)
             stepSound.play(volume);
+    }
+
+    public void attacked(){
+        if(sfxOn){
+            attacked.play(volume);
+        }
+    }
+
+    public void killed(){
+        if(sfxOn){
+            killed.play(volume);
+        }
     }
 
     public void poison(){

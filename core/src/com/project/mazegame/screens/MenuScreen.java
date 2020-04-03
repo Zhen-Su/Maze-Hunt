@@ -1,10 +1,5 @@
 package com.project.mazegame.screens;
 
-//import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
-//import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
-import static com.project.mazegame.tools.Variables.V_HEIGHT;
-import static com.project.mazegame.tools.Variables.V_WIDTH;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -13,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.Assets;
-import com.project.mazegame.tools.OrthoCam;
 
 
 public class MenuScreen implements Screen {

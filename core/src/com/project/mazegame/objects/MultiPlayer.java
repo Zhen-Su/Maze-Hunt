@@ -25,6 +25,7 @@ public class MultiPlayer extends Player {
     private Direction dir;
     public static boolean debug = false;
     private float playerAttackTime;
+    private boolean beAttacked;
 
     //constructors=================================================================================
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
@@ -81,6 +82,9 @@ public class MultiPlayer extends Player {
         this.dir = dir;
     }
 
+    public void setBeAttacked(boolean beAttacked) {
+        this.beAttacked = beAttacked;
+    }
 
     //==============================================================================================
 
@@ -93,6 +97,7 @@ public class MultiPlayer extends Player {
 
         setBatch(sb);
         if (this.isDead()) {
+            setAnimation(DyingAnim);
             font.getData().setScale(1f, 1f);
             String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
             font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
@@ -154,7 +159,12 @@ public class MultiPlayer extends Player {
                 swordSwipeUp.elapsedTime = 0;
                 swordSwipeDown.elapsedTime = 0;
             }
-
+        }
+        // play injured sfx
+        if(beAttacked){
+            game.audio.setSFXOn();
+            game.audio.attacked();
+            beAttacked=false;
         }
     }
 
