@@ -109,7 +109,7 @@ public class GameScreen implements Screen {
 
 		inputHandler = new InputHandler();
 
-		worldTimer = 30;
+		worldTimer = 5;
 		aiPlayers = new ArrayList<AIPlayer> ();
 
 
@@ -207,6 +207,7 @@ public class GameScreen implements Screen {
 		//start timer
 		player.initialPosition();
 		font = new BitmapFont(Gdx.files.internal("myFont.fnt"), false);
+		
 
 		playerPos = new Coordinate(player.position.getX(), player.position.getY());
 
@@ -277,6 +278,7 @@ public class GameScreen implements Screen {
 		}
 
 		aiMultiPickUp();
+//		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
 
 		game.batch.draw(overlay,player.position.getX() - overlayWidth/2,player.position.getY() - overlayHeight/2 , overlayWidth ,overlayHeight);
 
@@ -338,10 +340,6 @@ public class GameScreen implements Screen {
 		
 		player.render(game.batch);
 		player.attack();
-		
-		if(player.items.contains("gearEnchantment"))game.batch.draw(enchantedGlow ,player.position.getX() -enchantedGlow.getWidth()/2 ,player.position.getY() - enchantedGlow.getHeight()/2 , enchantedGlow.getWidth() ,enchantedGlow.getHeight());
-
-		
 
 		for(int i = 0 ; i < numOfAI; i ++) {
             aiPlayers.get(i).render(game.batch);

@@ -21,6 +21,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.tools.Timer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Database.AddData;
+import com.project.mazegame.objects.Direction;
 import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Assets;
@@ -133,7 +134,7 @@ public class EndScreen implements Screen {
 
         font = (Assets.manager.get(Assets.font));
         font.setColor(Color.BLACK);
-        font.getData().setScale(1f);
+        font.getData().setScale(1.5f);
         frames = Assets.manager.get(Assets.endAnimation , Texture.class);
 
 
@@ -206,6 +207,8 @@ public class EndScreen implements Screen {
 
             playerWin.setAnimation(UpAnim);
             playerWin.update(delta,0,0);
+            playerWin.setDir(Direction.U);
+            playerWin.items.clear();
             playerWin.position.setX(550);
             if(initialY <= 730)
                 playerWin.position.setY(initialY += 3 );
@@ -215,7 +218,7 @@ public class EndScreen implements Screen {
 
 
 
-            font.draw(game.batch,  winningPlayer + " escapes the maze!", 200, 900);
+            font.draw(game.batch,  winningPlayer + " escapes the maze!", 300, 900);
 
 
 
