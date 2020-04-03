@@ -34,7 +34,10 @@ import static com.project.mazegame.tools.Variables.*;
  * Is called when the single player mode is chosen
  * Is where the game play is rendered, player, AI players and items are generated.
  * Read the csvFile.csv to customise the game;
- *
+ * @author Charlotte
+ * @author Selma
+ * @author Andin
+ * @author James
  */
 public class GameScreen implements Screen {
 	private MazeGame game;
@@ -503,7 +506,7 @@ public class GameScreen implements Screen {
 	 * works out if two coordinates are the same or not
 	 * @param investigation
 	 * @param check
-	 * @return
+	 * @return boolean true if on same space false if not
 	 */
 	private boolean sameSpace(Coordinate investigation, Coordinate check) {
     	// get  coordinates then abs and check difference
@@ -786,6 +789,9 @@ public class GameScreen implements Screen {
 	public void resume() {
 
 	}
+	/**
+	 * hides everything
+	 */
 
 	@Override
 	public void hide() {
@@ -793,7 +799,10 @@ public class GameScreen implements Screen {
 		player.dispose();
 		mapItems.clear();
 	}
-
+    /**
+     * disposes of everything
+     */
+     
 	@Override
 	public void dispose() {
 		tileMap.dispose();
@@ -905,10 +914,18 @@ public class GameScreen implements Screen {
 		}
 	}
 
+    /**
+     * works out the time passed in the game
+     * @param theTime
+     * @return theTimepassed
+     */
 	private float timePassed(float theTime) {
 		return worldTimer - theTime;
 	}
-
+    /**
+     * updates the time
+     * @param dt
+     */
 	private void updateTime(float dt) {
 		float initial  = time.currentTime();
 		time.updateTimer(dt);
