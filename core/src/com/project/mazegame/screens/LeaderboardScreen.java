@@ -70,10 +70,6 @@ public class LeaderboardScreen implements Screen {
         leaderboard = Assets.manager.get(Assets.LeaderboardBigger, Texture.class);
 
 
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
-        bgm.setLooping(true);
-        bgm.play();
-
         new Thread(new Withdraw()).start();
         output = CSVStuff.readCSVFile("leaderboardCSV");
 
