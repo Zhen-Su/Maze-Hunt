@@ -21,6 +21,8 @@ public class AudioHandler {
     private Sound chooseButton;
     private Sound gearEnchantment;
     private Sound poison;
+    private Sound attacked;
+    private Sound killed;
     private Music endBgm;
 
     private String theScreen;
@@ -58,6 +60,8 @@ public class AudioHandler {
         chooseButton = Assets.manager.get(Assets.chooseButtonSFX,Sound.class);
         gearEnchantment=Assets.manager.get(Assets.gearEnchantment,Sound.class);
         poison=Assets.manager.get(Assets.poison,Sound.class);
+        attacked=Assets.manager.get(Assets.attacked,Sound.class);
+        killed=Assets.manager.get(Assets.killed,Sound.class);
 
     }
 
@@ -115,7 +119,7 @@ public class AudioHandler {
     /**
      * Sets boolean sfxOn to false
      */
-    public void setSFXOff() {
+    public void setSFXoff() {
         sfxOn = false;
     }
 
@@ -148,6 +152,18 @@ public class AudioHandler {
             stepSound.play(volume);
     }
 
+    public void attacked(){
+        if(sfxOn){
+            attacked.play(volume);
+        }
+    }
+
+    public void killed(){
+        if(sfxOn){
+            killed.play(volume);
+        }
+    }
+
     public void poison(){
         if (sfxOn)
             poison.play(volume);
@@ -164,12 +180,10 @@ public class AudioHandler {
     }
 
     public void choose(){
-        if(sfxOn && !buttonPlayed) {
+        if(sfxOn) {
 //            chooseButton.play(volume);
             chooseButton.play(1.0f);
             buttonPlayed = true;
-//            chooseButton.setLooping(id,false);
-
         }
     }
 
@@ -210,6 +224,7 @@ public class AudioHandler {
     public boolean isSoundOn() {
         return sfxOn && musicOn;
     }
+
 
     /**
      * Gets the current boolean value of musicOn

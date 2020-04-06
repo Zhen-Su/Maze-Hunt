@@ -1,10 +1,5 @@
 package com.project.mazegame.screens;
 
-//import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
-//import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
-import static com.project.mazegame.tools.Variables.V_HEIGHT;
-import static com.project.mazegame.tools.Variables.V_WIDTH;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
@@ -13,7 +8,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.Assets;
-import com.project.mazegame.tools.OrthoCam;
 
 
 public class MenuScreen implements Screen {
@@ -114,6 +108,7 @@ public class MenuScreen implements Screen {
         }
     }
 
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.325f, 0.343f, 0.604f, 1);
@@ -175,7 +170,8 @@ public class MenuScreen implements Screen {
 
         drawX = xMid("SB");
         if (isHovering(drawX, EXIT_Y, SB_WIDTH, SB_HEIGHT)) {
-            game.audio.choose();
+            if (!game.audio.buttonPlayed)
+                game.audio.choose();
             game.batch.draw(exitButtonActive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
             if (Gdx.input.justTouched()) {
                 Gdx.app.exit();
@@ -183,7 +179,7 @@ public class MenuScreen implements Screen {
             }
         }
         else {
-            game.audio.buttonPlayed = false;
+            game.audio.buttonPlayed = true;
             game.batch.draw(exitButtonInactive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
         }
 
@@ -202,7 +198,7 @@ public class MenuScreen implements Screen {
         if (isHovering(drawX, AUDIO_SFX_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {
             if (Gdx.input.justTouched()) {
                 if (game.audio.isSFXOn()) {
-                    game.audio.setSFXOff();
+                    game.audio.setSFXoff();
                 } else {
                     game.audio.setSFXOn();
                 }
@@ -265,14 +261,14 @@ public class MenuScreen implements Screen {
 
     @Override
     public void dispose() {
-        playButtonActive.dispose();
-        playButtonInactive.dispose();
-        audioOn.dispose();
-        audioOff.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
-        joinMazeButtonActive.dispose();
-        joinMazeButtonInactive.dispose();
+//        playButtonActive.dispose();
+//        playButtonInactive.dispose();
+//        audioOn.dispose();
+//        audioOff.dispose();
+//        exitButtonActive.dispose();
+//        exitButtonInactive.dispose();
+//        joinMazeButtonActive.dispose();
+//        joinMazeButtonInactive.dispose();
 
     }
 }

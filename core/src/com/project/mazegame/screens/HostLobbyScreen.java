@@ -37,15 +37,16 @@ public class HostLobbyScreen implements Screen {
     public static final int HEIGHT = 1000;
     private String hostColour;
     private boolean StartPressed = false;
+    private String difficulty;
 
-    public HostLobbyScreen(MazeGame game,String username,int NumOfAI, String map, String color) {
+    public HostLobbyScreen(MazeGame game,String username,int NumOfAI, String map, String color,String difficulty) {
         this.game=game;
         this.hostUsername=username;
         GameServer gameServer=new GameServer();
         this.gameServer = gameServer;
         new Thread(gameServer).start();
         try {
-            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress(),true,NumOfAI,map,color);
+            MultiPlayerGameScreen gameClient = new MultiPlayerGameScreen(game,hostUsername, InetAddress.getLocalHost().getHostAddress(),true,NumOfAI,map,color,difficulty);
             this.gameClient=gameClient;
             this.gameClient.setServer(gameServer);
         } catch (UnknownHostException e) {

@@ -10,17 +10,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.project.mazegame.networking.Database.WithdrawData;
 import com.project.mazegame.tools.Timer;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.networking.Database.AddData;
-import com.project.mazegame.objects.Player;
 import com.project.mazegame.tools.AnimationTool;
 import com.project.mazegame.tools.Assets;
 import com.project.mazegame.tools.CSVStuff;
-import com.project.mazegame.tools.Variables;
+
 
 //import com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 public class LeaderboardScreen implements Screen {
@@ -70,10 +67,6 @@ public class LeaderboardScreen implements Screen {
         leaderboard = Assets.manager.get(Assets.LeaderboardBigger, Texture.class);
 
 
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
-        bgm.setLooping(true);
-        bgm.play();
-
         new Thread(new Withdraw()).start();
         output = CSVStuff.readCSVFile("leaderboardCSV");
 
@@ -88,7 +81,13 @@ public class LeaderboardScreen implements Screen {
         font.getData().setScale(1f);
         frames = Assets.manager.get(Assets.endAnimation , Texture.class);
 
-
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen("menu");
+            game.audio.setMusicOn();
+        } else {
+            game.audio.setMusicOff();
+        }
 
     }
 
@@ -120,7 +119,6 @@ public class LeaderboardScreen implements Screen {
         if (isHovering(drawX, PLAY_Y- 50, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y - 50 ,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
-                bgm.stop();
                 game.setScreen(new MenuScreen(game));
             }
         } else {

@@ -14,6 +14,14 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.project.mazegame.MazeGame;
 import com.project.mazegame.tools.*;
 
+/**
+ * Contains the player attributes and carries out the functionality of the player and their animations
+ * @author Charlotte
+ * @author James
+ * @author Andin
+ * @author Selma
+ */
+
 public class Player {
 
     public int x, y;
@@ -37,6 +45,8 @@ public class Player {
     protected TiledMapTileLayer collisionLayer;
     public Collect co;
 
+    //AI variables
+    protected int attackcount;
     protected float aiAttackTime;
     protected float playerAttackTime;
     protected boolean startPAttack;
@@ -44,11 +54,13 @@ public class Player {
     public boolean isAttacking = false;
     protected boolean pressSpace;
 
+    //Textures
     protected BitmapFont font;
     protected Texture frames, walkRight, walkLeft, walkUp, walkDown, coinPick, swipeRight, swipeLeft, swipeUp, swipeDown, playerDying;
     protected Texture player, sword, swordAttack, swordNotAttack, shield;
     private Texture enchantedGlow;
 
+    //Animations
     protected AnimationTool RightAnim;
     protected AnimationTool LeftAnim;
     protected AnimationTool UpAnim;
@@ -56,6 +68,7 @@ public class Player {
     protected AnimationTool animation;
     protected AnimationTool DyingAnim;
     protected AnimationTool coinAnimation, swordSwipeRight, swordSwipeLeft, swordSwipeUp, swordSwipeDown, swipeAnim;
+
     private SpriteBatch batch;
     protected Timer time;
 
@@ -67,6 +80,7 @@ public class Player {
     protected float deathTime;
 
     public static int shieldIconSize = 50;
+
 
     public Player() {
         this.health = 5;
@@ -85,7 +99,14 @@ public class Player {
         this.startAIAttack = false;
         this.dir = Direction.STOP;
     }
-
+    /**
+     *
+     * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
+     * @param name The chosen name of the player
+     * @param ID The player ID number
+     * @param colour The chosen colour of the player
+     * @param playersType The type of player, single player or multi player
+     */
     public Player(TiledMapTileLayer collisionLayer, String name, int ID, String colour, PlayersType playersType) {
         this();
         this.name = name;
@@ -95,128 +116,207 @@ public class Player {
         this.playersType = playersType;
         this.co = new Collect(this);
         initialPosition();
-//        x = this.position.getX();
-//        y = this.position.getY();
         loadPlayerTextures();
         createAnimations();
     }
+    /**
+     *
+     * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
+     * @param username The chosen name of the player
+     */
+    public Player(TiledMapTileLayer collisionLayer, String username) {
+    }
+    /**
+     *
+     * @param collisionLayer The layer of the map .tmx file that holds the positions of the walls
+     * @param username The chosen name of the player
+     * @param x the x position
+     * @param y the y position
+     * @param dir the direction of the player
+     */
+    public Player(TiledMapTileLayer collisionLayer, String username, int x, int y, Direction dir) {
+    }
+
 
     //Getter&Setter=================================================================================
+    /**
+     * gets the player id
+     * @return int
+     */
     public int getID() {
         return ID;
     }
 
+    /**
+     * sets the player id
+     * @param ID
+     */
     public void setID(int ID) {
         this.ID = ID;
     }
-
+    /**
+     * gets the player direction
+     * @return player direction
+     */
     public Direction getDir() {
         return dir;
     }
+    /**
+     * sets the player direction
+     * @param dir
+     */
 
     public void setDir(Direction dir) {
         this.dir = dir;
     }
 
+    /**
+     * gets the players x position
+     * @return int x
+     */
     public int getX() {
         return x;
     }
-
+    /**
+     * sets the players x position
+     * @param x
+     */
     public void setX(int x) {
         this.x = x;
     }
-
+    /**
+     * gets the players y position
+     * @return int y
+     */
     public int getY() {
         return y;
     }
-
+    /**
+     * sets the players y position
+     *@param y
+     */
     public void setY(int y) {
         this.y = y;
     }
-
+    /**
+     * gets the player name
+     * @return String name
+     */
     public String getName() {
         return name;
     }
-
+    /**
+     * sets the player name
+     * @param name
+     */
     public void setName(String name) {
         this.name = name;
     }
-
+    /**
+     * sets the player animation
+     * @param direction
+     */
     public void setAnimation(AnimationTool direction) {
         animation = direction;
     }
-
+    /**
+     * sets the sword animation
+     * @param direction
+     */
     public void setSwordAnimation(AnimationTool direction) {
         swipeAnim = direction;
     }
-
+    /**
+     * sets the sprite batch
+     * @param sb
+     */
     public void setBatch(SpriteBatch sb) {
         this.batch = sb;
     }
-
+    /**
+     * gets the sprite batch
+     * @return SpriteBatch
+     */
     public SpriteBatch getSpriteBatch() {
         return this.batch;
     }
-
+    /**
+     * gets the texture frames
+     * @return frames
+     */
     public Texture getFrames() {
         return frames;
     }
-
+    /**
+     * gets the sword xp
+     * @return int swordxp
+     */
     public int getSwordXP() {
         return this.swordXP;
     }
-
+    /**
+     * gets the shield xp
+     * @return shield xp
+     */
     public int getShieldXP() {
         return this.shieldXP;
     }
-
+    /**
+     * gets the player health
+     * @return int health
+     */
     public int getHealth() {
         return health;
     }
-
+    /**
+     * gets the current time
+     * @return float time
+     */
     public float getTime() {
         return this.time.currentTime();
     }
-
+    /**
+     * gets the player colour
+     * @return String colour
+     */
     public String getColour() {
         return colour;
     }
-
+    /**
+     * sets the player colour
+     * @param colour
+     */
     public void setColour(String colour) {
         this.colour = colour;
     }
-
-    public AnimationTool getDyingAnim() {
-        return DyingAnim;
-    }
-
+    /**
+     * gets the collect object
+     * @return collect
+     */
     public Collect getCo() {
         return co;
     }
-
-    public void setCo(Collect co) {
-        this.co = co;
-    }
-
-    public TiledMapTileLayer getCollisionLayer() {
-        return collisionLayer;
-    }
-
-    public void setCollisionLayer(TiledMapTileLayer collisionLayer) {
-        this.collisionLayer = collisionLayer;
-    }
-
+    /**
+     * gets the mazgame
+     * @return game
+     */
     public MazeGame getGame() {
         return game;
     }
-
+    /**
+     * sets the mazegame
+     * @param game
+     */
     public void setGame(MazeGame game) {
         this.game = game;
     }
 
     //==============================================================================================
 
-
+    /**
+     * Chooses the initial player position at the start of the game, and when they respawn.
+     * It recursively loops until a position has been chosen that isn't a wall.
+     */
     public void initialPosition() {
         int maxX = collisionLayer.getWidth();
         int maxY = collisionLayer.getHeight();
@@ -231,11 +331,18 @@ public class Player {
             initialPosition();
         }
 
+
         x = this.position.getX();
         y = this.position.getY();
     }
 
-    public void update(float delta, int mode, ArrayList<Item> items, float worldTime) {
+    /**
+     * Updates the player position a their texture/animation
+     * @param delta
+     * @param mode
+     * @param worldTime
+     */
+    public void update(float delta, int mode, float worldTime) {
         removeShield();
         removeEnchantment();
         time.updateTimer(delta);
@@ -245,9 +352,9 @@ public class Player {
         this.position.setY(y);
 
         if (this.isDead()) {
-            if (respawnCounter == 0) respawnCounter = time.currentTime();
+            if (this.respawnCounter == 0) this.respawnCounter = time.currentTime();
 
-            if (time.currentTime() - respawnCounter == 3) this.death(worldTime);
+            if (time.currentTime() - this.respawnCounter == 3) this.death(worldTime);
         } else {
 
             if (RIGHT_TOUCHED) {
@@ -300,6 +407,11 @@ public class Player {
         moveTo.setY(y);
     }
 
+    /**
+     * draws the player and their name above their head as well as any items they are carrying
+     * @param sb
+     */
+
     public void render(SpriteBatch sb) {
         setBatch(sb);
 
@@ -330,6 +442,9 @@ public class Player {
             }
         }
 
+        if (this.items.contains("gearEnchantment"))
+            sb.draw(enchantedGlow, this.position.getX() - enchantedGlow.getWidth() / 2, this.position.getY() - enchantedGlow.getHeight() / 2, enchantedGlow.getWidth(), enchantedGlow.getHeight());
+
         animation.render();
 
         if (this.items.contains("sword"))
@@ -338,26 +453,37 @@ public class Player {
         if (this.items.contains("shield"))
             sb.draw(shield, (float) (x - (width / 1.5)), y - (height / 2), shieldIconSize, shieldIconSize);
 
-        if (this.items.contains("gearEnchantment"))
-            sb.draw(enchantedGlow, this.position.getX() - enchantedGlow.getWidth() / 2, this.position.getY() - enchantedGlow.getHeight() / 2, enchantedGlow.getWidth(), enchantedGlow.getHeight());
+
 
         font.getData().setScale(0.5f, 0.5f);
         font.draw(sb, this.name, this.position.getX() - 30, this.position.getY() + 60);
     }
 
     //-----------------functions
+    /**
+     * increases the sword xp
+     * @param xp
+     */
     public void increaseSwordXP(int XP) {
         this.swordXP += XP;
     }
-
+    /**
+     * increasers shield xp
+     * @param xp
+     */
     public void increaseShieldXP(int XP) {
         this.shieldXP += XP;
     }
-
+    /**
+     * decrease player health
+     * @param number
+     */
     public void decreaseHealth(int number) {
         this.health -= number;
     }
-
+    /**
+     * generates player health
+     */
     public void generateHealth() {
         if (this.health != 9) {
             this.health++;
@@ -365,7 +491,9 @@ public class Player {
     }
 
     // ---------------------------player functionality
-
+    /**
+     * After 10 seconds the shield is removed from player items
+     */
     public void removeShield() {
         if (!this.items.contains("shield")) {
             return;
@@ -376,7 +504,9 @@ public class Player {
 
         }
     }
-
+    /**
+     * After 10 seconds the gear enchantment is removed from player items
+     */
     public void removeEnchantment() {
         if (!this.items.contains("gearEnchantment")) {
             return;
@@ -391,8 +521,13 @@ public class Player {
         return new Coordinate(this.x, this.y);
     }
 
+    /**
+     * Sets the sword swipe animation.
+     * If the player is holding a sword and is alive they can attack.
+     */
+
     public void attack() {
-        if (isAttacking) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             if (this.items.contains("sword") && !this.isDead()) {
                 if (animation.toString().equals(RightAnim.toString()))
                     setSwordAnimation(swordSwipeRight);
@@ -405,6 +540,7 @@ public class Player {
 
                 //do animation
                 swipeAnim.render();
+                game.audio.atk();
                 isAttacking = false;
                 sword = swordAttack;
             }
@@ -417,6 +553,10 @@ public class Player {
         }
     }
 
+    /**
+     * determines whether a player is dead
+     * @return true if player is currently dead
+     */
     public boolean isDead() {
         if (this.health <= 0) {
             haveyoudied = true;
@@ -424,7 +564,10 @@ public class Player {
         } else
             return false;
     }
-
+    /**
+     * once player has been dead for 3 seconds this method is called to allow the player to respawn
+     * @param time the current time
+     */
     public void death(float time) {
         this.initialPosition();
         setAnimation(DownAnim);
@@ -436,67 +579,97 @@ public class Player {
         this.deathTime = time;
         this.haveyoudied = true;
 
-        //this.items = new ArrayList<>();
     }
 
-    // method for a player attacking another player
+
+    /**
+     * Method for a player  to attack another player with a time delay
+     * @param playerA
+     * @param time
+     */
+
+
     public void attackP(Player playerA, float time) {
         // first checks the time delay to stop spamming and the plaeyer hans't attacked before
-//        if (playerAttackTime - time > 0.3) {
+
         // checks if the space key is pressed
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            System.out.println("I'm going to attack a real player");
             // checks if the player has a swrod and the player its attacking doesn't have a shield
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
+                if (attackcount <= 8) {
+                    this.attackcount++;
+                } else {
 //              System.out.println("Player is attacking");
-                // sets is attacking to true
-                isAttacking = true;
-                // animation for sword
-                sword = swordAttack;
-                // decreases health by one plus any gearenchatnments
-                playerA.decreaseHealth(1 + getGearCount());
-                if (playerA.health == 0) {
-                    // adds the coins to the opposing player
-                    this.coins += playerA.coins;
-                    System.out.println("opposing player has died");
-                    // calls the death method
-//                    playerA.death(time);
-                }
+                    // sets is attacking to true
+                    isAttacking = true;
+                    // animation for sowrd
+                    sword = swordAttack;
+                    // decreases health by one plus any gearenchatnments
+                    playerA.decreaseHealth(1 + getGearCount());
+                    if (playerA.health == 0) {
+                        // adds the cons to the opposing player
+//                        this.coins += playerA.coins;
+                        // calls the death mehtod
+                        playerA.death(time);
 
+                    }
+                    attackcount = 0;
+                }
             }
         } else sword = swordNotAttack;
-//        }
+
         // sets the time again and gives tur to startattack
-//        this.playerAttackTime = time;
-//        startPAttack = true;
+        this.playerAttackTime = time;
+        startPAttack = true;
     }
 
-    // attacks an ai paleyr same method as above
+
+    /**
+     * Method to attack an ai player
+     * @param playerA
+     * @param time
+     * @return
+     */
+
     public AIPlayer attackAI(AIPlayer playerA, float time) {
-        if (aiAttackTime - time > 0.1 || !startAIAttack) {
+//      if (aiAttackTime - time > 0.3 || !startAIAttack) {
         if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+
             if (this.items.contains("sword") && !playerA.items.contains("shield")) {
-                System.out.println("Player is attacking an AI");
-                isAttacking = true;
-                sword = swordAttack;
-                int gearEnchantCount = 0;
+                if (attackcount <= 8) {
+                    this.attackcount++;
+                } else {
+                    System.out.println("Player as attacking me");
+                    isAttacking = true;
+                    sword = swordAttack;
+                    int gearEnchantCount = 0;
 
-                playerA.decreaseHealth(1 + getGearCount());
+                    playerA.decreaseHealth(1 + getGearCount());
 
-                if (playerA.health == 0) {
-                    System.out.println("AI has dead....");
-                    this.coins += playerA.coins;
+                    if (playerA.health == 0) {
+                        this.coins += 1;
+                        System.out.println("I am about to die");
+                        this.coins += playerA.coins;
+                        playerA.death(time);
+
+                    }
+                    attackcount = 0;
                 }
             }
         }
-            this.aiAttackTime = time;
-            startAIAttack = true;
-        }
+
+        startAIAttack = true;
+//      }
 
         return playerA;
     }
 
-    // counts the amount of gear enchatns and returns the number
+
+    /**
+     *  counts the amount of gear enchantments
+     * @return the number of gearEnchantments
+     */
+
     protected int getGearCount() {
         int count = 0;
         for (int i = 0; i < items.size(); i++) {
@@ -506,9 +679,15 @@ public class Player {
         return count;
     }
 
-    //-------------------------check collisions
 
-    public boolean checkCollisionMap(float possibleX, float possibleY) { // true = good to move | false = can't move there
+    /**
+     * Checks whether the player can move into a certain position
+     * @param possibleX
+     * @param possibleY
+     * @return true if player can move there | false if they cannot
+     */
+
+    public boolean checkCollisionMap(float possibleX, float possibleY) {
         //Overall x and y of player
         float xWorld = possibleX;
         float yWorld = possibleY;
@@ -529,6 +708,12 @@ public class Player {
         else return true;
     }
 
+    /**
+     * used by checkCollisionMap
+     * @param x
+     * @param y
+     * @return true if there is a wall at given coordinates
+     */
     public boolean isCellBlocked(float x, float y) {
 
         Cell cell = collisionLayer.getCell(
@@ -539,8 +724,9 @@ public class Player {
                 & cell.getTile().getProperties().containsKey("isWall");
     }
 
-
-    //-------------------------loading textures and animations
+    /**
+     * creating animations
+     */
     public void createAnimations() {
 
         width = walkUp.getWidth() / 2;
@@ -601,6 +787,9 @@ public class Player {
         animation.create();
         setAnimation(UpAnim);
     }
+    /**
+     * Retrieving player textures from asset manager
+     */
 
     public void loadPlayerTextures() {
 
@@ -665,10 +854,10 @@ public class Player {
 
 
     public void dispose() {
-        walkDown.dispose();
-        walkLeft.dispose();
-        walkRight.dispose();
-        walkUp.dispose();
+//        walkDown.dispose();
+//        walkLeft.dispose();
+//        walkRight.dispose();
+//        walkUp.dispose();
         // player.dispose();
 
     }

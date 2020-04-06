@@ -11,6 +11,9 @@ import java.util.ArrayList;
  */
 public class AddData {
 
+    private Connection c = null;
+    private Statement stmt = null;
+
     /**
      * <h1>exist</h1>
      * This method is used to determine whether the user name exists in the database
@@ -21,7 +24,7 @@ public class AddData {
      * @return True if the username appears in the database, otherwise false
      * @throws Exception Exception on database connection
      */
-    public static boolean exist(String username) throws Exception {
+    private static boolean exist(String username) throws Exception {
         boolean exist = false;
         WithdrawData withdraw = new WithdrawData();
         ArrayList<String> list = withdraw.download();
@@ -46,8 +49,7 @@ public class AddData {
      */
     public void update(ArrayList<String> input)
     {
-        Connection c = null;
-        Statement stmt = null;
+
         String[] str;
         String[] name = new String[1000];
         String[] coins = new String[1000];

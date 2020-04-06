@@ -17,7 +17,12 @@ import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
 
-
+/**
+ * This Multiplayer class will use in multi-player mode
+ *
+ * @author Yueyi wang
+ * @author Zhen su
+ */
 public class MultiPlayer extends Player {
 
     private MultiPlayerGameScreen gameClient;
@@ -25,6 +30,7 @@ public class MultiPlayer extends Player {
     private Direction dir;
     public static boolean debug = false;
     private float playerAttackTime;
+    private boolean beAttacked;
 
     //constructors=================================================================================
     public MultiPlayer(TiledMapTileLayer collisionLayer, String username, MultiPlayerGameScreen gameClient, Direction dir, String colour, PlayersType playersType) {
@@ -81,6 +87,9 @@ public class MultiPlayer extends Player {
         this.dir = dir;
     }
 
+    public void setBeAttacked(boolean beAttacked) {
+        this.beAttacked = beAttacked;
+    }
 
     //==============================================================================================
 
@@ -93,6 +102,7 @@ public class MultiPlayer extends Player {
 
         setBatch(sb);
         if (this.isDead()) {
+            setAnimation(DyingAnim);
             font.getData().setScale(1f, 1f);
             String message = "Respawn in: " + (respawnCounter - time.currentTime() + 3);
             font.draw(sb, message, this.position.getX() - 100, this.position.getY() + 200);
@@ -154,7 +164,12 @@ public class MultiPlayer extends Player {
                 swordSwipeUp.elapsedTime = 0;
                 swordSwipeDown.elapsedTime = 0;
             }
-
+        }
+        // play injured sfx
+        if(beAttacked){
+            game.audio.setSFXOn();
+            game.audio.attacked();
+            beAttacked=false;
         }
     }
 
@@ -433,7 +448,13 @@ public class MultiPlayer extends Player {
         gameClient.getNc().send(message);
     }
 
-    // method for a player attacking another player
+
+
+    /**
+     * method for a player attacking another player
+     * @param playerA
+     * @param time
+     */
     public void attackP(Player playerA, float time) {
         // checks if the space key is pressed
         if (pressSpace) {
@@ -467,8 +488,14 @@ public class MultiPlayer extends Player {
         }
     }
 
-    // attacks an ai paleyr same method as above
 
+
+    /**
+     * attacks an ai paleyr same method as above
+     * @param playerA
+     * @param time
+     * @return
+     */
     public AIPlayer attackAI(AIPlayer playerA, float time) {
         if (pressSpace) {
             if (aiAttackTime - time > 0.03 || !startAIAttack) {
@@ -497,6 +524,9 @@ public class MultiPlayer extends Player {
     }
 
 
+    /**
+     * remove shield for player according to the time
+     */
     public void removeShield() {
         if (!this.items.contains("shield")) {
             return;
@@ -510,6 +540,9 @@ public class MultiPlayer extends Player {
         }
     }
 
+    /**
+     * remove enchantment for player according to the time
+     */
     public void removeEnchantment() {
         if (!this.items.contains("gearEnchantment")) {
             return;

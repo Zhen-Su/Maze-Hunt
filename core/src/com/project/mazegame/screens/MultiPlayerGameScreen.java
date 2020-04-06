@@ -31,14 +31,24 @@ import com.project.mazegame.tools.PlayersType;
 import com.project.mazegame.tools.Timer;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import static com.project.mazegame.tools.Variables.VIEWPORT_HEIGHT;
 import static com.project.mazegame.tools.Variables.VIEWPORT_WIDTH;
 import static com.project.mazegame.tools.Variables.V_HEIGHT;
 import static com.project.mazegame.tools.Variables.V_WIDTH;
+
+/**
+ * Is called when the multi-player mode is chosen
+ * Is where the game play is rendered, player, AI players and items are generated.
+ * @author Yueyi Wang
+ * @author Zhen su
+ */
 
 public class MultiPlayerGameScreen implements Screen, InputProcessor {
     private boolean debug = true;
@@ -101,7 +111,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String map;
 
     private float timer;
-    public static float worldTimer = 200;
+    public static float worldTimer = 120;
     public Timer time = new Timer();
     private float initialisedShieldTime;
     private float initialisedPotionTime;
@@ -116,13 +126,14 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     public String username;
     public String serverIP;
     public String playerSkin;
+    public int difficulty;
     int counter;
 
 
     //=====================================constructors=============================================
 
     //This construction for host Player
-    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, int NumOfAI, String map, String playerSkin) {
+    public MultiPlayerGameScreen(MazeGame game, String username, String serverIP, boolean isHost, int NumOfAI, String map, String playerSkin,String difficulty) {
         this.game = game;
         this.username = username;
         this.serverIP = serverIP;
@@ -131,17 +142,18 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         this.isHost = isHost;
         timer = 0;
 
-        aiPlayerAttack = null;
-        playerAttack = null;
-
-        if (game.audio.isMusicOn()) {
-            game.audio.setMusicOff();
-            game.audio.setCurrentScreen("game");
-            game.audio.setMusicOn();
-        } else {
-            game.audio.setMusicOff();
+        if(difficulty.equals("difficulty 1")){
+            this.difficulty=1;
+        }else if(difficulty.equals("difficulty 2")){
+            this.difficulty=2;
+        }else if(difficulty.equals("difficulty 3")){
+            this.difficulty=3;
         }
 
+        System.out.println("difficulty for AI:"+difficulty);
+
+        aiPlayerAttack = null;
+        playerAttack = null;
 
         if (map.equals("map1")) {
             tileMap = new TmxMapLoader().load("Map1.tmx");
@@ -167,7 +179,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
 
         if (isHost) {
             //create AI players
@@ -363,6 +374,14 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             }
             System.out.println();
         }
+
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen("game");
+            game.audio.setMusicOn();
+        } else {
+            game.audio.setMusicOff();
+        }
     }
 
     int iconSize = 30;
@@ -377,17 +396,16 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         delta = Gdx.graphics.getDeltaTime();
 
         //only update multiPlayer, not AIPlayer
-        ArrayList<Item> empty = new ArrayList<>();
         for (Player otherPlayer : players) {
             if (otherPlayer instanceof MultiPlayer)
-                otherPlayer.update(delta, 0, empty, 0);
+                otherPlayer.update(delta, 0, 0);
         }
 
         //Only host player can update AI player for movements, other player only update them for animation.
         if (imHost) {
             for (Player aiPlayer : players) {
                 if (aiPlayer instanceof MultiAIPlayer)
-                    aiPlayer.update(delta, 2, mapItems, worldTimer);
+                    aiPlayer.update(delta, difficulty, worldTimer);
             }
         }
 
@@ -400,7 +418,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
         //update myself
-        myMultiPlayer.update(delta, 0, empty, 0);
+        myMultiPlayer.update(delta, 0, 0);
 
         //camera
         cam.update(myMultiPlayer.position.getX(), myMultiPlayer.position.getY(), game);
@@ -492,7 +510,7 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
             //draw timer
-            String message = "Time = " + (int) (worldTimer);
+            String message = "Time = " + (int) worldTimer;
             font.draw(game.batch, message, myMultiPlayer.position.getX(), myMultiPlayer.position.getY() + VIEWPORT_HEIGHT / 2 - 10);
 
 
@@ -514,19 +532,50 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
 
             //if timer runs out
-            if ((worldTimer - time.currentTime()) < 3) {
+            if ((worldTimer) < 3) {
                 overlayWidth -= 15;
                 overlayHeight -= 15;
 
-                if ((worldTimer - time.currentTime()) < 0) {
-                    this.dispose();
-                    //TODO when  game over, player want to start a new game again
+                if ((worldTimer) < 0) {
                     writeCoinCSV();
+                    writeMultiCoinCSV();
                     try {
-                        game.setScreen(new EndScreen(this.game,true));
+
+                        Map<Integer, Integer> map = new HashMap<>();
+                        for(Player winner : players)
+                        {
+                            map.put(winner.getID(),winner.coins);
+                            map.put(myMultiPlayer.getID(),myMultiPlayer.coins);
+                        }
+
+                        List<Map.Entry<Integer,Integer>> infos = new ArrayList<>(map.entrySet());
+
+                        Collections.sort(infos, new Comparator<Map.Entry<Integer, Integer>>() {
+                            @Override
+                            public int compare(Map.Entry<Integer, Integer> o2, Map.Entry<Integer, Integer> o1) {
+
+
+                                return (o1.getValue().compareTo(o2.getValue()));
+                            }
+                        });
+                        int id = infos.get(0).getKey();
+                        System.out.println("========================" + id);
+                        if(id == myMultiPlayer.getID()) {
+                            System.out.println("=================in=======");
+                            game.setScreen(new EndScreen(this.game,myMultiPlayer,true));
+                        }else {
+                            for (Player winner : players) {
+                                if (winner.getID() == id) {
+                                    System.out.println("================= not in=======");
+                                    game.setScreen(new EndScreen(this.game, winner, true));
+
+                                }
+                            }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
                     if (isHost) {
                         this.server.dispose(this, false);
                         if (debug) {
@@ -534,6 +583,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                         }
                     }
                     //if gameover, then close server from hostplayer
+                    this.dispose();
+
                 }
             }
         }
@@ -650,7 +701,13 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
 
     }
 
-    // method which compares and checks if the palyers are on the same space
+
+    /**
+     * method which compares and checks if the palyers are on the same space
+     * @param investigation
+     * @param check
+     * @return
+     */
     private boolean sameSpace(Coordinate investigation, Coordinate check) {
         // get  coordinates then abs and check difference
         int xCorI = investigation.getX();
@@ -677,6 +734,23 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         System.out.println("in method " + input);
 
         CSVStuff.writeCSV(input, "coinCSV");
+    }
+
+    //it will store coins and use for update on database(just store real player)
+    private void writeMultiCoinCSV() {
+        ArrayList<String> input = new ArrayList<>();
+
+        for (Player player : players) {
+            if(player instanceof MultiPlayer) {
+                input.add(player.getName() + " = " + player.coins);
+            }
+        }
+
+        input.add(myMultiPlayer.getName() + " = " + myMultiPlayer.coins);
+
+        System.out.println("in method " + input);
+
+        CSVStuff.writeCSV(input, "multi_coinCSV");
     }
 
     private void drawIcons(int iconSize, int buffer, Coordinate position) {
@@ -785,7 +859,6 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             if (item.getType().equals("shield")) {
                 item.setInitialisedTime(time.currentTime());
                 player.initialisedShieldTime = time.currentTime();
-                player.getCo().shield(item, player);
                 if (player.items.contains("gearEnchantment")) {
                     player.initialisedShieldTime += 3;
                 }
@@ -804,26 +877,20 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
                 }
 
             }
-            if (item.getType().equals("minimap")) {
-                player.getCo().minimap(item);
-            }
         } else if (isCoin) {
             if(isMy) {
-                game.audio.setSFXOn();
                 game.audio.pickupCoin();
             }
             mapItems.remove(item);
             player.coins++;
         } else if (isHealingPotion) {
             if(isMy) {
-                game.audio.setSFXOn();
                 game.audio.addHealth();
             }
             mapItems.remove(item);
             player.getCo().healingPotion(player);
         } else if (isDamagingPotion) {
             if(isMy) {
-                game.audio.setSFXOn();
                 game.audio.poison();
             }
             mapItems.remove(item);
@@ -892,8 +959,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
     @Override
     public void dispose() {
         tileMap.dispose();
-        exitButtonActive.dispose();
-        exitButtonInactive.dispose();
+//        exitButtonActive.dispose();
+//        exitButtonInactive.dispose();
         myMultiPlayer.dispose();
         for (int i = 0; i < players.size(); i++) {
             Player otherMultiPlayer = players.get(i);
@@ -918,8 +985,8 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
         int maxShields = 15;
         int maxCoins = 50;
         //TODO this swords number need to change, only for test
-        int maxSwords = 200;
-        int maxMinimaps = 100;
+        int maxSwords = 20;
+        int maxMinimaps = 10;
         int maxPotions = 50;
         int maxX = widthInTiles;
         int maxY = widthInTiles;
