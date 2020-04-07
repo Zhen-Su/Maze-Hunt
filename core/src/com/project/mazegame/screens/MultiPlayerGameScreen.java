@@ -879,21 +879,18 @@ public class MultiPlayerGameScreen implements Screen, InputProcessor {
             }
         } else if (isCoin) {
             if(isMy) {
-                game.audio.setSFXOn();
                 game.audio.pickupCoin();
             }
             mapItems.remove(item);
             player.coins++;
         } else if (isHealingPotion) {
             if(isMy) {
-                game.audio.setSFXOn();
                 game.audio.addHealth();
             }
             mapItems.remove(item);
             player.getCo().healingPotion(player);
         } else if (isDamagingPotion) {
             if(isMy) {
-                game.audio.setSFXOn();
                 game.audio.poison();
             }
             mapItems.remove(item);

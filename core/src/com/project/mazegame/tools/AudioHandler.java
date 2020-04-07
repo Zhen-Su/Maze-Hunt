@@ -182,8 +182,8 @@ public class AudioHandler {
     public void choose(){
         if(sfxOn) {
 //            chooseButton.play(volume);
-            long id = chooseButton.play(1.0f);
-            chooseButton.setLooping(id,false);
+            chooseButton.play(1.0f);
+            buttonPlayed = true;
         }
     }
 

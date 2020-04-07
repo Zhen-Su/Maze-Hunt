@@ -81,7 +81,13 @@ public class LeaderboardScreen implements Screen {
         font.getData().setScale(1f);
         frames = Assets.manager.get(Assets.endAnimation , Texture.class);
 
-
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen("menu");
+            game.audio.setMusicOn();
+        } else {
+            game.audio.setMusicOff();
+        }
 
     }
 
@@ -113,7 +119,6 @@ public class LeaderboardScreen implements Screen {
         if (isHovering(drawX, PLAY_Y- 50, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y - 50 ,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
-                bgm.stop();
                 game.setScreen(new MenuScreen(game));
             }
         } else {

@@ -84,9 +84,13 @@ public class EndScreen implements Screen {
         leaderboard = Assets.manager.get(Assets.Leaderboard, Texture.class);
 
 
-        bgm = Gdx.audio.newMusic(Gdx.files.internal("sounds\\menuBgm.mp3"));
-        bgm.setLooping(true);
-        bgm.play();
+        if (game.audio.isMusicOn()) {
+            game.audio.setMusicOff();
+            game.audio.setCurrentScreen("menu");
+            game.audio.setMusicOn();
+        } else {
+            game.audio.setMusicOff();
+        }
 
         output = CSVStuff.readCSVFile("coinCSV");
         multioutput = CSVStuff.readCSVFile("multi_coinCSV");
@@ -192,7 +196,6 @@ public class EndScreen implements Screen {
         if (isHovering(drawX, PLAY_Y- 50, MB_WIDTH, MB_HEIGHT)) {
             game.batch.draw(playButtonActive, drawX, PLAY_Y - 50 ,MB_WIDTH, MB_HEIGHT);
             if (Gdx.input.isTouched()) {
-                bgm.stop();
                 game.setScreen(new MenuScreen(game));
             }
         } else {

@@ -170,9 +170,8 @@ public class MenuScreen implements Screen {
 
         drawX = xMid("SB");
         if (isHovering(drawX, EXIT_Y, SB_WIDTH, SB_HEIGHT)) {
-            game.audio.setSFXOn();
-            game.audio.choose();
-            game.audio.setSFXoff();
+            if (!game.audio.buttonPlayed)
+                game.audio.choose();
             game.batch.draw(exitButtonActive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
             if (Gdx.input.justTouched()) {
                 Gdx.app.exit();
@@ -180,7 +179,7 @@ public class MenuScreen implements Screen {
             }
         }
         else {
-            game.audio.buttonPlayed = false;
+            game.audio.buttonPlayed = true;
             game.batch.draw(exitButtonInactive, drawX, EXIT_Y,SB_WIDTH, SB_HEIGHT);
         }
 
@@ -189,10 +188,19 @@ public class MenuScreen implements Screen {
             if (Gdx.input.justTouched()) {
                 if (game.audio.isMusicOn()) {
                     game.audio.setMusicOff();
-                    game.audio.setSFXoff();
                 } else {
                     game.audio.setMusicOn();
+                }
+            }
+        }
+
+        drawX = xMid("AudioButton") - MazeGame.WIDTH + AUDIO_WIDTH;
+        if (isHovering(drawX, AUDIO_SFX_Y, AUDIO_WIDTH, AUDIO_HEIGHT)) {
+            if (Gdx.input.justTouched()) {
+                if (game.audio.isSFXOn()) {
                     game.audio.setSFXoff();
+                } else {
+                    game.audio.setSFXOn();
                 }
             }
         }

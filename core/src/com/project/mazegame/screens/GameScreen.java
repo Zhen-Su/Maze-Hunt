@@ -72,6 +72,7 @@ public class GameScreen implements Screen {
 	private Texture overlay ,enchantedGlow;
 	private BitmapFont font;
 	private Texture mapTexture, minimapOutline, playerIcon;
+	private Texture coinPick;
 
 	public static float worldTimer;
 
@@ -112,7 +113,7 @@ public class GameScreen implements Screen {
 
 		inputHandler = new InputHandler();
 
-		worldTimer = 10;
+		worldTimer = 300;
 		aiPlayers = new ArrayList<AIPlayer> ();
 
 
@@ -177,6 +178,8 @@ public class GameScreen implements Screen {
 		minimapOutline = Assets.manager.get(Assets.minimapOutline,Texture.class);
 		enchantedGlow = Assets.manager.get(Assets.ENCHANTED,Texture.class);
 		playerIcon = Assets.manager.get(Assets.playerOnMap,Texture.class);
+		coinPick = Assets.manager.get(Assets.coinAnimation, Texture.class);
+
 		overlayWidth = overlay.getWidth() +300;
 		overlayHeight = overlay.getHeight() +300;
 	}
@@ -762,12 +765,15 @@ public class GameScreen implements Screen {
 
 		} else if (item.getType() == "coin") {
 			mapItems.remove(item);
+			game.audio.pickupCoin();
 			player.coins++;
 		}else if (item.getType() == "healingPotion") {
 			mapItems.remove(item);
+			game.audio.addHealth();
 			co.healingPotion (player);
 		}else if (item.getType() == "damagingPotion") {
 			mapItems.remove(item);
+			game.audio.poison();
 			co.damagingPotion(player);
 		}
 
